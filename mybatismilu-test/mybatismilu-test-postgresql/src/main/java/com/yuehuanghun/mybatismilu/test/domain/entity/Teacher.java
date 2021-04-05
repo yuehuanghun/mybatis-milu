@@ -1,0 +1,29 @@
+package com.yuehuanghun.mybatismilu.test.domain.entity;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+
+import lombok.Data;
+
+@Data
+@Entity
+public class Teacher {
+
+	@Id
+	private Long id; //数据库自增ID
+	
+	private Date addTime;
+	
+	private String name;
+	
+	private Integer age;
+	@ManyToMany
+	@JoinTable(name = "class_teacher_rel", joinColumns = @JoinColumn(name = "teacher_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "class_id", referencedColumnName = "id"))
+	private List<Classs> classList; //多对多引用演示
+}

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+
+<mapper namespace="com.yuehuanghun.mybatismilu.test.domain.mapper.TeacherMapper">
+	<!-- 已经创建了默认的ResultMap：com.yuehuanghun.mybatismilu.test.domain.mapper.TeacherMapper.TeacherMap -->
+	<!-- 规则是mapper全路类名（即当前namespace）+ "." + 实体类名 + "Map" -->
+	<select id="getById" resultMap="TeacherMap">
+		SELECT * FROM teacher WHERE id = #{id}
+	</select>
+</mapper>
+

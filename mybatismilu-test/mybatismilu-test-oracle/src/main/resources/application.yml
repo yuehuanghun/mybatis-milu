@@ -1,0 +1,24 @@
+
+
+mybatis: 
+    mapperLocations: /mapper/**/*.xml
+    
+spring.datasource:
+    driverClassName: oracle.jdbc.driver.OracleDriver
+    url: jdbc:oracle:thin:@//192.168.1.126:1521/orcl
+    username: mybatis
+    password: 123456
+    poolName: SpringBootHikariCP
+    maximumPoolSize: 20
+    minimumIdle: 3
+    maxLifetime: 2000000
+    connectionTimeout: 30000
+    idleTimeout: 30000
+    pool-prepared-statements: true
+    max-open-prepared-statements: 250
+    validationQuery: select 1
+    testWhileIdle: true
+    testOnBorrow: true
+    
+logging:
+    level.com.yuehuanghun: debug
