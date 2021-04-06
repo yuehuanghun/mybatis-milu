@@ -23,14 +23,14 @@ public interface QueryPredicate extends Predicate {
 	/**
 	 * 指定查询的（实体类）属性，未指定时查询实体所有属性
 	 * @param attrNames 需要查询的实体属性
-	 * @return
+	 * @return 当前对象
 	 */
 	QueryPredicate select(String... attrNames);
 	
 	/**
 	 * 指定查询的（实体类）属性，未指定时查询实体所有属性
 	 * @param attrNameChain 多个属性名用英文逗号隔开，举例：name, age, createTime
-	 * @return
+	 * @return 当前对象
 	 */
 	QueryPredicate selects(String attrNameChain);
 	
@@ -38,7 +38,7 @@ public interface QueryPredicate extends Predicate {
 	 * 排除查询指定的（实体类）属性，select比exselect优先级更高<br>
 	 * 例如文本或二进制大字段，影响IO效率，在查询时排除掉
 	 * @param attrNames 需要查询的实体属性
-	 * @return
+	 * @return 当前对象
 	 */
 	QueryPredicate exselect(String... attrNames);
 	
@@ -46,14 +46,14 @@ public interface QueryPredicate extends Predicate {
 	 * 排除查询指定的（实体类）属性，select比exselect优先级更高<br>
 	 * 例如文本或二进制大字段，影响IO效率，在查询时排除掉
 	 * @param attrNameChain 多个属性名用英文逗号隔开，举例：content, fileData
-	 * @return
+	 * @return 当前对象
 	 */
 	QueryPredicate exselects(String attrNameChain);
 
 	/**
 	 * 添加排序，不指定排序方向，以数据库默认排序为准
 	 * @param attrNames 属性名
-	 * @return
+	 * @return 当前对象
 	 */
 	QueryPredicate order(String... attrNames);
 	
@@ -61,14 +61,14 @@ public interface QueryPredicate extends Predicate {
 	 * 添加排序，指定排序方向
 	 * @param direction 排序方向枚举
 	 * @param attrNames 属性名
-	 * @return
+	 * @return 当前对象
 	 */
 	QueryPredicate order(Direction direction, String... attrNames);
 
 	/**
 	 * 获取第1页的pageSize条数据
 	 * @param pageSize 每页行数
-	 * @return
+	 * @return 当前对象
 	 */
 	QueryPredicate limit(int pageSize);
 	
@@ -76,7 +76,7 @@ public interface QueryPredicate extends Predicate {
 	 * 获取第1页的pageSize条数据
 	 * @param pageSize 每页行数
 	 * @param count 是否查询符合的总行数
-	 * @return
+	 * @return 当前对象
 	 */
 	QueryPredicate limit(int pageSize, boolean count);
 	
@@ -84,7 +84,7 @@ public interface QueryPredicate extends Predicate {
 	 * 获取第pageNum页的pageSize条数据
 	 * @param pageNum 起始页，从1开始
 	 * @param pageSize 每页行数
-	 * @return
+	 * @return 当前对象
 	 */
 	QueryPredicate limit(int pageNum, int pageSize);
 	
@@ -94,7 +94,7 @@ public interface QueryPredicate extends Predicate {
 	 * @param pageNum 起始页，从1开始
 	 * @param pageSize 每页行数
 	 * @param count 是否查询符合的总行数
-	 * @return
+	 * @return 当前对象
 	 */
 	QueryPredicate limit(int pageNum, int pageSize, boolean count);
 	

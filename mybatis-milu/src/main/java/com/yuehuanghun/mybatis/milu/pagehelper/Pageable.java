@@ -24,19 +24,19 @@ public interface Pageable {
 
 	/**
 	 * 当前页码，从1开始
-	 * @return
+	 * @return 页码
 	 */
 	int getPageNum();
 	
 	/**
 	 * 每页行数
-	 * @return
+	 * @return 行数
 	 */
 	int getPageSize();
 	
 	/**
 	 * 是否计算总行数
-	 * @return
+	 * @return 总行数
 	 */
 	boolean isCount();
 }

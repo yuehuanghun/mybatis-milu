@@ -18,7 +18,7 @@ package com.yuehuanghun.mybatis.milu.dialect.db;
 import com.yuehuanghun.mybatis.milu.dialect.AbstractDialect;
 
 /**
- * sqlserver >= 2012版本
+ * sqlserver &gt;= 2012版本
  * @author fengjie
  *
  */

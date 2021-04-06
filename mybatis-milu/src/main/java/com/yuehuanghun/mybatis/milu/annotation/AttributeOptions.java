@@ -33,25 +33,25 @@ public @interface AttributeOptions {
 
 	/**
 	 * 仅可设置一个元素
-	 * @return
+	 * @return 条件设置
 	 */
 	ExampleQuery[] exampleQuery() default {};
 	
 	/**
 	 * 仅可设置一个元素
-	 * @return
+	 * @return 自动填充设置
 	 */
 	Filler[] filler() default {};
 	
 	/**
 	 * 作为更新字段时，值为何种情况生效
-	 * @return
+	 * @return 更新模式
 	 */
 	Mode updateMode() default Mode.AUTO;
 	
 	/**
 	 * 作为查询条件时，值为何种情况时生效
-	 * @return
+	 * @return 条件模式
 	 */
 	Mode conditionMode() default Mode.AUTO;
 }

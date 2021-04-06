@@ -29,14 +29,14 @@ public interface Dialect {
 	 * 获取第一页N条数据
 	 * @param sql 原sql
 	 * @param topRows 条件数
-	 * @return
+	 * @return 添加分页后SQL表达式
 	 */
 	public String getTopLimitSql(String sql, int topRows);
 	
 	/**
 	 * 获取partType的SQL表达式
-	 * @param partType
-	 * @return
+	 * @param partType 类型
+	 * @return 表达式
 	 */
 	String getPartTypeExpression(Type partType);
 

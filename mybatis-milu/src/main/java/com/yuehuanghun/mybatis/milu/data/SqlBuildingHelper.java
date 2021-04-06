@@ -190,9 +190,9 @@ public class SqlBuildingHelper {
 	
 	/**
 	 * 自动填充由@Filler声明的属性
-	 * @param param
-	 * @param insert
-	 * @param configuration
+	 * @param param 输入参数
+	 * @param insert 新增/更新
+	 * @param configuration 配置
 	 */
 	public static void fill(Object param, boolean insert, MiluConfiguration configuration) {
 		if(Map.class.isInstance(param)) {

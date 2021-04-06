@@ -38,19 +38,19 @@ public @interface Filler {
 	 * 属性值提供者<br>
 	 * 已提供默认属性值提供者：Date、sql.Date、LocalDate、LocalDateTime默认为当前日期或日期时间<br>
 	 * 常见Number子类被设置为0值
-	 * @return
+	 * @return 填充数据供应者
 	 */
 	Class<? extends AttributeValueSupplier<?>> attributeValueSupplier() default DelegateSupplier.class;
 	
 	/**
 	 * 在插入时自动填充（属性值非null时）
-	 * @return
+	 * @return true/false
 	 */
 	boolean fillOnInsert() default false;
 	
 	/**
 	 * 在更新时自动填充（属性值非null时）
-	 * @return
+	 * @return true/false
 	 */
 	boolean fillOnUpdate() default false;
 }

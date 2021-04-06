@@ -25,7 +25,7 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	/**
 	 * 指定查询的（实体类）属性，未指定时查询实体所有属性
 	 * @param getterFns 实体类的getter函数式
-	 * @return
+	 * @return 当前对象
 	 */
 	@SuppressWarnings("unchecked")
 	LambdaQueryPredicate<T> select(SerializableFunction<T, ?>... getterFns);
@@ -33,7 +33,7 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	/**
 	 * 指定查询的（实体类）属性，未指定时查询实体所有属性
 	 * @param attrNameChain 多个属性名用英文逗号隔开，举例：name, age, createTime
-	 * @return
+	 * @return 当前对象
 	 */
 	LambdaQueryPredicate<T> selects(String attrNameChain);
 	
@@ -41,7 +41,7 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	 * 排除查询指定的（实体类）属性，select比exselect优先级更高<br>
 	 * 例如文本或二进制大字段，影响IO效率，在查询时排除掉
 	 * @param getterFns 实体类的getter函数式
-	 * @return
+	 * @return 当前对象
 	 */
 	@SuppressWarnings("unchecked")
 	LambdaQueryPredicate<T> exselect(SerializableFunction<T, ?>... getterFns);
@@ -50,13 +50,13 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	 * 排除查询指定的（实体类）属性，select比exselect优先级更高<br>
 	 * 例如文本或二进制大字段，影响IO效率，在查询时排除掉
 	 * @param attrNameChain 多个属性名用英文逗号隔开，举例：content, fileData
-	 * @return
+	 * @return 当前对象
 	 */
 	LambdaQueryPredicate<T> exselects(String attrNameChain);
 	/**
 	 * 添加排序，不指定排序方向，以数据库默认排序为准
 	 * @param getterFns 实体类的getter函数式
-	 * @return
+	 * @return 当前对象
 	 */
 	@SuppressWarnings("unchecked")
 	LambdaQueryPredicate<T> order(SerializableFunction<T, ?>... getterFns);
@@ -65,7 +65,7 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	 * 添加排序，指定排序方向
 	 * @param direction 排序方向枚举
 	 * @param getterFns 实体类的getter函数式
-	 * @return
+	 * @return 当前对象
 	 */
 	@SuppressWarnings("unchecked")
 	LambdaQueryPredicate<T> order(Direction direction, SerializableFunction<T, ?>... getterFns);
@@ -74,7 +74,7 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	/**
 	 * 获取第1页的pageSize条数据
 	 * @param pageSize 每页行数
-	 * @return
+	 * @return 当前对象
 	 */
 	LambdaQueryPredicate<T> limit(int pageSize);
 	
@@ -82,7 +82,7 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	 * 获取第1页的pageSize条数据
 	 * @param pageSize 每页行数
 	 * @param count 是否查询符合的总行数
-	 * @return
+	 * @return 当前对象
 	 */
 	LambdaQueryPredicate<T> limit(int pageSize, boolean count);
 	
@@ -90,7 +90,7 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	 * 获取第pageNum页的pageSize条数据
 	 * @param pageNum 起始页，从1开始
 	 * @param pageSize 每页行数
-	 * @return
+	 * @return 当前对象
 	 */
 	LambdaQueryPredicate<T> limit(int pageNum, int pageSize);
 	
@@ -100,7 +100,7 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	 * @param pageNum 起始页，从1开始
 	 * @param pageSize 每页行数
 	 * @param count 是否查询符合的总行数
-	 * @return
+	 * @return 当前对象
 	 */
 	LambdaQueryPredicate<T> limit(int pageNum, int pageSize, boolean count);
 

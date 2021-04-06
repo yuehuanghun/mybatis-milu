@@ -31,19 +31,19 @@ public @interface StatementOptions {
 	/**
 	 * 选择的属性，多个用英文逗号隔开，如id,createTime，仅可为主实体类的属性<br>
 	 * 不为空时exselects的设置无效
-	 * @return
+	 * @return 选择的属性
 	 */
 	String selects() default StringUtils.EMPTY;
 	
 	/**
 	 * 不选择的属性，多个用英文逗号隔开，如id,createTime，仅可为主实体类的属性<br>
-	 * @return
+	 * @return 不选择的属性
 	 */
 	String exselects() default StringUtils.EMPTY;
 	
 	/**
 	 * 覆盖Mapper的methodName作为查询表达式
-	 * @return
+	 * @return 查询表达式
 	 */
 	String asExpression() default StringUtils.EMPTY;
 }

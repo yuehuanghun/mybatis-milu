@@ -26,21 +26,21 @@ public interface AttributeValueSupplier<T> {
 	/**
 	 * 当插入数据时取值
 	 * @param clazz 属性类型
-	 * @return
+	 * @return 值
 	 */
 	T getValueOnInsert(Class<?> clazz);
 	
 	/**
 	 * 当更新数据时取值
 	 * @param clazz 属性类型
-	 * @return
+	 * @return 值
 	 */
 	T getValueOnUpdate(Class<?> clazz);
 	
 	/**
 	 * 是否支持此类型
-	 * @param clazz
-	 * @return
+	 * @param clazz 属性类型
+	 * @return true/false
 	 */
 	boolean support(Class<?> clazz);
 }

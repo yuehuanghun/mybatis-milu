@@ -17,6 +17,7 @@
 package com.yuehuanghun.mybatis.milu.ext;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -43,7 +44,7 @@ public interface BaseService<T, ID extends Serializable> {
 		return getBaseMappper().findById(id);
 	}
 	
-	default List<T> getByIds(Iterable<ID> ids){
+	default List<T> getByIds(Collection<ID> ids){
 		return getBaseMappper().findByIds(ids);
 	}
 	
@@ -67,7 +68,7 @@ public interface BaseService<T, ID extends Serializable> {
 		return getBaseMappper().insert(entity);
 	}
 	
-	default int batchAdd(Iterable<T> entityList) {
+	default int batchAdd(Collection<T> entityList) {
 		return getBaseMappper().batchInsert(entityList);
 	}
 	
@@ -79,7 +80,7 @@ public interface BaseService<T, ID extends Serializable> {
 		return getBaseMappper().deleteById(id);
 	}
 	
-	default int deleteByIds(Iterable<ID> ids) {
+	default int deleteByIds(Collection<ID> ids) {
 		return getBaseMappper().deleteByIds(ids);
 	}
 	
