@@ -514,4 +514,16 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 		super.notIn(accept, getterFn, value);
 		return this;
 	}
+	
+	@Override
+	public LambdaQueryPredicate<T> regex(SerializableFunction<T, ?> getterFn, Object value) {
+		super.regex(getterFn, value);
+		return this;
+	}
+	
+	@Override
+	public LambdaQueryPredicate<T> regex(boolean accept, SerializableFunction<T, ?> getterFn, Object value) {
+		super.regex(accept, getterFn, value);
+		return this;
+	}
 }

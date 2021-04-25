@@ -205,4 +205,10 @@ public interface QueryPredicate extends Predicate {
 
 	@Override
 	QueryPredicate notIn(boolean accept, String attrName, Object value);
+
+	@Override
+	QueryPredicate regex(String attrName, Object value);
+
+	@Override
+	QueryPredicate regex(boolean accept, String attrName, Object value);
 }

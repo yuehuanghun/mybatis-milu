@@ -121,8 +121,6 @@ public class SqlBuildingHelper {
 						hasAttr = true;
 						break;
 					}
-				} else {
-					continue;
 				}
 			}
 			if(!hasAttr) {
@@ -154,6 +152,10 @@ public class SqlBuildingHelper {
 	}
 	
 	public static void appendIdentifier(StringBuilder stringBuilder , String identifier, MiluConfiguration configuration) {
+		if(!configuration.isIdentifierWrapQuote()) {
+			stringBuilder.append(identifier);
+			return;
+		}
 		String identifierQuoteString = configuration.getDbMeta().getIdentifierQuoteString();
 		if(StringUtils.isBlank(identifierQuoteString)) {
 			stringBuilder.append(identifier);
@@ -163,6 +165,9 @@ public class SqlBuildingHelper {
 	}
 	
 	public static String wrapIdentifier(String identifier, MiluConfiguration configuration) {
+		if(!configuration.isIdentifierWrapQuote()) {
+			return identifier;
+		}
 		String identifierQuoteString = configuration.getDbMeta().getIdentifierQuoteString();
 		if(StringUtils.isBlank(identifierQuoteString)) {
 			return identifier;
@@ -270,6 +275,13 @@ public class SqlBuildingHelper {
 	    		type = Part.Type.SIMPLE_PROPERTY;
 	    		break;
 	    }
-	    return String.format(configuration.getDialect().getPartTypeExpression(type), "#{example." + attr.getName() + "}");
+	    return String.format(configuration.getDialect().getPartTypeExpression(type), Segment.HASH_EXAMPLE  + attr.getName() + Segment.RIGHT_BRACE);
+	}
+	
+	public static String matchExpression(Part.Type type, String keyName, MiluConfiguration configuration) {
+		if(type == Part.Type.IN) {
+			return String.format(configuration.getDialect().getPartTypeExpression(type), Segment.EXAMPLE_TO_COLLECTION + keyName + Segment.RIGHT_BRACKET);
+		}
+		return String.format(configuration.getDialect().getPartTypeExpression(type), Segment.HASH_EXAMPLE + keyName + Segment.RIGHT_BRACE);
 	}
 }

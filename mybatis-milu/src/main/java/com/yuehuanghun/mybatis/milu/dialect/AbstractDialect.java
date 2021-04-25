@@ -33,7 +33,7 @@ public abstract class AbstractDialect implements Dialect {
 		partTypeExpressionMap.put(Type.IS_NOT_NULL, " IS NOT NULL");
 		partTypeExpressionMap.put(Type.IS_NULL, " IS NULL");
 		partTypeExpressionMap.put(Type.LESS_THAN, " &lt; %s");
-		partTypeExpressionMap.put(Type.LESS_THAN_EQUAL, " &lt; = %s");
+		partTypeExpressionMap.put(Type.LESS_THAN_EQUAL, " &lt;= %s");
 		partTypeExpressionMap.put(Type.GREATER_THAN, " &gt; %s");
 		partTypeExpressionMap.put(Type.GREATER_THAN_EQUAL, " &gt;= %s");
 		partTypeExpressionMap.put(Type.BEFORE, " &lt; %s");

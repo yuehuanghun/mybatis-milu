@@ -23,6 +23,7 @@ import com.yuehuanghun.mybatis.milu.generic.GenericCachingProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
+import com.yuehuanghun.mybatis.milu.metamodel.Entity.RangeCondition;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
 public class GenericCountByExampleProviderSql extends GenericCachingProviderSql {
@@ -34,7 +35,7 @@ public class GenericCountByExampleProviderSql extends GenericCachingProviderSql 
 		Collection<Attribute> attributes = entity.getAttributes();
 		StringBuilder sqlBuilder = new StringBuilder(1024).append(Segment.SCRIPT_LABEL);
 		
-		sqlBuilder.append("SELECT COUNT(*) FROM ").append(wrapIdentifier(entity.getTableName(), context));
+		sqlBuilder.append(Segment.SELECT_COUNT_FROM).append(wrapIdentifier(entity.getTableName(), context));
 		
 		sqlBuilder.append(Segment.WHERE_LABEL);
 		for(Attribute attr : attributes) {
@@ -46,20 +47,28 @@ public class GenericCountByExampleProviderSql extends GenericCachingProviderSql 
 				sqlBuilder.append(Segment.AND_B)
 				    .append(wrapIdentifier(attr.getColumnName(), context))
 				    .append(SqlBuildingHelper.matchExpression(attr, context.getConfiguration()));
-			} else if(attr.getUpdateMode() == Mode.NOT_EMPTY && CharSequence.class.isAssignableFrom(attr.getJavaType())) {
-				sqlBuilder.append(" <if test=\"example.")
-				    .append(attr.getName()).append(" != null and example.")
-				    .append(attr.getName()).append(" != ''\"> AND ")
+			} else if(attr.getConditionMode() == Mode.NOT_EMPTY && CharSequence.class.isAssignableFrom(attr.getJavaType())) {
+				sqlBuilder.append(Segment.IF_TEST_EXAMPLE)
+				    .append(attr.getName()).append(Segment.NOT_EQUAL_NULL_AND_EXAMPLE)
+				    .append(attr.getName()).append(Segment.NOT_EMPTY_NULL_CLOSING).append(Segment.AND_B)
 				    .append(wrapIdentifier(attr.getColumnName(), context))
 				    .append(SqlBuildingHelper.matchExpression(attr, context.getConfiguration()))
-				    .append("</if> ");
+				    .append(Segment.IF_LABEL_END);
 			} else {
-				sqlBuilder.append(" <if test=\"example.")
-				    .append(attr.getName()).append(" != null\"> AND ")
+				sqlBuilder.append(Segment.IF_TEST_EXAMPLE)
+				    .append(attr.getName()).append(Segment.NOT_EQUAL_NULL_CLOSING).append(Segment.AND_B)
 				    .append(wrapIdentifier(attr.getColumnName(), context))
 				    .append(SqlBuildingHelper.matchExpression(attr, context.getConfiguration()))
-				    .append("</if> ");
+				    .append(Segment.IF_LABEL_END);
 			}
+			for(RangeCondition range : attr.getRangeList()) {
+				sqlBuilder.append(Segment.IF_TEST_EXAMPLE_NOT_BLANK)
+				    .append(range.getKeyName()).append(Segment.RIGHT_BRACKET_CLOSING).append(Segment.AND_B)
+				    .append(wrapIdentifier(attr.getColumnName(), context))
+				    .append(SqlBuildingHelper.matchExpression(range.getType(), range.getKeyName(), context.getConfiguration()))
+				    .append(Segment.IF_LABEL_END);
+			}
+			
 		}
 		sqlBuilder.append(Segment.WHERE_LABEL_END).append(Segment.SCRIPT_LABEL_END);
 		

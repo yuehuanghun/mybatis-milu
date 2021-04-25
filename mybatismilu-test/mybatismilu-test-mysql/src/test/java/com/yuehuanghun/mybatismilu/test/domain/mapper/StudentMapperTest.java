@@ -4,12 +4,17 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +59,7 @@ public class StudentMapperTest {
 	};
 
 	@Test
-	public void testFindByExample() {
+	public void testFindByExample() throws ParseException {
 		Student example = new Student();
 		example.setName("张三");
 		List<Student> result = studentMapper.findByExample(example);
@@ -65,10 +70,36 @@ public class StudentMapperTest {
 		example.setAge(7);
 		result = studentMapper.findByExample(example);
 		assertTrue(result.size() == 1);
+		
+		example = new Student();
+		Date startDate = DateUtils.parseDate("2017-06-08", "yyyy-MM-dd");
+		Date endDate = new Date();
+		Map<String, Object> params = new HashMap<>();
+		params.put("addTimeBegin", startDate);
+		params.put("addTimeEnd", endDate);
+		example.setParams(params);
+		
+		result = studentMapper.findByExample(example);
+		assertTrue(result.size() == 4);
+		
+		params.put("addTimeBegin", "2017-06-08");
+		params.put("addTimeEnd", "");
+		result = studentMapper.findByExample(example);
+		assertTrue(result.size() == 4);
+		
+		params.clear();;
+		params.put("nameIn", new String[] {"张三", "李四"});
+		result = studentMapper.findByExample(example);
+		assertTrue(result.size() == 2);
+		
+		params.clear();;
+		params.put("nameIn", "张三, 李四");
+		result = studentMapper.findByExample(example);
+		assertTrue(result.size() == 2);
 	};
 
 	@Test
-	public void testFindByExampleAndSort() {
+	public void testFindByExampleAndSort() throws ParseException {
 		Student example = new Student();
 		example.setName("张");
 		
@@ -82,6 +113,21 @@ public class StudentMapperTest {
 		result = studentMapper.findByExampleAndSort(example, sort);
 		assertTrue(result.size() > 0);
 		
+		example = new Student();
+		Date startDate = DateUtils.parseDate("2017-06-08", "yyyy-MM-dd");
+		Date endDate = new Date();
+		Map<String, Object> params = new HashMap<>();
+		params.put("addTimeBegin", startDate);
+		params.put("addTimeEnd", endDate);
+		example.setParams(params);
+		
+		result = studentMapper.findByExampleAndSort(example, sort);
+		assertTrue(result.size() == 4);
+		
+		params.put("addTimeBegin", "2017-06-08");
+		params.put("addTimeEnd", "");
+		result = studentMapper.findByExampleAndSort(example, sort);
+		assertTrue(result.size() == 4);
 	};
 
 	@Test
@@ -148,11 +194,27 @@ public class StudentMapperTest {
 	};
 
 	@Test
-	public void testCountByExample() {
+	public void testCountByExample() throws ParseException {
 		Student example = new Student();
 		example.setName("张三");
 		int result = studentMapper.countByExample(example);
 		assertTrue(result == 1);
+		
+		example = new Student();
+		Date startDate = DateUtils.parseDate("2017-06-08", "yyyy-MM-dd");
+		Date endDate = new Date();
+		Map<String, Object> params = new HashMap<>();
+		params.put("addTimeBegin", startDate);
+		params.put("addTimeEnd", endDate);
+		example.setParams(params);
+		
+		result = studentMapper.countByExample(example);
+		assertTrue(result == 4);
+		
+		params.put("addTimeBegin", "2017-06-08");
+		params.put("addTimeEnd", "");
+		result = studentMapper.countByExample(example);
+		assertTrue(result == 4);
 	};
 
 	@Test

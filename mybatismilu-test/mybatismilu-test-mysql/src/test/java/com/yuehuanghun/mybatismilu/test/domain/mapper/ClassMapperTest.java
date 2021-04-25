@@ -69,6 +69,9 @@ public class ClassMapperTest {
 		//不查某些字段
 		result = classMapper.findByCriteria(new QueryPredicateImpl().exselects("addTime").eq("name", "一年级").order(Direction.DESC,"id").order("studentListAddTime").limit(1, 10, false));
 		assertTrue(result.size() == 3);
+		
+		result = classMapper.findByCriteria(new QueryPredicateImpl().regex("name", "^一.*$" ));
+		assertTrue(result.size() == 1);
 	}
 
 	@Test
@@ -124,5 +127,9 @@ public class ClassMapperTest {
 		result = classMapper.findByLambdaCriteria(predicate -> predicate.conditionMode(Mode.NOT_NULL).eq(Classs::getName, "").order(Direction.ASC, Classs::getAddTime, Classs::getName));
 		
 		assertTrue(result.size() == 0);
+		
+		result = classMapper.findByLambdaCriteria(predicate -> predicate.regex(Classs::getName, "^一.*$"));
+		
+		assertTrue(result.size() == 1);
 	}
 }

@@ -26,6 +26,7 @@ public interface Segment {
     String AND = "AND";
     String AND_B = " AND ";
     String ATTR_ = "attr_";
+    String CLOSING_ANGLE_BRACKET = ">";
     String COMMA = ",";
     String COMMA_B = ", ";
     String COUNT_ALL = "COUNT(*) ";
@@ -36,20 +37,31 @@ public interface Segment {
     String EQUALS = "=";
     String EQUALS_B = " = ";
     String EMPTY = "";
+    String EXAMPLE_TO_COLLECTION = "@com.yuehuanghun.mybatis.milu.tool.StringUtils@toCollectioin(example.";
     String FROM_B = " FROM ";
     String INNER_JOIN_B = " INNER JOIN ";
+    String IF_LABEL_END = "</if>";
+    String IF_TEST_EXAMPLE = "<if test=\"example.";
+    String IF_TEST_EXAMPLE_NOT_BLANK = "<if test=\"@com.yuehuanghun.mybatis.milu.tool.StringUtils@notBlank(example.";
     String LEFT_BRACE = "{";
     String LEFT_BRACKET = "(";
+    String NOT_EQUAL_NULL_CLOSING = " != null\">";
+    String NOT_EQUAL_NULL_AND_EXAMPLE = " != null and example.";
+    String NOT_EMPTY_NULL_CLOSING = " != ''\">";
     String OR_B = " OR ";
     String ORDER_BY = " ORDER BY ";
     String ON_BRACKET = " ON (";
     String RIGHT_BRACE = "}";
     String RIGHT_BRACKET = ")";
+    String RIGHT_BRACKET_CLOSING = ")\">";
     String HASH_LEFT_BRACE = "#{";
+    String HASH_EXAMPLE = "#{example.";
+    String HYPHEN = "-";
     String UPDATE = "UPDATE ";
     String WHERE_B = " WHERE ";
     String SCRIPT_LABEL = "<script>";
     String SCRIPT_LABEL_END = "</script>";
+    String SELECT_COUNT_FROM = "SELECT COUNT(*) FROM ";
     String TABLE_ = "table_";
     String WHERE_LABEL = "<where>";
     String WHERE_LABEL_END = "</where>";
@@ -57,5 +69,6 @@ public interface Segment {
     String SET_LABEL_END = "</set>";
     String SELECT = "SELECT ";
     String SELECT_COUNT = "SELECT COUNT(*)";
+    String SORT = "sort";
     String SPACE = " ";
 }

@@ -349,4 +349,21 @@ public interface Predicate extends Condition {
 	 * @return 当前对象
 	 */
 	Predicate notIn(boolean accept, String attrName, Object value);
+	
+	/**
+	 * 正则匹配
+	 * @param attrName 查询属性名
+	 * @param value 值
+	 * @return 当前对象
+	 */
+	Predicate regex(String attrName, Object value);
+	
+	/**
+	 * 正则匹配
+	 * @param accept 当值为true时，条件生效
+	 * @param attrName 查询属性名
+	 * @param value 值
+	 * @return 当前对象
+	 */
+	Predicate regex(boolean accept, String attrName, Object value);
 }

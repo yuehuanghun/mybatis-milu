@@ -95,6 +95,8 @@ public class MybatisProperties {
    */
   @NestedConfigurationProperty
   private MiluConfiguration configuration;
+  
+  private boolean identifierWrapQuote = true;
 
   /**
    * @since 1.1.0
@@ -213,4 +215,11 @@ public class MybatisProperties {
     }
   }
 
+  public boolean isIdentifierWrapQuote() {
+	return identifierWrapQuote;
+  }
+
+  public void setIdentifierWrapQuote(boolean identifierWrapQuote) {
+	this.identifierWrapQuote = identifierWrapQuote;
+  }
 }

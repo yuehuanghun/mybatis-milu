@@ -496,4 +496,16 @@ public class LambdaPredicateImpl<T> implements LambdaPredicate<T> {
 		getDelegate().notIn(accept, LambdaReflections.fnToFieldName(getterFn), value);
 		return this;
 	}
+
+	@Override
+	public LambdaPredicate<T> regex(SerializableFunction<T, ?> getterFn, Object value) {
+		getDelegate().regex(LambdaReflections.fnToFieldName(getterFn), value);
+		return this;
+	}
+
+	@Override
+	public LambdaPredicate<T> regex(boolean accept, SerializableFunction<T, ?> getterFn, Object value) {
+		getDelegate().regex(accept, LambdaReflections.fnToFieldName(getterFn), value);
+		return this;
+	}
 }

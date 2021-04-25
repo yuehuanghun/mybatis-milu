@@ -22,6 +22,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -49,6 +50,7 @@ import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
 import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
+import com.yuehuanghun.mybatis.milu.data.Part.Type;
 import com.yuehuanghun.mybatis.milu.exception.OrmBuildingException;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 import com.yuehuanghun.mybatis.milu.filler.Filler;
@@ -57,6 +59,7 @@ import com.yuehuanghun.mybatis.milu.metamodel.Entity.AssociationAttribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.IdAttribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.PluralAttribute;
+import com.yuehuanghun.mybatis.milu.metamodel.Entity.RangeCondition;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.VersionAttribute;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.ManyToManyReference;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.ManyToManyReference.JoinTable;
@@ -140,13 +143,29 @@ public class EntityBuilder {
 			
 			Attribute attr = forField(field);
 			entity.addAttribute(attr);
-			
+
+			List<RangeCondition> rangeList = null;
 			if(field.isAnnotationPresent(AttributeOptions.class)) {
 				AttributeOptions options = field.getAnnotation(AttributeOptions.class);
 				
 				ExampleQuery[] exampleQuerys = options.exampleQuery();
 				if(exampleQuerys.length > 0) {
 					attr.setExampleMatchType(exampleQuerys[0].matchType());
+
+					for(ExampleQuery exampleQuery : exampleQuerys) {
+						if(StringUtils.isNotBlank(exampleQuery.startKeyName())) {
+							if(rangeList == null) rangeList = new ArrayList<>(2);
+							rangeList.add(new RangeCondition(exampleQuery.startKeyName(), exampleQuery.startValueContain() ? Type.GREATER_THAN_EQUAL : Type.GREATER_THAN));
+						}
+						if(StringUtils.isNotBlank(exampleQuery.endKeyName())) {
+							if(rangeList == null) rangeList = new ArrayList<>(2);
+							rangeList.add(new RangeCondition(exampleQuery.endKeyName(), exampleQuery.endValueContain() ? Type.LESS_THAN_EQUAL : Type.LESS_THAN));
+						}
+						if(StringUtils.isNotBlank(exampleQuery.inKeyName())) {
+							if(rangeList == null) rangeList = new ArrayList<>(1);
+							rangeList.add(new RangeCondition(exampleQuery.inKeyName(), Type.IN));
+						}
+					}
 				}
 				
 				com.yuehuanghun.mybatis.milu.annotation.Filler[] fillers = options.filler();
@@ -171,6 +190,8 @@ public class EntityBuilder {
 					attr.setUpdateMode(options.updateMode());
 				}
 			}
+
+			attr.setRangeList(rangeList == null ? Collections.emptyList() : rangeList);
 		}
 		
 		buildAttribute(entity, clazz.getSuperclass());
@@ -310,7 +331,7 @@ public class EntityBuilder {
 			String refColumnName = null; //关联主表的中间表的列名
 			String inverseColumnName = null; //关联对方表的列名
 			String inverseRefColumnName = null; //关联从表的中间表的列名
-			String inverseRefTableName = inverseEntity.getTableName();;
+			String inverseRefTableName = inverseEntity.getTableName();
 			String joinTableName = null;
 			
 			boolean mapped = false;

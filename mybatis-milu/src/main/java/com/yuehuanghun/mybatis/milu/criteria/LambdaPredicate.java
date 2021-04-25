@@ -41,6 +41,7 @@ public interface LambdaPredicate<T> extends Condition {
 	/**
 	 * 设置默认的条件生效模式，默认为Mode.NOT_EMPTY
 	 * @param conditionMode 条件生效模式
+	 * @return 当前对象
 	 */
 	LambdaPredicate<T> conditionMode(Mode conditionMode);
 	
@@ -566,4 +567,21 @@ public interface LambdaPredicate<T> extends Condition {
 	 * @return 当前对象
 	 */
 	LambdaPredicate<T> notIn(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
+		
+	/**
+	 * 正则匹配
+	 * @param getterFn 实体类的get方法函数式
+	 * @param value 值
+	 * @return 当前对象
+	 */
+	LambdaPredicate<T> regex(SerializableFunction<T, ?> getterFn, Object value);
+	
+	/**
+	 * 正则匹配
+	 * @param accept 当值为true时，条件生效
+	 * @param getterFn 实体类的get方法函数式
+	 * @param value 值
+	 * @return 当前对象
+	 */
+	LambdaPredicate<T> regex(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
 }

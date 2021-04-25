@@ -58,6 +58,7 @@ import com.yuehuanghun.mybatis.milu.metamodel.MetaModel;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
 import lombok.Getter;
+import lombok.Setter;
 
 public class MiluConfiguration extends Configuration {
 
@@ -71,6 +72,9 @@ public class MiluConfiguration extends Configuration {
 	private Dialect dialect;
 	@Getter
 	private final MetaModel metaModel = new MetaModel();
+	@Getter
+	@Setter
+	private boolean identifierWrapQuote = true; //标识符（表名、字段名）是否使用引号
 
 	public MiluConfiguration() {
 		super();

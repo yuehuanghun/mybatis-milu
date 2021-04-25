@@ -32,10 +32,10 @@ public class GenericFindAllAndSortProviderSql extends GenericCachingProviderSql 
 	@Override
 	public String provideSql(GenericProviderContext context, Object params) {
 		StringBuilder mapKeyBuilder = new StringBuilder(64).append(context.getMapperType().getName());
-		Sort sort = (Sort)((Map<String, Object>)params).get("sort");
+		Sort sort = (Sort)((Map<String, Object>)params).get(Segment.SORT);
 		if(sort != null) {
 			for(Order order : sort) {
-				mapKeyBuilder.append("-").append(order.getProperty()).append("-").append(order.getDirection());
+				mapKeyBuilder.append(Segment.HYPHEN).append(order.getProperty()).append(Segment.HYPHEN).append(order.getDirection());
 			}
 		}
 		return cache.computeIfAbsent(mapKeyBuilder.toString(), (key) -> {return provideCachingSql(context, params);});
@@ -66,7 +66,7 @@ public class GenericFindAllAndSortProviderSql extends GenericCachingProviderSql 
 		
 		sqlBuilder.append(Segment.FROM_B).append(wrapIdentifier(entity.getTableName(), context));
 		
-		Sort sort = (Sort)((Map<String, Object>)params).get("sort");
+		Sort sort = (Sort)((Map<String, Object>)params).get(Segment.SORT);
 		if(sort != null) {
 			sqlBuilder.append(Segment.ORDER_BY);
 			first = true;

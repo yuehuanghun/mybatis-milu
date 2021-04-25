@@ -74,22 +74,37 @@ public class TableKeyGenerator implements KeyGenerator {
 
 	private class KeyManager {
 		private AtomicLong curKey = new AtomicLong();
-		private AtomicLong maxKey = new AtomicLong();
+		private volatile long maxKey = 0;
 		private ReentrantLock rLock = new ReentrantLock();
+		private static final long MAX_WAIT_TIMEOUT_MILLS = 30000L;
 		
 		public Long getNextKey() {
 			Long nextKey = doGetNextKey();
-			while(nextKey == null) {
+			if(nextKey != null) {
+				return nextKey;
+			}
+			long startTime = System.currentTimeMillis();
+			while(true) {
 				fetchNextBatchKey();
 				nextKey = doGetNextKey();
+				if(nextKey != null) {
+					return nextKey;
+				}
+				if(System.currentTimeMillis() - startTime > MAX_WAIT_TIMEOUT_MILLS) {
+					throw new RuntimeException("获取主键超时");
+				}
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					//
+				}
 			}
-			return nextKey;
 		}
 		
 		private Long doGetNextKey() {
-			if(curKey.get() < maxKey.get()) {
+			if(curKey.get() < maxKey) {
 				long key = curKey.incrementAndGet();
-				if(key > maxKey.get()) {
+				if(key > maxKey) {
 					return null;
 				}
 				
@@ -98,13 +113,20 @@ public class TableKeyGenerator implements KeyGenerator {
 			return null;
 		}
 		
-		private boolean fetchNextBatchKey() {
+		private void fetchNextBatchKey() {
 			if(rLock.tryLock()) {
+				Executor selectExecutor = null;
+				Executor updateExecutor = null;
 				try {
+					if(curKey.get() < maxKey) {
+						return;
+					}
 					Configuration configuration = selectStatement.getConfiguration();
 					Environment environment = configuration.getEnvironment();
-					Transaction transaction = environment.getTransactionFactory().newTransaction(environment.getDataSource(), TransactionIsolationLevel.READ_COMMITTED, true);
-					Executor selectExecutor = configuration.newExecutor(transaction, ExecutorType.SIMPLE);
+					Transaction transaction = environment.getTransactionFactory().newTransaction(environment.getDataSource(), TransactionIsolationLevel.READ_COMMITTED, false);
+					selectExecutor = configuration.newExecutor(transaction, ExecutorType.SIMPLE);
+					updateExecutor = configuration.newExecutor(transaction, ExecutorType.SIMPLE);
+					
 					List<Object> values = selectExecutor.query(selectStatement, null, RowBounds.DEFAULT,
 							Executor.NO_RESULT_HANDLER);
 					if(values.size() == 0) {
@@ -118,23 +140,34 @@ public class TableKeyGenerator implements KeyGenerator {
 					parameter.put("oldValue", oldValue);
 					parameter.put("newValue", newValue);
 					
-					Executor updateExecutor = updateStatement.getConfiguration().newExecutor(transaction, ExecutorType.SIMPLE);
 					int effect = updateExecutor.update(updateStatement, parameter);
 					
 					if(effect > 0) {
-						maxKey.set(newValue);
-						curKey.set(oldValue);
-						transaction.commit();
-						return true;
+						curKey.set(oldValue.longValue());
+						maxKey = newValue.longValue();
+						selectExecutor.commit(false);
+						updateExecutor.commit(true);
+						return;
 					}
-					return false;
+					return;
 				} catch (SQLException e) {
-					throw new RuntimeException(e);
+					try {
+						updateExecutor.rollback(true);
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+					throw new ExecutorException(e);
 				} finally {
 					rLock.unlock();
+					if(selectExecutor != null) {
+						selectExecutor.close(false);
+					}
+					if(updateExecutor != null) {
+						updateExecutor.close(false);
+					}
 				}
 			}
-			return true; //获取锁失败，当作拉取批量key成功
+			return;
 		}
 	}
 }

@@ -344,6 +344,20 @@ public class PredicateImpl implements Predicate {
 		}
 		return this;
 	}
+
+	@Override
+	public Predicate regex(String attrName, Object value) {
+		this.regex(acceptCondition(value), attrName, value);
+		return this;
+	}
+
+	@Override
+	public Predicate regex(boolean accept, String attrName, Object value) {
+		if(accept) {
+			and(ConditionImpl.regex(attrName, value));
+		}
+		return this;
+	}
 	
 	protected boolean acceptCondition(Object value) {
 		if(conditionMode == Mode.NOT_NULL) {

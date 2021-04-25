@@ -350,6 +350,18 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		super.notIn(accept, attrName, value);
 		return this;
 	}
+	
+	@Override
+	public QueryPredicate regex(String attrName, Object value) {
+		super.regex(attrName, value);
+		return this;
+	}
+
+	@Override
+	public QueryPredicate regex(boolean accept, String attrName, Object value) {
+		super.regex(accept, attrName, value);
+		return this;
+	}
 
 	@Override
 	public int render(MiluConfiguration configuration, StringBuilder expressionBuilder, Map<String, Object> params, Set<String> columns, int paramIndex) {

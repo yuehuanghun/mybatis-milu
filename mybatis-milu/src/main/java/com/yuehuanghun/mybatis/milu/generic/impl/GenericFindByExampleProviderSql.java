@@ -23,6 +23,7 @@ import com.yuehuanghun.mybatis.milu.generic.GenericCachingProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
+import com.yuehuanghun.mybatis.milu.metamodel.Entity.RangeCondition;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
 public class GenericFindByExampleProviderSql extends GenericCachingProviderSql {
@@ -53,19 +54,27 @@ public class GenericFindByExampleProviderSql extends GenericCachingProviderSql {
 				condition.append(Segment.AND_B)
 				    .append(wrapIdentifier(attr.getColumnName(), context))
 				    .append(SqlBuildingHelper.matchExpression(attr, context.getConfiguration()));
-			} else if(attr.getUpdateMode() == Mode.NOT_EMPTY && CharSequence.class.isAssignableFrom(attr.getJavaType())) {
-				condition.append(" <if test=\"example.")
-				    .append(attr.getName()).append(" != null and example.")
-				    .append(attr.getName()).append(" != ''\"> AND ")
+			} else if(attr.getConditionMode() == Mode.NOT_EMPTY && CharSequence.class.isAssignableFrom(attr.getJavaType())) {
+				condition.append(Segment.IF_TEST_EXAMPLE)
+				    .append(attr.getName()).append(Segment.NOT_EQUAL_NULL_AND_EXAMPLE)
+				    .append(attr.getName()).append(Segment.NOT_EMPTY_NULL_CLOSING).append(Segment.AND_B)
 				    .append(wrapIdentifier(attr.getColumnName(), context))
 				    .append(SqlBuildingHelper.matchExpression(attr, context.getConfiguration()))
-				    .append("</if> ");
+				    .append(Segment.IF_LABEL_END);
 			} else {
-				condition.append(" <if test=\"example.")
-				    .append(attr.getName()).append(" != null\"> AND ")
+				condition.append(Segment.IF_TEST_EXAMPLE)
+				    .append(attr.getName()).append(Segment.NOT_EQUAL_NULL_CLOSING).append(Segment.AND_B)
 				    .append(wrapIdentifier(attr.getColumnName(), context))
 				    .append(SqlBuildingHelper.matchExpression(attr, context.getConfiguration()))
-				    .append("</if> ");
+				    .append(Segment.IF_LABEL_END);
+			}
+			
+			for(RangeCondition range : attr.getRangeList()) {
+				condition.append(Segment.IF_TEST_EXAMPLE_NOT_BLANK)
+				    .append(range.getKeyName()).append(Segment.RIGHT_BRACKET_CLOSING).append(Segment.AND_B)
+				    .append(wrapIdentifier(attr.getColumnName(), context))
+				    .append(SqlBuildingHelper.matchExpression(range.getType(), range.getKeyName(), context.getConfiguration()))
+				    .append(Segment.IF_LABEL_END);
 			}
 		}
 		condition.append(Segment.WHERE_LABEL_END);

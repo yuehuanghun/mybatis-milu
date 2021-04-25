@@ -20,16 +20,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.persistence.GenerationType;
 
-import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery.MatchType;
+import com.yuehuanghun.mybatis.milu.annotation.Mode;
+import com.yuehuanghun.mybatis.milu.data.Part;
 import com.yuehuanghun.mybatis.milu.filler.Filler;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.Reference;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -43,13 +46,13 @@ public class Entity {
 	
 	private String tableName;
 	
-	private final Map<String, Attribute> attributeMap = new HashMap<>();
+	private final Map<String, Attribute> attributeMap = new LinkedHashMap<>();
 
 	private boolean hasId;
 	
 	private boolean hasVersion;
 	
-	private Attribute version;
+	private VersionAttribute version;
 	
 	private IdAttribute id;
 	
@@ -121,6 +124,8 @@ public class Entity {
 		
 		private Mode conditionMode = Mode.NOT_EMPTY;
 		
+		private List<RangeCondition> rangeList;
+		
 		public boolean isId() {
 			return false;
 		}
@@ -191,5 +196,14 @@ public class Entity {
 		public boolean isAssociation() {
 			return true;
 		}
+	}
+	
+	@Data
+	@AllArgsConstructor
+	public static class RangeCondition {
+		
+		private String keyName;
+		
+		private Part.Type type;
 	}
 }

@@ -308,5 +308,10 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 
 	@Override
 	LambdaQueryPredicate<T> notIn(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
+
+	@Override
+	LambdaQueryPredicate<T> regex(SerializableFunction<T, ?> getterFn, Object value);
 	
+	@Override
+	LambdaQueryPredicate<T> regex(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
 }

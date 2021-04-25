@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.apache.ibatis.javassist.scopedpool.SoftValueHashMap;
 
-import com.yuehuanghun.mybatis.milu.tool.StringUtils;
+import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 
 public abstract class GenericCachingProviderSql implements GenericProviderSql {
 	protected final Map<String, String> cache = new SoftValueHashMap<>();
@@ -32,11 +32,6 @@ public abstract class GenericCachingProviderSql implements GenericProviderSql {
 	public abstract String provideCachingSql(GenericProviderContext context, Object params);
 	
 	protected String wrapIdentifier(String identifier, GenericProviderContext context) {
-		String identifierQuoteString = context.getConfiguration().getDbMeta().getIdentifierQuoteString();
-		if(StringUtils.isBlank(identifierQuoteString)) {
-			return identifier;
-		} else {
-			return identifierQuoteString + identifier + identifierQuoteString;
-		}
+		return SqlBuildingHelper.wrapIdentifier(identifier, context.getConfiguration());
 	}
 }

@@ -15,15 +15,17 @@
  */
 package com.yuehuanghun.mybatis.milu.tool;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class StringUtils {
-	private final static Pattern underlinePattern = Pattern.compile("([A-Za-z\\d]+)(_)?");
+	private final static Pattern UNDERLINE_PATTERN = Pattern.compile("([A-Za-z\\d]+)(_)?");
 
-	private final static Pattern camelPattern = Pattern.compile("[A-Z]([a-z\\d]+)?");
+	private final static Pattern CAMEL_PATTERN = Pattern.compile("[A-Z]([a-z\\d]+)?");
 	
 	public final static String EMPTY = "";
 
@@ -50,6 +52,29 @@ public class StringUtils {
 		}
 		return str;
 	}
+	
+	//在sql模板中使用
+	public static boolean notBlank(final Object obj) {
+		if(obj == null) {
+			return false;
+		}
+		if(CharSequence.class.isInstance(obj)) {
+			return isNotBlank((CharSequence)obj);
+		}
+		return true;
+	}
+	
+	public static Object toCollectioin(final Object obj) {
+		if(obj == null || Collection.class.isInstance(obj) || obj.getClass().isArray()) {
+			return obj;
+		}
+		if(String.class.isInstance(obj)) {
+			if(((String)obj).contains(Segment.COMMA)) {
+				return Arrays.asList(((String)obj).split(Segment.COMMA)).stream().filter(StringUtils::isNotBlank).map(String::trim).collect(Collectors.toList());
+			}
+		}
+		return new String[] {obj.toString()};
+	}
 
 	/**
 	 * 下划线转驼峰法
@@ -63,7 +88,7 @@ public class StringUtils {
 			return "";
 		}
 		StringBuilder sb = new StringBuilder();
-		Matcher matcher = underlinePattern.matcher(line);
+		Matcher matcher = UNDERLINE_PATTERN.matcher(line);
 		while (matcher.find()) {
 			String word = matcher.group();
 			sb.append(smallCamel && matcher.start() == 0 ? Character.toLowerCase(word.charAt(0))
@@ -86,16 +111,16 @@ public class StringUtils {
 	 * @return 转换后的字符串
 	 */
 	public static String camel2Underline(String line, boolean lowerCase) {
-		if (line == null || "".equals(line)) {
-			return "";
+		if (line == null || EMPTY.equals(line)) {
+			return EMPTY;
 		}
 		line = String.valueOf(line.charAt(0)).toUpperCase().concat(line.substring(1));
 		StringBuilder sb = new StringBuilder();
-		Matcher matcher = camelPattern.matcher(line);
+		Matcher matcher = CAMEL_PATTERN.matcher(line);
 		while (matcher.find()) {
 			String word = matcher.group();
 			sb.append(lowerCase ? word.toLowerCase() : word.toUpperCase());
-			sb.append(matcher.end() == line.length() ? "" : "_");
+			sb.append(matcher.end() == line.length() ? EMPTY : "_");
 		}
 		return sb.toString();
 	}
@@ -112,13 +137,13 @@ public class StringUtils {
 	}
 
 	public static String collectionToDelimitedString(Collection<?> coll, String delim) {
-		return collectionToDelimitedString(coll, delim, "", "");
+		return collectionToDelimitedString(coll, delim, EMPTY, EMPTY);
 	}
 
 	public static String collectionToDelimitedString(Collection<?> coll, String delim, String prefix, String suffix) {
 
 		if (coll == null || coll.isEmpty()) {
-			return "";
+			return EMPTY;
 		}
 
 		StringBuilder sb = new StringBuilder();

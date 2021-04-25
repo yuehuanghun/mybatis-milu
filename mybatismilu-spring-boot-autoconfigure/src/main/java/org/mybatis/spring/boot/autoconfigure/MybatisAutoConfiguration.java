@@ -258,19 +258,22 @@ public class MybatisAutoConfiguration implements InitializingBean, ApplicationCo
   }
 
   private void applyConfiguration(SqlSessionFactoryBean factory, List<IdentifierGenerator> identifierGeneratorList) {
-    Configuration configuration = this.properties.getConfiguration();
+	  MiluConfiguration configuration = this.properties.getConfiguration();
     if (configuration == null && !StringUtils.hasText(this.properties.getConfigLocation())) {
       configuration = new MiluConfiguration();
     }
     if(identifierGeneratorList != null && configuration != null) {
     	for(IdentifierGenerator identifierGenerator : identifierGeneratorList) {
-    		((MiluConfiguration)configuration).addIdentifierGenerator(identifierGenerator);
+    		configuration.addIdentifierGenerator(identifierGenerator);
     	}
     }
     if (configuration != null && !CollectionUtils.isEmpty(this.configurationCustomizers)) {
       for (ConfigurationCustomizer customizer : this.configurationCustomizers) {
         customizer.customize(configuration);
       }
+    }
+    if(configuration != null && properties != null) {
+    	configuration.setIdentifierWrapQuote(properties.isIdentifierWrapQuote());
     }
     factory.setConfiguration(configuration);
   }

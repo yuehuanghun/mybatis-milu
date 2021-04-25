@@ -243,12 +243,7 @@ public class SqlBuilder {
 	}
 	
 	private void appendIdentifier(StringBuilder stringBuilder , String identifier) {
-		String identifierQuoteString = configuration.getDbMeta().getIdentifierQuoteString();
-		if(StringUtils.isBlank(identifierQuoteString)) {
-			stringBuilder.append(identifier);
-		} else {
-			stringBuilder.append(identifierQuoteString).append(identifier).append(identifierQuoteString);
-		}
+		SqlBuildingHelper.appendIdentifier(stringBuilder, identifier, configuration);
 	}
 	
 	private void parseSelectExselectAttrs(Method method) {

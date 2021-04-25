@@ -21,6 +21,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.yuehuanghun.mybatis.milu.tool.StringUtils;
+
 /**
  * 应用于通用查询方法findByExample、findByExampleAndSort、countByExample中，标记属性作为查询条件的匹配方法
  * @author yuehuanghun
@@ -31,10 +33,44 @@ import java.lang.annotation.Target;
 @Target(ElementType.ANNOTATION_TYPE)
 public @interface ExampleQuery {
 
+	/**
+	 * 匹配方式
+	 * @return 匹配方式
+	 */
 	MatchType matchType() default MatchType.EQUAL;
 	
+	/**
+	 * 当前属性范围查询时的传值开始键名
+	 * @return 键名
+	 */
+	String startKeyName() default StringUtils.EMPTY;
 	
-	public static enum MatchType {
+	/**
+	 * 范围查询时，是否包括开始值，默认true
+	 * @return true/false
+	 */
+	boolean startValueContain() default true;
+	
+	/**
+	 * 当前属性范围查询时的传值结束键名
+	 * @return 键名
+	 */
+	String endKeyName() default StringUtils.EMPTY;
+	
+	/**
+	 * 范围查询时，是否包括结束值，默认true
+	 * @return true/false
+	 */
+	boolean endValueContain() default true;
+	
+	/**
+	 * 当前属性IN查询时传值的键名<br>
+	 * 传值允许为数组、集合或半角逗号隔开的字符串
+	 * @return 键名
+	 */
+	String inKeyName() default StringUtils.EMPTY;
+	
+	public enum MatchType {
 		/**
 		 * 等，即 = 查询值
 		 */
