@@ -10,6 +10,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Version;
 
+import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
+import com.yuehuanghun.mybatis.milu.annotation.Filler;
+
 import lombok.Data;
 
 @Data
@@ -26,6 +29,7 @@ public class Teacher {
 	private Integer age;
 	
 	@Version
+	@AttributeOptions(filler = @Filler(fillOnInsert = true))
 	private Integer revision;
 	
 	@ManyToMany

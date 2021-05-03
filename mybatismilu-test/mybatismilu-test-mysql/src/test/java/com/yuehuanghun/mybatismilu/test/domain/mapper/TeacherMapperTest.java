@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.LockModeType;
 
@@ -85,7 +86,7 @@ public class TeacherMapperTest {
 	
 	@Test
 	@Transactional
-	public void findByCriteriaWithLock() {
+	public void testFindByCriteriaWithLock() {
 		List<Teacher> list = teacherMapper.findByCriteria(p -> p.eq("id", 1L).lock(LockModeType.PESSIMISTIC_WRITE));
 		assertTrue(list.size() == 1);
 		
@@ -98,7 +99,7 @@ public class TeacherMapperTest {
 	
 	@Test
 	@Transactional
-	public void findByLambdaCriteriaWithLock() {
+	public void testFindByLambdaCriteriaWithLock() {
 		List<Teacher> list = teacherMapper.findByLambdaCriteria(p -> p.eq(Teacher::getId, 1L).lock(LockModeType.PESSIMISTIC_WRITE));
 		assertTrue(list.size() == 1);
 		
@@ -107,5 +108,19 @@ public class TeacherMapperTest {
 		teacher.setAge(teacher.getAge() + 1);
 		
 		teacherMapper.updateById(teacher);
+	}
+	
+	@Test
+	@Transactional
+	public void testUpdateWithOptimisticLock() { //乐观锁
+		Optional<Teacher> teacherOpt = teacherMapper.findById(1L);
+		assertTrue(teacherOpt.isPresent());
+		
+		Teacher teacher = teacherOpt.get();
+		
+		teacher.setAge(teacher.getAge() + 1);
+		
+		int result = teacherMapper.updateById(teacher);
+		assertTrue(result == 1);
 	}
 }
