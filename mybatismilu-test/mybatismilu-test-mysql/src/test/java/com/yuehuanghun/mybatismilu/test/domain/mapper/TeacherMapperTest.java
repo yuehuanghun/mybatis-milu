@@ -11,6 +11,7 @@ import javax.persistence.LockModeType;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -117,10 +118,16 @@ public class TeacherMapperTest {
 		assertTrue(teacherOpt.isPresent());
 		
 		Teacher teacher = teacherOpt.get();
+		Teacher conTeacher = new Teacher();
+		BeanUtils.copyProperties(teacher, conTeacher);
 		
 		teacher.setAge(teacher.getAge() + 1);
 		
 		int result = teacherMapper.updateById(teacher);
 		assertTrue(result == 1);
+		
+		conTeacher.setAge(teacher.getAge() + 1);
+		result = teacherMapper.updateById(conTeacher); //版本号未更新，更新失败
+		assertTrue(result == 0);
 	}
 }
