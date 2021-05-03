@@ -24,6 +24,7 @@ import com.yuehuanghun.mybatis.milu.dialect.db.HsqldbDialect;
 import com.yuehuanghun.mybatis.milu.dialect.db.InformixDialect;
 import com.yuehuanghun.mybatis.milu.dialect.db.MysqlDialect;
 import com.yuehuanghun.mybatis.milu.dialect.db.OracleDialect;
+import com.yuehuanghun.mybatis.milu.dialect.db.PostgreSqlDialect;
 import com.yuehuanghun.mybatis.milu.dialect.db.SqlServer2012Dialect;
 import com.yuehuanghun.mybatis.milu.dialect.db.SqlServerDialect;
 
@@ -38,7 +39,7 @@ public class PageDialectManager {
         //注册别名
         registerDialectAlias("hsqldb", HsqldbDialect.instance);
         registerDialectAlias("h2", HsqldbDialect.instance);
-        registerDialectAlias("postgresql", HsqldbDialect.instance);
+        registerDialectAlias("postgresql", PostgreSqlDialect.instance);
         registerDialectAlias("phoenix", HsqldbDialect.instance);
 
         registerDialectAlias("mysql", MysqlDialect.instance);

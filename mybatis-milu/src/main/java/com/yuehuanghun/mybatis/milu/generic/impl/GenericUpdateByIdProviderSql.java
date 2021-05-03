@@ -47,8 +47,8 @@ public class GenericUpdateByIdProviderSql extends GenericCachingProviderSql {
 			if(!attr.isUpdateable()) {
 				continue;
 			}
-			if(attr.isVersion()) { //版本号 + 1
-				sqlBuilder.append(" <if test=\"entity.").append(attr.getName()).append(" != null\">").append(wrapIdentifier(attr.getColumnName(), context)).append(" = #{entity.").append(attr.getName()).append("} + 1, </if> ");
+			if(attr.isVersion()) { //版本号 + 1，总是+1
+				sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context)).append(" = #{entity.").append(attr.getName()).append("} + 1,");
 			} else {
 				if(attr.getUpdateMode() == Mode.ALL) {
 					sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context)).append(" = #{entity.").append(attr.getName()).append(Segment.RIGHT_BRACE);

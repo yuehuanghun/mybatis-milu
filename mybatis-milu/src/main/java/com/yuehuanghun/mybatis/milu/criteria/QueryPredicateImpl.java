@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import javax.persistence.LockModeType;
+
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
@@ -34,6 +36,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	
 	private final List<Order> orderList = new ArrayList<>();
 	private Limit limit;
+	private Lock lock;
 	@Getter
 	private final Set<String> selectAttrs = new HashSet<>();
 	@Getter
@@ -90,6 +93,18 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		for(String attrName : attrNames) {
 			orderList.add(OrderImpl.order(attrName, direction));
 		}
+		return this;
+	}
+
+	@Override
+	public QueryPredicate orderAsc(String... attrNames) {
+		this.order(Direction.ASC, attrNames);
+		return this;
+	}
+
+	@Override
+	public QueryPredicate orderDesc(String... attrNames) {
+		this.order(Direction.DESC, attrNames);
 		return this;
 	}
 
@@ -362,6 +377,21 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		super.regex(accept, attrName, value);
 		return this;
 	}
+	
+	public QueryPredicate lock(LockModeType lockModeType) {
+		if(lockModeType == null) {
+			this.lock = null;
+		} else {
+			this.lock = new Lock(lockModeType);
+		}
+		return this;
+	}
+
+	@Override
+	public QueryPredicate lock() {
+		this.lock(LockModeType.PESSIMISTIC_WRITE);
+		return this;
+	}
 
 	@Override
 	public int render(MiluConfiguration configuration, StringBuilder expressionBuilder, Map<String, Object> params, Set<String> columns, int paramIndex) {
@@ -380,6 +410,10 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		
 		if(limit != null) {
 			limit.render(configuration, expressionBuilder, params, columns, paramIndex);
+		}
+		
+		if(lock != null) {
+			lock.render(configuration, expressionBuilder, params, columns, paramIndex);
 		}
 		
 		return paramIndex;

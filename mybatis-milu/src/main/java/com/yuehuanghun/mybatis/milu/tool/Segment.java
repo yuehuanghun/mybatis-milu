@@ -38,6 +38,7 @@ public interface Segment {
     String EQUALS_B = " = ";
     String EMPTY = "";
     String EXAMPLE_TO_COLLECTION = "@com.yuehuanghun.mybatis.milu.tool.StringUtils@toCollectioin(example.";
+    String FOR_UPDATE = " FOR UPDATE";
     String FROM_B = " FROM ";
     String INNER_JOIN_B = " INNER JOIN ";
     String IF_LABEL_END = "</if>";

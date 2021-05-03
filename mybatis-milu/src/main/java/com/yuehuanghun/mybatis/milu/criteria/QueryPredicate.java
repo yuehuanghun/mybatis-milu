@@ -15,6 +15,9 @@
  */
 package com.yuehuanghun.mybatis.milu.criteria;
 
+import javax.persistence.LockModeType;
+import javax.persistence.Version;
+
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 
@@ -64,6 +67,20 @@ public interface QueryPredicate extends Predicate {
 	 * @return 当前对象
 	 */
 	QueryPredicate order(Direction direction, String... attrNames);
+	
+	/**
+	 * 添加升序排序
+	 * @param attrNames 属性名
+	 * @return 当前对象
+	 */
+	QueryPredicate orderAsc(String... attrNames);
+	
+	/**
+	 * 添加降序排序
+	 * @param attrNames 属性名
+	 * @return 当前对象
+	 */
+	QueryPredicate orderDesc(String... attrNames);
 
 	/**
 	 * 获取第1页的pageSize条数据
@@ -211,4 +228,20 @@ public interface QueryPredicate extends Predicate {
 
 	@Override
 	QueryPredicate regex(boolean accept, String attrName, Object value);
+	
+	/**
+	 * 设置数据库锁模式
+	 * @param lockModeType {@link LockModeType}锁模式
+	 * 本框架下模式READ/WRITE/OPTIMISTIC/OPTIMISTIC_FORCE_INCREMENT都等同于NONE，即无锁，乐观锁是实体在声明{@link Version}之后自动使用的<br>
+	 * PESSIMISTIC_WRITE等于PESSIMISTIC_FORCE_INCREMENT，即使用悲观写锁，如果有{@link Version}声明属性，则自增。<br>
+	 * 如果数据库无读锁（共享锁）则PESSIMISTIC_READ跟PESSIMISTIC_WRITE功能一致
+	 * @return 当前对象
+	 */
+	QueryPredicate lock(LockModeType lockModeType);
+	
+	/**
+	 * 设置数据库锁，并且锁模式为悲观写锁{@link LockModeType#PESSIMISTIC_WRITE}
+	 * @return 当前对象
+	 */
+	QueryPredicate lock();
 }

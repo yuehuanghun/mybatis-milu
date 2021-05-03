@@ -15,7 +15,10 @@
  */
 package com.yuehuanghun.mybatis.milu.dialect;
 
+import javax.persistence.LockModeType;
+
 import com.yuehuanghun.mybatis.milu.data.Part.Type;
+import com.yuehuanghun.mybatis.milu.tool.Segment;
 
 /**
  * 目前仅应用于NamingQuery方法中topN条件的分页查询<br>
@@ -31,7 +34,7 @@ public interface Dialect {
 	 * @param topRows 条件数
 	 * @return 添加分页后SQL表达式
 	 */
-	public String getTopLimitSql(String sql, int topRows);
+	String getTopLimitSql(String sql, int topRows);
 	
 	/**
 	 * 获取partType的SQL表达式
@@ -40,4 +43,16 @@ public interface Dialect {
 	 */
 	String getPartTypeExpression(Type partType);
 
+	/**
+	 * 为sql添加锁
+	 * @param sql
+	 * @param lockModeType
+	 * @return
+	 */
+	default String getLockSql(String sql, LockModeType lockModeType) {
+		if(LockModeType.PESSIMISTIC_WRITE == lockModeType || LockModeType.PESSIMISTIC_READ == lockModeType || LockModeType.PESSIMISTIC_FORCE_INCREMENT == lockModeType) {
+			return sql + Segment.FOR_UPDATE;
+		}
+		return sql;
+	}
 }

@@ -21,6 +21,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javax.persistence.LockModeType;
+import javax.persistence.Version;
+
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
 @Documented
@@ -46,4 +49,13 @@ public @interface StatementOptions {
 	 * @return 查询表达式
 	 */
 	String asExpression() default StringUtils.EMPTY;
+	
+	/**
+	 * {@link LockModeType} 锁模式.，默认为无<br>
+	 * 本框架下模式READ/WRITE/OPTIMISTIC/OPTIMISTIC_FORCE_INCREMENT都等同于NONE，即无锁，乐观锁是实体在声明{@link Version}之后自动使用的<br>
+	 * PESSIMISTIC_WRITE等于PESSIMISTIC_FORCE_INCREMENT，即使用悲观写锁，如果有{@link Version}声明属性，则自增。<br>
+	 * 如果数据库无读锁（共享锁）则PESSIMISTIC_READ跟PESSIMISTIC_WRITE功能一致
+	 * @return 锁模式.枚举
+	 */
+	LockModeType lockModeType() default LockModeType.NONE;
 }

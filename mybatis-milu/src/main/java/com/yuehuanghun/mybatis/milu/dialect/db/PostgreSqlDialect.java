@@ -20,12 +20,12 @@ import javax.persistence.LockModeType;
 import com.yuehuanghun.mybatis.milu.dialect.AbstractDialect;
 
 /**
- * MYSQL 数据库
- * @author fengjie
+ * PostgreSql
+ * @author yuehuanghun
  *
  */
-public class MysqlDialect extends AbstractDialect {
-	public static final MysqlDialect instance = new MysqlDialect();
+public class PostgreSqlDialect extends AbstractDialect {
+	public static final PostgreSqlDialect instance = new PostgreSqlDialect();
 
 	@Override
 	public String getTopLimitSql(String sql, int topRows) {
@@ -35,9 +35,8 @@ public class MysqlDialect extends AbstractDialect {
 	@Override
 	public String getLockSql(String sql, LockModeType lockModeType) {
 		if(LockModeType.PESSIMISTIC_READ == lockModeType) {
-			return sql + " LOCK IN SHARE MODE";
+			return sql + " FOR SHARE";
 		}
 		return super.getLockSql(sql, lockModeType);
 	}
-
 }

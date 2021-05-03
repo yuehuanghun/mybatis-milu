@@ -17,6 +17,8 @@ package com.yuehuanghun.mybatis.milu.criteria;
 
 import java.util.function.Consumer;
 
+import javax.persistence.LockModeType;
+
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.LambdaReflections;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.SerializableFunction;
@@ -79,6 +81,20 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 			attrNames[i] = LambdaReflections.fnToFieldName(getterFn);
 		}
 		getDelegate().order(direction, attrNames);
+		return this;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public LambdaQueryPredicate<T> orderAsc(SerializableFunction<T, ?>... getterFns) {
+		this.order(Direction.ASC, getterFns);
+		return this;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public LambdaQueryPredicate<T> orderDesc(SerializableFunction<T, ?>... getterFns) {
+		this.order(Direction.DESC, getterFns);
 		return this;
 	}
 
@@ -524,6 +540,18 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 	@Override
 	public LambdaQueryPredicate<T> regex(boolean accept, SerializableFunction<T, ?> getterFn, Object value) {
 		super.regex(accept, getterFn, value);
+		return this;
+	}
+
+	@Override
+	public LambdaQueryPredicate<T> lock(LockModeType lockModeType) {
+		getDelegate().lock(lockModeType);
+		return this;
+	}
+
+	@Override
+	public LambdaQueryPredicate<T> lock() {
+		getDelegate().lock();
 		return this;
 	}
 }

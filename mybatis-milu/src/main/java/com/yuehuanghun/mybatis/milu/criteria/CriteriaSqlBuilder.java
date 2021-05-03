@@ -174,8 +174,8 @@ public class CriteriaSqlBuilder {
 			if(!attr.isUpdateable()) {
 				continue;
 			}
-			if(attr.isVersion()) { //版本号 + 1
-				sqlBuilder.append(" <if test=\"entity.").append(attr.getName()).append(" != null\">").append(SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration)).append(" = #{entity.").append(attr.getName()).append("} + 1, </if> ");
+			if(attr.isVersion()) { //版本号 + 1，总是+1
+				sqlBuilder.append(SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration)).append(" = #{entity.").append(attr.getName()).append("} + 1,");
 			} else {
 				if(attr.getUpdateMode() == Mode.ALL) {
 					sqlBuilder.append(SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration)).append(" = #{entity.").append(attr.getName()).append("}");

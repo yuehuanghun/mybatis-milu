@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.LockModeType;
+
 import org.apache.ibatis.annotations.Param;
 
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
@@ -52,6 +54,8 @@ public class SqlBuilder {
 	private TableAliasDispacher tableAliasDispacher = new TableAliasDispacher();
 	private Map<String, String> joinExpressMap = new HashMap<>();
 	private Map<String, String> joinQueryColumnNap = new HashMap<>();
+	
+	private LockModeType lockModeType = LockModeType.NONE;
 
 	private SqlBuilder(Class<?> domainClazz, Method method, PartTree partTree, MiluConfiguration configuration) {
 		super();
@@ -59,7 +63,7 @@ public class SqlBuilder {
 		this.partTree = partTree;
 		this.configuration = configuration;
 		this.parameters = method.getParameters();
-		parseSelectExselectAttrs(method);
+		setOptions(method);
 	}
 	
 	public static SqlBuilder instance(Class<?> domainClazz, Method method, PartTree partTree, MiluConfiguration configuration) {
@@ -67,7 +71,7 @@ public class SqlBuilder {
 	}
 
 	public String build() {
-		StringBuilder sqlBuilder = new StringBuilder(1024).append(Segment.SCRIPT_LABEL);
+		StringBuilder sqlBuilder = new StringBuilder(1024);
 		
 		String mainTableAlias = tableAliasDispacher.dispach(Segment.TABLE_ + entity.getTableName());
 		analyseDomain(entity);
@@ -201,12 +205,16 @@ public class SqlBuilder {
             }
         }
         
+        String sqlExpression = sqlBuilder.toString();
         if(partTree.isLimiting()) {
-        	return configuration.getDialect().getTopLimitSql(sqlBuilder.toString(), partTree.getMaxResults()) + Segment.SCRIPT_LABEL_END;
+        	sqlExpression = configuration.getDialect().getTopLimitSql(sqlExpression, partTree.getMaxResults());
         }
         
-        sqlBuilder.append(Segment.SCRIPT_LABEL_END);
-        return sqlBuilder.toString();
+        if(lockModeType != LockModeType.NONE) {
+        	sqlExpression = configuration.getDialect().getLockSql(sqlExpression, lockModeType);
+        }
+        
+        return Segment.SCRIPT_LABEL + sqlExpression + Segment.SCRIPT_LABEL_END;
 	}
 	
 	private String getMybatisParamName(Parameter parameter) {
@@ -246,7 +254,7 @@ public class SqlBuilder {
 		SqlBuildingHelper.appendIdentifier(stringBuilder, identifier, configuration);
 	}
 	
-	private void parseSelectExselectAttrs(Method method) {
+	private void setOptions(Method method) {
 		if(!method.isAnnotationPresent(StatementOptions.class)) {
 			return;
 		}
@@ -259,6 +267,8 @@ public class SqlBuilder {
 			exselectAttrs = string2Set(options.exselects());
 			assertAttrExists(exselectAttrs);
 		}
+		
+		this.lockModeType = options.lockModeType();
 	}
 	
 	private Set<String> string2Set(String attrStr){
