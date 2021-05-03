@@ -78,7 +78,8 @@ CREATE TABLE [dbo].[teacher](
 	[id] [bigint] IDENTITY(1,1) NOT NULL,
 	[name] [varchar](20) NULL,
 	[age] [smallint] NULL,
-	[add_time] [datetime] NULL
+	[add_time] [datetime] NULL,
+	[revision] [int] NULL
 ) ON [PRIMARY]
 GO
 INSERT [dbo].[class] ([id], [name], [add_time]) VALUES (1, N'一年级', CAST(N'2017-06-04T16:14:44.000' AS DateTime))
@@ -101,8 +102,8 @@ INSERT [dbo].[student_profile] ([id], [father_name], [father_age], [mother_name]
 GO
 SET IDENTITY_INSERT [dbo].[teacher] ON 
 
-INSERT [dbo].[teacher] ([id], [name], [age], [add_time]) VALUES (1, N'黄老师', 30, CAST(N'2017-08-21T09:03:28.000' AS DateTime))
-INSERT [dbo].[teacher] ([id], [name], [age], [add_time]) VALUES (2, N'何老师', 28, CAST(N'2017-08-21T16:49:56.000' AS DateTime))
+INSERT [dbo].[teacher] ([id], [name], [age], [add_time], [revision]) VALUES (1, N'黄老师', 30, CAST(N'2017-08-21T09:03:28.000' AS DateTime), 0)
+INSERT [dbo].[teacher] ([id], [name], [age], [add_time], [revision]) VALUES (2, N'何老师', 28, CAST(N'2017-08-21T16:49:56.000' AS DateTime), 0)
 SET IDENTITY_INSERT [dbo].[teacher] OFF
 GO
 /****** Object:  Index [PK_CLASS]   ******/

@@ -94,15 +94,16 @@ INSERT INTO `student_profile` (`id`, `student_id`, `father_name`, `mother_name`,
 	(1, 1, '蓝标', '张兰', 33, 28, '2021-03-14 10:38:25', '2021-03-14 19:14:09'),
 	(2, 2, '王海飞', '梁晓菊', 32, 29, '2021-03-14 10:39:34', '2021-03-14 19:14:11');
 
-CREATE TABLE IF NOT EXISTS `teacher` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `add_time` datetime DEFAULT NULL,
-  `age` varchar(255) DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+CREATE TABLE `teacher` (
+	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+	`add_time` DATETIME NULL DEFAULT NULL,
+	`age` VARCHAR(255) NULL DEFAULT NULL,
+	`name` VARCHAR(255) NULL DEFAULT NULL,
+	`revision` INT(11) NULL DEFAULT '0',
+	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
-INSERT INTO `teacher` (`id`, `add_time`, `age`, `name`) VALUES
-	(1, '2017-08-21 09:03:28', '30', '黄老师'),
-	(2, '2017-08-21 16:49:56', '28', '何老师');
+INSERT INTO `teacher` (`id`, `add_time`, `age`, `name`,`revision`) VALUES
+	(1, '2017-08-21 09:03:28', '30', '黄老师',0),
+	(2, '2017-08-21 16:49:56', '28', '何老师',0);
 

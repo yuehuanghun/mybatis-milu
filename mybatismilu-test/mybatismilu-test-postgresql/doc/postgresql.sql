@@ -220,7 +220,8 @@ CREATE TABLE public.teacher (
     id integer NOT NULL,
     name character varying(20),
     age smallint,
-    add_time timestamp without time zone
+    add_time timestamp without time zone,
+	revision integer NOT NULL
 );
 
 
@@ -335,8 +336,8 @@ INSERT INTO public.student_profile VALUES (2, '王海飞', 32, '梁晓菊', 29, 
 -- Data for Name: teacher; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.teacher VALUES (1, '黄老师', 30, '2017-08-21 09:03:28');
-INSERT INTO public.teacher VALUES (2, '何老师', 28, '2017-08-21 16:49:56');
+INSERT INTO public.teacher VALUES (1, '黄老师', 30, '2017-08-21 09:03:28', 0);
+INSERT INTO public.teacher VALUES (2, '何老师', 28, '2017-08-21 16:49:56', 0);
 
 
 --
