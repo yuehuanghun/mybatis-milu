@@ -5,9 +5,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
+import com.yuehuanghun.mybatis.milu.spring.EnableEntityGenericResultMap;
+
 @SpringBootApplication
 @MapperScan(basePackages = "com.yuehuanghun.mybatismilu.test.domain.mapper")
 @ComponentScan(value = {"com.yuehuanghun"})
+@EnableEntityGenericResultMap
 public class App 
 {
     public static void main( String[] args )

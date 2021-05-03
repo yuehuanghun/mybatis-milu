@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.Version;
 
 import lombok.Data;
 
@@ -23,6 +24,10 @@ public class Teacher {
 	private String name;
 	
 	private Integer age;
+	
+	@Version
+	private Integer revision;
+	
 	@ManyToMany
 	@JoinTable(name = "class_teacher_rel", joinColumns = @JoinColumn(name = "teacher_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "class_id", referencedColumnName = "id"))
 	private List<Classs> classList; //多对多引用演示

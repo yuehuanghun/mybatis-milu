@@ -6,11 +6,14 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import javax.persistence.LockModeType;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.yuehuanghun.AppTest;
@@ -56,5 +59,53 @@ public class TeacherMapperTest {
 		List<Teacher> list = teacherMapper.findByAgeLessThan(100);
 		assertTrue(list.size() == 2);
 		assertNull(list.get(0).getAddTime());
+	}
+	
+	@Test
+	@Transactional
+	public void testFindByIdWithLock() {
+		Teacher teacher = teacherMapper.findByIdWithLock(1L);
+		assertNotNull(teacher);
+		
+		teacher.setAge(teacher.getAge() + 1);
+		
+		teacherMapper.updateById(teacher);
+	}
+	
+	@Test
+	@Transactional
+	public void testFindByIdWithShareLock() {
+		Teacher teacher = teacherMapper.findByIdWithShareLock(1L);
+		assertNotNull(teacher);
+		
+		teacher.setAge(teacher.getAge() + 1);
+		
+		teacherMapper.updateById(teacher);
+	}
+	
+	@Test
+	@Transactional
+	public void findByCriteriaWithLock() {
+		List<Teacher> list = teacherMapper.findByCriteria(p -> p.eq("id", 1L).lock(LockModeType.PESSIMISTIC_WRITE));
+		assertTrue(list.size() == 1);
+		
+		Teacher teacher = list.get(0);
+		
+		teacher.setAge(teacher.getAge() + 1);
+		
+		teacherMapper.updateById(teacher);
+	}
+	
+	@Test
+	@Transactional
+	public void findByLambdaCriteriaWithLock() {
+		List<Teacher> list = teacherMapper.findByLambdaCriteria(p -> p.eq(Teacher::getId, 1L).lock(LockModeType.PESSIMISTIC_WRITE));
+		assertTrue(list.size() == 1);
+		
+		Teacher teacher = list.get(0);
+		
+		teacher.setAge(teacher.getAge() + 1);
+		
+		teacherMapper.updateById(teacher);
 	}
 }

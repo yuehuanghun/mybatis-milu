@@ -2,6 +2,8 @@ package com.yuehuanghun.mybatismilu.test.domain.mapper;
 
 import java.util.List;
 
+import javax.persistence.LockModeType;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import com.yuehuanghun.mybatis.milu.BaseMapper;
@@ -31,4 +33,12 @@ public interface TeacherMapper extends BaseMapper<Teacher, Long> {
 	@NamingQuery
 	@StatementOptions(exselects = "addTime") //不查询的字段
 	public List<Teacher> findByAgeLessThan(int age);
+	
+	@NamingQuery
+	@StatementOptions(asExpression = "findById", lockModeType = LockModeType.PESSIMISTIC_WRITE)
+	public Teacher findByIdWithLock(Long id);
+	
+	@NamingQuery
+	@StatementOptions(asExpression = "findById", lockModeType = LockModeType.PESSIMISTIC_READ)
+	public Teacher findByIdWithShareLock(Long id);
 }
