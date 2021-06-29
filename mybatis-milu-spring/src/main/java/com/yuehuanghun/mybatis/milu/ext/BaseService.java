@@ -36,91 +36,91 @@ import com.yuehuanghun.mybatis.milu.data.Sort;
  * @param <T> 实体类
  * @param <ID> 实体类的ID类型
  */
-public interface BaseService<T, ID extends Serializable> {
+public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T, ID>> {
 
-	BaseMapper<T, ID> getBaseMappper();
+	M getDomainMapper();
 
 	default Optional<T> getById(ID id){
-		return getBaseMappper().findById(id);
+		return getDomainMapper().findById(id);
 	}
 	
 	default List<T> getByIds(Collection<ID> ids){
-		return getBaseMappper().findByIds(ids);
+		return getDomainMapper().findByIds(ids);
 	}
 	
 	default List<T> getAll(){
-		return getBaseMappper().findAll();
+		return getDomainMapper().findAll();
 	}
 	
 	default List<T> getAllAndSort(Sort sort) {
-		return getBaseMappper().findAllAndSort(sort);
+		return getDomainMapper().findAllAndSort(sort);
 	}
 	
 	default List<T> getByExample(T example) {
-		return getBaseMappper().findByExample(example);
+		return getDomainMapper().findByExample(example);
 	}
 	
 	default List<T> getByExampleAndSort(T example, Sort sort) {
-		return getBaseMappper().findByExampleAndSort(example, sort);
+		return getDomainMapper().findByExampleAndSort(example, sort);
 	}
 	
 	default int add(T entity) {
-		return getBaseMappper().insert(entity);
+		return getDomainMapper().insert(entity);
 	}
 	
 	default int batchAdd(Collection<T> entityList) {
-		return getBaseMappper().batchInsert(entityList);
+		return getDomainMapper().batchInsert(entityList);
 	}
 	
 	default int updateById(T entity) {
-		return getBaseMappper().updateById(entity);
+		return getDomainMapper().updateById(entity);
 	}
 	
 	default int deleteById(ID id) {
-		return getBaseMappper().deleteById(id);
+		return getDomainMapper().deleteById(id);
 	}
 	
 	default int deleteByIds(Collection<ID> ids) {
-		return getBaseMappper().deleteByIds(ids);
+		return getDomainMapper().deleteByIds(ids);
 	}
 	
 	default int countByExample(T example) {
-		return getBaseMappper().countByExample(example);
+		return getDomainMapper().countByExample(example);
 	}
 	
 	default List<T> getByCriteria(QueryPredicate predicate) {
-		return getBaseMappper().findByCriteria(predicate);
+		return getDomainMapper().findByCriteria(predicate);
 	}
 	
 	default List<T> getByCriteria(Consumer<QueryPredicate> predicate) {
-		return getBaseMappper().findByCriteria(predicate);
+		return getDomainMapper().findByCriteria(predicate);
 	}
 	
 	default List<T> getByLambdaCriteria(Consumer<LambdaQueryPredicate<T>> predicate) {
-		return getBaseMappper().findByLambdaCriteria(predicate);
+		return getDomainMapper().findByLambdaCriteria(predicate);
 	}
 	
 	default int updateByCriteria(T entity, Predicate predicate) {
-		return getBaseMappper().updateByCriteria(entity, predicate);
+		return getDomainMapper().updateByCriteria(entity, predicate);
 	}
 	
 	default int updateByCriteria(T entity, Consumer<Predicate> predicate) {
-		return getBaseMappper().updateByCriteria(entity, predicate);
+		return getDomainMapper().updateByCriteria(entity, predicate);
 	}
 	
 	default int updateByLambdaCriteria(T entity, Consumer<LambdaPredicate<T>> predicate) {
-		return getBaseMappper().updateByLambdaCriteria(entity, predicate);
+		return getDomainMapper().updateByLambdaCriteria(entity, predicate);
 	}
 	
 	default int deleteByCriteria(Predicate predicate) {
-		return getBaseMappper().deleteByCriteria(predicate);
+		return getDomainMapper().deleteByCriteria(predicate);
 	}
 	
 	default int deleteByCriteria(Consumer<Predicate> predicate) {
-		return getBaseMappper().deleteByCriteria(predicate);
+		return getDomainMapper().deleteByCriteria(predicate);
 	}
 	
 	default int deleteByLambdaCriteria(Consumer<LambdaPredicate<T>> predicate) {
-		return getBaseMappper().deleteByLambdaCriteria(predicate);
+		return getDomainMapper().deleteByLambdaCriteria(predicate);
 	}
 }

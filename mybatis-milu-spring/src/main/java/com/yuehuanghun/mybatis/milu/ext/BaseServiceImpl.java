@@ -22,14 +22,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.yuehuanghun.mybatis.milu.BaseMapper;
 
-public class BaseServiceImpl<T, ID extends Serializable, M extends BaseMapper<T, ID>> implements BaseService<T, ID> {
+public class BaseServiceImpl<T, ID extends Serializable, M extends BaseMapper<T, ID>> implements BaseService<T, ID, M> {
 
 	@Autowired
-	private M baseMapper;
+	protected M domainMapper;
 	
 	@Override
-	public BaseMapper<T, ID> getBaseMappper() {
-		return baseMapper;
+	public M getDomainMapper() {
+		return domainMapper;
 	}
 
 }
