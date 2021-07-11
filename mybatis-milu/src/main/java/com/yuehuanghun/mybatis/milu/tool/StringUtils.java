@@ -131,6 +131,13 @@ public class StringUtils {
 		}
 		return string.substring(0, 1).toLowerCase() + string.substring(1, string.length());
 	}
+	
+	public static String capitalize(String string) {
+		if (isBlank(string)) {
+			return string;
+		}
+		return string.substring(0, 1).toUpperCase() + string.substring(1, string.length());
+	}
 
 	public static String collectionToCommaDelimitedString(Collection<?> coll) {
 		return collectionToDelimitedString(coll, ",");
