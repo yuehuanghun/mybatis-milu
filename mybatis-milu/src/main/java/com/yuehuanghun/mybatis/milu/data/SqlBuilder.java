@@ -17,12 +17,10 @@ package com.yuehuanghun.mybatis.milu.data;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -80,41 +78,23 @@ public class SqlBuilder {
 			sqlBuilder.append(Segment.DELETE_FROM);
 		} else {
 			sqlBuilder.append(Segment.SELECT);
-			if(partTree.isCountProjection()) {
+			if(partTree.isStatistic()) {
+				sqlBuilder.append(buildStatisticSegment(mainTableAlias));
+			} else if(partTree.isCountProjection()) {
 				sqlBuilder.append(Segment.COUNT_ALL);
 			} else {
 				if(partTree.isDistinct()) {
 					sqlBuilder.append(Segment.DISTINCT);
 				}
 				
-				Iterator<Attribute> it = entity.getAttributes().iterator();
-				boolean first = true;
-				while(it.hasNext()) {
-					Attribute attr = it.next();
-					if(!selectAttrs.isEmpty()) {
-						if(!selectAttrs.contains(attr.getName())) {
-							continue;
-						}
-					} else if(!exselectAttrs.isEmpty() && exselectAttrs.contains(attr.getName())) {
-						continue;
-					}
-					if(attr.isSelectable()) {
-						if(first) {
-							first = false;
-						} else {
-							sqlBuilder.append(Segment.COMMA_B);
-						}						
-						if(!joinExpressMap.isEmpty()) { //没有关联查询时，不需要使用表别名
-							sqlBuilder.append(mainTableAlias).append(Segment.DOT);
-						}
-						appendIdentifier(sqlBuilder, attr.getColumnName());
-					}
-				}
+				//select columns 查询的列
+				sqlBuilder.append(buildSelectColumnsSegment(mainTableAlias));
 			}
 			
 			sqlBuilder.append(Segment.FROM_B);
 		}
 		
+		// table and join table 表与关联表
 		appendIdentifier(sqlBuilder, entity.getTableName()); //表名
 		if(!joinExpressMap.isEmpty()) { //没有关联查询时，不需要使用表别名
 			sqlBuilder.append(Segment.SPACE).append(mainTableAlias);
@@ -124,97 +104,185 @@ public class SqlBuilder {
             }
 		}		
 		
-		Iterator<OrPart> orPartIt = partTree.iterator();
-		int paramIndex = 0;
-		if(orPartIt.hasNext()) {
-			sqlBuilder.append(Segment.WHERE_B);
-			boolean first = true;
-			while(orPartIt.hasNext()) {
-				if(first) {
-					first = false;
-				} else {
-					sqlBuilder.append(Segment.OR_B);
-				}
-				OrPart orPart = orPartIt.next();
-				Iterator<Part> partIt = orPart.iterator();
-				boolean first2 = true;
-				while(partIt.hasNext()) {
-					if(first2) {
-						first2 = false;
-					} else {
-						sqlBuilder.append(Segment.AND_B);
-					}
-					Part part = partIt.next();
-					
-					if(joinQueryColumnNap.containsKey(part.getProperty())) {
-						sqlBuilder.append(joinQueryColumnNap.get(part.getProperty()));
-					} else {
-						if(!joinExpressMap.isEmpty()) {
-							sqlBuilder.append(mainTableAlias).append(Segment.DOT);
-						}
-						appendIdentifier(sqlBuilder, entity.getAttribute(part.getProperty()).getColumnName()); //查询列名
-					}					
-					
-					String express = configuration.getDialect().getPartTypeExpression(part.getType());
-					
-					int numberOfArguments = part.getNumberOfArguments();
-					if(numberOfArguments > 0) {
-						Object[] params = new String[numberOfArguments];
-						for(int i = 0 ; i < numberOfArguments; i++) {
-							//TODO 是否做parameters长度判断？
-							if(part.getType() == Type.IN || part.getType() == Type.NOT_IN ) {
-								params[i] = getMybatisParamName(parameters[paramIndex++]); //mybatis的顺序参数
-							} else {
-								params[i] = Segment.HASH_LEFT_BRACE + getMybatisParamName(parameters[paramIndex++]) + Segment.RIGHT_BRACE; //mybatis的顺序参数
-							}
-						}
-						
-						sqlBuilder.append(String.format(express, params));
-					} else {
-						sqlBuilder.append(express);
-					}
-				}
-			}
-		}
+		//condition 查询条件
+		sqlBuilder.append(buildConditionSegment(mainTableAlias));
 		
-		Sort sort = partTree.getSort();
-        if(sort != null) {
-            Iterator<Order> it = sort.iterator();
-            if(it.hasNext()) {
-            	boolean first = true;
-            	sqlBuilder.append(Segment.ORDER_BY);
-            	while(it.hasNext()) {
-            		if(first) {
-						first = false;
-					} else {
-						sqlBuilder.append(Segment.COMMA_B);
-					}
-                    Order order = it.next();
-                    
-                    if(joinQueryColumnNap.containsKey(order.getProperty())) { //关联表字段排序
-						sqlBuilder.append(joinQueryColumnNap.get(order.getProperty()));
-					} else {
-	                    if(!joinExpressMap.isEmpty()) {
-							sqlBuilder.append(mainTableAlias).append(Segment.DOT);
-						}
-						appendIdentifier(sqlBuilder, entity.getAttribute(order.getProperty()).getColumnName());
-					}
-                    
-                    sqlBuilder.append(Segment.SPACE).append(order.getDirection().name());
-                }
-            }
-        }
+		//group by 分组片段
+		sqlBuilder.append(buildGroupBySegment(mainTableAlias));
+		
+		//sort 排序
+		sqlBuilder.append(buildSortSegment(mainTableAlias));
         
+		//offset limit / page 返回行范围
         String sqlExpression = sqlBuilder.toString();
         if(partTree.isLimiting()) {
         	sqlExpression = configuration.getDialect().getTopLimitSql(sqlExpression, partTree.getMaxResults());
         }
         
+        //lock 锁
         if(lockModeType != LockModeType.NONE) {
         	sqlExpression = configuration.getDialect().getLockSql(sqlExpression, lockModeType);
         }
         
         return Segment.SCRIPT_LABEL + sqlExpression + Segment.SCRIPT_LABEL_END;
+	}
+	
+	private String buildSelectColumnsSegment(String mainTableAlias) {
+		StringBuilder sb = new StringBuilder(128);
+		Iterator<Attribute> it = entity.getAttributes().iterator();
+		boolean first = true;
+		while(it.hasNext()) {
+			Attribute attr = it.next();
+			if(!selectAttrs.isEmpty()) {
+				if(!selectAttrs.contains(attr.getName())) {
+					continue;
+				}
+			} else if(!exselectAttrs.isEmpty() && exselectAttrs.contains(attr.getName())) {
+				continue;
+			}
+			if(attr.isSelectable()) {
+				if(first) {
+					first = false;
+				} else {
+					sb.append(Segment.COMMA_B);
+				}						
+				if(!joinExpressMap.isEmpty()) { //没有关联查询时，不需要使用表别名
+					sb.append(mainTableAlias).append(Segment.DOT);
+				}
+				appendIdentifier(sb, attr.getColumnName());
+			}
+		}
+		return sb.toString();
+	}
+	
+	private String buildConditionSegment(String mainTableAlias) {
+		Iterator<OrPart> orPartIt = partTree.iterator();
+		if(!orPartIt.hasNext()) {
+			return StringUtils.EMPTY;
+		}
+		StringBuilder sb = new StringBuilder(128);
+		int paramIndex = 0;
+		sb.append(Segment.WHERE_B);
+		boolean orFirst = true;
+		while(orPartIt.hasNext()) {
+			if(orFirst) {
+				orFirst = false;
+			} else {
+				sb.append(Segment.OR_B);
+			}
+			OrPart orPart = orPartIt.next();
+			Iterator<Part> partIt = orPart.iterator();
+			boolean andFirst = true;
+			while(partIt.hasNext()) {
+				if(andFirst) {
+					andFirst = false;
+				} else {
+					sb.append(Segment.AND_B);
+				}
+				Part part = partIt.next();
+
+				sb.append(getColumn(mainTableAlias, part.getProperty())); //替换以上注释
+				
+				String express = configuration.getDialect().getPartTypeExpression(part.getType());
+				
+				int numberOfArguments = part.getNumberOfArguments();
+				if(numberOfArguments > 0) {
+					Object[] params = new String[numberOfArguments];
+					for(int i = 0 ; i < numberOfArguments; i++) {
+						//TODO 是否做parameters长度判断？
+						if(part.getType() == Type.IN || part.getType() == Type.NOT_IN ) {
+							params[i] = getMybatisParamName(parameters[paramIndex++]); //mybatis的顺序参数
+						} else {
+							params[i] = Segment.HASH_LEFT_BRACE + getMybatisParamName(parameters[paramIndex++]) + Segment.RIGHT_BRACE; //mybatis的顺序参数
+						}
+					}
+					
+					sb.append(String.format(express, params));
+				} else {
+					sb.append(express);
+				}
+			}
+		}
+		return sb.toString();
+	}
+	
+	private String getColumn(String mainTableAlias, String property) {
+		String columnName = StringUtils.EMPTY;
+		if(joinQueryColumnNap.containsKey(property)) {
+			columnName = joinQueryColumnNap.get(property);
+		} else {
+			if(!joinExpressMap.isEmpty()) {
+				columnName = mainTableAlias + Segment.DOT;
+			}
+			columnName += SqlBuildingHelper.wrapIdentifier(entity.getAttribute(property).getColumnName(), configuration); //查询列名
+		}
+		return columnName;
+	}
+	
+	private String buildStatisticSegment(String mainTableAlias) {
+		StringBuilder sb = new StringBuilder(128);
+		partTree.getStatisticParts().forEach(part -> {
+			if(sb.length() > 0) {
+				sb.append(Segment.COMMA_B);
+			}
+			String columnName = getColumn(mainTableAlias, part.getProperty());
+			sb.append(String.format(configuration.getDialect().getFunctionExpression(part.getFunction()), columnName));
+			sb.append(Segment.SPACE).append(getAlias(part.getFunction(), part.getProperty()));
+		});;
+		if(!partTree.getGroupProperties().isEmpty()) { //分组字段
+			sb.append(Segment.COMMA_B).append(groupByColumns(mainTableAlias, true));
+		}
+		return sb.toString();
+	}
+	
+	private String getAlias(String function, String property) {
+		return property + StringUtils.capitalize(function);
+	}
+	
+	private String groupByColumns(String mainTableAlias, boolean withAlias) {
+		StringBuilder sb = new StringBuilder(32);
+		partTree.getGroupProperties().forEach(property -> {
+			if(sb.length() > 0) {
+				sb.append(Segment.COMMA_B);
+			}
+			sb.append(getColumn(mainTableAlias, property));
+			if(withAlias) {
+				sb.append(Segment.SPACE).append(property);
+			}
+		});
+		return sb.toString();
+	}
+	
+	private String buildGroupBySegment(String mainTableAlias) {
+		if(partTree.getGroupProperties().isEmpty()) {
+			return StringUtils.EMPTY;
+		}
+		return Segment.GROUP_BY_B + groupByColumns(mainTableAlias, false);
+	}
+	
+	private String buildSortSegment(String mainTableAlias) {
+		Sort sort = partTree.getSort();
+		if(sort == null) {
+			return StringUtils.EMPTY;
+		}
+		StringBuilder sb = new StringBuilder(32);
+        Iterator<Order> it = sort.iterator();
+        if(it.hasNext()) {
+        	boolean first = true;
+        	sb.append(Segment.ORDER_BY);
+        	while(it.hasNext()) {
+        		if(first) {
+					first = false;
+				} else {
+					sb.append(Segment.COMMA_B);
+				}
+                Order order = it.next();
+                
+                sb.append(getColumn(mainTableAlias, order.getProperty())); //替换以上注释                  
+                sb.append(Segment.SPACE).append(order.getDirection().name());
+            }
+        }
+        return sb.toString();
 	}
 	
 	private String getMybatisParamName(Parameter parameter) {
@@ -231,7 +299,7 @@ public class SqlBuilder {
 	private void analyseDomain(Entity entity) {
 		Iterator<OrPart> orPartIt = partTree.iterator();
 		
-		List<String> properties = new ArrayList<>();
+		Set<String> properties = new HashSet<>();
 		while(orPartIt.hasNext()) {
 			OrPart orPart = orPartIt.next();
 			Iterator<Part> partIt = orPart.iterator();
@@ -246,6 +314,9 @@ public class SqlBuilder {
 				properties.add(it.next().getProperty());
 			}
 		}
+		
+		partTree.getStatisticParts().forEach(part -> properties.add(part.getProperty()));
+		partTree.getGroupProperties().forEach(property -> properties.add(property));
 		
 		SqlBuildingHelper.analyseDomain(entity, properties, tableAliasDispacher, configuration, joinExpressMap, joinQueryColumnNap);
 	}

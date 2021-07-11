@@ -26,6 +26,7 @@ import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
+import com.yuehuanghun.mybatis.milu.mapping.ResultMapHelper;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 
 public class GenericProviderSqlSource implements SqlSource {
@@ -50,6 +51,7 @@ public class GenericProviderSqlSource implements SqlSource {
 	}
 
 	private SqlSource createSqlSource(Object parameterObject) {
+		ResultMapHelper.clearResultType(); //清除动态的resultType
 		try {
 			String sql = providerSql.provideSql(providerContext, parameterObject);
 

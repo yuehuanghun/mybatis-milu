@@ -29,6 +29,7 @@ import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper.TableAliasDispacher;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
+import com.yuehuanghun.mybatis.milu.tool.Constants;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
@@ -38,7 +39,7 @@ import lombok.experimental.Accessors;
 public class CriteriaSqlBuilder {
 	
 	private final Entity entity;
-	private final String queryConditionExpression;	
+	private final String sqlTemplate;	
 	private final Set<String> queryProperties;	
 	private final MiluConfiguration configuration;
 	
@@ -58,9 +59,9 @@ public class CriteriaSqlBuilder {
 	
 	private final static Pattern ORDER_BY_PT = Pattern.compile("^\\s*ORDER BY.*$");
 
-	private CriteriaSqlBuilder(Class<?> domainClazz, String queryConditionExpression, Set<String> queryProperties, MiluConfiguration configuration) {
+	private CriteriaSqlBuilder(Class<?> domainClazz, String sqlTemplate, Set<String> queryProperties, MiluConfiguration configuration) {
 		this.entity = configuration.getMetaModel().getEntity(domainClazz);
-		this.queryConditionExpression = queryConditionExpression;
+		this.sqlTemplate = sqlTemplate;
 		this.queryProperties = queryProperties;
 		this.configuration = configuration;
 		
@@ -90,13 +91,15 @@ public class CriteriaSqlBuilder {
 		case COUNT:
 			buildCountSegment(sqlBuilder);
 			break;
+		case STATISTIC:
+			break;
 		}		
 		
-		if(StringUtils.isNotBlank(queryConditionExpression)) {
-			String condition = queryConditionExpression;
+		if(StringUtils.isNotBlank(sqlTemplate)) {
+			String sqlTemplateTmp = sqlTemplate;
 			for(String property : queryProperties) {
 				if(joinQueryColumnNap.containsKey(property)) {
-					condition = condition.replace(SqlBuildingHelper.columnHolder(property), joinQueryColumnNap.get(property));
+					sqlTemplateTmp = sqlTemplateTmp.replace(SqlBuildingHelper.columnHolder(property), joinQueryColumnNap.get(property));
 				} else {
 					String column = Segment.EMPTY;
 					if(!joinExpressMap.isEmpty()) {
@@ -104,14 +107,20 @@ public class CriteriaSqlBuilder {
 					}
 					Attribute attr = entity.getAttribute(property);
 					column += SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration);
-					condition = condition.replace(SqlBuildingHelper.columnHolder(property), column);
+					sqlTemplateTmp = sqlTemplateTmp.replace(SqlBuildingHelper.columnHolder(property), column);
 				}	
 			}
 			
-			if(!ORDER_BY_PT.matcher(condition).matches()) {
-				sqlBuilder.append(Segment.WHERE_B);
+			if(criteriaType == CriteriaType.STATISTIC) {
+				StringBuilder tableSegment = new StringBuilder();
+				buildTableSegment(tableSegment);
+				sqlTemplateTmp = sqlTemplateTmp.replace(Constants.TABLE_HOLDER, tableSegment.toString());
+			} else {
+				if(!ORDER_BY_PT.matcher(sqlTemplateTmp).matches()) { //如果没有查询条件时，则不用加WHERE
+					sqlBuilder.append(Segment.WHERE_B);
+				}
 			}
-			sqlBuilder.append(condition);
+			sqlBuilder.append(sqlTemplateTmp);
 		}
 		
 		sqlBuilder.append(Segment.SCRIPT_LABEL_END);
@@ -199,7 +208,7 @@ public class CriteriaSqlBuilder {
 		sqlBuilder.append(Segment.SELECT_COUNT).append(Segment.FROM_B);;
 		buildTableSegment(sqlBuilder);		
 	}
-	
+
 	private void assertAttrExists(Set<String> attrs) {
 		if(attrs == null || attrs.isEmpty()) {
 			return;
@@ -213,6 +222,6 @@ public class CriteriaSqlBuilder {
 	}
 	
 	public enum CriteriaType {
-		SELECT, UPDATE, DELETE, COUNT
+		SELECT, UPDATE, DELETE, COUNT, STATISTIC
 	}
 }

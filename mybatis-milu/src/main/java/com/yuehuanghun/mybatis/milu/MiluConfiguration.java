@@ -48,6 +48,8 @@ import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindByIdsProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindByLambdaCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFlushProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericInsertProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericStatisticByCriteriaProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericStatisticByLambdaCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdateByCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdateByIdProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdateByLambdaCriteriaProviderSql;
@@ -69,6 +71,7 @@ public class MiluConfiguration extends Configuration {
 	@Getter
 	private DbMeta dbMeta;
 	@Getter
+	@Setter
 	private Dialect dialect;
 	@Getter
 	private final MetaModel metaModel = new MetaModel();
@@ -110,6 +113,8 @@ public class MiluConfiguration extends Configuration {
 		this.addGenericProviderSql(new GenericDeleteByLambdaCriteriaProviderSql());
 		this.addGenericProviderSql(new GenericCountByCriteriaProviderSql());
 		this.addGenericProviderSql(new GenericCountByLambdaCriteriaProviderSql());
+		this.addGenericProviderSql(new GenericStatisticByCriteriaProviderSql());
+		this.addGenericProviderSql(new GenericStatisticByLambdaCriteriaProviderSql());
 	}
 	
 	private void registerDefaultIdentifierGenerator() {
@@ -172,7 +177,7 @@ public class MiluConfiguration extends Configuration {
 	public boolean hasIdentifierGenerator(String identifierGeneratorName) {
 		return identifierGeneratorMaps.containsKey(identifierGeneratorName);
 	}
-	
+
 	public void buildDbMeta() {
 		if(this.environment == null) {
 			return;

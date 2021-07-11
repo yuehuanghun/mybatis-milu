@@ -13,28 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.yuehuanghun.mybatis.milu.tool;
+package com.yuehuanghun.mybatis.milu.exception;
 
-public interface Constants {
+public class IllegalMethodExpressException extends RuntimeException {
 
-	/**
-	 * 内置的32位UUID构造器（String）
-	 */
-	String ID_GENERATOR_UUID = "uuid";
-	/**
-	 * 内置的snowflakeId构造器（Long）
-	 */
-	String ID_GENERATOR_SNOWFLAKE = "snowflake";
+	private static final long serialVersionUID = 1L;
+
+	public IllegalMethodExpressException() {
+		super();
+	}
 	
-	/**
-	 * 分页参数
-	 */
-	String PAGE_KEY = "_MILU_PAGE_";
+	public IllegalMethodExpressException(String error) {
+		super(error);
+	}
 	
-	/**
-	 * 
-	 */
-	String COLUMN_HOLDER = "ColumnHolder";
+	public IllegalMethodExpressException(Throwable e) {
+		super(e);
+	}
 	
-	String TABLE_HOLDER = "__FromTablesHolder__";
+	public IllegalMethodExpressException(String error, Throwable e) {
+		super(error, e);
+	}
 }

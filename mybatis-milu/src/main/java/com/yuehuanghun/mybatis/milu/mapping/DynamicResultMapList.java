@@ -13,28 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.yuehuanghun.mybatis.milu.tool;
 
-public interface Constants {
+package com.yuehuanghun.mybatis.milu.mapping;
 
-	/**
-	 * 内置的32位UUID构造器（String）
-	 */
-	String ID_GENERATOR_UUID = "uuid";
-	/**
-	 * 内置的snowflakeId构造器（Long）
-	 */
-	String ID_GENERATOR_SNOWFLAKE = "snowflake";
+import java.util.ArrayList;
+
+import org.apache.ibatis.mapping.ResultMap;
+
+public class DynamicResultMapList extends ArrayList<ResultMap> {
+	private static final long serialVersionUID = 1L;
+
+	@Override
+	public ResultMap get(int index) {
+		ResultMap element = super.get(index);
+		return index == 0 ? ResultMapHelper.replaceResultMap(element) : element;
+	}
 	
-	/**
-	 * 分页参数
-	 */
-	String PAGE_KEY = "_MILU_PAGE_";
-	
-	/**
-	 * 
-	 */
-	String COLUMN_HOLDER = "ColumnHolder";
-	
-	String TABLE_HOLDER = "__FromTablesHolder__";
 }

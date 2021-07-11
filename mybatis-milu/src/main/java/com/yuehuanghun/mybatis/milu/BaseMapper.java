@@ -18,6 +18,7 @@ package com.yuehuanghun.mybatis.milu;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -25,8 +26,10 @@ import org.apache.ibatis.annotations.Param;
 
 import com.yuehuanghun.mybatis.milu.criteria.LambdaPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaQueryPredicate;
+import com.yuehuanghun.mybatis.milu.criteria.LambdaStatisticPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.Predicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
+import com.yuehuanghun.mybatis.milu.criteria.StatisticPredicate;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 
 /**
@@ -213,6 +216,45 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @return 影响行数
 	 */
 	int deleteByLambdaCriteria(@Param("criteria")Consumer<LambdaPredicate<T>> predicate);
+	
+	/**
+	 * 动态统计数据
+	 * @param predicate 条件
+	 * @return 统计数据列表
+	 */
+	List<Map<String, Object>> statisticByCriteria(@Param("criteria") StatisticPredicate predicate);
+	
+	/**
+	 * 动态统计数据
+	 * @param predicate 条件
+	 * @return 统计数据列表
+	 */
+	List<Map<String, Object>> statisticByCriteria(@Param("criteria") Consumer<StatisticPredicate> predicate);
+	
+	/**
+	 * 动态统计数据
+	 * @param <E> 每行数据的接收类
+	 * @param predicate 条件
+	 * @param resultType 结果类
+	 * @return 统计数据列表
+	 */
+	<E> List<E> statisticByCriteria(@Param("criteria") Consumer<StatisticPredicate> predicate, @Param("resultType") Class<E> resultType);
+	
+	/**
+	 * 动态统计数据
+	 * @param predicate 条件
+	 * @return 统计数据列表
+	 */
+	List<Map<String, Object>> statisticByLambdaCriteria(@Param("criteria") Consumer<LambdaStatisticPredicate<T>> predicate);
+	
+	/**
+	 * 动态统计数据
+	 * @param <E> 每行数据的接收类
+	 * @param predicate 条件
+	 * @param resultType 结果类
+	 * @return 统计数据列表
+	 */
+	<E> List<E> statisticByLambdaCriteria(@Param("criteria") Consumer<LambdaStatisticPredicate<T>> predicate, @Param("resultType") Class<E> resultType);
 	
 	/**
 	 * 刷新执行查询到数据库

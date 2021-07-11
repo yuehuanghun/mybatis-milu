@@ -40,6 +40,7 @@ public interface Segment {
     String EXAMPLE_TO_COLLECTION = "@com.yuehuanghun.mybatis.milu.tool.StringUtils@toCollectioin(example.";
     String FOR_UPDATE = " FOR UPDATE";
     String FROM_B = " FROM ";
+    String GROUP_BY_B = " GROUP BY ";
     String INNER_JOIN_B = " INNER JOIN ";
     String IF_LABEL_END = "</if>";
     String IF_TEST_EXAMPLE = "<if test=\"example.";

@@ -13,28 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.yuehuanghun.mybatis.milu.tool;
 
-public interface Constants {
+package com.yuehuanghun.mybatis.milu.criteria;
 
-	/**
-	 * 内置的32位UUID构造器（String）
-	 */
-	String ID_GENERATOR_UUID = "uuid";
-	/**
-	 * 内置的snowflakeId构造器（Long）
-	 */
-	String ID_GENERATOR_SNOWFLAKE = "snowflake";
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+interface Select extends Expression {
+
+	void add(String functionName, String property, String alias);
 	
-	/**
-	 * 分页参数
-	 */
-	String PAGE_KEY = "_MILU_PAGE_";
+	void add(String property);
 	
-	/**
-	 * 
-	 */
-	String COLUMN_HOLDER = "ColumnHolder";
-	
-	String TABLE_HOLDER = "__FromTablesHolder__";
+	@Data
+	@AllArgsConstructor
+	class Function {
+		/**
+		 * 函数名
+		 */
+		private String functionName;
+		/**
+		 * 属性名
+		 */
+		private String propertyName;
+		/**
+		 * 别名
+		 */
+		private String alias;
+	}
 }

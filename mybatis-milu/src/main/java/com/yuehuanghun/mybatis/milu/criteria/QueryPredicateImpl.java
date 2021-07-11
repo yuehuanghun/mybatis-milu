@@ -15,9 +15,7 @@
  */
 package com.yuehuanghun.mybatis.milu.criteria;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -34,7 +32,7 @@ import lombok.Getter;
 
 public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate {
 	
-	private final List<Order> orderList = new ArrayList<>();
+	private final Sort sort = new SortImpl();
 	private Limit limit;
 	private Lock lock;
 	@Getter
@@ -83,7 +81,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	@Override
 	public QueryPredicate order(String... attrNames) {
 		for(String attrName : attrNames) {
-			orderList.add(OrderImpl.order(attrName));
+			sort.add(attrName);
 		}
 		return this;
 	}
@@ -91,7 +89,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	@Override
 	public QueryPredicate order(Direction direction, String... attrNames) {
 		for(String attrName : attrNames) {
-			orderList.add(OrderImpl.order(attrName, direction));
+			sort.add(attrName, direction);
 		}
 		return this;
 	}
@@ -397,16 +395,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	public int render(MiluConfiguration configuration, StringBuilder expressionBuilder, Map<String, Object> params, Set<String> columns, int paramIndex) {
 		paramIndex = super.render(configuration, expressionBuilder, params, columns, paramIndex);
 		
-		if(!orderList.isEmpty()) {
-			expressionBuilder.append(Segment.ORDER_BY);
-			for(int i = 0; i < orderList.size(); i++) {
-				if(i > 0) {
-					expressionBuilder.append(Segment.COMMA_B);
-				}
-				
-				paramIndex = orderList.get(i).render(configuration, expressionBuilder, params, columns, paramIndex);
-			}
-		}
+		sort.render(configuration, expressionBuilder, params, columns, paramIndex);
 		
 		if(limit != null) {
 			limit.render(configuration, expressionBuilder, params, columns, paramIndex);

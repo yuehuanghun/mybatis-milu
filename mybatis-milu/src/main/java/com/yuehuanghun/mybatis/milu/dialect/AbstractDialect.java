@@ -23,9 +23,11 @@ import com.yuehuanghun.mybatis.milu.tool.Assert;
 
 public abstract class AbstractDialect implements Dialect {
 	protected final Map<Type, String> partTypeExpressionMap = new HashMap<>();
+	protected final Map<String, String> functionMap = new HashMap<>();
 	
 	protected AbstractDialect() {
 		initPartTypeExpression();
+		initFunctionMap();
 	}
 	
 	protected void initPartTypeExpression() {
@@ -52,6 +54,14 @@ public abstract class AbstractDialect implements Dialect {
 		partTypeExpressionMap.put(Type.SIMPLE_PROPERTY, " = %s");
 		partTypeExpressionMap.put(Type.NEGATING_SIMPLE_PROPERTY, " <> %s");
 	}
+	
+	protected void initFunctionMap() {
+		functionMap.put(SUM, "SUM(%s)");
+		functionMap.put(COUNT, "COUNT(%s)");
+		functionMap.put(MIN, "MIN(%s)");
+		functionMap.put(MAX, "MAX(%s)");
+		functionMap.put(AVG, "AVG(%s)");
+	}
 
 	public String getPartTypeExpression(Type partType) {
 		String expression = partTypeExpressionMap.get(partType);
@@ -59,4 +69,8 @@ public abstract class AbstractDialect implements Dialect {
 		return expression;
 	}
 
+	@Override
+	public String getFunctionExpression(String function) {
+		return functionMap.get(function);
+	}
 }

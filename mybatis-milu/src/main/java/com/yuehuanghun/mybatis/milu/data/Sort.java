@@ -134,6 +134,24 @@ public class Sort implements Streamable<com.yuehuanghun.mybatis.milu.data.Sort.O
 		}
 		return by(direction, properties);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T, M> Sort desc(SerializableFunction<T, M>... propertyGetterFns) {
+		return by(Direction.DESC, propertyGetterFns);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T, M> Sort asc(SerializableFunction<T, M>... propertyGetterFns) {
+		return by(Direction.ASC, propertyGetterFns);
+	}
+	
+	public static Sort desc(String... properties) {
+		return by(Direction.DESC, properties);
+	}
+	
+	public static Sort asc(String... properties) {
+		return by(Direction.ASC, properties);
+	}
 
 	public static Sort unsorted() {
 		return UNSORTED;

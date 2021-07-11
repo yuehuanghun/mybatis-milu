@@ -27,6 +27,11 @@ import com.yuehuanghun.mybatis.milu.tool.Segment;
  *
  */
 public interface Dialect {
+	String SUM = "sum";
+	String COUNT = "count";
+	String MIN = "min";
+	String MAX = "max";
+	String AVG = "avg";
   
 	/**
 	 * 获取第一页N条数据
@@ -55,4 +60,6 @@ public interface Dialect {
 		}
 		return sql;
 	}
+	
+	String getFunctionExpression(String function);
 }

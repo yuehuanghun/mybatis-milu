@@ -13,28 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.yuehuanghun.mybatis.milu.tool;
 
-public interface Constants {
+package com.yuehuanghun.mybatis.milu.criteria;
 
-	/**
-	 * 内置的32位UUID构造器（String）
-	 */
-	String ID_GENERATOR_UUID = "uuid";
-	/**
-	 * 内置的snowflakeId构造器（Long）
-	 */
-	String ID_GENERATOR_SNOWFLAKE = "snowflake";
-	
-	/**
-	 * 分页参数
-	 */
-	String PAGE_KEY = "_MILU_PAGE_";
-	
-	/**
-	 * 
-	 */
-	String COLUMN_HOLDER = "ColumnHolder";
-	
-	String TABLE_HOLDER = "__FromTablesHolder__";
+import java.util.Set;
+
+/**
+ * 分组
+ * @author yuehuanghun
+ *
+ */
+public interface Group extends Expression, Set<String> {
+
 }

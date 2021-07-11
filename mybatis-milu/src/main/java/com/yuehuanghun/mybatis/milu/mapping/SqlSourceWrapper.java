@@ -13,28 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.yuehuanghun.mybatis.milu.tool;
 
-public interface Constants {
+package com.yuehuanghun.mybatis.milu.mapping;
 
-	/**
-	 * 内置的32位UUID构造器（String）
-	 */
-	String ID_GENERATOR_UUID = "uuid";
-	/**
-	 * 内置的snowflakeId构造器（Long）
-	 */
-	String ID_GENERATOR_SNOWFLAKE = "snowflake";
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.SqlSource;
+
+public class SqlSourceWrapper implements SqlSource {
+	private SqlSource delegate;
+
+	public SqlSourceWrapper(SqlSource sqlSource) {
+		this.delegate = sqlSource;
+	}
 	
-	/**
-	 * 分页参数
-	 */
-	String PAGE_KEY = "_MILU_PAGE_";
-	
-	/**
-	 * 
-	 */
-	String COLUMN_HOLDER = "ColumnHolder";
-	
-	String TABLE_HOLDER = "__FromTablesHolder__";
+	@Override
+	public BoundSql getBoundSql(Object parameterObject) {
+		ResultMapHelper.clearResultType();
+		return delegate.getBoundSql(parameterObject);
+	}
+
 }

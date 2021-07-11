@@ -86,6 +86,8 @@ import com.yuehuanghun.mybatis.milu.id.SequenceSqlSource;
 import com.yuehuanghun.mybatis.milu.id.TableKeyGenerator;
 import com.yuehuanghun.mybatis.milu.id.tablekey.TableKeySelectSqlSource;
 import com.yuehuanghun.mybatis.milu.id.tablekey.TableKeyUpdateSqlSource;
+import com.yuehuanghun.mybatis.milu.mapping.MiluMapperBuilderAssistant;
+import com.yuehuanghun.mybatis.milu.mapping.SqlSourceWrapper;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.IdAttribute;
@@ -100,7 +102,7 @@ public class MapperNamingQueryBuilder {
 
 	public MapperNamingQueryBuilder(Configuration configuration, Class<?> type) {
 		String resource = type.getName().replace('.', '/') + ".java (best guess)";
-		this.assistant = new MapperBuilderAssistant(configuration, resource);
+		this.assistant = new MiluMapperBuilderAssistant(configuration, resource);
 		this.configuration = (MiluConfiguration) configuration;
 		this.type = type;
 	}
@@ -518,7 +520,7 @@ public class MapperNamingQueryBuilder {
 
 	private SqlSource buildSqlSourceFromStrings(String[] strings, Class<?> parameterTypeClass,
 			LanguageDriver languageDriver) {
-		return languageDriver.createSqlSource(configuration, String.join(" ", strings).trim(), parameterTypeClass);
+		return new SqlSourceWrapper(languageDriver.createSqlSource(configuration, String.join(" ", strings).trim(), parameterTypeClass));
 	}
 	
 	private String getExpression(Method method) {
@@ -565,7 +567,7 @@ public class MapperNamingQueryBuilder {
 	
 	private SqlCommandType getSqlCommandType(Method method) {
 		String methodName = method.getName();
-		if(methodName.matches("^(find|read|get|query|stream|count).*")) {
+		if(methodName.matches("^(find|read|get|query|stream|count|sum|count|min|max|avg).*")) {
 			return SqlCommandType.SELECT;
 		} else if(methodName.matches("^(delete|remove).*")) {
 			return SqlCommandType.DELETE;
@@ -596,6 +598,8 @@ public class MapperNamingQueryBuilder {
 		if(method.getName().startsWith("find")) {
 			returnType = entityClass;
 			buildEntityResultMapping(returnType, resultMappings);
+		} else if(method.getName().startsWith("statistic")) {
+			returnType = Map.class;
 		} else {
 			returnType = int.class;
 		}
@@ -614,7 +618,7 @@ public class MapperNamingQueryBuilder {
 		GenericProviderSql genericProviderSql = this.configuration.getGenericProviderSql(methodName);
 		
 		SqlCommandType sqlCommandType = SqlCommandType.UNKNOWN;
-		if(methodName.startsWith("find") || methodName.startsWith("count")) {
+		if(methodName.startsWith("find") || methodName.startsWith("count") || methodName.startsWith("statistic")) {
 			sqlCommandType = SqlCommandType.SELECT;
 		} else if(methodName.startsWith("delete")) {
 			sqlCommandType = SqlCommandType.DELETE;
