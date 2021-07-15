@@ -17,7 +17,6 @@
 package com.yuehuanghun.mybatis.milu.criteria;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
@@ -32,8 +31,8 @@ public class GroupImpl extends HashSet<String> implements Group {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public int render(MiluConfiguration configuration, StringBuilder expressionBuilder, Map<String, Object> params,
-			Set<String> columns, int paramIndex) {
+	public int renderSqlTemplate(MiluConfiguration configuration, StringBuilder expressionBuilder, Set<String> columns,
+			int paramIndex) {
 		if(this.isEmpty()) {
 			return paramIndex;
 		}

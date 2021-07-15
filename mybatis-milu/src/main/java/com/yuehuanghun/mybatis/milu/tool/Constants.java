@@ -32,9 +32,28 @@ public interface Constants {
 	String PAGE_KEY = "_MILU_PAGE_";
 	
 	/**
-	 * 
+	 * 列名占位
 	 */
 	String COLUMN_HOLDER = "ColumnHolder";
 	
+	/**
+	 * FROM TABLE 占位
+	 */
 	String TABLE_HOLDER = "__FromTablesHolder__";
+	
+	String CRITERIA = "criteria";
+	
+	String ID = "id";
+	
+	String IDS = "ids";
+	
+	String SORT = "sort";
+	
+	String EXAMPLE = "example";
+	
+	String ENTITY_LIST = "entityList";
+	
+	String ENTITY = "entity";
+	
+	String RESULT_TYPE = "resultType";
 }

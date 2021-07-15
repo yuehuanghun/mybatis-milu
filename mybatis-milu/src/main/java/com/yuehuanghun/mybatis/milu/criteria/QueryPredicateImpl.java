@@ -17,6 +17,7 @@ package com.yuehuanghun.mybatis.milu.criteria;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -31,7 +32,7 @@ import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 import lombok.Getter;
 
 public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate {
-	
+
 	private final Sort sort = new SortImpl();
 	private Limit limit;
 	private Lock lock;
@@ -42,7 +43,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 
 	@Override
 	public QueryPredicate select(String... attrNames) {
-		for(String attrName : attrNames) {
+		for (String attrName : attrNames) {
 			this.selectAttrs.add(attrName);
 		}
 		return this;
@@ -51,8 +52,8 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	@Override
 	public QueryPredicate selects(String attrNameChain) {
 		String[] arry = attrNameChain.split(Segment.COMMA);
-		for(String attrName : arry) {
-			if(StringUtils.isNotBlank(attrName)) {
+		for (String attrName : arry) {
+			if (StringUtils.isNotBlank(attrName)) {
 				selectAttrs.add(attrName.trim());
 			}
 		}
@@ -61,7 +62,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 
 	@Override
 	public QueryPredicate exselect(String... attrNames) {
-		for(String attrName : attrNames) {
+		for (String attrName : attrNames) {
 			this.exselectAttrs.add(attrName);
 		}
 		return this;
@@ -70,17 +71,17 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	@Override
 	public QueryPredicate exselects(String attrNameChain) {
 		String[] arry = attrNameChain.split(Segment.COMMA);
-		for(String attrName : arry) {
-			if(StringUtils.isNotBlank(attrName)) {
+		for (String attrName : arry) {
+			if (StringUtils.isNotBlank(attrName)) {
 				exselectAttrs.add(attrName.trim());
 			}
 		}
 		return this;
 	}
-	
+
 	@Override
 	public QueryPredicate order(String... attrNames) {
-		for(String attrName : attrNames) {
+		for (String attrName : attrNames) {
 			sort.add(attrName);
 		}
 		return this;
@@ -88,7 +89,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 
 	@Override
 	public QueryPredicate order(Direction direction, String... attrNames) {
-		for(String attrName : attrNames) {
+		for (String attrName : attrNames) {
 			sort.add(attrName, direction);
 		}
 		return this;
@@ -111,7 +112,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		this.limit = new LimitImpl(pageSize);
 		return this;
 	}
-	
+
 	@Override
 	public QueryPredicate limit(int pageSize, boolean count) {
 		this.limit = new LimitImpl(pageSize, count);
@@ -123,13 +124,13 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		this.limit = new LimitImpl(pageNum, pageSize, true);
 		return this;
 	}
-	
+
 	@Override
 	public QueryPredicate limit(int pageNum, int pageSize, boolean count) {
 		this.limit = new LimitImpl(pageNum, pageSize, count);
 		return this;
 	}
-	
+
 	@Override
 	public QueryPredicate conditionMode(Mode conditionMode) {
 		super.conditionMode(conditionMode);
@@ -141,7 +142,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		super.and(conditions);
 		return this;
 	}
-	
+
 	@Override
 	public QueryPredicate and(Consumer<Predicate> predicate) {
 		super.and(predicate);
@@ -153,19 +154,19 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		super.or(conditions);
 		return this;
 	}
-	
+
 	@Override
 	public QueryPredicate or(Consumer<Predicate> predicate) {
 		super.or(predicate);
 		return this;
 	}
-	
+
 	@Override
 	public QueryPredicate not(Condition... conditions) {
 		super.or(conditions);
 		return this;
 	}
-	
+
 	@Override
 	public QueryPredicate not(Consumer<Predicate> predicate) {
 		super.not(predicate);
@@ -249,7 +250,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		super.between(attrName, startValue, endValue);
 		return this;
 	}
-	
+
 	@Override
 	public QueryPredicate between(boolean accept, String attrName, Object startValue, Object endValue) {
 		super.between(accept, attrName, startValue, endValue);
@@ -267,7 +268,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		super.notNull(attrName);
 		return this;
 	}
-	
+
 	@Override
 	public QueryPredicate in(String attrName, Object value) {
 		super.in(attrName, value);
@@ -279,7 +280,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		super.notIn(attrName, value);
 		return this;
 	}
-	
+
 	@Override
 	public QueryPredicate eq(boolean accept, String attrName, Object value) {
 		super.eq(accept, attrName, value);
@@ -363,7 +364,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		super.notIn(accept, attrName, value);
 		return this;
 	}
-	
+
 	@Override
 	public QueryPredicate regex(String attrName, Object value) {
 		super.regex(attrName, value);
@@ -375,9 +376,9 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		super.regex(accept, attrName, value);
 		return this;
 	}
-	
+
 	public QueryPredicate lock(LockModeType lockModeType) {
-		if(lockModeType == null) {
+		if (lockModeType == null) {
 			this.lock = null;
 		} else {
 			this.lock = new Lock(lockModeType);
@@ -392,19 +393,60 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	}
 
 	@Override
-	public int render(MiluConfiguration configuration, StringBuilder expressionBuilder, Map<String, Object> params, Set<String> columns, int paramIndex) {
-		paramIndex = super.render(configuration, expressionBuilder, params, columns, paramIndex);
-		
-		sort.render(configuration, expressionBuilder, params, columns, paramIndex);
-		
-		if(limit != null) {
-			limit.render(configuration, expressionBuilder, params, columns, paramIndex);
+	public int renderSqlTemplate(MiluConfiguration configuration, StringBuilder expressionBuilder, Set<String> columns,
+			int paramIndex) {
+		paramIndex = super.renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
+
+		sort.renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
+
+		if (limit != null) {
+			limit.renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
 		}
-		
-		if(lock != null) {
-			lock.render(configuration, expressionBuilder, params, columns, paramIndex);
+
+		if (lock != null) {
+			lock.renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
 		}
-		
+
 		return paramIndex;
+	}
+
+	@Override
+	public int renderParams(Map<String, Object> params, int paramIndex) {
+		paramIndex = super.renderParams(params, paramIndex);
+		paramIndex = sort.renderParams(params, paramIndex);
+		if (limit != null) {
+			paramIndex = limit.renderParams(params, paramIndex);
+		}
+
+		if (lock != null) {
+			paramIndex = lock.renderParams(params, paramIndex);
+		}
+		return paramIndex;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = super.hashCode();
+
+		result = 31 * result + sort.hashCode();
+		result = 31 * result + selectAttrs.hashCode();
+		result = 31 * result + exselectAttrs.hashCode();
+		result = 31 * result + (lock == null ? 0 : lock.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!this.getClass().isInstance(obj)) {
+			return false;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		
+		QueryPredicateImpl that = (QueryPredicateImpl) obj;
+
+		return Objects.equals(this.sort, that.sort) && Objects.equals(this.exselectAttrs, that.exselectAttrs)
+				&& Objects.equals(this.selectAttrs, that.selectAttrs) && Objects.equals(this.lock, that.lock);
 	}
 }

@@ -15,7 +15,7 @@
  */
 package com.yuehuanghun.mybatis.milu.criteria;
 
-import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.LockModeType;
@@ -38,13 +38,26 @@ public class Lock implements Expression {
 	private LockModeType lockModeType;
 
 	@Override
-	public int render(MiluConfiguration configuration, StringBuilder expressionBuilder, Map<String, Object> params,
-			Set<String> columns, int paramIndex) {
+	public int renderSqlTemplate(MiluConfiguration configuration, StringBuilder expressionBuilder, Set<String> columns,
+			int paramIndex) {
 		if(lockModeType != null && LockModeType.NONE != lockModeType) {
 			String lockSql = configuration.getDialect().getLockSql(expressionBuilder.toString(), lockModeType);
 			expressionBuilder.setLength(0);
 			expressionBuilder.append(lockSql);
 		}
 		return paramIndex;
+	}
+
+	@Override
+	public int hashCode() {
+		return lockModeType.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object that) {
+		if(!this.getClass().isInstance(that)) {
+			return false;
+		}
+		return Objects.equals(lockModeType, ((Lock)that).getLockModeType());
 	}
 }

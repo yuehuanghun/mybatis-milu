@@ -16,9 +16,8 @@
 
 package com.yuehuanghun.mybatis.milu.criteria;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -26,7 +25,6 @@ import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.dialect.Dialect;
-import com.yuehuanghun.mybatis.milu.dialect.db.MysqlDialect;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
@@ -402,43 +400,71 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 		super.regex(accept, attrName, value);
 		return this;
 	}
-
+	
 	@Override
-	public int render(MiluConfiguration configuration, StringBuilder expressionBuilder, Map<String, Object> params,
-			Set<String> columns, int paramIndex) {
-		
-		paramIndex = select.render(configuration, expressionBuilder, params, columns, paramIndex);
+	public int renderSqlTemplate(MiluConfiguration configuration, StringBuilder expressionBuilder, Set<String> columns,
+			int paramIndex) {
+		paramIndex = select.renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
 		
 		expressionBuilder.append(Segment.FROM_B).append(Constants.TABLE_HOLDER).append(Segment.WHERE_LABEL);
 		
 		StringBuilder conditionBuilder = new StringBuilder();
-		paramIndex = super.render(configuration, conditionBuilder, params, columns, paramIndex);
+		paramIndex = super.renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
 		
 		expressionBuilder.append(conditionBuilder).append(Segment.WHERE_LABEL_END);
 		
-		paramIndex = group.render(configuration, expressionBuilder, params, columns, paramIndex);
+		paramIndex = group.renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
 		
-		sort.render(configuration, expressionBuilder, params, columns, paramIndex);
+		sort.renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
 	
 		if(limit != null) {
-			limit.render(configuration, expressionBuilder, params, columns, paramIndex);
+			limit.renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
 		}
 		
 		return paramIndex;
 	}
+
+	@Override
+	public int renderParams(Map<String, Object> params, int paramIndex) {
+		paramIndex = select.renderParams(params, paramIndex);
+		
+		paramIndex = super.renderParams(params, paramIndex);
+		
+		paramIndex = group.renderParams(params, paramIndex);;
+		
+		paramIndex = sort.renderParams(params, paramIndex);
 	
-	public static void main(String[] args) {
-		StatisticPredicateImpl p = new StatisticPredicateImpl();
-		p.sum("age").avg("age").eq("classId", 2).groupBy("firstName", "secondName").order("studentId","studentName").limit(10);
+		if(limit != null) {
+			paramIndex = limit.renderParams(params, paramIndex);
+		}
 		
-		StringBuilder expressionBuilder = new StringBuilder(256);
-		Map<String, Object> queryParams = new HashMap<>();
-		Set<String> queryProperties = new HashSet<>();
-		
-		MiluConfiguration configuration = new MiluConfiguration();
-		configuration.setDialect(new MysqlDialect());
-		
-		p.render(configuration, expressionBuilder, queryParams, queryProperties, 0);
-		System.out.println(expressionBuilder.toString());
+		return paramIndex;
+	}	
+
+	@Override
+	public int hashCode() {
+		int result = super.hashCode();
+
+		result = 31 * result + sort.hashCode();
+		result = 31 * result + select.hashCode();
+		result = 31 * result + group.hashCode();
+		result = 31 * result + (limit == null ? 0 : limit.hashCode());
+		return result;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!this.getClass().isInstance(obj)) {
+			return false;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		
+		StatisticPredicateImpl that = (StatisticPredicateImpl) obj;
+
+		return Objects.equals(this.sort, that.sort) && Objects.equals(this.select, that.select)
+				&& Objects.equals(this.group, that.group) && Objects.equals(this.limit, that.limit);
+	}
+
 }

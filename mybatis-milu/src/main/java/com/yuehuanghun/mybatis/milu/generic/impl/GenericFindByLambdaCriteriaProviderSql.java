@@ -21,18 +21,19 @@ import java.util.function.Consumer;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaQueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaQueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
+import com.yuehuanghun.mybatis.milu.tool.Constants;
 
 public class GenericFindByLambdaCriteriaProviderSql extends GenericFindByCriteriaProviderSql {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public String provideSql(GenericProviderContext context, Object params) {
-		Object criteria = ((Map)params).get("criteria");
+		Object criteria = ((Map)params).get(Constants.CRITERIA);
 		
 		LambdaQueryPredicateImpl<?> predicate = new LambdaQueryPredicateImpl<>();
 		((Consumer<LambdaQueryPredicate>)criteria).accept(predicate);
 		
-		((Map)params).put("criteria", predicate.getDelegate()); //覆盖
+		((Map)params).put(Constants.CRITERIA, predicate.getDelegate()); //覆盖
 		
 		return super.provideSql(context, params);
 	}

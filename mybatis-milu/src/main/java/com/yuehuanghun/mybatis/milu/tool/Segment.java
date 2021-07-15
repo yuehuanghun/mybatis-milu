@@ -47,6 +47,7 @@ public interface Segment {
     String IF_TEST_EXAMPLE_NOT_BLANK = "<if test=\"@com.yuehuanghun.mybatis.milu.tool.StringUtils@notBlank(example.";
     String LEFT_BRACE = "{";
     String LEFT_BRACKET = "(";
+    String LEFT_JOIN_B = " LEFT JOIN ";
     String NOT_EQUAL_NULL_CLOSING = " != null\">";
     String NOT_EQUAL_NULL_AND_EXAMPLE = " != null and example.";
     String NOT_EMPTY_NULL_CLOSING = " != ''\">";

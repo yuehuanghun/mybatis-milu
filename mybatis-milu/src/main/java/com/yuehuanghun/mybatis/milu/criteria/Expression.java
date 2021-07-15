@@ -22,9 +22,15 @@ import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 
 public interface Expression {
+	
+	default int renderSqlTemplate(MiluConfiguration configuration, StringBuilder expressionBuilder, Set<String> columns, int paramIndex) {
+		return paramIndex;
+	}
 
-	public int render(MiluConfiguration configuration, StringBuilder expressionBuilder, Map<String, Object> params, Set<String> columns, int paramIndex);
-
+	default int renderParams(Map<String, Object> params, int paramIndex) {
+		return paramIndex;
+	}
+	
 	default String columnHolder(String attrName) {
 		return SqlBuildingHelper.columnHolder(attrName);
 	}

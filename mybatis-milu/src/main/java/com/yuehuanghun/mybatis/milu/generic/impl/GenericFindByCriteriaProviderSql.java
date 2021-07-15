@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import org.apache.ibatis.javassist.scopedpool.SoftValueHashMap;
+
 import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.mybatis.milu.criteria.CriteriaSqlBuilder;
 import com.yuehuanghun.mybatis.milu.criteria.Expression;
@@ -33,10 +35,12 @@ import com.yuehuanghun.mybatis.milu.tool.Constants;
 
 public class GenericFindByCriteriaProviderSql implements GenericProviderSql {
 
+	private final Map<Expression, String> cache = new SoftValueHashMap<>();
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public String provideSql(GenericProviderContext context, Object params) {
-		Object criteria = ((Map)params).get("criteria");
+		Object criteria = ((Map)params).get(Constants.CRITERIA);
 		Expression expression;
 		
 		if(Consumer.class.isInstance(criteria)) {
@@ -47,24 +51,25 @@ public class GenericFindByCriteriaProviderSql implements GenericProviderSql {
 			expression = (Expression)criteria;
 		}
 		
-		StringBuilder expressionBuilder = new StringBuilder(256);
 		Map<String, Object> queryParams = new HashMap<>();
-		Set<String> queryProperties = new HashSet<>();
-		
-		expression.render(context.getConfiguration(), expressionBuilder, queryParams, queryProperties, 0);
-		
+		expression.renderParams(queryParams, 0);		
 		((Map)params).putAll(queryParams);
-		
-		CriteriaSqlBuilder builder = CriteriaSqlBuilder.instance(context.getEntity().getJavaType(), expressionBuilder.toString(), queryProperties, context.getConfiguration());
-		if(QueryPredicateImpl.class.isInstance(expression)) {
-			builder.setSelectAttrs(((QueryPredicateImpl)expression).getSelectAttrs()).setExselectAttrs(((QueryPredicateImpl)expression).getExselectAttrs());
-		}
-		String sqlExpression = builder.build();
 		
 		if(((Map)params).containsKey(Constants.PAGE_KEY)) {
 			Pageable page = (Pageable)((Map)params).get(Constants.PAGE_KEY);
 			PageHelper.startPage(page.getPageNum(), page.getPageSize(), page.isCount());
 		}
+
+		String sqlExpression = cache.computeIfAbsent(expression, (key) -> {
+			StringBuilder expressionBuilder = new StringBuilder(256);
+			Set<String> columns = new HashSet<>();
+			expression.renderSqlTemplate(context.getConfiguration(), expressionBuilder, columns, 0);
+			CriteriaSqlBuilder builder = CriteriaSqlBuilder.instance(context.getEntity().getJavaType(), expressionBuilder.toString(), columns, context.getConfiguration());
+			if(QueryPredicateImpl.class.isInstance(expression)) {
+				builder.setSelectAttrs(((QueryPredicateImpl)expression).getSelectAttrs()).setExselectAttrs(((QueryPredicateImpl)expression).getExselectAttrs());
+			}
+			return builder.build();
+		});
 		
 		return sqlExpression;
 	}

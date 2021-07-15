@@ -16,6 +16,7 @@
 package com.yuehuanghun.mybatis.milu.criteria;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -34,8 +35,14 @@ public class LambdaPredicateImpl<T> implements LambdaPredicate<T> {
 	private PredicateImpl delegate = new PredicateImpl();
 
 	@Override
-	public int render(MiluConfiguration configuration, StringBuilder expressionBuilder, Map<String, Object> params, Set<String> columns, int paramIndex) {
-		return getDelegate().render(configuration, expressionBuilder, params, columns, paramIndex);
+	public int renderSqlTemplate(MiluConfiguration configuration, StringBuilder expressionBuilder, Set<String> columns,
+			int paramIndex) {
+		return getDelegate().renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
+	}
+
+	@Override
+	public int renderParams(Map<String, Object> params, int paramIndex) {
+		return getDelegate().renderParams(params, paramIndex);
 	}
 
 	@Override
@@ -507,5 +514,18 @@ public class LambdaPredicateImpl<T> implements LambdaPredicate<T> {
 	public LambdaPredicate<T> regex(boolean accept, SerializableFunction<T, ?> getterFn, Object value) {
 		getDelegate().regex(accept, LambdaReflections.fnToFieldName(getterFn), value);
 		return this;
+	}
+
+	@Override
+	public int hashCode() {
+		return delegate.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object that) {
+		if(!this.getClass().isInstance(that)) {
+			return false;
+		}
+		return Objects.equals(delegate, ((LambdaPredicateImpl<?>)that).getDelegate());
 	}
 }

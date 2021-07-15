@@ -17,7 +17,7 @@
 package com.yuehuanghun.mybatis.milu.criteria;
 
 import java.util.HashSet;
-import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
@@ -38,10 +38,10 @@ public class SelectImpl implements Select {
 	public void add(String property) {
 		properties.add(property);
 	}
-	
+
 	@Override
-	public int render(MiluConfiguration configuration, StringBuilder expressionBuilder, Map<String, Object> params,
-			Set<String> columns, int paramIndex) {
+	public int renderSqlTemplate(MiluConfiguration configuration, StringBuilder expressionBuilder, Set<String> columns,
+			int paramIndex) {
 		if(functions.isEmpty()) {
 			throw new SqlExpressionBuildingException("未设置统计字段属性");
 		}
@@ -70,5 +70,24 @@ public class SelectImpl implements Select {
 	
 	private String getAlias(String function, String property) {
 		return property + StringUtils.capitalize(function);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = 17;
+
+		result = 31 * result + functions.hashCode();
+		result = 31 * result + properties.hashCode();
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!this.getClass().isInstance(obj)) {
+			return false;
+		}
+		
+		SelectImpl that = (SelectImpl) obj;
+		return Objects.equals(this.functions, that.functions) && Objects.equals(this.properties, that.properties);
 	}
 }

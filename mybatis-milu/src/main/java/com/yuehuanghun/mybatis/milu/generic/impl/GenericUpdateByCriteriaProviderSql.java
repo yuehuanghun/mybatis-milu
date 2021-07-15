@@ -21,21 +21,27 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import org.apache.ibatis.javassist.scopedpool.SoftValueHashMap;
+
 import com.yuehuanghun.mybatis.milu.criteria.CriteriaSqlBuilder;
+import com.yuehuanghun.mybatis.milu.criteria.Expression;
 import com.yuehuanghun.mybatis.milu.criteria.CriteriaSqlBuilder.CriteriaType;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.criteria.Predicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderSql;
+import com.yuehuanghun.mybatis.milu.tool.Constants;
 
 public class GenericUpdateByCriteriaProviderSql implements GenericProviderSql {
 
+	private final Map<Expression, String> cache = new SoftValueHashMap<>();
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public String provideSql(GenericProviderContext context, Object params) {
 		SqlBuildingHelper.fill(params, false, context.getConfiguration());
-		Object criteria = ((Map)params).get("criteria");
+		Object criteria = ((Map)params).get(Constants.CRITERIA);
 		Predicate predicate;
 		
 		if(Consumer.class.isInstance(criteria)) {
@@ -45,15 +51,19 @@ public class GenericUpdateByCriteriaProviderSql implements GenericProviderSql {
 			predicate = (Predicate)criteria;
 		}
 		
-		StringBuilder expressionBuilder = new StringBuilder(128);
 		Map<String, Object> queryParams = new HashMap<>();
-		Set<String> queryProperties = new HashSet<>();
-		
-		predicate.render(context.getConfiguration(), expressionBuilder, queryParams, queryProperties, 0);
-		
+		predicate.renderParams(queryParams, 0);
 		((Map)params).putAll(queryParams);
+
+		String sqlExpression = cache.computeIfAbsent(predicate, (key) -> {
+			StringBuilder expressionBuilder = new StringBuilder(256);
+			Set<String> columns = new HashSet<>();
+			predicate.renderSqlTemplate(context.getConfiguration(), expressionBuilder, columns, 0);
+			CriteriaSqlBuilder builder = CriteriaSqlBuilder.instance(context.getEntity().getJavaType(), expressionBuilder.toString(), columns, context.getConfiguration()).setCriteriaType(CriteriaType.UPDATE);
+			return builder.build();
+		});
 		
-		return CriteriaSqlBuilder.instance(context.getEntity().getJavaType(), expressionBuilder.toString(), queryProperties, context.getConfiguration()).setCriteriaType(CriteriaType.UPDATE).build();
+		return sqlExpression;
 	}
 
 	@Override

@@ -15,6 +15,7 @@
  */
 package com.yuehuanghun.mybatis.milu.criteria;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import javax.persistence.LockModeType;
@@ -553,5 +554,18 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 	public LambdaQueryPredicate<T> lock() {
 		getDelegate().lock();
 		return this;
+	}	
+
+	@Override
+	public int hashCode() {
+		return delegate.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object that) {
+		if(!this.getClass().isInstance(that)) {
+			return false;
+		}
+		return Objects.equals(delegate, ((LambdaQueryPredicateImpl<?>)that).getDelegate());
 	}
 }

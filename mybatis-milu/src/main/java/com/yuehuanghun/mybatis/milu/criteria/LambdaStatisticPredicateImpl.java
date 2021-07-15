@@ -15,6 +15,7 @@
  */
 package com.yuehuanghun.mybatis.milu.criteria;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
@@ -579,4 +580,16 @@ public class LambdaStatisticPredicateImpl<T> extends LambdaPredicateImpl<T> impl
 		return this;
 	}
 
+	@Override
+	public int hashCode() {
+		return delegate.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object that) {
+		if(!this.getClass().isInstance(that)) {
+			return false;
+		}
+		return Objects.equals(delegate, ((LambdaStatisticPredicateImpl<?>)that).getDelegate());
+	}
 }

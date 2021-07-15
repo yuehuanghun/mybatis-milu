@@ -16,6 +16,7 @@
 package com.yuehuanghun.mybatis.milu.criteria;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
@@ -131,9 +132,36 @@ public class ConditionImpl implements Condition {
 	}
 
 	@Override
-	public int render(MiluConfiguration configuration, StringBuilder expressionBuilder, Map<String, Object> params, Set<String> columns, int paramIndex) {
+	public int renderSqlTemplate(MiluConfiguration configuration, StringBuilder expressionBuilder, Set<String> columns, int paramIndex) {
 		String express = configuration.getDialect().getPartTypeExpression(getType());
 
+		Object[] keys = new Object[getParams().length];
+		if(getType().getNumberOfArguments() > 0) {
+			for(int i = 0; i < getParams().length; i++) {
+				String key = attributeName + "_" + paramIndex;
+				if(getType() == Type.IN || getType() == Type.NOT_IN) { //collection
+					keys[i] = key;
+				} else {
+					keys[i] = Segment.HASH_LEFT_BRACE +  key + Segment.RIGHT_BRACE;
+				}
+				
+				paramIndex ++;
+			}
+		}
+		
+		String partTypeExpression = String.format(express, keys);
+		if(partTypeExpression.contains(Constants.COLUMN_HOLDER)) {
+			expressionBuilder.append(partTypeExpression.replace(Constants.COLUMN_HOLDER, Segment.DOLLAR + attributeName + Segment.DOLLAR));
+		} else {
+			expressionBuilder.append(Segment.DOLLAR).append(attributeName).append(Segment.DOLLAR).append(partTypeExpression);
+		}
+		
+		columns.add(attributeName);
+		return paramIndex;
+	}
+
+	@Override
+	public int renderParams(Map<String, Object> params, int paramIndex) {
 		Object[] keys = new Object[getParams().length];
 		if(getType().getNumberOfArguments() > 0) {
 			for(int i = 0; i < getParams().length; i++) {
@@ -149,15 +177,24 @@ public class ConditionImpl implements Condition {
 			}
 		}
 		
-		columns.add(attributeName);
-		
-		String partTypeExpression = String.format(express, keys);
-		if(partTypeExpression.contains(Constants.COLUMN_HOLDER)) {
-			expressionBuilder.append(partTypeExpression.replace(Constants.COLUMN_HOLDER, Segment.DOLLAR + attributeName + Segment.DOLLAR));
-		} else {
-			expressionBuilder.append(Segment.DOLLAR).append(attributeName).append(Segment.DOLLAR).append(partTypeExpression);
-		}
-		
 		return paramIndex;
+	}
+	
+
+	@Override
+	public boolean equals(Object that) {
+		if(!this.getClass().isInstance(that)) {
+			return false;
+		}
+		return Objects.equals(this.getType(), ((ConditionImpl)that).getType()) && Objects.equals(this.getAttributeName(), ((ConditionImpl)that).getAttributeName());
+	}
+
+	@Override
+	public int hashCode() {
+		int result = 17;
+
+		result = 31 * result + type.hashCode();
+		result = 31 * result + attributeName.hashCode();
+		return result;
 	}
 }

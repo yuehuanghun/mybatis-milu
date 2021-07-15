@@ -21,10 +21,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import org.apache.ibatis.javassist.scopedpool.SoftValueHashMap;
+
 import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.mybatis.milu.criteria.CriteriaSqlBuilder;
 import com.yuehuanghun.mybatis.milu.criteria.Expression;
 import com.yuehuanghun.mybatis.milu.criteria.Predicate;
+import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.criteria.StatisticPredicateImpl;
 import com.yuehuanghun.mybatis.milu.criteria.CriteriaSqlBuilder.CriteriaType;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
@@ -35,14 +38,16 @@ import com.yuehuanghun.mybatis.milu.tool.Constants;
 
 public class GenericStatisticByCriteriaProviderSql implements GenericProviderSql {
 
+	private final Map<Expression, String> cache = new SoftValueHashMap<>();
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public String provideSql(GenericProviderContext context, Object params) {
 		Map paramMap = ((Map)params);
-		Object criteria = paramMap.get("criteria");		
+		Object criteria = paramMap.get(Constants.CRITERIA);		
 		
-		if(paramMap.containsKey("resultType")) { //动态resultType
-			ResultMapHelper.setResultType((Class<?>) paramMap.remove("resultType"));
+		if(paramMap.containsKey(Constants.RESULT_TYPE)) { //动态resultType
+			ResultMapHelper.setResultType((Class<?>) paramMap.remove(Constants.RESULT_TYPE));
 		}
 		
 		Expression expression;
@@ -55,22 +60,25 @@ public class GenericStatisticByCriteriaProviderSql implements GenericProviderSql
 			expression = (Expression)criteria;
 		}
 		
-		StringBuilder expressionBuilder = new StringBuilder(1024);
 		Map<String, Object> queryParams = new HashMap<>();
-		Set<String> queryProperties = new HashSet<>();
+		expression.renderParams(queryParams, 0);		
+		((Map)params).putAll(queryParams);
 		
-		expression.render(context.getConfiguration(), expressionBuilder, queryParams, queryProperties, 0);
-		
-		paramMap.putAll(queryParams);
-		
-		CriteriaSqlBuilder builder = CriteriaSqlBuilder.instance(context.getEntity().getJavaType(), expressionBuilder.toString(), queryProperties, context.getConfiguration()).setCriteriaType(CriteriaType.STATISTIC);
-
-		String sqlExpression = builder.build();
-		
-		if(paramMap.containsKey(Constants.PAGE_KEY)) {
-			Pageable page = (Pageable)paramMap.get(Constants.PAGE_KEY);
+		if(((Map)params).containsKey(Constants.PAGE_KEY)) {
+			Pageable page = (Pageable)((Map)params).get(Constants.PAGE_KEY);
 			PageHelper.startPage(page.getPageNum(), page.getPageSize(), page.isCount());
 		}
+
+		String sqlExpression = cache.computeIfAbsent(expression, (key) -> {
+			StringBuilder expressionBuilder = new StringBuilder(256);
+			Set<String> columns = new HashSet<>();
+			expression.renderSqlTemplate(context.getConfiguration(), expressionBuilder, columns, 0);
+			CriteriaSqlBuilder builder = CriteriaSqlBuilder.instance(context.getEntity().getJavaType(), expressionBuilder.toString(), columns, context.getConfiguration()).setCriteriaType(CriteriaType.STATISTIC);
+			if(QueryPredicateImpl.class.isInstance(expression)) {
+				builder.setSelectAttrs(((QueryPredicateImpl)expression).getSelectAttrs()).setExselectAttrs(((QueryPredicateImpl)expression).getExselectAttrs());
+			}
+			return builder.build();
+		});
 		
 		return sqlExpression;
 	}

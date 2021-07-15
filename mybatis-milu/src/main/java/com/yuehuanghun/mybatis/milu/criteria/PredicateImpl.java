@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -37,7 +38,7 @@ import lombok.experimental.Accessors;
 public class PredicateImpl implements Predicate {
 
 	private Logic logic = Logic.AND;
-	
+
 	private Mode conditionMode = Mode.NOT_EMPTY;
 
 	private List<Condition> conditionList = new ArrayList<>();
@@ -392,7 +393,8 @@ public class PredicateImpl implements Predicate {
 	}
 
 	@Override
-	public int render(MiluConfiguration configuration, StringBuilder expressionBuilder, Map<String, Object> params, Set<String> columns, int paramIndex) {
+	public int renderSqlTemplate(MiluConfiguration configuration, StringBuilder expressionBuilder, Set<String> columns,
+			int paramIndex) {
 		if(conditionList.isEmpty()) {
 			return paramIndex;
 		}
@@ -407,12 +409,37 @@ public class PredicateImpl implements Predicate {
 		}
 		
 		for(Condition condition : conditionList) {
-			paramIndex = condition.render(configuration, expressionBuilder, params, columns, paramIndex);
+			paramIndex = condition.renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
 		}
 		
 		if(group) {
 			expressionBuilder.append(Segment.RIGHT_BRACKET);
 		}
 		return paramIndex;
+	}
+
+	@Override
+	public int renderParams(Map<String, Object> params, int paramIndex) {
+		for(Condition condition : conditionList) {
+			paramIndex = condition.renderParams(params, paramIndex);
+		}
+		return paramIndex;
+	}
+
+	@Override
+	public int hashCode() {
+		return logic.hashCode() + conditionMode.hashCode() + conditionList.hashCode() + depth;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(!this.getClass().isInstance(obj)) {
+			return false;
+		}
+		
+		PredicateImpl that = (PredicateImpl) obj;
+		
+		return Objects.equals(this.logic, that.logic) && Objects.equals(this.conditionMode, that.conditionMode) && 
+				Objects.equals(this.conditionList, that.conditionList) && this.depth == that.depth;
 	}
 }

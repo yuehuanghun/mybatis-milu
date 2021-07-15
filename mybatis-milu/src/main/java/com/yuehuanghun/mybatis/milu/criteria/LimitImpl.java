@@ -16,9 +16,7 @@
 package com.yuehuanghun.mybatis.milu.criteria;
 
 import java.util.Map;
-import java.util.Set;
 
-import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 import com.yuehuanghun.mybatis.milu.tool.Assert;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
@@ -56,7 +54,7 @@ public class LimitImpl implements Limit, Pageable {
 	}
 
 	@Override
-	public int render(MiluConfiguration configuration, StringBuilder expressionBuilder, Map<String, Object> params, Set<String> columns, int paramIndex) {
+	public int renderParams(Map<String, Object> params, int paramIndex) {
 		params.put(Constants.PAGE_KEY, this);
 		return paramIndex;
 	}

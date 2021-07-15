@@ -31,6 +31,7 @@ import com.yuehuanghun.mybatis.milu.criteria.Predicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.StatisticPredicate;
 import com.yuehuanghun.mybatis.milu.data.Sort;
+import com.yuehuanghun.mybatis.milu.tool.Constants;
 
 /**
  * 通用查询方法接口<br>
@@ -47,14 +48,14 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param id 主键
 	 * @return 唯一行
 	 */
-	Optional<T> findById(@Param("id")ID id);
+	Optional<T> findById(@Param(Constants.ID)ID id);
 	
 	/**
 	 * 通过ID集合查询一组数据，如果实体类未声明ID，则不可使用此方法
 	 * @param ids 主键集合
 	 * @return 列表
 	 */
-	List<T> findByIds(@Param("ids")Collection<ID> ids);
+	List<T> findByIds(@Param(Constants.IDS)Collection<ID> ids);
 	
 	/**
 	 * 查询表所有数据
@@ -67,14 +68,14 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param sort 排序
 	 * @return 列表
 	 */
-	List<T> findAllAndSort(@Param("sort")Sort sort);
+	List<T> findAllAndSort(@Param(Constants.SORT)Sort sort);
 	
 	/**
 	 * 使用实体类作为查询参数，非null值才会参与查询，关联表属性无效
 	 * @param example 条件
 	 * @return 列表
 	 */
-	List<T> findByExample(@Param("example")T example);
+	List<T> findByExample(@Param(Constants.EXAMPLE)T example);
 	
 	/**
 	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效
@@ -82,7 +83,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param sort 排序
 	 * @return 列表
 	 */
-	List<T> findByExampleAndSort(@Param("example")T example, @Param("sort")Sort sort);
+	List<T> findByExampleAndSort(@Param(Constants.EXAMPLE)T example, @Param(Constants.SORT)Sort sort);
 	
 	/**
 	 * 插入一条数据
@@ -97,7 +98,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param entityList 新增实体对象列表
 	 * @return 影响行数
 	 */
-	int batchInsert(@Param("entityList")Collection<T> entityList);
+	int batchInsert(@Param(Constants.ENTITY_LIST)Collection<T> entityList);
 	
 	/**
 	 * 通过ID更新，非null值被更新<br>
@@ -105,70 +106,70 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param entity 更新对象
 	 * @return 影响行数
 	 */
-	int updateById(@Param("entity")T entity);
+	int updateById(@Param(Constants.ENTITY)T entity);
 	
 	/**
 	 * 通过ID删除单条数据
 	 * @param id 主键
 	 * @return 影响行数
 	 */
-	int deleteById(@Param("id")ID id);
+	int deleteById(@Param(Constants.ID)ID id);
 	
 	/**
 	 * 通过ID集合删除批量数据
 	 * @param ids 主键集合
 	 * @return 影响行数
 	 */
-	int deleteByIds(@Param("ids")Collection<ID> ids);
+	int deleteByIds(@Param(Constants.IDS)Collection<ID> ids);
 
 	/**
 	 * 以实体类为参数进行统计行数
 	 * @param example 条件
 	 * @return 影响行数
 	 */
-	int countByExample(@Param("example")T example);
+	int countByExample(@Param(Constants.EXAMPLE)T example);
 
 	/**
 	 * 动态条件计算行数
 	 * @param predicate 条件
 	 * @return 影响行数
 	 */
-	int countByCriteria(@Param("criteria")Predicate predicate);
+	int countByCriteria(@Param(Constants.CRITERIA)Predicate predicate);
 	
 	/**
 	 * 动态条件计算行数
 	 * @param predicate 条件
 	 * @return 影响行数
 	 */
-	int countByCriteria(@Param("criteria")Consumer<Predicate> predicate);
+	int countByCriteria(@Param(Constants.CRITERIA)Consumer<Predicate> predicate);
 	
 	/**
 	 * 动态条件计算行数
 	 * @param predicate 条件
 	 * @return 影响行数
 	 */
-	int countByLambdaCriteria(@Param("criteria")Consumer<LambdaPredicate<T>> predicate);
+	int countByLambdaCriteria(@Param(Constants.CRITERIA)Consumer<LambdaPredicate<T>> predicate);
 	
 	/**
 	 * 动态条件查询<br>
 	 * @param predicate 条件
 	 * @return 列表
 	 */
-	List<T> findByCriteria(@Param("criteria")QueryPredicate predicate);
+	List<T> findByCriteria(@Param(Constants.CRITERIA)QueryPredicate predicate);
 	
 	/**
 	 * 动态条件查询<br>
 	 * @param predicate 条件
 	 * @return 列表
 	 */
-	List<T> findByCriteria(@Param("criteria")Consumer<QueryPredicate> predicate);
+	List<T> findByCriteria(@Param(Constants.CRITERIA)Consumer<QueryPredicate> predicate);
 	
 	/**
 	 * lambda表达式动态条件查询
 	 * @param predicate 条件
 	 * @return 列表
 	 */
-	List<T> findByLambdaCriteria(@Param("criteria")Consumer<LambdaQueryPredicate<T>> predicate);
+	List<T> findByLambdaCriteria(@Param(Constants.CRITERIA)Consumer<LambdaQueryPredicate<T>> predicate);
 	
 	/**
 	 * 动态条件更新<br>
@@ -177,7 +178,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param predicate Where条件
 	 * @return 影响行数
 	 */
-	int updateByCriteria(@Param("entity")T entity, @Param("criteria")Predicate predicate);
+	int updateByCriteria(@Param(Constants.ENTITY)T entity, @Param(Constants.CRITERIA)Predicate predicate);
 	
 	/**
 	 * 动态条件更新<br>
@@ -186,7 +187,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param predicate Where条件
 	 * @return 影响行数
 	 */
-	int updateByCriteria(@Param("entity")T entity, @Param("criteria")Consumer<Predicate> predicate);
+	int updateByCriteria(@Param(Constants.ENTITY)T entity, @Param(Constants.CRITERIA)Consumer<Predicate> predicate);
 	
 	/**
 	 * 动态条件更新<br>
@@ -194,42 +195,42 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param predicate Where条件
 	 * @return 影响行数
 	 */
-	int updateByLambdaCriteria(@Param("entity")T entity, @Param("criteria")Consumer<LambdaPredicate<T>> predicate);
+	int updateByLambdaCriteria(@Param(Constants.ENTITY)T entity, @Param(Constants.CRITERIA)Consumer<LambdaPredicate<T>> predicate);
 	
 	/**
 	 * 动态条件删除<br>
 	 * @param predicate 条件
 	 * @return 影响行数
 	 */
-	int deleteByCriteria(@Param("criteria")Predicate predicate);
+	int deleteByCriteria(@Param(Constants.CRITERIA)Predicate predicate);
 	
 	/**
 	 * 动态条件删除<br>
 	 * @param predicate 条件
 	 * @return 影响行数
 	 */
-	int deleteByCriteria(@Param("criteria")Consumer<Predicate> predicate);
+	int deleteByCriteria(@Param(Constants.CRITERIA)Consumer<Predicate> predicate);
 	
 	/**
 	 * 动态条件删除<br>
 	 * @param predicate 条件
 	 * @return 影响行数
 	 */
-	int deleteByLambdaCriteria(@Param("criteria")Consumer<LambdaPredicate<T>> predicate);
+	int deleteByLambdaCriteria(@Param(Constants.CRITERIA)Consumer<LambdaPredicate<T>> predicate);
 	
 	/**
 	 * 动态统计数据
 	 * @param predicate 条件
 	 * @return 统计数据列表
 	 */
-	List<Map<String, Object>> statisticByCriteria(@Param("criteria") StatisticPredicate predicate);
+	List<Map<String, Object>> statisticByCriteria(@Param(Constants.CRITERIA) StatisticPredicate predicate);
 	
 	/**
 	 * 动态统计数据
 	 * @param predicate 条件
 	 * @return 统计数据列表
 	 */
-	List<Map<String, Object>> statisticByCriteria(@Param("criteria") Consumer<StatisticPredicate> predicate);
+	List<Map<String, Object>> statisticByCriteria(@Param(Constants.CRITERIA) Consumer<StatisticPredicate> predicate);
 	
 	/**
 	 * 动态统计数据
@@ -238,14 +239,14 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param resultType 结果类
 	 * @return 统计数据列表
 	 */
-	<E> List<E> statisticByCriteria(@Param("criteria") Consumer<StatisticPredicate> predicate, @Param("resultType") Class<E> resultType);
+	<E> List<E> statisticByCriteria(@Param(Constants.CRITERIA) Consumer<StatisticPredicate> predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType);
 	
 	/**
 	 * 动态统计数据
 	 * @param predicate 条件
 	 * @return 统计数据列表
 	 */
-	List<Map<String, Object>> statisticByLambdaCriteria(@Param("criteria") Consumer<LambdaStatisticPredicate<T>> predicate);
+	List<Map<String, Object>> statisticByLambdaCriteria(@Param(Constants.CRITERIA) Consumer<LambdaStatisticPredicate<T>> predicate);
 	
 	/**
 	 * 动态统计数据
@@ -254,7 +255,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param resultType 结果类
 	 * @return 统计数据列表
 	 */
-	<E> List<E> statisticByLambdaCriteria(@Param("criteria") Consumer<LambdaStatisticPredicate<T>> predicate, @Param("resultType") Class<E> resultType);
+	<E> List<E> statisticByLambdaCriteria(@Param(Constants.CRITERIA) Consumer<LambdaStatisticPredicate<T>> predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType);
 	
 	/**
 	 * 刷新执行查询到数据库
