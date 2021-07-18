@@ -165,11 +165,29 @@ public interface BaseMapper<T, ID extends Serializable> {
 	List<T> findByCriteria(@Param(Constants.CRITERIA)Consumer<QueryPredicate> predicate);
 	
 	/**
+	 * 动态条件查询<br>
+	 * @param <E> 元素
+	 * @param predicate 条件
+	 * @param resultType 结果类
+	 * @return 列表
+	 */
+	<E> List<E> findByCriteria(@Param(Constants.CRITERIA)Consumer<QueryPredicate> predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType);
+	
+	/**
 	 * lambda表达式动态条件查询
 	 * @param predicate 条件
 	 * @return 列表
 	 */
 	List<T> findByLambdaCriteria(@Param(Constants.CRITERIA)Consumer<LambdaQueryPredicate<T>> predicate);
+
+	/**
+	 * 动态条件查询<br>
+	 * @param <E> 元素
+	 * @param predicate 条件
+	 * @param resultType 结果类
+	 * @return 列表
+	 */
+	<E> List<E> findByLambdaCriteria(@Param(Constants.CRITERIA)Consumer<LambdaQueryPredicate<T>> predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType);
 	
 	/**
 	 * 动态条件更新<br>

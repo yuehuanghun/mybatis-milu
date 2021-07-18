@@ -30,6 +30,7 @@ import com.yuehuanghun.mybatis.milu.criteria.Predicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderSql;
+import com.yuehuanghun.mybatis.milu.mapping.ResultMapHelper;
 import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
 
@@ -40,7 +41,8 @@ public class GenericFindByCriteriaProviderSql implements GenericProviderSql {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public String provideSql(GenericProviderContext context, Object params) {
-		Object criteria = ((Map)params).get(Constants.CRITERIA);
+		Map paramMap = ((Map)params);
+		Object criteria = paramMap.get(Constants.CRITERIA);
 		Expression expression;
 		
 		if(Consumer.class.isInstance(criteria)) {
@@ -50,13 +52,17 @@ public class GenericFindByCriteriaProviderSql implements GenericProviderSql {
 		} else {
 			expression = (Expression)criteria;
 		}
+
+		if(paramMap.containsKey(Constants.RESULT_TYPE)) { //动态resultType
+			ResultMapHelper.setResultType((Class<?>) paramMap.remove(Constants.RESULT_TYPE));
+		}
 		
 		Map<String, Object> queryParams = new HashMap<>();
 		expression.renderParams(queryParams, 0);		
-		((Map)params).putAll(queryParams);
+		paramMap.putAll(queryParams);
 		
-		if(((Map)params).containsKey(Constants.PAGE_KEY)) {
-			Pageable page = (Pageable)((Map)params).get(Constants.PAGE_KEY);
+		if(paramMap.containsKey(Constants.PAGE_KEY)) {
+			Pageable page = (Pageable)paramMap.get(Constants.PAGE_KEY);
 			PageHelper.startPage(page.getPageNum(), page.getPageSize(), page.isCount());
 		}
 
