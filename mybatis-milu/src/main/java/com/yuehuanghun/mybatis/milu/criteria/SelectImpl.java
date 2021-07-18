@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
+import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
@@ -50,9 +51,9 @@ public class SelectImpl implements Select {
 		functions.forEach(function -> {
 			expressionBuilder.append(String.format(configuration.getDialect().getFunctionExpression(function.getFunctionName()), columnHolder(function.getPropertyName())));
 			if(StringUtils.isNotBlank(function.getAlias())) {
-				expressionBuilder.append(Segment.SPACE).append(function.getAlias());
+				expressionBuilder.append(Segment.SPACE).append(SqlBuildingHelper.wrapIdentifier(function.getAlias(), configuration));
 			} else {
-				expressionBuilder.append(Segment.SPACE).append(getAlias(function.getFunctionName(), function.getPropertyName()));
+				expressionBuilder.append(Segment.SPACE).append(SqlBuildingHelper.wrapIdentifier(getAlias(function.getFunctionName(), function.getPropertyName()), configuration));
 			}
 			expressionBuilder.append(Segment.COMMA_B);
 			columns.add(function.getPropertyName());

@@ -227,7 +227,8 @@ public class SqlBuilder {
 			}
 			String columnName = getColumn(mainTableAlias, part.getProperty());
 			sb.append(String.format(configuration.getDialect().getFunctionExpression(part.getFunction()), columnName));
-			sb.append(Segment.SPACE).append(getAlias(part.getFunction(), part.getProperty()));
+			sb.append(Segment.SPACE);
+			SqlBuildingHelper.appendIdentifier(sb, getAlias(part.getFunction(), part.getProperty()), configuration);
 		});;
 		if(!partTree.getGroupProperties().isEmpty()) { //分组字段
 			sb.append(Segment.COMMA_B).append(groupByColumns(mainTableAlias, true));
@@ -247,7 +248,8 @@ public class SqlBuilder {
 			}
 			sb.append(getColumn(mainTableAlias, property));
 			if(withAlias) {
-				sb.append(Segment.SPACE).append(property);
+				sb.append(Segment.SPACE);
+				SqlBuildingHelper.appendIdentifier(sb, property, configuration);
 			}
 		});
 		return sb.toString();

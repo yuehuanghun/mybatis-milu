@@ -49,7 +49,6 @@ import org.apache.ibatis.annotations.SelectKey;
 import org.apache.ibatis.annotations.TypeDiscriminator;
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
 import org.apache.ibatis.builder.BuilderException;
-import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -87,7 +86,6 @@ import com.yuehuanghun.mybatis.milu.id.TableKeyGenerator;
 import com.yuehuanghun.mybatis.milu.id.tablekey.TableKeySelectSqlSource;
 import com.yuehuanghun.mybatis.milu.id.tablekey.TableKeyUpdateSqlSource;
 import com.yuehuanghun.mybatis.milu.mapping.MiluMapperBuilderAssistant;
-import com.yuehuanghun.mybatis.milu.mapping.SqlSourceWrapper;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.IdAttribute;
@@ -96,7 +94,7 @@ import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
 public class MapperNamingQueryBuilder {
 	private final MiluConfiguration configuration;
-	private final MapperBuilderAssistant assistant;
+	private final MiluMapperBuilderAssistant assistant;
 	private final Class<?> type;
 	private final static List<ResultFlag> ID_FLAG_LIST = Arrays.asList(ResultFlag.ID);
 
@@ -282,7 +280,7 @@ public class MapperNamingQueryBuilder {
 							if(configuration.hasKeyGenerator(sequenceGenerator.name())){
 								keyGenerator = configuration.getKeyGenerator(sequenceGenerator.name());
 							} else {
-								keyGenerator = handleSequenceGeneratorAnnotation(sequenceGenerator, mappedStatementId, keyProperty, keyColumn, languageDriver);							
+								keyGenerator = handleSequenceGeneratorAnnotation(sequenceGenerator, mappedStatementId, keyProperty, keyColumn, idAttr.getJavaType(), languageDriver);							
 								configuration.addKeyGenerator(sequenceGenerator.name(), keyGenerator);
 							}
 						}
@@ -520,7 +518,7 @@ public class MapperNamingQueryBuilder {
 
 	private SqlSource buildSqlSourceFromStrings(String[] strings, Class<?> parameterTypeClass,
 			LanguageDriver languageDriver) {
-		return new SqlSourceWrapper(languageDriver.createSqlSource(configuration, String.join(" ", strings).trim(), parameterTypeClass));
+		return languageDriver.createSqlSource(configuration, String.join(" ", strings).trim(), parameterTypeClass);
 	}
 	
 	private String getExpression(Method method) {
@@ -657,7 +655,7 @@ public class MapperNamingQueryBuilder {
 							if(configuration.hasKeyGenerator(sequenceGenerator.name())){
 								keyGenerator = configuration.getKeyGenerator(sequenceGenerator.name());
 							} else {
-								keyGenerator = handleSequenceGeneratorAnnotation(sequenceGenerator, mappedStatementId, keyProperty, keyColumn, languageDriver);							
+								keyGenerator = handleSequenceGeneratorAnnotation(sequenceGenerator, mappedStatementId, keyProperty, keyColumn, idAttr.getJavaType(), languageDriver);							
 								configuration.addKeyGenerator(sequenceGenerator.name(), keyGenerator);
 							}
 						}
@@ -698,13 +696,13 @@ public class MapperNamingQueryBuilder {
 		assistant.addMappedStatement(mappedStatementId, sqlSource, statementType, sqlCommandType, fetchSize,
 				timeout,
 				null, parameterTypeClass, resultMapId, getReturnType(method), resultSetType, flushCache, useCache,
-				false, keyGenerator, keyProperty, keyColumn, configuration.getDatabaseId(), languageDriver,null);
+				false, keyGenerator, keyProperty, keyColumn, configuration.getDatabaseId(), languageDriver,null, true);
 	}
 	
-	private KeyGenerator handleSequenceGeneratorAnnotation(SequenceGenerator sequenceGenerator, String baseStatementId, String keyProperty, String keyColumn, LanguageDriver languageDriver) {
+	private KeyGenerator handleSequenceGeneratorAnnotation(SequenceGenerator sequenceGenerator, String baseStatementId, String keyProperty, String keyColumn, Class<?> keyJavaType, LanguageDriver languageDriver) {
 	    String id = baseStatementId + "!" + sequenceGenerator.name();
 	    // defaults
-	    Class<?> resultTypeClass = Long.class;
+	    Class<?> resultTypeClass = keyJavaType;
 	    Class<?> parameterTypeClass = Object.class;
 	    StatementType statementType = StatementType.PREPARED;
 	    boolean useCache = false;

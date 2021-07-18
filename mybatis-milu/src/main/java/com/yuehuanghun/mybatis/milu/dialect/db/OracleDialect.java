@@ -17,6 +17,7 @@ package com.yuehuanghun.mybatis.milu.dialect.db;
 
 import com.yuehuanghun.mybatis.milu.data.Part.Type;
 import com.yuehuanghun.mybatis.milu.dialect.AbstractDialect;
+import com.yuehuanghun.mybatis.milu.tool.Constants;
 
 /**
  * ORACLE
@@ -47,6 +48,6 @@ public class OracleDialect extends AbstractDialect {
 		partTypeExpressionMap.put(Type.ENDING_WITH, " LIKE '%%' || %s ");
 		partTypeExpressionMap.put(Type.NOT_CONTAINING, " NOT LIKE '%%' || %s || '%%' ");
 		partTypeExpressionMap.put(Type.CONTAINING, " LIKE '%%' || %s || '%%' ");
-		partTypeExpressionMap.put(Type.REGEX, " REGEXP_LIKE(ColumnHolder, %s ");
+		partTypeExpressionMap.put(Type.REGEX, " REGEXP_LIKE(" + Constants.COLUMN_HOLDER + ", %s )");
 	}
 }

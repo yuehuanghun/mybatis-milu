@@ -56,6 +56,14 @@ public class MiluMapperBuilderAssistant extends MapperBuilderAssistant {
 			Class<?> parameterType, String resultMap, Class<?> resultType, ResultSetType resultSetType,
 			boolean flushCache, boolean useCache, boolean resultOrdered, KeyGenerator keyGenerator, String keyProperty,
 			String keyColumn, String databaseId, LanguageDriver lang, String resultSets) {
+		return addMappedStatement(id, sqlSource, statementType, sqlCommandType, fetchSize, timeout, parameterMap, parameterType, resultMap, resultType, resultSetType, flushCache, useCache, resultOrdered, keyGenerator, keyProperty, keyColumn, databaseId, lang, resultSets, false);
+	}
+	
+	public MappedStatement addMappedStatement(String id, SqlSource sqlSource, StatementType statementType,
+			SqlCommandType sqlCommandType, Integer fetchSize, Integer timeout, String parameterMap,
+			Class<?> parameterType, String resultMap, Class<?> resultType, ResultSetType resultSetType,
+			boolean flushCache, boolean useCache, boolean resultOrdered, KeyGenerator keyGenerator, String keyProperty,
+			String keyColumn, String databaseId, LanguageDriver lang, String resultSets, boolean dynamicResultType) {
 
 		if (unresolvedCacheRef) {
 			throw new IncompleteElementException("Cache-ref not yet resolved");
@@ -68,7 +76,7 @@ public class MiluMapperBuilderAssistant extends MapperBuilderAssistant {
 				sqlCommandType).resource(resource).fetchSize(fetchSize).timeout(timeout).statementType(statementType)
 						.keyGenerator(keyGenerator).keyProperty(keyProperty).keyColumn(keyColumn).databaseId(databaseId)
 						.lang(lang).resultOrdered(resultOrdered).resultSets(resultSets)
-						.resultMaps(getStatementResultMaps(resultMap, resultType, id)).resultSetType(resultSetType)
+						.resultMaps(getStatementResultMaps(resultMap, resultType, id, dynamicResultType)).resultSetType(resultSetType)
 						.flushCacheRequired(valueOrDefault(flushCache, !isSelect))
 						.useCache(valueOrDefault(useCache, isSelect)).cache(currentCache);
 
@@ -104,10 +112,10 @@ public class MiluMapperBuilderAssistant extends MapperBuilderAssistant {
 		return parameterMap;
 	}
 
-	private List<ResultMap> getStatementResultMaps(String resultMap, Class<?> resultType, String statementId) {
+	private List<ResultMap> getStatementResultMaps(String resultMap, Class<?> resultType, String statementId, boolean dynamicResultMap) {
 		resultMap = applyCurrentNamespace(resultMap, true);
 
-		List<ResultMap> resultMaps = new DynamicResultMapList();
+		List<ResultMap> resultMaps = dynamicResultMap ? new DynamicResultMapList() : new ArrayList<>();
 		if (resultMap != null) {
 			String[] resultMapNames = resultMap.split(",");
 			for (String resultMapName : resultMapNames) {
