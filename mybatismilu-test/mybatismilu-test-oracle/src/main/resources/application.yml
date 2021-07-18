@@ -22,3 +22,4 @@ spring.datasource:
     
 logging:
     level.com.yuehuanghun: debug
+    file: ./logs/milutest-orc.log

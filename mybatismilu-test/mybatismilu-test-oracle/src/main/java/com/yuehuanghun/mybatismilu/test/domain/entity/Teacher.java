@@ -8,6 +8,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.Version;
+
+import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
+import com.yuehuanghun.mybatis.milu.annotation.Filler;
 
 import lombok.Data;
 
@@ -23,6 +27,11 @@ public class Teacher {
 	private String name;
 	
 	private Integer age;
+
+	@Version
+	@AttributeOptions(filler = @Filler(fillOnInsert = true))
+	private Integer revision;
+	
 	@ManyToMany
 	@JoinTable(name = "class_teacher_rel", joinColumns = @JoinColumn(name = "teacher_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "class_id", referencedColumnName = "id"))
 	private List<Classs> classList; //多对多引用演示

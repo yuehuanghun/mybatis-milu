@@ -3,6 +3,7 @@ package com.yuehuanghun.mybatismilu.test.domain.mapper;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -25,4 +26,14 @@ public interface StudentMapper extends BaseMapper<Student, Long> {
 	public List<Student> findByClasssNameOrderByClasssIdDescAddTimeAsc(String className);
 	@NamingQuery
 	public List<Student> findByUpdateTimeNotNull();
+	@NamingQuery
+	public List<Map<String, Object>> sumAgeAvgAgeCountIdByGroupByClassId();
+	@NamingQuery
+	public Map<String, Object> sumAgeAvgAgeCountIdBy();
+	@NamingQuery
+	public List<Map<String, Object>> sumAgeAvgAgeCountIdByGroupByClassIdAndUpdateTime();
+	@NamingQuery
+	public List<Map<String, Object>> sumAgeAvgAgeCountIdByUpdateTimeGroupByClassIdOrderByClassId(Date updateTime);
+	@NamingQuery
+	public List<Map<String, Object>> minAgeCountIdByGroupByClassIdOrderByClasssName();
 }

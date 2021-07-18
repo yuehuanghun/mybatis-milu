@@ -44,7 +44,7 @@ public class TeacherMapperTest {
 	}
 	@Test
 	public void testFindByAge() {
-		List<TeacherDTO> teacherList = teacherMapper.findByAge(30);
+		List<TeacherDTO> teacherList = teacherMapper.findByAge(31);
 		assertTrue(teacherList.size() == 1);
 		System.out.println(JSON.toJSONString(teacherList));
 	}

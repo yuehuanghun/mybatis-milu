@@ -17,6 +17,7 @@ import com.yuehuanghun.AppTest;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Classs;
+import com.yuehuanghun.mybatismilu.test.dto.ClassDTO;
 
 @SpringBootTest(classes = AppTest.class)
 @RunWith(SpringRunner.class)
@@ -111,5 +112,24 @@ public class ClassMapperTest {
 		result = classMapper.findByLambdaCriteria(predicate -> predicate.apply(params).and(p -> p.eq(Classs::getName).lt(Classs::getAddTime, new Date())).or(p -> p.eq(Classs::getName, "二年级").gt(Classs::getAddTime, new Date())));
 		
 		assertTrue(result.size() == 1);
+	}
+	
+	
+	@Test
+	public void testFindByCriteria_resultType() {
+		List<ClassDTO> result = classMapper.findByCriteria(p -> p.exselect("addTime").eq("name", "一年级"), ClassDTO.class);
+		assertTrue(result.size() == 1);
+		assertEquals(result.get(0).getClass(), ClassDTO.class);
+		assertEquals(result.get(0).getName(), "一年级");
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testFindByLambdaCriteria_resultType() {
+		List<ClassDTO> result = classMapper.findByLambdaCriteria(p -> p.exselect(Classs::getAddTime).eq(Classs::getName, "一年级"), ClassDTO.class);
+		assertTrue(result.size() == 1);
+		assertEquals(result.get(0).getClass(), ClassDTO.class);
+		assertEquals(result.get(0).getName(), "一年级");
 	}
 }

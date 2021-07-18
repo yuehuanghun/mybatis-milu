@@ -6,7 +6,7 @@
 	<!-- 已经创建了默认的ResultMap：com.yuehuanghun.mybatismilu.test.domain.mapper.TeacherMapper.TeacherMap -->
 	<!-- 规则是mapper全路类名（即当前namespace）+ "." + 实体类名 + "Map" -->
 	<select id="getById" resultMap="TeacherMap">
-		SELECT * FROM teacher WHERE id = #{id}
+		SELECT * FROM "teacher" WHERE "id" = #{id}
 	</select>
 </mapper>
 

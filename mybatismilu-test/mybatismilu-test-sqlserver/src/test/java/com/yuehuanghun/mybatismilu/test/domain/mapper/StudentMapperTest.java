@@ -1,6 +1,8 @@
 package com.yuehuanghun.mybatismilu.test.domain.mapper;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -8,6 +10,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.Test;
@@ -17,10 +20,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.yuehuanghun.AppTest;
+import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Student;
+import com.yuehuanghun.mybatismilu.test.dto.StudentStatistic;
 
 @SpringBootTest(classes = AppTest.class)
 @RunWith(SpringRunner.class)
@@ -180,5 +186,101 @@ public class StudentMapperTest {
 	public void testFindByClasssNameOrderByClasssIdDescAddTimeAsc() {
 		List<Student> result = studentMapper.findByClasssNameOrderByClasssIdDescAddTimeAsc("一年级");
 		assertTrue(result.size() > 0);
+	}
+	
+
+	@Test
+	@Transactional
+	public void testUpdateByCriteria() {
+		Student student = new Student();
+		student.setAge(10);
+		int result = studentMapper.updateByCriteria(student, p -> p.eq("id", 2L));
+		assertTrue(result == 1);
+		assertNotNull(student.getUpdateTime());
+		assertNull(student.getAddTime());
+	};
+	
+	@Test
+	public void testCountByCountByCriteria() {
+		int result = studentMapper.countByCriteria(p -> p.eq("name", "张三"));
+		assertTrue(result == 1);
+		
+		result = studentMapper.countByCriteria(new QueryPredicateImpl().eq("name", "张三"));
+		assertTrue(result == 1);
+	}
+	
+	@Test
+	public void testCountByLambdaCriteria() {
+		int result = studentMapper.countByLambdaCriteria(p -> p.eq(Student::getName, "张三"));
+		assertTrue(result == 1);
+	}
+	
+	@Test
+	public void testFindByUpdateTimeNotNull() {
+		List<Student> list = studentMapper.findByUpdateTimeNotNull();
+		assertTrue(list.size() == 5);
+	}
+	
+	@Test
+	public void testSumAgeAvgAgeCountIdByGroupByClassId() {
+		List<Map<String, Object>> list = studentMapper.sumAgeAvgAgeCountIdByGroupByClassId();
+		System.out.println(JSON.toJSONString(list));
+		assertTrue(list.size() > 0);
+	}
+	
+	@Test
+	public void testSumAgeAvgAgeCountIdBy() {
+		Map<String, Object> map = studentMapper.sumAgeAvgAgeCountIdBy();
+		System.out.println(JSON.toJSONString(map));
+		assertNotNull(map);
+	}
+	
+	@Test
+	public void testSumAgeAvgAgeCountIdByGroupByClassIdAndUpdateTime() {
+		List<Map<String, Object>> list = studentMapper.sumAgeAvgAgeCountIdByGroupByClassIdAndUpdateTime();
+		System.out.println(JSON.toJSONString(list));
+		System.out.println(list.get(0).get("updateTime").getClass().getName());
+		assertTrue(list.size() > 0);
+	}
+	
+	@Test
+	public void testSumAgeAvgAgeCountIdByUpdateTimeGroupByClassIdOrderByClassId() {
+		Date updateTime = new Date(1625402486000L);
+		List<Map<String, Object>> list = studentMapper.sumAgeAvgAgeCountIdByUpdateTimeGreaterThanGroupByClassIdOrderByClassId(updateTime);
+		System.out.println(JSON.toJSONString(list));
+		assertTrue(list.size() > 0);
+	}
+		
+	@Test
+	public void testMinAgeCountIdByGroupByClassIdOrderByClasssName() {
+		List<Map<String, Object>> list = studentMapper.minAgeCountIdByGroupByClassIdOrderByClassId();
+		System.out.println(JSON.toJSONString(list));
+		assertTrue(list.size() > 0);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testStatisticByCriteria() {
+		List<Map<String, Object>> result = studentMapper.statisticByCriteria(p -> p.sum("age").avg("age").count("id").groupBy("classId").orderAsc("classId"));
+		assertTrue(result.size() > 0);
+		System.out.println(JSON.toJSONString(result));
+		
+		result = studentMapper.statisticByLambdaCriteria(p -> p.sum(Student::getAge).avg(Student::getAge).count(Student::getId).groupBy(Student::getClassId).orderAsc(Student::getClassId));
+		assertTrue(result.size() > 0);
+		System.out.println(JSON.toJSONString(result));
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testStatisticByCriteriaDynamic() {
+		List<StudentStatistic> result = studentMapper.statisticByCriteria(p -> p.sum("age").avg("age").count("id").groupBy("classId").orderAsc("classId"), StudentStatistic.class);
+		assertTrue(result.size() > 0);
+		assertEquals(result.get(0).getClass(), StudentStatistic.class);
+		System.out.println(result.get(0).getClass().getName());
+		System.out.println(JSON.toJSONString(result));
+		
+		result = studentMapper.statisticByLambdaCriteria(p -> p.sum(Student::getAge).avg(Student::getAge).count(Student::getId).groupBy(Student::getClassId).orderAsc(Student::getClassId), StudentStatistic.class);
+		assertTrue(result.size() > 0);
+		assertEquals(result.get(0).getClass(), StudentStatistic.class);
 	}
 }

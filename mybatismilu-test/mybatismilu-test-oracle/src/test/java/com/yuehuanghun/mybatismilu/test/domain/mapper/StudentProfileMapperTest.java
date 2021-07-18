@@ -21,8 +21,11 @@ import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Student;
 import com.yuehuanghun.mybatismilu.test.domain.entity.StudentProfile;
 
+import lombok.extern.slf4j.Slf4j;
+
 @SpringBootTest(classes = AppTest.class)
 @RunWith(SpringRunner.class)
+@Slf4j
 public class StudentProfileMapperTest {
 	@Autowired
 	private StudentMapper studentMapper;
@@ -136,6 +139,8 @@ public class StudentProfileMapperTest {
 	@Test
 	@Transactional
 	public void testUpdateById() {
+		log.debug("studentProfile-testUpdateById");
+		System.out.println("studentProfile-testUpdateById");
 		Student student = new Student();
 		student.setAddTime(new Date());
 		student.setClassId(2L);
@@ -263,6 +268,8 @@ public class StudentProfileMapperTest {
 	@Test
 	@Transactional
 	public void testUpdateByCriteria() {
+		log.debug("studentProfile-testUpdateByCriteria");
+		System.out.println("studentProfile-testUpdateByCriteria");
 		Student student = new Student();
 		student.setAddTime(new Date());
 		student.setClassId(2L);
