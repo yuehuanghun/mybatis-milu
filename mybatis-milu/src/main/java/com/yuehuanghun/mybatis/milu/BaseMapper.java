@@ -101,7 +101,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	int batchInsert(@Param(Constants.ENTITY_LIST)Collection<T> entityList);
 	
 	/**
-	 * 通过ID更新，非null值被更新<br>
+	 * 通过ID更新，默认非null值被更新，可以通过@AttributeOptions注解的updateMode设定更新的模式<br>
 	 * 如果有Version字段（被@Version注解的实体类属性），只有Version字段非null时才有效，如果由于版本不匹配不被更新，不会抛出异常，请自行判断影响行数（即返回值 ）
 	 * @param entity 更新对象
 	 * @return 影响行数
@@ -192,7 +192,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	/**
 	 * 动态条件更新<br>
 	 * 支持关联表条件，但需要确定数据库是否支持关联条件查询进行更新<br>
-	 * @param entity 只更新实体对象中的非Null属性
+	 * @param entity 默认非null值被更新，可以通过@AttributeOptions注解的updateMode设定更新的模式
 	 * @param predicate Where条件
 	 * @return 影响行数
 	 */
@@ -201,7 +201,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	/**
 	 * 动态条件更新<br>
 	 * 支持关联表条件，但需要确定数据库是否支持关联条件查询进行更新<br>
-	 * @param entity 只更新实体对象中的非Null属性
+	 * @param entity 默认非null值被更新，可以通过@AttributeOptions注解的updateMode设定更新的模式
 	 * @param predicate Where条件
 	 * @return 影响行数
 	 */
@@ -209,7 +209,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	
 	/**
 	 * 动态条件更新<br>
-	 * @param entity 只更新实体对象中的非Null属性
+	 * @param entity 默认非null值被更新，可以通过@AttributeOptions注解的updateMode设定更新的模式
 	 * @param predicate Where条件
 	 * @return 影响行数
 	 */
