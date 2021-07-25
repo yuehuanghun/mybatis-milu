@@ -50,9 +50,9 @@ public interface Dialect {
 
 	/**
 	 * 为sql添加锁
-	 * @param sql
-	 * @param lockModeType
-	 * @return
+	 * @param sql 原始sql
+	 * @param lockModeType 锁模式
+	 * @return 完成后的sql
 	 */
 	default String getLockSql(String sql, LockModeType lockModeType) {
 		if(LockModeType.PESSIMISTIC_WRITE == lockModeType || LockModeType.PESSIMISTIC_READ == lockModeType || LockModeType.PESSIMISTIC_FORCE_INCREMENT == lockModeType) {
