@@ -35,5 +35,5 @@ public interface StudentMapper extends BaseMapper<Student, Long> {
 	@NamingQuery
 	public List<Map<String, Object>> sumAgeAvgAgeCountIdByUpdateTimeGroupByClassIdOrderByClassId(Date updateTime);
 	@NamingQuery
-	public List<Map<String, Object>> minAgeCountIdByGroupByClassIdOrderByClasssName();
+	public List<Map<String, Object>> minAgeCountIdByGroupByClassIdOrderByClassId();
 }

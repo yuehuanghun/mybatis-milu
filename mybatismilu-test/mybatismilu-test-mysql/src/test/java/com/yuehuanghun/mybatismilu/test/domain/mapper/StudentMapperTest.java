@@ -325,7 +325,7 @@ public class StudentMapperTest {
 		
 	@Test
 	public void testMinAgeCountIdByGroupByClassIdOrderByClasssName() {
-		List<Map<String, Object>> list = studentMapper.minAgeCountIdByGroupByClassIdOrderByClasssName();
+		List<Map<String, Object>> list = studentMapper.minAgeCountIdByGroupByClassIdOrderByClassId();
 		System.out.println(JSON.toJSONString(list));
 		assertTrue(list.size() > 0);
 	}
@@ -333,7 +333,7 @@ public class StudentMapperTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testStatisticByCriteria() {
-		List<Map<String, Object>> result = studentMapper.statisticByCriteria(p -> p.sum("age").avg("age").count("id").groupBy("classId").orderAsc("classsName"));
+		List<Map<String, Object>> result = studentMapper.statisticByCriteria(p -> p.sum("age").avg("age").count("id").groupBy("classId").orderAsc("classId"));
 		assertTrue(result.size() > 0);
 		System.out.println(JSON.toJSONString(result));
 		
@@ -345,7 +345,7 @@ public class StudentMapperTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testStatisticByCriteriaDynamic() {
-		List<StudentStatistic> result = studentMapper.statisticByCriteria(p -> p.sum("age").avg("age").count("id").groupBy("classId").orderAsc("classsName"), StudentStatistic.class);
+		List<StudentStatistic> result = studentMapper.statisticByCriteria(p -> p.sum("age").avg("age").count("id").groupBy("classId").orderAsc("classId"), StudentStatistic.class);
 		assertTrue(result.size() > 0);
 		assertEquals(result.get(0).getClass(), StudentStatistic.class);
 		System.out.println(result.get(0).getClass().getName());
