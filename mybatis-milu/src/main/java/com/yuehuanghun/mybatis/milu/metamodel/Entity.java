@@ -120,7 +120,7 @@ public class Entity {
 		
 		private MatchType exampleMatchType = MatchType.EQUAL;
 		
-		private Mode updateMode = Mode.NOT_EMPTY;
+		private Mode updateMode = Mode.NOT_NULL;
 		
 		private Mode conditionMode = Mode.NOT_EMPTY;
 		
