@@ -18,8 +18,8 @@ package com.yuehuanghun.mybatis.milu.generic.impl;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import com.yuehuanghun.mybatis.milu.criteria.LambdaPredicate;
-import com.yuehuanghun.mybatis.milu.criteria.LambdaPredicateImpl;
+import com.yuehuanghun.mybatis.milu.criteria.LambdaUpdatePredicate;
+import com.yuehuanghun.mybatis.milu.criteria.LambdaUpdatePredicateImpl;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
 
@@ -30,8 +30,8 @@ public class GenericUpdateByLambdaCriteriaProviderSql extends GenericUpdateByCri
 	public String provideSql(GenericProviderContext context, Object params) {
 		Object criteria = ((Map)params).get(Constants.CRITERIA);
 		
-		LambdaPredicateImpl<?> predicate = new LambdaPredicateImpl<>();
-		((Consumer<LambdaPredicate>)criteria).accept(predicate);
+		LambdaUpdatePredicateImpl<?> predicate = new LambdaUpdatePredicateImpl<>();
+		((Consumer<LambdaUpdatePredicate>)criteria).accept(predicate);
 		
 		((Map)params).put(Constants.CRITERIA, predicate.getDelegate()); //覆盖
 		

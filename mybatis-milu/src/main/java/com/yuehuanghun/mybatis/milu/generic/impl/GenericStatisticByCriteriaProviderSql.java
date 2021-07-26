@@ -16,20 +16,17 @@
 package com.yuehuanghun.mybatis.milu.generic.impl;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.ibatis.javassist.scopedpool.SoftValueHashMap;
 
 import com.github.pagehelper.PageHelper;
-import com.yuehuanghun.mybatis.milu.criteria.CriteriaSqlBuilder;
 import com.yuehuanghun.mybatis.milu.criteria.Expression;
 import com.yuehuanghun.mybatis.milu.criteria.Predicate;
-import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
+import com.yuehuanghun.mybatis.milu.criteria.StatisticPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.StatisticPredicateImpl;
-import com.yuehuanghun.mybatis.milu.criteria.CriteriaSqlBuilder.CriteriaType;
+import com.yuehuanghun.mybatis.milu.criteria.builder.StatisticSqlTemplateBuilder;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderSql;
 import com.yuehuanghun.mybatis.milu.mapping.ResultMapHelper;
@@ -50,18 +47,17 @@ public class GenericStatisticByCriteriaProviderSql implements GenericProviderSql
 			ResultMapHelper.setResultType((Class<?>) paramMap.remove(Constants.RESULT_TYPE));
 		}
 		
-		Expression expression;
+		StatisticPredicate predicate;
 		
 		if(Consumer.class.isInstance(criteria)) {
-			Predicate predicate = new StatisticPredicateImpl();			
+			predicate = new StatisticPredicateImpl();			
 			((Consumer<Predicate>)criteria).accept(predicate);
-			expression = predicate;
 		} else {
-			expression = (Expression)criteria;
+			predicate = (StatisticPredicate)criteria;
 		}
 		
 		Map<String, Object> queryParams = new HashMap<>();
-		expression.renderParams(queryParams, 0);		
+		predicate.renderParams(queryParams, 0);		
 		((Map)params).putAll(queryParams);
 		
 		if(((Map)params).containsKey(Constants.PAGE_KEY)) {
@@ -69,15 +65,8 @@ public class GenericStatisticByCriteriaProviderSql implements GenericProviderSql
 			PageHelper.startPage(page.getPageNum(), page.getPageSize(), page.isCount());
 		}
 
-		String sqlExpression = cache.computeIfAbsent(expression, (key) -> {
-			StringBuilder expressionBuilder = new StringBuilder(256);
-			Set<String> columns = new HashSet<>();
-			expression.renderSqlTemplate(context.getConfiguration(), expressionBuilder, columns, 0);
-			CriteriaSqlBuilder builder = CriteriaSqlBuilder.instance(context.getEntity().getJavaType(), expressionBuilder.toString(), columns, context.getConfiguration()).setCriteriaType(CriteriaType.STATISTIC);
-			if(QueryPredicateImpl.class.isInstance(expression)) {
-				builder.setSelectAttrs(((QueryPredicateImpl)expression).getSelectAttrs()).setExselectAttrs(((QueryPredicateImpl)expression).getExselectAttrs());
-			}
-			return builder.build();
+		String sqlExpression = cache.computeIfAbsent(predicate, (key) -> {
+			return new StatisticSqlTemplateBuilder(context.getEntity(), context.getConfiguration(), predicate).build();
 		});
 		
 		return sqlExpression;

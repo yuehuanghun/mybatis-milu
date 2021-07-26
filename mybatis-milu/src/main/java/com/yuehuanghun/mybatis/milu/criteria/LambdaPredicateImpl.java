@@ -518,7 +518,7 @@ public class LambdaPredicateImpl<T> implements LambdaPredicate<T> {
 
 	@Override
 	public int hashCode() {
-		return delegate.hashCode();
+		return this.getClass().hashCode() + this.getDelegate().hashCode() * 31;
 	}
 
 	@Override
@@ -526,6 +526,6 @@ public class LambdaPredicateImpl<T> implements LambdaPredicate<T> {
 		if(!this.getClass().isInstance(that)) {
 			return false;
 		}
-		return Objects.equals(delegate, ((LambdaPredicateImpl<?>)that).getDelegate());
+		return Objects.equals(this.getDelegate(), ((LambdaPredicateImpl<?>)that).getDelegate());
 	}
 }

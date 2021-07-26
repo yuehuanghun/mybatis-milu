@@ -1,18 +1,15 @@
 package com.yuehuanghun.mybatis.milu.generic.impl;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.ibatis.javassist.scopedpool.SoftValueHashMap;
 
-import com.yuehuanghun.mybatis.milu.criteria.CriteriaSqlBuilder;
-import com.yuehuanghun.mybatis.milu.criteria.CriteriaSqlBuilder.CriteriaType;
 import com.yuehuanghun.mybatis.milu.criteria.Expression;
 import com.yuehuanghun.mybatis.milu.criteria.Predicate;
 import com.yuehuanghun.mybatis.milu.criteria.PredicateImpl;
+import com.yuehuanghun.mybatis.milu.criteria.builder.CountSqlTemplateBuilder;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderSql;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
@@ -25,27 +22,22 @@ public class GenericCountByCriteriaProviderSql implements GenericProviderSql {
 	@Override
 	public String provideSql(GenericProviderContext context, Object params) {
 		Object criteria = ((Map)params).get(Constants.CRITERIA);
-		Expression expression;
+		Predicate predicate;
 		
 		if(Consumer.class.isInstance(criteria)) {
-			Predicate predicate = new PredicateImpl();			
+			predicate = new PredicateImpl();			
 			((Consumer<Predicate>)criteria).accept(predicate);
-			expression = predicate;
 		} else {
-			expression = (Expression)criteria;
+			predicate = (Predicate) criteria;
 		}
 
 		Map<String, Object> queryParams = new HashMap<>();
-		expression.renderParams(queryParams, 0);
+		predicate.renderParams(queryParams, 0);
 		
 		((Map)params).putAll(queryParams);
 
-		String sqlExpression = cache.computeIfAbsent(expression, (key) -> {
-			StringBuilder expressionBuilder = new StringBuilder(256);
-			Set<String> columns = new HashSet<>();
-			expression.renderSqlTemplate(context.getConfiguration(), expressionBuilder, columns, 0);
-			CriteriaSqlBuilder builder = CriteriaSqlBuilder.instance(context.getEntity().getJavaType(), expressionBuilder.toString(), columns, context.getConfiguration()).setCriteriaType(CriteriaType.COUNT);
-			return builder.build();
+		String sqlExpression = cache.computeIfAbsent(predicate, (key) -> {
+			return new CountSqlTemplateBuilder(context.getEntity(), context.getConfiguration(), predicate).build();
 		});
 		
 		return sqlExpression;

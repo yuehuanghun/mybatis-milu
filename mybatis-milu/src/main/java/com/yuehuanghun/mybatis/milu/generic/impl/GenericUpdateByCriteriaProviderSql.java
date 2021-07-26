@@ -16,19 +16,16 @@
 package com.yuehuanghun.mybatis.milu.generic.impl;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.ibatis.javassist.scopedpool.SoftValueHashMap;
 
-import com.yuehuanghun.mybatis.milu.criteria.CriteriaSqlBuilder;
 import com.yuehuanghun.mybatis.milu.criteria.Expression;
-import com.yuehuanghun.mybatis.milu.criteria.CriteriaSqlBuilder.CriteriaType;
+import com.yuehuanghun.mybatis.milu.criteria.UpdatePredicate;
+import com.yuehuanghun.mybatis.milu.criteria.UpdatePredicateImpl;
+import com.yuehuanghun.mybatis.milu.criteria.builder.UpdateSqlTemplateBuilder;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
-import com.yuehuanghun.mybatis.milu.criteria.Predicate;
-import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderSql;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
@@ -42,13 +39,13 @@ public class GenericUpdateByCriteriaProviderSql implements GenericProviderSql {
 	public String provideSql(GenericProviderContext context, Object params) {
 		SqlBuildingHelper.fill(params, false, context.getConfiguration());
 		Object criteria = ((Map)params).get(Constants.CRITERIA);
-		Predicate predicate;
+		UpdatePredicate predicate;
 		
 		if(Consumer.class.isInstance(criteria)) {
-			predicate = new QueryPredicateImpl();			
-			((Consumer<Predicate>)criteria).accept(predicate);
+			predicate = new UpdatePredicateImpl();			
+			((Consumer<UpdatePredicate>)criteria).accept(predicate);
 		} else {
-			predicate = (Predicate)criteria;
+			predicate = (UpdatePredicate)criteria;
 		}
 		
 		Map<String, Object> queryParams = new HashMap<>();
@@ -56,11 +53,7 @@ public class GenericUpdateByCriteriaProviderSql implements GenericProviderSql {
 		((Map)params).putAll(queryParams);
 
 		String sqlExpression = cache.computeIfAbsent(predicate, (key) -> {
-			StringBuilder expressionBuilder = new StringBuilder(256);
-			Set<String> columns = new HashSet<>();
-			predicate.renderSqlTemplate(context.getConfiguration(), expressionBuilder, columns, 0);
-			CriteriaSqlBuilder builder = CriteriaSqlBuilder.instance(context.getEntity().getJavaType(), expressionBuilder.toString(), columns, context.getConfiguration()).setCriteriaType(CriteriaType.UPDATE);
-			return builder.build();
+			return new UpdateSqlTemplateBuilder(context.getEntity(), context.getConfiguration(), predicate).build();
 		});
 		
 		return sqlExpression;

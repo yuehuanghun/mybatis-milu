@@ -27,9 +27,11 @@ import org.apache.ibatis.annotations.Param;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaQueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaStatisticPredicate;
+import com.yuehuanghun.mybatis.milu.criteria.LambdaUpdatePredicate;
 import com.yuehuanghun.mybatis.milu.criteria.Predicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.StatisticPredicate;
+import com.yuehuanghun.mybatis.milu.criteria.UpdatePredicate;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
 
@@ -192,28 +194,28 @@ public interface BaseMapper<T, ID extends Serializable> {
 	/**
 	 * 动态条件更新<br>
 	 * 支持关联表条件，但需要确定数据库是否支持关联条件查询进行更新<br>
-	 * @param entity 默认非null值被更新，可以通过@AttributeOptions注解的updateMode设定更新的模式
+	 * @param entity 默认非null值被更新，可以通过predicate.updateMode(Mode mode)设定更新的模式
 	 * @param predicate Where条件
 	 * @return 影响行数
 	 */
-	int updateByCriteria(@Param(Constants.ENTITY)T entity, @Param(Constants.CRITERIA)Predicate predicate);
+	int updateByCriteria(@Param(Constants.ENTITY)T entity, @Param(Constants.CRITERIA)UpdatePredicate predicate);
 	
 	/**
 	 * 动态条件更新<br>
 	 * 支持关联表条件，但需要确定数据库是否支持关联条件查询进行更新<br>
-	 * @param entity 默认非null值被更新，可以通过@AttributeOptions注解的updateMode设定更新的模式
+	 * @param entity 默认非null值被更新，可以通过predicate.updateMode(Mode mode)设定更新的模式
 	 * @param predicate Where条件
 	 * @return 影响行数
 	 */
-	int updateByCriteria(@Param(Constants.ENTITY)T entity, @Param(Constants.CRITERIA)Consumer<Predicate> predicate);
+	int updateByCriteria(@Param(Constants.ENTITY)T entity, @Param(Constants.CRITERIA)Consumer<UpdatePredicate> predicate);
 	
 	/**
 	 * 动态条件更新<br>
-	 * @param entity 默认非null值被更新，可以通过@AttributeOptions注解的updateMode设定更新的模式
+	 * @param entity 默认非null值被更新，可以通过predicate.updateMode(Mode mode)设定更新的模式
 	 * @param predicate Where条件
 	 * @return 影响行数
 	 */
-	int updateByLambdaCriteria(@Param(Constants.ENTITY)T entity, @Param(Constants.CRITERIA)Consumer<LambdaPredicate<T>> predicate);
+	int updateByLambdaCriteria(@Param(Constants.ENTITY)T entity, @Param(Constants.CRITERIA)Consumer<LambdaUpdatePredicate<T>> predicate);
 	
 	/**
 	 * 动态条件删除<br>
