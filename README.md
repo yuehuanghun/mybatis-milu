@@ -132,9 +132,20 @@ classMapper.findByLambdaCriteria(predicate -> predicate.apply(params).select(Cla
 classMapper.findByLambdaCriteria(predicate -> predicate.select(Classs::getName, Classs::getAddTime).eq(Classs::getName, params.getName()).limit(10, false));
 
 ```
+4、criteria、lambdaCriteria统计  
+目前支持5个统计关键字：sum/count/min/max/avg
+```
+List<Map<String, Object>> result = studentMapper.statisticByCriteria(p -> p.sum("age").avg("age").count("id").groupBy("classId").orderAsc("classId"));
+// SELECT SUM(`age`) `ageSum`, AVG(`age`) `ageAvg`, COUNT(`id`) `idCount`, `class_id` classId FROM `student` GROUP BY `class_id` ORDER BY `class_id` ASC
+```
+统计字段别名为统计属性名+统计函数名，分组字段也会自动作为查询字段  
 
+可以指resultType
+```
+List<StudentStatistic> result = studentMapper.statisticByCriteria(p -> p.sum("age").avg("age").count("id").groupBy("classId").orderAsc("classId"), StudentStatistic.class);
+```
 #### 三、 查询创建器
-与Spring Data JPA的查询创建器一致
+与Spring Data JPA的查询创建器一致，并进行了拓展
 
 ```
 @Mapper
@@ -210,6 +221,7 @@ public interface ClassMapper extends BaseMapper<Classs, Long> {
 |count     |countByLastname | select count(*) from ... where x.lastname = ?1 |
 |Distinct | findDistinctByLastname | select distinct ... where x.lastname = ?1|
 |delete/remove |deleteByLastname | delete from ... where x.lastname = ?1 |
+|sum/count/min/max/avg | sumAgeAvgAgeCountIdByGroupByClassIdAndUpdateTime |SELECT SUM(age) ageSum, AVG(age) ageAvg, COUNT(id) idCount, class_id classId, update_time updateTime FROM student GROUP BY class_id, update_time|
 
 返回行限制关键字(示例目标数据库为Mysql)
 
