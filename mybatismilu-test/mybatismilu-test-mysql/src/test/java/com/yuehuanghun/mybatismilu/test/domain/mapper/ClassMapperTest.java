@@ -57,11 +57,11 @@ public class ClassMapperTest {
 		result = classMapper.findByCriteria(new QueryPredicateImpl().eq("name", "一年级").order(Direction.DESC,"id").order("studentListAddTime"));
 		assertTrue(result.size() == 3);
 		
-		result = classMapper.findByCriteria(new QueryPredicateImpl().eq("name", "一年级").order(Direction.DESC,"id").order("studentListAddTime").limit(10));
-		assertTrue(result.size() == 3);
+		result = classMapper.findByCriteria(new QueryPredicateImpl().eq("name", "一年级").order(Direction.DESC,"id").order("studentListAddTime").limit(2));
+		assertTrue(result.size() == 2);
 		
-		result = classMapper.findByCriteria(new QueryPredicateImpl().eq("name", "一年级").order(Direction.DESC,"id").order("studentListAddTime").limit(1, 10, false));
-		assertTrue(result.size() == 3);
+		result = classMapper.findByCriteria(new QueryPredicateImpl().eq("name", "一年级").order(Direction.DESC,"id").order("studentListAddTime").limit(1, 2, false));
+		assertTrue(result.size() == 2);
 		
 		//只查某些字段
 		result = classMapper.findByCriteria(new QueryPredicateImpl().select("id", "name", "addTime").eq("name", "一年级").order(Direction.DESC,"id").order("studentListAddTime").limit(1, 10, false));

@@ -1,5 +1,6 @@
 package com.yuehuanghun.mybatismilu.test.domain.mapper;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -15,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.yuehuanghun.AppTest;
+import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
@@ -287,6 +289,14 @@ public class StudentProfileMapperTest {
 		result = studentProfileMapper.updateByCriteria(profile, p -> p.eq("fatherName", "张爱民"));
 		
 		assertTrue(result == 1);
+		
+		assertTrue(profile.getMotherName() != null);
+		
+		profile.setMotherName(null); //通过Mode.ALL将为null的字段也更新到数据库
+		int effect = studentProfileMapper.updateByCriteria(profile, p -> p.eq("id", profile.getId()).updateMode(Mode.ALL));
+		assertEquals(effect, 1);
+		Optional<StudentProfile> updated = studentProfileMapper.findById(profile.getId());
+		assertTrue(updated.get().getMotherName() == null);
 	}
 	
 	@Test
