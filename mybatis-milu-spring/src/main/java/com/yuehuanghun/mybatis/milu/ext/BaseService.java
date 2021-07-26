@@ -29,9 +29,11 @@ import com.yuehuanghun.mybatis.milu.BaseMapper;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaQueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaStatisticPredicate;
+import com.yuehuanghun.mybatis.milu.criteria.LambdaUpdatePredicate;
 import com.yuehuanghun.mybatis.milu.criteria.Predicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.StatisticPredicate;
+import com.yuehuanghun.mybatis.milu.criteria.UpdatePredicate;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
 
@@ -148,7 +150,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 
 	/**
 	 * 动态条件计算行数
-	 * @param predicate 条件
+	 * @param example 条件
 	 * @return 影响行数
 	 */
 	default int countByExample(T example) {
@@ -220,7 +222,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * @param predicate Where条件
 	 * @return 影响行数
 	 */
-	default int updateByCriteria(T entity, Predicate predicate) {
+	default int updateByCriteria(T entity, UpdatePredicate predicate) {
 		return getDomainMapper().updateByCriteria(entity, predicate);
 	}
 	
@@ -231,7 +233,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * @param predicate Where条件
 	 * @return 影响行数
 	 */
-	default int updateByCriteria(T entity, Consumer<Predicate> predicate) {
+	default int updateByCriteria(T entity, Consumer<UpdatePredicate> predicate) {
 		return getDomainMapper().updateByCriteria(entity, predicate);
 	}
 	
@@ -241,7 +243,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * @param predicate Where条件
 	 * @return 影响行数
 	 */
-	default int updateByLambdaCriteria(T entity, Consumer<LambdaPredicate<T>> predicate) {
+	default int updateByLambdaCriteria(T entity, Consumer<LambdaUpdatePredicate<T>> predicate) {
 		return getDomainMapper().updateByLambdaCriteria(entity, predicate);
 	}
 	
