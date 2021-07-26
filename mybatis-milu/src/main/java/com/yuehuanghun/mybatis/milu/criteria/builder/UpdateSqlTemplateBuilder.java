@@ -39,17 +39,16 @@ public class UpdateSqlTemplateBuilder extends SqlTemplateBuilder {
 				continue;
 			}
 			if(attr.isVersion()) { //版本号 + 1，总是+1
-				sqlBuilder.append(SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration)).append(" = #{entity.").append(attr.getName()).append("} + 1,");
+				sqlBuilder.append(SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration)).append(" = #{entity.").append(attr.getName()).append("} + 1, ");
 			} else {
 				if(predicate.getUpdateMode() == Mode.ALL) {
-					sqlBuilder.append(SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration)).append(" = #{entity.").append(attr.getName()).append("}");
+					sqlBuilder.append(SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration)).append(" = #{entity.").append(attr.getName()).append("}, ");
 				} else if(predicate.getUpdateMode() == Mode.NOT_EMPTY && CharSequence.class.isAssignableFrom(attr.getJavaType())) {
 					sqlBuilder.append(" <if test=\"entity.").append(attr.getName()).append(" != null and entity.").append(attr.getName()).append("!=''\">").append(SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration)).append(" = #{entity.").append(attr.getName()).append("}, </if> ");
 				} else {
 					sqlBuilder.append(" <if test=\"entity.").append(attr.getName()).append(" != null\">").append(SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration)).append(" = #{entity.").append(attr.getName()).append("}, </if> ");
 				}
-			}
-			
+			}	
 		}
 		sqlBuilder.append(Segment.SET_LABEL_END);
 		
