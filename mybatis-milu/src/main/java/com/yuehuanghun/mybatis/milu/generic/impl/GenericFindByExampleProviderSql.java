@@ -16,7 +16,9 @@
 package com.yuehuanghun.mybatis.milu.generic.impl;
 
 import java.util.Collection;
+import java.util.Map;
 
+import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.generic.GenericCachingProviderSql;
@@ -24,9 +26,27 @@ import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.RangeCondition;
+import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
+import com.yuehuanghun.mybatis.milu.tool.Constants;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
 public class GenericFindByExampleProviderSql extends GenericCachingProviderSql {
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public String provideSql(GenericProviderContext context, Object params) {
+		String sql = super.provideSql(context, params);
+
+		Map paramMap = ((Map)params);
+		if(paramMap.containsKey(Constants.PAGE)) {
+			Pageable page = (Pageable) paramMap.get(Constants.PAGE);
+			if(page != null) {
+				PageHelper.startPage(page.getPageNum(), page.getPageSize(), page.isCount());
+			}
+		}
+		
+		return sql;
+	}
 
 	@Override
 	public String provideCachingSql(GenericProviderContext context, Object params) {
@@ -80,7 +100,7 @@ public class GenericFindByExampleProviderSql extends GenericCachingProviderSql {
 		condition.append(Segment.WHERE_LABEL_END);
 		sqlBuilder.append(Segment.FROM_B).append(wrapIdentifier(entity.getTableName(), context));
 		sqlBuilder.append(condition).append(Segment.SCRIPT_LABEL_END);
-		
+
 		return sqlBuilder.toString();
 	}
 

@@ -24,8 +24,10 @@ import org.apache.ibatis.javassist.scopedpool.SoftValueHashMap;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.scripting.LanguageDriver;
+import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
+import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.mybatis.milu.mapping.ResultMapHelper;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 
@@ -39,15 +41,20 @@ public class GenericProviderSqlSource implements SqlSource {
 	public GenericProviderSqlSource(Configuration configuration, GenericProviderSql providerSql, Class<?> mapperType,
 			Method mapperMethod, KeyGenerator keyGenerator, Entity entity) {
 		this.configuration = configuration;
-		this.languageDriver = configuration.getLanguageDriver(null);
+		this.languageDriver = configuration.getLanguageDriver(XMLLanguageDriver.class);
 		this.providerContext = new GenericProviderContext(mapperType, mapperMethod, configuration, keyGenerator, entity);
 		this.providerSql = providerSql;
 	}
 
 	@Override
 	public BoundSql getBoundSql(Object parameterObject) {
-		SqlSource sqlSource = createSqlSource(parameterObject);
-		return sqlSource.getBoundSql(parameterObject);
+		try {
+			SqlSource sqlSource = createSqlSource(parameterObject);
+			return sqlSource.getBoundSql(parameterObject);
+		} catch (Exception e) {
+			PageHelper.clearPage(); //防止异常导致ThreadLocal中的Page未被使用并清除
+			throw e;
+		}
 	}
 
 	private SqlSource createSqlSource(Object parameterObject) {

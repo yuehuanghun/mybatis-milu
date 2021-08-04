@@ -18,6 +18,7 @@ package com.yuehuanghun.mybatis.milu.generic.impl;
 import java.util.Collection;
 import java.util.Map;
 
+import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.data.Sort.Order;
@@ -27,11 +28,13 @@ import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.RangeCondition;
+import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
+import com.yuehuanghun.mybatis.milu.tool.Constants;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
 public class GenericFindByExampleAndSortProviderSql extends GenericCachingProviderSql {
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public String provideSql(GenericProviderContext context, Object params) {
 		StringBuilder mapKeyBuilder = new StringBuilder(64).append(context.getMapperType().getName());
@@ -41,10 +44,21 @@ public class GenericFindByExampleAndSortProviderSql extends GenericCachingProvid
 				mapKeyBuilder.append(Segment.HYPHEN).append(order.getProperty()).append(Segment.HYPHEN).append(order.getDirection());
 			}
 		}
-		return cache.computeIfAbsent(mapKeyBuilder.toString(), (key) -> {return provideCachingSql(context, params);});
+		
+		String sql = cache.computeIfAbsent(mapKeyBuilder.toString(), (key) -> {return provideCachingSql(context, params);});
+
+		Map paramMap = ((Map)params);
+		if(paramMap.containsKey(Constants.PAGE)) {
+			Pageable page = (Pageable) paramMap.get(Constants.PAGE);
+			if(page != null) {
+				PageHelper.startPage(page.getPageNum(), page.getPageSize(), page.isCount());
+			}
+		}
+		
+		return sql;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	public String provideCachingSql(GenericProviderContext context, Object params) {
 		Entity entity = context.getEntity();

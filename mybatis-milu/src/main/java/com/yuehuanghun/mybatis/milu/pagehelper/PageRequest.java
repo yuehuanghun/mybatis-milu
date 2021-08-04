@@ -39,7 +39,7 @@ public class PageRequest implements Pageable {
 	 * @param pageSize 每页行数
 	 * @param count 是否查询符合条件的总行数
 	 */
-	private PageRequest(int pageNum, int pageSize, boolean count) {
+	public PageRequest(int pageNum, int pageSize, boolean count) {
 		Assert.isTrue(pageNum >= 1, "当前页码pageNum不能小于1");
 		Assert.isTrue(pageSize >= 1, "每页行数pageSize不能小于1");
 		this.pageNum = pageNum;
@@ -52,7 +52,7 @@ public class PageRequest implements Pageable {
 	 * @param pageNum 当前页码，从1开始
 	 * @param pageSize 每页行数
 	 */
-	private PageRequest(int pageNum, int pageSize) {
+	public PageRequest(int pageNum, int pageSize) {
 		this(pageNum, pageSize, true);
 	}
 
@@ -61,7 +61,7 @@ public class PageRequest implements Pageable {
 	 * @param pageSize 每页行数
 	 * @param count 是否查询符合条件的总行数
 	 */
-	private PageRequest(int pageSize, boolean count) {
+	public PageRequest(int pageSize, boolean count) {
 		this(1, pageSize, count);
 	}
 
@@ -69,7 +69,7 @@ public class PageRequest implements Pageable {
 	 * 分页信息，第一页的pageSize条数据，查询符合条件总行数
 	 * @param pageSize 每页行数
 	 */
-	private PageRequest(int pageSize) {
+	public PageRequest(int pageSize) {
 		this(1, pageSize, true);
 	}
 }

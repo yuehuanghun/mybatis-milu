@@ -37,15 +37,15 @@ public class LimitImpl implements Limit, Pageable {
 	
 	private final boolean count;
 	
-	public LimitImpl(int pageSize) {
+	protected LimitImpl(int pageSize) {
 		this(1, pageSize, true);
 	}
 	
-	public LimitImpl(int pageSize, boolean count) {
+	protected LimitImpl(int pageSize, boolean count) {
 		this(1, pageSize, count);
 	}
 	
-	public LimitImpl(int pageNum, int pageSize, boolean count) {
+	protected LimitImpl(int pageNum, int pageSize, boolean count) {
 		Assert.isTrue(pageNum >= 1, "当前页码pageNum不能小于1");
 		Assert.isTrue(pageSize >= 1, "每页行数pageSize不能小于1");
 		this.pageNum = pageNum;

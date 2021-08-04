@@ -56,4 +56,6 @@ public interface Constants {
 	String ENTITY = "entity";
 	
 	String RESULT_TYPE = "resultType";
+	
+	String PAGE = "page";
 }

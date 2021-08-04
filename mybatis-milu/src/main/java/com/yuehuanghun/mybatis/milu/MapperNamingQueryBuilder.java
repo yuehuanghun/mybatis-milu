@@ -74,6 +74,7 @@ import org.apache.ibatis.type.UnknownTypeHandler;
 
 import com.yuehuanghun.mybatis.milu.annotation.NamingQuery;
 import com.yuehuanghun.mybatis.milu.annotation.StatementOptions;
+import com.yuehuanghun.mybatis.milu.data.NamedQuerySqlSource;
 import com.yuehuanghun.mybatis.milu.data.PartTree;
 import com.yuehuanghun.mybatis.milu.data.SqlBuilder;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
@@ -513,14 +514,9 @@ public class MapperNamingQueryBuilder {
 		Class<?> entityClass = getGenericEntity(method.getDeclaringClass());
 		PartTree tree = new PartTree(getExpression(method), entityClass);
 		
-		return buildSqlSourceFromStrings(new String[] {SqlBuilder.instance(entityClass, method, tree, this.configuration).build()}, parameterType, languageDriver);
+		return new NamedQuerySqlSource(configuration, SqlBuilder.instance(entityClass, method, tree, this.configuration).build(), parameterType);
 	}
 
-	private SqlSource buildSqlSourceFromStrings(String[] strings, Class<?> parameterTypeClass,
-			LanguageDriver languageDriver) {
-		return languageDriver.createSqlSource(configuration, String.join(" ", strings).trim(), parameterTypeClass);
-	}
-	
 	private String getExpression(Method method) {
 		if(method.isAnnotationPresent(StatementOptions.class)) {
 			StatementOptions options = method.getAnnotation(StatementOptions.class);

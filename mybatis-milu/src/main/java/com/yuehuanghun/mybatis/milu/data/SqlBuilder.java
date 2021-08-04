@@ -17,12 +17,14 @@ package com.yuehuanghun.mybatis.milu.data;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.LockModeType;
 
@@ -37,6 +39,7 @@ import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper.TableAliasDispacher;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
+import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
@@ -60,7 +63,7 @@ public class SqlBuilder {
 		this.entity = configuration.getMetaModel().getEntity(domainClazz);
 		this.partTree = partTree;
 		this.configuration = configuration;
-		this.parameters = method.getParameters();
+		this.parameters = Arrays.asList(method.getParameters()).stream().filter(param -> !Pageable.class.isAssignableFrom(param.getType())).collect(Collectors.toList()).toArray(new Parameter[0]);
 		setOptions(method);
 	}
 	

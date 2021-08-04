@@ -33,6 +33,7 @@ import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.StatisticPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.UpdatePredicate;
 import com.yuehuanghun.mybatis.milu.data.Sort;
+import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
 
 /**
@@ -78,6 +79,14 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @return 列表
 	 */
 	List<T> findByExample(@Param(Constants.EXAMPLE)T example);
+
+	/**
+	 * 使用实体类作为查询参数，非null值才会参与查询，关联表属性无效
+	 * @param example 条件
+	 * @param pageable 分页参数
+	 * @return 列表
+	 */
+	List<T> findByExample(@Param(Constants.EXAMPLE)T example, @Param(Constants.PAGE)Pageable pageable);
 	
 	/**
 	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效
@@ -86,6 +95,15 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @return 列表
 	 */
 	List<T> findByExampleAndSort(@Param(Constants.EXAMPLE)T example, @Param(Constants.SORT)Sort sort);
+	
+	/**
+	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效
+	 * @param example 条件
+	 * @param sort 排序
+	 * @param pageable 分页参数
+	 * @return 列表
+	 */
+	List<T> findByExampleAndSort(@Param(Constants.EXAMPLE)T example, @Param(Constants.SORT)Sort sort, @Param(Constants.PAGE)Pageable pageable);
 	
 	/**
 	 * 插入一条数据
