@@ -203,6 +203,9 @@ public class MapperNamingQueryBuilder {
 			if(Modifier.isFinal(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
 				continue;
 			}
+			if(!hasSetter(subType, field)) {
+				continue;
+			}
 			ResultMapping resultMapping = assistant.buildResultMapping(resultType, field.getName(), field.getName(), fieldType, null, null, null, null, null, null, null);
 			resultMappings.add(resultMapping);
 			String snakeName = StringUtils.camel2Underline(field.getName(), true);
@@ -213,6 +216,21 @@ public class MapperNamingQueryBuilder {
 		}
 		
 		buildNotEntityResultMapping(resultType, subType.getSuperclass(), resultMappings);
+	}
+	
+	private static boolean hasSetter(Class<?> clazz, Field field) {
+		Method[] methods = clazz.getDeclaredMethods();
+		String setterName = "set" + StringUtils.capitalize(field.getName());
+		for(Method method : methods) {
+			if(Modifier.isStatic(field.getModifiers())) {
+				continue;
+			}
+			
+			if(method.getName().equals(setterName) && method.getParameterCount() == 1) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void createDiscriminatorResultMaps(String resultMapId, Class<?> resultType,
