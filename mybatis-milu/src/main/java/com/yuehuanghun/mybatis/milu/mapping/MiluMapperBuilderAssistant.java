@@ -16,8 +16,13 @@
 
 package com.yuehuanghun.mybatis.milu.mapping;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.builder.IncompleteElementException;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
@@ -27,12 +32,15 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMap;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.ResultMap;
+import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.mapping.ResultSetType;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
+
+import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
 /**
  * 为了动态替换ResultMap中的type，方便在criteria查询中，指定绑定的返回类<br>
@@ -140,5 +148,48 @@ public class MiluMapperBuilderAssistant extends MapperBuilderAssistant {
 		Cache cache = super.useCacheRef(namespace);
 		this.unresolvedCacheRef = false;
 		return cache;
+	}
+	
+	public void buildResultMapping(Class<?> resultType, Class<?> subType, List<ResultMapping> resultMappings) {
+		if(subType == null || subType.isPrimitive() || subType == Object.class) {
+			return;
+		}
+		Field[] fields = subType.getDeclaredFields();
+		for(Field field : fields) {
+			Class<?> fieldType = field.getType();
+			if(fieldType.isArray() || Collection.class.isAssignableFrom(fieldType) || Map.class.isAssignableFrom(fieldType)) {
+				continue;
+			}
+			if(Modifier.isFinal(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
+				continue;
+			}
+			if(!hasSetter(subType, field)) {
+				continue;
+			}
+			ResultMapping resultMapping = this.buildResultMapping(resultType, field.getName(), field.getName(), fieldType, null, null, null, null, null, null, null);
+			resultMappings.add(resultMapping);
+			String snakeName = StringUtils.camel2Underline(field.getName(), true);
+			if(!field.getName().equals(snakeName)) {
+				resultMapping = this.buildResultMapping(resultType, field.getName(), snakeName, fieldType, null, null, null, null, null, null, null);
+				resultMappings.add(resultMapping);
+			}
+		}
+		
+		buildResultMapping(resultType, subType.getSuperclass(), resultMappings);
+	}
+	
+	private static boolean hasSetter(Class<?> clazz, Field field) {
+		Method[] methods = clazz.getDeclaredMethods();
+		String setterName = "set" + StringUtils.capitalize(field.getName());
+		for(Method method : methods) {
+			if(Modifier.isStatic(field.getModifiers())) {
+				continue;
+			}
+			
+			if(method.getName().equals(setterName) && method.getParameterCount() == 1) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

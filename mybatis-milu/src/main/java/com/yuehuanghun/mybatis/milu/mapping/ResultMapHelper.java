@@ -17,10 +17,13 @@
 package com.yuehuanghun.mybatis.milu.mapping;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.ibatis.mapping.ResultMap;
+import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.session.Configuration;
 
 /**
@@ -55,7 +58,12 @@ public class ResultMapHelper {
 		}
 
 		return map.computeIfAbsent(returnType, (key) -> {
-			return new ResultMap.Builder(getConfiguration(resultMap), resultMapId, returnType, resultMap.getResultMappings(), true).build();
+			Configuration configuration = getConfiguration(resultMap);
+			MiluMapperBuilderAssistant assistant = new MiluMapperBuilderAssistant(configuration, null); //resource ignore
+			List<ResultMapping> mappingList = new ArrayList<>();
+			assistant.buildResultMapping(returnType, returnType, mappingList);
+//			if(resultMap.get) //TODO 判断是否为原resultType子类
+			return new ResultMap.Builder(configuration, resultMapId, returnType, resultMap.getResultMappings(), true).build();
 		});
 	}
 	

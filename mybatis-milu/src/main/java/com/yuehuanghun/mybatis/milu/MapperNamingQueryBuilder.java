@@ -20,7 +20,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -190,47 +189,8 @@ public class MapperNamingQueryBuilder {
 		}
 	}
 	
-	private void buildNotEntityResultMapping(Class<?> resultType, Class<?> subType, List<ResultMapping> resultMappings) {
-		if(subType == null || subType.isPrimitive() || subType == Object.class) {
-			return;
-		}
-		Field[] fields = subType.getDeclaredFields();
-		for(Field field : fields) {
-			Class<?> fieldType = field.getType();
-			if(fieldType.isArray() || Collection.class.isAssignableFrom(fieldType) || Map.class.isAssignableFrom(fieldType)) {
-				continue;
-			}
-			if(Modifier.isFinal(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
-				continue;
-			}
-			if(!hasSetter(subType, field)) {
-				continue;
-			}
-			ResultMapping resultMapping = assistant.buildResultMapping(resultType, field.getName(), field.getName(), fieldType, null, null, null, null, null, null, null);
-			resultMappings.add(resultMapping);
-			String snakeName = StringUtils.camel2Underline(field.getName(), true);
-			if(!field.getName().equals(snakeName)) {
-				resultMapping = assistant.buildResultMapping(resultType, field.getName(), snakeName, fieldType, null, null, null, null, null, null, null);
-				resultMappings.add(resultMapping);
-			}
-		}
-		
-		buildNotEntityResultMapping(resultType, subType.getSuperclass(), resultMappings);
-	}
-	
-	private static boolean hasSetter(Class<?> clazz, Field field) {
-		Method[] methods = clazz.getDeclaredMethods();
-		String setterName = "set" + StringUtils.capitalize(field.getName());
-		for(Method method : methods) {
-			if(Modifier.isStatic(field.getModifiers())) {
-				continue;
-			}
-			
-			if(method.getName().equals(setterName) && method.getParameterCount() == 1) {
-				return true;
-			}
-		}
-		return false;
+	private void buildNotEntityResultMapping(Class<?> resultType, Class<?> subType, List<ResultMapping> resultMappings) {		
+		assistant.buildResultMapping(resultType, subType, resultMappings);
 	}
 
 	private void createDiscriminatorResultMaps(String resultMapId, Class<?> resultType,
