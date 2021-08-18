@@ -34,11 +34,12 @@ import com.yuehuanghun.mybatis.milu.tool.Segment;
 
 public class GenericFindByExampleAndSortProviderSql extends GenericCachingProviderSql {
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked"})
 	@Override
 	public String provideSql(GenericProviderContext context, Object params) {
 		StringBuilder mapKeyBuilder = new StringBuilder(64).append(context.getMapperType().getName());
-		Sort sort = (Sort)((Map<String, Object>)params).get(Segment.SORT);
+		Map<String, Object> paramMap = (Map<String, Object>)params;
+		Sort sort = (Sort)paramMap.get(Segment.SORT);
 		if(sort != null) {
 			for(Order order : sort) {
 				mapKeyBuilder.append(Segment.HYPHEN).append(order.getProperty()).append(Segment.HYPHEN).append(order.getDirection());
@@ -47,7 +48,6 @@ public class GenericFindByExampleAndSortProviderSql extends GenericCachingProvid
 		
 		String sql = cache.computeIfAbsent(mapKeyBuilder.toString(), (key) -> {return provideCachingSql(context, params);});
 
-		Map paramMap = ((Map)params);
 		if(paramMap.containsKey(Constants.PAGE)) {
 			Pageable page = (Pageable) paramMap.get(Constants.PAGE);
 			if(page != null) {
