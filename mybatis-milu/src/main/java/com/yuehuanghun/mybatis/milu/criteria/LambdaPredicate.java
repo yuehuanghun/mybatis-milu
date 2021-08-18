@@ -88,7 +88,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> not(Consumer<LambdaPredicate<T>> predicate);
 
 	/**
-	 * 增加一个值相等查询条件，当value != null，条件生效
+	 * 增加一个值相等查询条件，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @return 当前对象
 	 */
@@ -103,7 +103,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> eq(boolean accept, SerializableFunction<T, ?> getterFn);
 	
 	/**
-	 * 增加一个值不等查询条件，当value != null，条件生效
+	 * 增加一个值不等查询条件，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @return 当前对象
 	 */
@@ -118,7 +118,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> neq(boolean accept, SerializableFunction<T, ?> getterFn);
 
 	/**
-	 * 增加一个值小于查询条件，当value != null，条件生效
+	 * 增加一个值小于查询条件，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @return 当前对象
 	 */
@@ -133,7 +133,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> lt(boolean accept, SerializableFunction<T, ?> getterFn);
 
 	/**
-	 * 增加一个值小于等于查询条件，当value != null，条件生效
+	 * 增加一个值小于等于查询条件，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @return 当前对象
 	 */
@@ -148,7 +148,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> lte(boolean accept, SerializableFunction<T, ?> getterFn);
 
 	/**
-	 * 增加一个值大于查询条件，当value != null，条件生效
+	 * 增加一个值大于查询条件，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @return 当前对象
 	 */
@@ -163,7 +163,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> gt(boolean accept, SerializableFunction<T, ?> getterFn);
 
 	/**
-	 * 增加一个值大于等于查询条件，当value != null，条件生效
+	 * 增加一个值大于等于查询条件，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @return 当前对象
 	 */
@@ -178,7 +178,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> gte(boolean accept, SerializableFunction<T, ?> getterFn);
 
 	/**
-	 * 增加一个匹配查询条件，注：该查询值不会自动加匹配符，当value != null，条件生效
+	 * 增加一个匹配查询条件，注：该查询值不会自动加匹配符，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @return 当前对象
 	 */
@@ -193,7 +193,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> like(boolean accept, SerializableFunction<T, ?> getterFn);
 
 	/**
-	 * 增加一个非匹配查询条件，注：该查询值不会自动加匹配符，当value != null，条件生效
+	 * 增加一个非匹配查询条件，注：该查询值不会自动加匹配符，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @return 当前对象
 	 */
@@ -208,7 +208,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> notLike(boolean accept, SerializableFunction<T, ?> getterFn);
 	
 	/**
-	 * 增加一个包含值查询条件，在值前后增加%，column LIKE CONCAT('%', value, '%')，当value != null，条件生效
+	 * 增加一个包含值查询条件，在值前后增加%，column LIKE CONCAT('%', value, '%')，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @return 当前对象
 	 */
@@ -223,7 +223,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> contain(boolean accept, SerializableFunction<T, ?> getterFn);
 
 	/**
-	 * 增加一个非包含值查询条件，在值前后增加%，column NOT LIKE CONCAT('%', value, '%')，当value != null，条件生效
+	 * 增加一个非包含值查询条件，在值前后增加%，column NOT LIKE CONCAT('%', value, '%')，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @return 当前对象
 	 */
@@ -238,7 +238,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> notContain(boolean accept, SerializableFunction<T, ?> getterFn);
 
 	/**
-	 * 增加一个左匹配查询条件，在值后面增加%，column LIKE CONCAT(value, '%')，当value != null，条件生效
+	 * 增加一个左匹配查询条件，在值后面增加%，column LIKE CONCAT(value, '%')，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @return 当前对象
 	 */
@@ -253,7 +253,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> startWith(boolean accept, SerializableFunction<T, ?> getterFn);
 	
 	/**
-	 * 增加一个右匹配查询条件，在值前面增加%，column LIKE CONCAT('%', value)，当value != null，条件生效
+	 * 增加一个右匹配查询条件，在值前面增加%，column LIKE CONCAT('%', value)，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @return 当前对象
 	 */
@@ -268,7 +268,8 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> endWith(boolean accept, SerializableFunction<T, ?> getterFn);
 
 	/**
-	 * 增加一个范围匹配查询条件， column BETWEEN startValue AND endValue
+	 * 增加一个范围匹配查询条件， column BETWEEN startValue AND endValue<br>
+	 * startValue和endValue不允许为null，如果可能为null值，可使用gte、lte替代
 	 * @param getterFn 实体类的get方法函数式
 	 * @param startValue 开始值
 	 * @param endValue 结束值 
@@ -277,7 +278,8 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> between(SerializableFunction<T, ?> getterFn, Object startValue, Object endValue);
 	
 	/**
-	 * 增加一个范围匹配查询条件， column BETWEEN startValue AND endValue
+	 * 增加一个范围匹配查询条件， column BETWEEN startValue AND endValue<br>
+	 * startValue和endValue不允许为null，如果可能为null值，可使用gte、lte替代
 	 * @param accept 当值为true时，条件生效
 	 * @param getterFn 实体类的get方法函数式
 	 * @param startValue 开始值
@@ -331,7 +333,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> notIn(boolean accept, SerializableFunction<T, ?> getterFn);
 	
 	/**
-	 * 增加一个值相等查询条件，当value != null，条件生效
+	 * 增加一个值相等查询条件，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式 实体类的get方法函数式
 	 * @param value 值
 	 * @return 当前对象
@@ -348,7 +350,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> eq(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
 	
 	/**
-	 * 增加一个值不等查询条件，当value != null，条件生效
+	 * 增加一个值不等查询条件，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @param value 值
 	 * @return 当前对象
@@ -365,7 +367,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> neq(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
 
 	/**
-	 * 增加一个值小于查询条件，当value != null，条件生效
+	 * 增加一个值小于查询条件，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @param value 值
 	 * @return 当前对象
@@ -382,7 +384,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> lt(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
 
 	/**
-	 * 增加一个值小于等于查询条件，当value != null，条件生效
+	 * 增加一个值小于等于查询条件，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @param value 值
 	 * @return 当前对象
@@ -399,7 +401,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> lte(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
 
 	/**
-	 * 增加一个值大于查询条件，当value != null，条件生效
+	 * 增加一个值大于查询条件，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @param value 值
 	 * @return 当前对象
@@ -416,7 +418,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> gt(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
 
 	/**
-	 * 增加一个值大于等于查询条件，当value != null，条件生效
+	 * 增加一个值大于等于查询条件，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @param value 值
 	 * @return 当前对象
@@ -433,7 +435,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> gte(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
 
 	/**
-	 * 增加一个匹配查询条件，注：该查询值不会自动加匹配符，当value != null，条件生效
+	 * 增加一个匹配查询条件，注：该查询值不会自动加匹配符，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @param value 值应包括匹配符
 	 * @return 当前对象
@@ -450,7 +452,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> like(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
 
 	/**
-	 * 增加一个非匹配查询条件，注：该查询值不会自动加匹配符，当value != null，条件生效
+	 * 增加一个非匹配查询条件，注：该查询值不会自动加匹配符，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @param value 值应包括匹配符
 	 * @return 当前对象
@@ -467,7 +469,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> notLike(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
 	
 	/**
-	 * 增加一个包含值查询条件，在值前后增加%，column LIKE CONCAT('%', value, '%')，当value != null，条件生效
+	 * 增加一个包含值查询条件，在值前后增加%，column LIKE CONCAT('%', value, '%')，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @param value 值
 	 * @return 当前对象
@@ -484,7 +486,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> contain(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
 
 	/**
-	 * 增加一个非包含值查询条件，在值前后增加%，column NOT LIKE CONCAT('%', value, '%')，当value != null，条件生效
+	 * 增加一个非包含值查询条件，在值前后增加%，column NOT LIKE CONCAT('%', value, '%')，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @param value 值
 	 * @return 当前对象
@@ -501,7 +503,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> notContain(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
 
 	/**
-	 * 增加一个左匹配查询条件，在值后面增加%，column LIKE CONCAT(value, '%')，当value != null，条件生效
+	 * 增加一个左匹配查询条件，在值后面增加%，column LIKE CONCAT(value, '%')，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @param value 值
 	 * @return 当前对象
@@ -518,7 +520,7 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> startWith(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
 	
 	/**
-	 * 增加一个右匹配查询条件，在值前面增加%，column LIKE CONCAT('%', value)，当value != null，条件生效
+	 * 增加一个右匹配查询条件，在值前面增加%，column LIKE CONCAT('%', value)，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param getterFn 实体类的get方法函数式
 	 * @param value 值
 	 * @return 当前对象
@@ -537,7 +539,7 @@ public interface LambdaPredicate<T> extends Condition {
 	/**
 	 * 增加一个IN查询条件，column IN (value[0],value[1]...)，当value != null并且非空集合时，条件生效
 	 * @param getterFn 实体类的get方法函数式
-	 * @param value 值
+	 * @param value 值，允许值为数组或集合，非null并且元素个数大于0时生效
 	 * @return 当前对象
 	 */
 	LambdaPredicate<T> in(SerializableFunction<T, ?> getterFn, Object value);
@@ -546,7 +548,7 @@ public interface LambdaPredicate<T> extends Condition {
 	 * 增加一个IN查询条件，column IN (value[0],value[1]...)
 	 * @param accept 当值为true时，条件生效
 	 * @param getterFn 实体类的get方法函数式
-	 * @param value 值
+	 * @param value 值，允许值为数组或集合
 	 * @return 当前对象
 	 */
 	LambdaPredicate<T> in(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
@@ -554,7 +556,7 @@ public interface LambdaPredicate<T> extends Condition {
 	/**
 	 * 增加一个NOT IN查询条件，column NOT IN (value[0],value[1]...)
 	 * @param getterFn 实体类的get方法函数式
-	 * @param value 值
+	 * @param value 值，允许值为数组或集合，非null并且元素个数大于0时生效
 	 * @return 当前对象
 	 */
 	LambdaPredicate<T> notIn(SerializableFunction<T, ?> getterFn, Object value);
@@ -563,7 +565,7 @@ public interface LambdaPredicate<T> extends Condition {
 	 * 增加一个NOT IN查询条件，column NOT IN (value[0],value[1]...)
 	 * @param accept 当值为true时，条件生效
 	 * @param getterFn 实体类的get方法函数式
-	 * @param value 值
+	 * @param value 值，允许值为数组或集合
 	 * @return 当前对象
 	 */
 	LambdaPredicate<T> notIn(boolean accept, SerializableFunction<T, ?> getterFn, Object value);

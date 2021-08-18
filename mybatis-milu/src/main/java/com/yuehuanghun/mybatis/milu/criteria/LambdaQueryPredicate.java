@@ -24,6 +24,16 @@ import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.SerializableFunction;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 
+/**
+ * 使用实体类的getter函数式作为查询条件，如实体类属性（的get方法）有变更能通过IDE直接感知<br>
+ * 有局限性，目前不能使用关联表的属性作为查询条件<br>
+ * 举例：<br>
+ * 当使用实体类接收查询参数：Foo foo = ...; fooMapper.findByLambdaCriteria(predicate -&gt; predicate.apply(foo).eq(Foo:getBar));<br>
+ * 当使用非实体类接口查询数：FooDTO fooDto = ...; fooMapper.findByLambdaCriteria(predicate -&gt; predicate.eq(Foo:getBar), fooDto.getBar());<br>
+ * @author yuehuanghun
+ *
+ * @param <T> 实体类
+ */
 public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	/**
 	 * 指定查询的（实体类）属性，未指定时查询实体所有属性

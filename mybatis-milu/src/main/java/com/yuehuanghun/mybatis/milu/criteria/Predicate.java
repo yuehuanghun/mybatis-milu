@@ -80,7 +80,7 @@ public interface Predicate extends Condition {
 	Predicate not(Consumer<Predicate> predicate);
 
 	/**
-	 * 增加一个值相等查询条件，当value != null，条件生效
+	 * 增加一个值相等查询条件，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param attrName 查询属性名
 	 * @param value 值
 	 * @return 当前对象
@@ -97,7 +97,7 @@ public interface Predicate extends Condition {
 	Predicate eq(boolean accept, String attrName, Object value);
 	
 	/**
-	 * 增加一个值不等查询条件，当value != null，条件生效
+	 * 增加一个值不等查询条件，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param attrName 查询属性名
 	 * @param value 值
 	 * @return 当前对象
@@ -114,7 +114,7 @@ public interface Predicate extends Condition {
 	Predicate neq(boolean accept, String attrName, Object value);
 
 	/**
-	 * 增加一个值小于查询条件，当value != null，条件生效
+	 * 增加一个值小于查询条件，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param attrName 查询属性名
 	 * @param value 值
 	 * @return 当前对象
@@ -131,7 +131,7 @@ public interface Predicate extends Condition {
 	Predicate lt(boolean accept, String attrName, Object value);
 
 	/**
-	 * 增加一个值小于等于查询条件，当value != null，条件生效
+	 * 增加一个值小于等于查询条件，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param attrName 查询属性名
 	 * @param value 值
 	 * @return 当前对象
@@ -148,7 +148,7 @@ public interface Predicate extends Condition {
 	Predicate lte(boolean accept, String attrName, Object value);
 
 	/**
-	 * 增加一个值大于查询条件，当value != null，条件生效
+	 * 增加一个值大于查询条件，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param attrName 查询属性名
 	 * @param value 值
 	 * @return 当前对象
@@ -165,7 +165,7 @@ public interface Predicate extends Condition {
 	Predicate gt(boolean accept, String attrName, Object value);
 
 	/**
-	 * 增加一个值大于等于查询条件，当value != null，条件生效
+	 * 增加一个值大于等于查询条件，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param attrName 查询属性名
 	 * @param value 值
 	 * @return 当前对象
@@ -182,7 +182,7 @@ public interface Predicate extends Condition {
 	Predicate gte(boolean accept, String attrName, Object value);
 
 	/**
-	 * 增加一个匹配查询条件，注：该查询值不会自动加匹配符，当value != null，条件生效
+	 * 增加一个匹配查询条件，注：该查询值不会自动加匹配符，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param attrName 查询属性名
 	 * @param value 值应包括匹配符
 	 * @return 当前对象
@@ -199,7 +199,7 @@ public interface Predicate extends Condition {
 	Predicate like(boolean accept, String attrName, Object value);
 
 	/**
-	 * 增加一个非匹配查询条件，注：该查询值不会自动加匹配符，当value != null，条件生效
+	 * 增加一个非匹配查询条件，注：该查询值不会自动加匹配符，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param attrName 查询属性名
 	 * @param value 值应包括匹配符
 	 * @return 当前对象
@@ -216,7 +216,7 @@ public interface Predicate extends Condition {
 	Predicate notLike(boolean accept, String attrName, Object value);
 	
 	/**
-	 * 增加一个包含值查询条件，在值前后增加%，column LIKE CONCAT('%', value, '%')，当value != null，条件生效
+	 * 增加一个包含值查询条件，在值前后增加%，column LIKE CONCAT('%', value, '%')，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param attrName 查询属性名
 	 * @param value 值
 	 * @return 当前对象
@@ -233,7 +233,7 @@ public interface Predicate extends Condition {
 	Predicate contain(boolean accept, String attrName, Object value);
 
 	/**
-	 * 增加一个非包含值查询条件，在值前后增加%，column NOT LIKE CONCAT('%', value, '%')，当value != null，条件生效
+	 * 增加一个非包含值查询条件，在值前后增加%，column NOT LIKE CONCAT('%', value, '%')，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param attrName 查询属性名
 	 * @param value 值
 	 * @return 当前对象
@@ -250,7 +250,7 @@ public interface Predicate extends Condition {
 	Predicate notContain(boolean accept, String attrName, Object value);
 
 	/**
-	 * 增加一个左匹配查询条件，在值后面增加%，column LIKE CONCAT(value, '%')，当value != null，条件生效
+	 * 增加一个左匹配查询条件，在值后面增加%，column LIKE CONCAT(value, '%')，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param attrName 查询属性名
 	 * @param value 值
 	 * @return 当前对象
@@ -267,7 +267,7 @@ public interface Predicate extends Condition {
 	Predicate startWith(boolean accept, String attrName, Object value);
 	
 	/**
-	 * 增加一个右匹配查询条件，在值前面增加%，column LIKE CONCAT('%', value)，当value != null，条件生效
+	 * 增加一个右匹配查询条件，在值前面增加%，column LIKE CONCAT('%', value)，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
 	 * @param attrName 查询属性名
 	 * @param value 值
 	 * @return 当前对象
@@ -284,7 +284,8 @@ public interface Predicate extends Condition {
 	Predicate endWith(boolean accept, String attrName, Object value);
 
 	/**
-	 * 增加一个范围匹配查询条件， column BETWEEN startValue AND endValue
+	 * 增加一个范围匹配查询条件， column BETWEEN startValue AND endValue<br>
+	 * startValue和endValue不允许为null，如果可能为null值，可使用gte、lte替代
 	 * @param attrName 查询属性名
 	 * @param startValue 开始值
 	 * @param endValue 结束值 
@@ -293,7 +294,8 @@ public interface Predicate extends Condition {
 	Predicate between(String attrName, Object startValue, Object endValue);
 	
 	/**
-	 * 增加一个范围匹配查询条件， column BETWEEN startValue AND endValue
+	 * 增加一个范围匹配查询条件， column BETWEEN startValue AND endValue。<br>
+	 * startValue和endValue不允许为null，如果可能为null值，可使用gte、lte替代
 	 * @param accept 当值为true时，条件生效
 	 * @param attrName 查询属性名
 	 * @param startValue 开始值
@@ -319,7 +321,7 @@ public interface Predicate extends Condition {
 	/**
 	 * 增加一个IN查询条件，column IN (value[0],value[1]...)，当value != null并且非空集合时，条件生效
 	 * @param attrName 查询属性名
-	 * @param value 值
+	 * @param value 值，允许值为数组或集合，非null并且元素个数大于0时条件生效
 	 * @return 当前对象
 	 */
 	Predicate in(String attrName, Object value);
@@ -328,7 +330,7 @@ public interface Predicate extends Condition {
 	 * 增加一个IN查询条件，column IN (value[0],value[1]...)
 	 * @param accept 当值为true时，条件生效
 	 * @param attrName 查询属性名
-	 * @param value 值
+	 * @param value 值，允许值为数组或集合
 	 * @return 当前对象
 	 */
 	Predicate in(boolean accept, String attrName, Object value);
@@ -336,7 +338,7 @@ public interface Predicate extends Condition {
 	/**
 	 * 增加一个NOT IN查询条件，column NOT IN (value[0],value[1]...)
 	 * @param attrName 查询属性名
-	 * @param value 值
+	 * @param value 值，允许值为数组或集合，非null并且元素个数大于0时条件生效
 	 * @return 当前对象
 	 */
 	Predicate notIn(String attrName, Object value);
@@ -345,7 +347,7 @@ public interface Predicate extends Condition {
 	 * 增加一个NOT IN查询条件，column NOT IN (value[0],value[1]...)
 	 * @param accept 当值为true时，条件生效
 	 * @param attrName 查询属性名
-	 * @param value 值
+	 * @param value 值，允许值为数组或集合
 	 * @return 当前对象
 	 */
 	Predicate notIn(boolean accept, String attrName, Object value);
@@ -359,7 +361,7 @@ public interface Predicate extends Condition {
 	Predicate regex(String attrName, Object value);
 	
 	/**
-	 * 正则匹配
+	 * 正则匹配，需要数据库支持
 	 * @param accept 当值为true时，条件生效
 	 * @param attrName 查询属性名
 	 * @param value 值
