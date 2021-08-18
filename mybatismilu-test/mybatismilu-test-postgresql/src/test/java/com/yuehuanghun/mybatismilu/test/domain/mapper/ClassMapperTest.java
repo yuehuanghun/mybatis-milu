@@ -1,6 +1,7 @@
 package com.yuehuanghun.mybatismilu.test.domain.mapper;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
@@ -130,6 +131,16 @@ public class ClassMapperTest {
 		List<ClassDTO> result = classMapper.findByLambdaCriteria(p -> p.exselect(Classs::getAddTime).eq(Classs::getName, "一年级"), ClassDTO.class);
 		assertTrue(result.size() == 1);
 		assertEquals(result.get(0).getClass(), ClassDTO.class);
-		assertEquals(result.get(0).getName(), "一年级");
+		assertEquals(result.get(0).getName(), "一年级");	
+		
+		List<Long> result2 = classMapper.findByLambdaCriteria(p -> p.select(Classs::getId).eq(Classs::getName, "一年级"), Long.class);
+		assertEquals(result2.size(), 1);
+		assertNotNull(result2.get(0));
+		assertTrue(result2.get(0) == 1);
+		
+		result2 = classMapper.findByLambdaCriteria(p -> p.select(Classs::getId), Long.class);
+		assertEquals(result2.size(), 2);
+		assertNotNull(result2.get(0));
+		assertNotNull(result2.get(1));
 	}
 }

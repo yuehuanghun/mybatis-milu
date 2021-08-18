@@ -25,6 +25,7 @@ import com.yuehuanghun.AppTest;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
+import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Student;
 import com.yuehuanghun.mybatismilu.test.dto.StudentStatistic;
 
@@ -282,5 +283,46 @@ public class StudentMapperTest {
 		result = studentMapper.statisticByLambdaCriteria(p -> p.sum(Student::getAge).avg(Student::getAge).count(Student::getId).groupBy(Student::getClassId).orderAsc(Student::getClassId), StudentStatistic.class);
 		assertTrue(result.size() > 0);
 		assertEquals(result.get(0).getClass(), StudentStatistic.class);
+	}
+	
+	@Test
+	@Transactional
+	public void testUpdateAttrByIdProvider() {
+		int effect = studentMapper.updateAttrById("name", "李五", 1L);
+		assertTrue(effect == 1);
+		Optional<Student> student = studentMapper.findById(1L);
+		assertTrue(student.isPresent() && "李五".equals(student.get().getName()));
+		
+		effect = studentMapper.updateAttrById(Student::getName, "赵四", 1L);
+		assertTrue(effect == 1);
+		student = studentMapper.findById(1L);
+		assertTrue(student.isPresent() && "赵四".equals(student.get().getName()));
+		
+		
+		effect = studentMapper.updateAttrById(Student::getAge, 23, 1L);
+		assertTrue(effect == 1);
+		student = studentMapper.findById(1L);
+		assertTrue(student.isPresent() && student.get().getAge() == 23);
+	}
+	
+	@Test
+	public void testFindByExample_page() {
+		Student example = new Student();
+		List<Student> studentList = studentMapper.findByExample(example, new PageRequest(1));
+		
+		assertTrue(studentList.size() == 1);
+		
+		example.setName("王");
+		studentList = studentMapper.findByExample(example, new PageRequest(3));
+		
+		assertTrue(studentList.size() == 2);
+		assertTrue(studentList.get(0).getName().startsWith("王"));
+	}
+	
+	@Test
+	public void testfindByNameStartsWith_page() {
+		List<Student> studentList = studentMapper.findByNameStartsWith("王", new PageRequest(10));
+		assertTrue(studentList.size() == 2);
+		assertTrue(studentList.get(0).getName().startsWith("王"));
 	}
 }

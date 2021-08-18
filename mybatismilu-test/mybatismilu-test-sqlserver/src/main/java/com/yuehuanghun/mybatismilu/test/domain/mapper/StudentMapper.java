@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.yuehuanghun.mybatis.milu.BaseMapper;
 import com.yuehuanghun.mybatis.milu.annotation.NamingQuery;
+import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Student;
 
 @Mapper
@@ -36,4 +37,6 @@ public interface StudentMapper extends BaseMapper<Student, Long> {
 	public List<Map<String, Object>> sumAgeAvgAgeCountIdByUpdateTimeGreaterThanGroupByClassIdOrderByClassId(Date updateTime);
 	@NamingQuery
 	public List<Map<String, Object>> minAgeCountIdByGroupByClassIdOrderByClassId();
+	@NamingQuery
+	public List<Student> findByNameStartsWith(String name, Pageable page);
 }
