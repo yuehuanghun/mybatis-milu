@@ -32,6 +32,7 @@ import com.yuehuanghun.mybatis.milu.criteria.Predicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.StatisticPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.UpdatePredicate;
+import com.yuehuanghun.mybatis.milu.criteria.lambda.SerializableFunction;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
@@ -213,7 +214,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * 动态条件更新<br>
 	 * 支持关联表条件，但需要确定数据库是否支持关联条件查询进行更新<br>
 	 * @param entity 默认非null值被更新，可以通过predicate.updateMode(Mode mode)设定更新的模式
-	 * @param predicate Where条件
+	 * @param predicate 查询条件
 	 * @return 影响行数
 	 */
 	int updateByCriteria(@Param(Constants.ENTITY)T entity, @Param(Constants.CRITERIA)UpdatePredicate predicate);
@@ -222,7 +223,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * 动态条件更新<br>
 	 * 支持关联表条件，但需要确定数据库是否支持关联条件查询进行更新<br>
 	 * @param entity 默认非null值被更新，可以通过predicate.updateMode(Mode mode)设定更新的模式
-	 * @param predicate Where条件
+	 * @param predicate 查询条件
 	 * @return 影响行数
 	 */
 	int updateByCriteria(@Param(Constants.ENTITY)T entity, @Param(Constants.CRITERIA)Consumer<UpdatePredicate> predicate);
@@ -230,7 +231,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	/**
 	 * 动态条件更新<br>
 	 * @param entity 默认非null值被更新，可以通过predicate.updateMode(Mode mode)设定更新的模式
-	 * @param predicate Where条件
+	 * @param predicate 查询条件
 	 * @return 影响行数
 	 */
 	int updateByLambdaCriteria(@Param(Constants.ENTITY)T entity, @Param(Constants.CRITERIA)Consumer<LambdaUpdatePredicate<T>> predicate);
@@ -294,6 +295,30 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @return 统计数据列表
 	 */
 	<E> List<E> statisticByLambdaCriteria(@Param(Constants.CRITERIA) Consumer<LambdaStatisticPredicate<T>> predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType);
+	
+	/**
+	 * 单属性更新<br>
+	 * 除了指定属性外，@Version及@AttributeOptions中声明为更新时填充的属性也会被更新<br>
+     * 指定更新属性为@Version属性是无意义的<br>
+     * 指定更新属性如果为@AttributeOptions声明为更新时填充的属性，则以指定值为准
+	 * @param attrName 属性名，实体中的属性。注意不要直接填字段名。
+	 * @param value 更新值，可以为null值
+	 * @param id 主键
+	 * @return 影响行数
+	 */
+	int updateAttrById(@Param(Constants.ATTR_NAME) String attrName, @Param(Constants.VALUE) Object value, @Param(Constants.ID) ID id);
+
+	/**
+	 * 单属性更新<br>
+	 * 除了指定属性外，@Version及@AttributeOptions中声明为更新时填充的属性也会被更新<br>
+     * 指定更新属性为@Version属性是无意义的<br>
+     * 指定更新属性如果为@AttributeOptions声明为更新时填充的属性，则以指定值为准
+	 * @param attrNameGetter 实体类属性名getter函数式。
+	 * @param value 更新值，可以为null值
+	 * @param id 主键
+	 * @return 影响行数
+	 */
+	int updateAttrById(@Param(Constants.ATTR_NAME) SerializableFunction<T, ?> attrNameGetter, @Param(Constants.VALUE) Object value, @Param(Constants.ID) ID id);
 	
 	/**
 	 * 刷新执行查询到数据库

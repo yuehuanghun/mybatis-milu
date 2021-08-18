@@ -58,4 +58,8 @@ public interface Constants {
 	String RESULT_TYPE = "resultType";
 	
 	String PAGE = "page";
+	
+	String ATTR_NAME = "attrName";
+	
+	String VALUE = "value";
 }

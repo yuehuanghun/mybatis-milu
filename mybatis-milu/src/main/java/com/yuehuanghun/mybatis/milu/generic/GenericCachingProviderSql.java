@@ -26,7 +26,11 @@ public abstract class GenericCachingProviderSql implements GenericProviderSql {
 
 	@Override
 	public String provideSql(GenericProviderContext context, Object params) {
-		return cache.computeIfAbsent(context.getMapperType().getName(), (key) -> {return provideCachingSql(context, params);});
+		return cache.computeIfAbsent(getCacheKey(context, params), (key) -> {return provideCachingSql(context, params);});
+	}
+	
+	protected String getCacheKey(GenericProviderContext context, Object params) {
+		return context.getMapperType().getName();
 	}
 
 	public abstract String provideCachingSql(GenericProviderContext context, Object params);
