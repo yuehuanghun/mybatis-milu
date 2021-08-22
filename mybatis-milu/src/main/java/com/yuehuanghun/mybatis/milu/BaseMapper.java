@@ -39,7 +39,7 @@ import com.yuehuanghun.mybatis.milu.tool.Constants;
 
 /**
  * 通用查询方法接口<br>
- * 勿在继续接口上覆盖或重载BaseMapper中的方法，以免发现不必要的错误
+ * 勿在继承接口上覆盖或重载BaseMapper中的方法，以免发现不必要的错误
  * @author yuehuanghun
  *
  * @param <T> 实体类
@@ -298,10 +298,10 @@ public interface BaseMapper<T, ID extends Serializable> {
 	
 	/**
 	 * 单属性更新<br>
-	 * 除了指定属性外，@Version及@AttributeOptions中声明为更新时填充的属性也会被更新<br>
-     * 指定更新属性为@Version属性是无意义的<br>
-     * 指定更新属性如果为@AttributeOptions声明为更新时填充的属性，则以指定值为准
-	 * @param attrName 属性名，实体中的属性。注意不要直接填字段名。
+	 * 除了指定属性外，@Version及@AttributeOptions中声明为更新时自动填充的属性也会被更新<br>
+        * 指定更新属性为@Version属性是无意义的<br>
+        * 指定更新属性如果为@AttributeOptions声明为更新时自动填充的属性，则以指定值为准
+	 * @param attrName 属性名，本实体中的属性，不能为关联实体的属性。注意不要直接填字段名。
 	 * @param value 更新值，可以为null值
 	 * @param id 主键
 	 * @return 影响行数
@@ -310,9 +310,9 @@ public interface BaseMapper<T, ID extends Serializable> {
 
 	/**
 	 * 单属性更新<br>
-	 * 除了指定属性外，@Version及@AttributeOptions中声明为更新时填充的属性也会被更新<br>
-     * 指定更新属性为@Version属性是无意义的<br>
-     * 指定更新属性如果为@AttributeOptions声明为更新时填充的属性，则以指定值为准
+	 * 除了指定属性外，@Version及@AttributeOptions中声明为更新时自动填充的属性也会被更新<br>
+        * 指定更新属性为@Version属性是无意义的<br>
+        * 指定更新属性如果为@AttributeOptions声明为更新时自动填充的属性，则以指定值为准
 	 * @param attrNameGetter 实体类属性名getter函数式。
 	 * @param value 更新值，可以为null值
 	 * @param id 主键

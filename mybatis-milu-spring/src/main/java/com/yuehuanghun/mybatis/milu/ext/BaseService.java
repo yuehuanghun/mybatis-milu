@@ -23,8 +23,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import org.apache.ibatis.annotations.Param;
-
 import com.yuehuanghun.mybatis.milu.BaseMapper;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaQueryPredicate;
@@ -34,8 +32,9 @@ import com.yuehuanghun.mybatis.milu.criteria.Predicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.StatisticPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.UpdatePredicate;
+import com.yuehuanghun.mybatis.milu.criteria.lambda.SerializableFunction;
 import com.yuehuanghun.mybatis.milu.data.Sort;
-import com.yuehuanghun.mybatis.milu.tool.Constants;
+import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 
 /**
  * 将BaseMaper的功能以Service的形式提供
@@ -93,6 +92,16 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	}
 
 	/**
+	 * 使用实体类作为查询参数，非null值才会参与查询，关联表属性无效
+	 * @param example 条件
+	 * @param pageable 分页参数
+	 * @return 列表
+	 */
+	default List<T> getByExample(T example, Pageable pageable){
+		return getDomainMapper().findByExample(example, pageable);
+	}
+
+	/**
 	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效
 	 * @param example 条件
 	 * @param sort 排序
@@ -100,6 +109,17 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 */
 	default List<T> getByExampleAndSort(T example, Sort sort) {
 		return getDomainMapper().findByExampleAndSort(example, sort);
+	}
+	
+	/**
+	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效
+	 * @param example 条件
+	 * @param sort 排序
+	 * @param pageable 分页参数
+	 * @return 列表
+	 */
+	default List<T> getByExampleAndSort(T example, Sort sort, Pageable pageable){
+		return getDomainMapper().findByExampleAndSort(example, sort, pageable);
 	}
 
 	/**
@@ -162,7 +182,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * @param predicate 条件
 	 * @return 影响行数
 	 */
-	default int countByLambdaCriteria(@Param(Constants.CRITERIA)Consumer<LambdaPredicate<T>> predicate) {
+	default int countByLambdaCriteria(Consumer<LambdaPredicate<T>> predicate) {
 		return getDomainMapper().countByLambdaCriteria(predicate);
 	}
 
@@ -191,7 +211,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * @param resultType 结果类
 	 * @return 列表
 	 */
-	default <E> List<E> getByCriteria(@Param(Constants.CRITERIA)Consumer<QueryPredicate> predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType) {
+	default <E> List<E> getByCriteria(Consumer<QueryPredicate> predicate, Class<E> resultType) {
 		return getDomainMapper().findByCriteria(predicate, resultType);
 	}
 
@@ -211,7 +231,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * @param resultType 结果类
 	 * @return 列表
 	 */
-	default <E> List<E> getByLambdaCriteria(@Param(Constants.CRITERIA)Consumer<LambdaQueryPredicate<T>> predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType){
+	default <E> List<E> getByLambdaCriteria(Consumer<LambdaQueryPredicate<T>> predicate, Class<E> resultType){
 		return getDomainMapper().findByLambdaCriteria(predicate, resultType);
 	}
 	
@@ -290,7 +310,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * @param resultType 结果类
 	 * @return 统计数据列表
 	 */
-	default <E> List<E> statisticByCriteria(@Param(Constants.CRITERIA) Consumer<StatisticPredicate> predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType){
+	default <E> List<E> statisticByCriteria(Consumer<StatisticPredicate> predicate, Class<E> resultType){
 		return getDomainMapper().statisticByCriteria(predicate, resultType);
 	}
 	
@@ -299,7 +319,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * @param predicate 条件
 	 * @return 统计数据列表
 	 */
-	default List<Map<String, Object>> statisticByLambdaCriteria(@Param(Constants.CRITERIA) Consumer<LambdaStatisticPredicate<T>> predicate) {
+	default List<Map<String, Object>> statisticByLambdaCriteria(Consumer<LambdaStatisticPredicate<T>> predicate) {
 		return getDomainMapper().statisticByLambdaCriteria(predicate);
 	}
 	
@@ -310,8 +330,35 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * @param resultType 结果类
 	 * @return 统计数据列表
 	 */
-	default <E> List<E> statisticByLambdaCriteria(@Param(Constants.CRITERIA) Consumer<LambdaStatisticPredicate<T>> predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType) {
+	default <E> List<E> statisticByLambdaCriteria(Consumer<LambdaStatisticPredicate<T>> predicate, Class<E> resultType) {
 		return getDomainMapper().statisticByLambdaCriteria(predicate, resultType);
 	}
-	
+
+	/**
+	 * 单属性更新<br>
+	 * 除了指定属性外，@Version及@AttributeOptions中声明为更新时自动填充的属性也会被更新<br>
+     * 指定更新属性为@Version属性是无意义的<br>
+     * 指定更新属性如果为@AttributeOptions声明为更新时自动填充的属性，则以指定值为准
+	 * @param attrName 属性名，本实体中的属性，不能为关联实体的属性。注意不要直接填字段名。
+	 * @param value 更新值，可以为null值
+	 * @param id 主键
+	 * @return 影响行数
+	 */
+	default int updateAttrById(String attrName, Object value, ID id) {
+		return getDomainMapper().updateAttrById(attrName, value, id);
+	}
+
+	/**
+	 * 单属性更新<br>
+	 * 除了指定属性外，@Version及@AttributeOptions中声明为更新时自动填充的属性也会被更新<br>
+     * 指定更新属性为@Version属性是无意义的<br>
+     * 指定更新属性如果为@AttributeOptions声明为更新时自动填充的属性，则以指定值为准
+	 * @param attrNameGetter 实体类属性名getter函数式。
+	 * @param value 更新值，可以为null值
+	 * @param id 主键
+	 * @return 影响行数
+	 */
+	default int updateAttrById(SerializableFunction<T, ?> attrNameGetter, Object value, ID id) {
+		return getDomainMapper().updateAttrById(attrNameGetter, value, id);
+	}
 }
