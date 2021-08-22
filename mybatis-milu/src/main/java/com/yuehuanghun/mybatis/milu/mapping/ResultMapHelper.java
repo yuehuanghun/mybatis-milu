@@ -40,7 +40,7 @@ public class ResultMapHelper {
 	
 	public static ResultMap replaceResultMap(ResultMap resultMap) {
 		Class<?> returnType = DYNAMIC_RETURN_TYPE.get();
-		if(returnType == null || returnType == resultMap.getType()) {
+		if(returnType == null || resultMap.getType().isAssignableFrom(returnType)) {
 			return resultMap;
 		}
 		
@@ -62,13 +62,6 @@ public class ResultMapHelper {
 			MiluMapperBuilderAssistant assistant = new MiluMapperBuilderAssistant(configuration, null); //resource ignore
 			List<ResultMapping> mappingList = new ArrayList<>();
 			assistant.buildResultMapping(returnType, returnType, mappingList);
-			if(resultMap.getType().isAssignableFrom(returnType)) {
-				for(ResultMapping mapping : resultMap.getResultMappings()) {
-					if(!mappingList.contains(mapping)) {
-						mappingList.add(mapping);
-					}
-				}
-			}
 			return new ResultMap.Builder(configuration, resultMapId, returnType, mappingList, true).build();
 		});
 	}
