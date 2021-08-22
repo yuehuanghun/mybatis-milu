@@ -155,15 +155,15 @@ public class EntityBuilder {
 					for(ExampleQuery exampleQuery : exampleQuerys) {
 						if(StringUtils.isNotBlank(exampleQuery.startKeyName())) {
 							if(rangeList == null) rangeList = new ArrayList<>(2);
-							rangeList.add(new RangeCondition(exampleQuery.startKeyName(), exampleQuery.startValueContain() ? Type.GREATER_THAN_EQUAL : Type.GREATER_THAN));
+							rangeList.add(new RangeCondition(exampleQuery.startKeyName(), exampleQuery.startValueContain() ? Type.GREATER_THAN_EQUAL : Type.GREATER_THAN, attr.getJavaType(), exampleQuery.valueConverter(), KeyType.START));
 						}
 						if(StringUtils.isNotBlank(exampleQuery.endKeyName())) {
 							if(rangeList == null) rangeList = new ArrayList<>(2);
-							rangeList.add(new RangeCondition(exampleQuery.endKeyName(), exampleQuery.endValueContain() ? Type.LESS_THAN_EQUAL : Type.LESS_THAN));
+							rangeList.add(new RangeCondition(exampleQuery.endKeyName(), exampleQuery.endValueContain() ? Type.LESS_THAN_EQUAL : Type.LESS_THAN, attr.getJavaType(), exampleQuery.valueConverter(), KeyType.END));
 						}
 						if(StringUtils.isNotBlank(exampleQuery.inKeyName())) {
 							if(rangeList == null) rangeList = new ArrayList<>(1);
-							rangeList.add(new RangeCondition(exampleQuery.inKeyName(), Type.IN));
+							rangeList.add(new RangeCondition(exampleQuery.inKeyName(), Type.IN, attr.getJavaType(), exampleQuery.valueConverter(), KeyType.IN));
 						}
 					}
 				}

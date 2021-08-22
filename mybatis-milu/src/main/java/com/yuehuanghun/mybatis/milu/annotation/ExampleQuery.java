@@ -22,6 +22,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
+import com.yuehuanghun.mybatis.milu.tool.converter.DefaultExampleQueryConverter;
+import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter;
 
 /**
  * 应用于通用查询方法findByExample、findByExampleAndSort、countByExample中，标记属性作为查询条件的匹配方法
@@ -62,6 +64,18 @@ public @interface ExampleQuery {
 	 * @return true/false
 	 */
 	boolean endValueContain() default true;
+	
+	/**
+	 * 对范围查询有效，对startValue、endValue值的转换<br>
+	 * 目前仅能对startKey、endKey为二级以上属性时并且属性所在对象为Map有效<br>
+	 * 例如startKey = "a.b"，a为Map对象时，可对b进行转换<br>
+	 * &nbsp;&nbsp;&nbsp;&nbsp;startKey = "a.b.c"， b为Map对象时，可对c进行转换<br>
+	 * 转换后的值会覆盖为原值<br>
+	 * 该功能为了使用Map接收参数后，作为查询参数时，对象类型非对应字段类型的问题，而某些数据库无法做类型隐式转换时。<br>
+	 * 如果不需要转换可以设置类为ExampleQueryConverter.NullConverter.class
+	 * @return
+	 */
+	Class<? extends ExampleQueryConverter> valueConverter() default DefaultExampleQueryConverter.class;
 	
 	/**
 	 * 当前属性IN查询时传值的键名<br>

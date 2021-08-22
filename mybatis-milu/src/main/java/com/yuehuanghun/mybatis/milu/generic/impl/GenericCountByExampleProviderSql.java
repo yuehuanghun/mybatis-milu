@@ -19,14 +19,14 @@ import java.util.Collection;
 
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
-import com.yuehuanghun.mybatis.milu.generic.GenericCachingProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.AbstractGenericExampleProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.RangeCondition;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
-public class GenericCountByExampleProviderSql extends GenericCachingProviderSql {
+public class GenericCountByExampleProviderSql extends AbstractGenericExampleProviderSql {
 
 	@Override
 	public String provideCachingSql(GenericProviderContext context, Object params) {

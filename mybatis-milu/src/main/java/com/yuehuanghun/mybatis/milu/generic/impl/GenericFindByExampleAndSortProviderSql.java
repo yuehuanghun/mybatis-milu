@@ -23,7 +23,7 @@ import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.data.Sort.Order;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
-import com.yuehuanghun.mybatis.milu.generic.GenericCachingProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.AbstractGenericExampleProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
@@ -32,7 +32,7 @@ import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
-public class GenericFindByExampleAndSortProviderSql extends GenericCachingProviderSql {
+public class GenericFindByExampleAndSortProviderSql extends AbstractGenericExampleProviderSql {
 	
 	@SuppressWarnings({ "unchecked"})
 	@Override

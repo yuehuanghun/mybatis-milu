@@ -31,6 +31,7 @@ import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Part;
 import com.yuehuanghun.mybatis.milu.filler.Filler;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.Reference;
+import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -201,9 +202,15 @@ public class Entity {
 	@Data
 	@AllArgsConstructor
 	public static class RangeCondition {
-		
+		//键名表达式
 		private String keyName;
 		
 		private Part.Type type;
+		//对应属性的类型
+		private Class<?> attrJavaType;
+		//传转换器
+		private Class<? extends ExampleQueryConverter> valueConverter;
+		
+		private KeyType keyType;
 	}
 }
