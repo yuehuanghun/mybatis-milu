@@ -26,6 +26,7 @@ import javax.persistence.LockModeType;
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
+import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
@@ -128,6 +129,12 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	@Override
 	public QueryPredicate limit(int pageNum, int pageSize, boolean count) {
 		this.limit = new LimitImpl(pageNum, pageSize, count);
+		return this;
+	}
+
+	@Override
+	public QueryPredicate limit(Pageable page) {
+		this.limit = new LimitImpl(page);
 		return this;
 	}
 

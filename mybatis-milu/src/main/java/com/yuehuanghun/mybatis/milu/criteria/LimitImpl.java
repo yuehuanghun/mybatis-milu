@@ -52,6 +52,12 @@ public class LimitImpl implements Limit, Pageable {
 		this.pageSize = pageSize;
 		this.count = count;
 	}
+	
+	protected LimitImpl(Pageable page) {
+		this.pageNum = page.getPageNum();
+		this.pageSize = page.getPageSize();
+		this.count = page.isCount();
+	}
 
 	@Override
 	public int renderParams(Map<String, Object> params, int paramIndex) {

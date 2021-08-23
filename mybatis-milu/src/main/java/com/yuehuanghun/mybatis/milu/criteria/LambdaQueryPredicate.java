@@ -23,6 +23,7 @@ import javax.persistence.Version;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.SerializableFunction;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
+import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 
 /**
  * 使用实体类的getter函数式作为查询条件，如实体类属性（的get方法）有变更能通过IDE直接感知<br>
@@ -130,7 +131,14 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	 * @param count 是否查询符合的总行数
 	 * @return 当前对象
 	 */
-	LambdaQueryPredicate<T> limit(int pageNum, int pageSize, boolean count);
+	LambdaQueryPredicate<T> limit(int pageNum, int pageSize, boolean count);	
+
+	/**
+	 * 使用一个Pageable对象传递分页信息
+	 * @param page 分页，getPageNum()、getPageSize()值需大于0
+	 * @return 当前对象
+	 */
+	LambdaQueryPredicate<T> limit(Pageable page);
 
 	@Override
 	LambdaQueryPredicate<T> apply(T entity);

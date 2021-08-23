@@ -18,6 +18,7 @@ import com.yuehuanghun.AppTest;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
+import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Classs;
 import com.yuehuanghun.mybatismilu.test.dto.ClassDTO;
 
@@ -59,6 +60,9 @@ public class ClassMapperTest {
 		assertTrue(result.size() == 3);
 		
 		result = classMapper.findByCriteria(new QueryPredicateImpl().eq("name", "一年级").order(Direction.DESC,"id").order("studentListAddTime").limit(2));
+		assertTrue(result.size() == 2);
+		
+		result = classMapper.findByCriteria(new QueryPredicateImpl().eq("name", "一年级").order(Direction.DESC,"id").order("studentListAddTime").limit(new PageRequest(2)));
 		assertTrue(result.size() == 2);
 		
 		result = classMapper.findByCriteria(new QueryPredicateImpl().eq("name", "一年级").order(Direction.DESC,"id").order("studentListAddTime").limit(1, 2, false));
