@@ -230,6 +230,13 @@ public interface ClassMapper extends BaseMapper<Classs, Long> {
 | Top | findTop5ByLastname | select ... where x.lastname = ?1 limit 5|
 | First | findFirstByLastname | select ... where x.lastname = ?1 limit 1|
 
+分页，直接在查询中添加Pageable参数即可，不需要在方法名上写表达式，并且参数位置任意。
+```
+	@NamingQuery
+	public List<Student> findByNameLike(String name, Pageable page);
+```
+当page参数为null时，将不会分页
+
 #### 四、主键生成器
 使用javax.persistence.GeneratedValue注解声明主键的创建方式  
 对于@GeneratedValue的strategy（策略）枚举，有不同的处理方式

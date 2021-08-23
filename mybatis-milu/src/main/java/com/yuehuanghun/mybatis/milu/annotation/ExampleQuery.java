@@ -73,7 +73,7 @@ public @interface ExampleQuery {
 	 * 转换后的值会覆盖为原值<br>
 	 * 该功能为了使用Map接收参数后，作为查询参数时，对象类型非对应字段类型的问题，而某些数据库无法做类型隐式转换时。<br>
 	 * 如果不需要转换可以设置类为ExampleQueryConverter.NullConverter.class
-	 * @return
+	 * @return 转换器
 	 */
 	Class<? extends ExampleQueryConverter> valueConverter() default DefaultExampleQueryConverter.class;
 	

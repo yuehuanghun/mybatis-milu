@@ -37,17 +37,9 @@ public class GenericFindByExampleAndSortProviderSql extends AbstractGenericExamp
 	@SuppressWarnings({ "unchecked"})
 	@Override
 	public String provideSql(GenericProviderContext context, Object params) {
-		StringBuilder mapKeyBuilder = new StringBuilder(64).append(context.getMapperType().getName());
-		Map<String, Object> paramMap = (Map<String, Object>)params;
-		Sort sort = (Sort)paramMap.get(Segment.SORT);
-		if(sort != null) {
-			for(Order order : sort) {
-				mapKeyBuilder.append(Segment.HYPHEN).append(order.getProperty()).append(Segment.HYPHEN).append(order.getDirection());
-			}
-		}
-		
-		String sql = cache.computeIfAbsent(mapKeyBuilder.toString(), (key) -> {return provideCachingSql(context, params);});
+		String sql = super.provideSql(context, params);
 
+		Map<String, Object> paramMap = (Map<String, Object>)params;
 		if(paramMap.containsKey(Constants.PAGE)) {
 			Pageable page = (Pageable) paramMap.get(Constants.PAGE);
 			if(page != null) {
@@ -57,7 +49,21 @@ public class GenericFindByExampleAndSortProviderSql extends AbstractGenericExamp
 		
 		return sql;
 	}
-	
+
+	@SuppressWarnings({ "unchecked"})
+	@Override
+	protected String getCacheKey(GenericProviderContext context, Object params) {
+		StringBuilder mapKeyBuilder = new StringBuilder(64).append(context.getMapperType().getName());
+		Map<String, Object> paramMap = (Map<String, Object>)params;
+		Sort sort = (Sort)paramMap.get(Segment.SORT);
+		if(sort != null) {
+			for(Order order : sort) {
+				mapKeyBuilder.append(Segment.HYPHEN).append(order.getProperty()).append(Segment.HYPHEN).append(order.getDirection());
+			}
+		}
+		return mapKeyBuilder.toString();
+	}
+
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public String provideCachingSql(GenericProviderContext context, Object params) {

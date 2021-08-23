@@ -20,7 +20,7 @@ import com.yuehuanghun.mybatis.milu.metamodel.KeyType;
 /**
  * ExampleQuery中动态参数值类型转换器
  * @see com.yuehuanghun.mybatis.milu.tool.converter.DefaultExampleQueryConverter
- * @see com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter.NONE_CONVERTER
+ * @see com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter.NullConverter
  * @author yuehuanghun
  *
  */
