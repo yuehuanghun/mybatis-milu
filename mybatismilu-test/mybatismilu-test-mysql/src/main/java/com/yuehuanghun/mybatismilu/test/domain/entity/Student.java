@@ -18,12 +18,15 @@ import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
 import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery;
 import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery.MatchType;
 import com.yuehuanghun.mybatis.milu.annotation.Filler;
+import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 @Entity
-public class Student {
+public class Student extends PageRequest {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "tableSequence")

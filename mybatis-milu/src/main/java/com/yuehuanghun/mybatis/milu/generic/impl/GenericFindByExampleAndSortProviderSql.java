@@ -40,9 +40,17 @@ public class GenericFindByExampleAndSortProviderSql extends AbstractGenericExamp
 		String sql = super.provideSql(context, params);
 
 		Map<String, Object> paramMap = (Map<String, Object>)params;
+		boolean hasPaging = false;
 		if(paramMap.containsKey(Constants.PAGE)) {
 			Pageable page = (Pageable) paramMap.get(Constants.PAGE);
 			if(page != null) {
+				PageHelper.startPage(page.getPageNum(), page.getPageSize(), page.isCount());
+			}
+		}
+		
+		if(!hasPaging && paramMap.get(Constants.EXAMPLE) instanceof Pageable) {
+			Pageable page = (Pageable)  paramMap.get(Constants.EXAMPLE);
+			if(page != null && page.getPageNum() > 0 && page.getPageSize() > 0) {
 				PageHelper.startPage(page.getPageNum(), page.getPageSize(), page.isCount());
 			}
 		}

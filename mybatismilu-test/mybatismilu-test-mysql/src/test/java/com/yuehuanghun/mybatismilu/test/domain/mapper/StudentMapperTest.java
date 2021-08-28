@@ -24,6 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.Page;
 import com.yuehuanghun.AppTest;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.Sort;
@@ -387,6 +388,29 @@ public class StudentMapperTest {
 		example.setName("王");
 		studentList = studentMapper.findByExample(example, new PageRequest(3));
 		
+		assertTrue(studentList.size() == 2);
+		assertTrue(studentList.get(0).getName().startsWith("王"));
+	}
+
+	@Test
+	public void testFindByExample_pageInEntity() {
+		Student example = new Student();
+		List<Student> studentList = studentMapper.findByExample(example);
+		
+		assertTrue(studentList.size() == 5);
+		assertTrue(!Page.class.isInstance(studentList));
+		
+		example.setPageNum(1);
+		example.setPageSize(3);
+		studentList = studentMapper.findByExample(example);
+		assertTrue(Page.class.isInstance(studentList));
+		
+		assertTrue(studentList.size() == 3);
+		
+		example.setName("王");
+		studentList = studentMapper.findByExample(example);
+		
+		assertTrue(Page.class.isInstance(studentList));		
 		assertTrue(studentList.size() == 2);
 		assertTrue(studentList.get(0).getName().startsWith("王"));
 	}

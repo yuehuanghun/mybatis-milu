@@ -15,9 +15,13 @@
  */
 package com.yuehuanghun.mybatis.milu.pagehelper;
 
+import javax.persistence.Transient;
+
 import com.yuehuanghun.mybatis.milu.tool.Assert;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * 分页参数默认实现
@@ -25,13 +29,15 @@ import lombok.Getter;
  *
  */
 @Getter
+@Setter
+@NoArgsConstructor
 public class PageRequest implements Pageable {
-	
+	@Transient
 	private int pageNum;
-	
+	@Transient
 	private int pageSize;
-	
-	private boolean count;
+	@Transient
+	private boolean count = true;
 
 	/**
 	 * 分页信息
