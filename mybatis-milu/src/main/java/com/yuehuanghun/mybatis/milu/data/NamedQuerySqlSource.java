@@ -24,13 +24,16 @@ import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
 import com.github.pagehelper.PageHelper;
+import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 
 public class NamedQuerySqlSource implements SqlSource {
 	private final SqlSource delegate;
+	private final Entity entity;
 	
-	public NamedQuerySqlSource(Configuration configuration, String script, Class<?> parameterType) {
+	public NamedQuerySqlSource(Configuration configuration, String script, Class<?> parameterType, Entity entity) {
 		delegate = createSqlSource(configuration, script, parameterType);
+		this.entity = entity;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -46,6 +49,9 @@ public class NamedQuerySqlSource implements SqlSource {
 				}
 			}
 		}
+		
+		SqlBuildingHelper.convertLocalPageOrder(entity); //转换排序中的属性为列名
+		
 		try {
 			return delegate.getBoundSql(parameterObject);
 		} catch (Exception e) {

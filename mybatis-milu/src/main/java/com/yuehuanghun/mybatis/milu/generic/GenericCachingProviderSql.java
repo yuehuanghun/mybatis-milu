@@ -26,6 +26,8 @@ public abstract class GenericCachingProviderSql implements GenericProviderSql {
 
 	@Override
 	public String provideSql(GenericProviderContext context, Object params) {
+		SqlBuildingHelper.convertLocalPageOrder(context.getEntity()); //转换排序中的属性为列名
+		
 		return cache.computeIfAbsent(getCacheKey(context, params), (key) -> {return provideCachingSql(context, params);});
 	}
 	

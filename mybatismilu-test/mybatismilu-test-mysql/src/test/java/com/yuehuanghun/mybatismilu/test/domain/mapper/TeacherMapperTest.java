@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.AppTest;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Teacher;
 import com.yuehuanghun.mybatismilu.test.dto.TeacherDTO;
@@ -59,6 +60,11 @@ public class TeacherMapperTest {
 	@Test
 	public void testFindByAgeLessThan() {
 		List<Teacher> list = teacherMapper.findByAgeLessThan(100);
+		assertTrue(list.size() == 2);
+		assertNull(list.get(0).getAddTime());
+		
+		PageHelper.startPage(1, 10, "addTime DESC");
+		list = teacherMapper.findByAgeLessThan(100);
 		assertTrue(list.size() == 2);
 		assertNull(list.get(0).getAddTime());
 	}

@@ -19,9 +19,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 import com.yuehuanghun.mybatis.milu.filler.Filler;
@@ -283,5 +287,39 @@ public class SqlBuildingHelper {
 			return String.format(configuration.getDialect().getPartTypeExpression(type), Segment.EXAMPLE_TO_COLLECTION + keyName + Segment.RIGHT_BRACKET);
 		}
 		return String.format(configuration.getDialect().getPartTypeExpression(type), Segment.HASH_EXAMPLE + keyName + Segment.RIGHT_BRACE);
+	}
+	
+	//转换PageHelper中的排序中的属性为column
+	public static void convertLocalPageOrder(Entity entity) {
+		Page<Object> page = PageHelper.getLocalPage();
+		if(page == null) {
+			return;
+		}
+		String orders = page.getOrderBy();
+		if(StringUtils.isBlank(orders)) {
+			return;
+		}
+		
+		String[] orderArray = orders.split(",");
+		if(orderArray.length == 1) {
+			String[] orderEl = orderArray[0].trim().split("\\s");
+			Attribute attr = entity.getAttribute(orderEl[0]);
+			if(attr != null) {
+				page.setOrderBy(attr.getColumnName() + (orderEl.length == 1 ? StringUtils.EMPTY : Segment.SPACE + orderEl[1]));
+			}
+		} else {
+			Map<String, String> orderMap = new LinkedHashMap<>();
+			for(String order : orderArray) {
+				String[] orderEl = order.trim().split("\\s");
+				Attribute attr = entity.getAttribute(orderEl[0]);
+				if(attr != null) {
+					orderMap.put(attr.getColumnName(), orderEl.length == 1 ? StringUtils.EMPTY : orderEl[1]);
+				} else {
+					orderMap.put(orderEl[0], orderEl.length == 1 ? StringUtils.EMPTY : orderEl[1]);
+				}
+			}
+			String orderEl = orderMap.entrySet().stream().map(item -> item.getKey() + Segment.SPACE + item.getValue()).collect(Collectors.joining(", "));
+			page.setOrderBy(orderEl);
+		}
 	}
 }

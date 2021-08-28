@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.AppTest;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.Sort;
@@ -54,6 +55,16 @@ public class StudentMapperTest {
 	@Test
 	public void testFindAll() {
 		List<Student> result = studentMapper.findAll();
+		assertTrue(result.size() > 0);
+		
+		PageHelper.startPage(1, 10, "addTime DESC, age");
+		
+		result = studentMapper.findAll();
+		assertTrue(result.size() > 0);
+		
+        PageHelper.startPage(1, 10, "updateTime DESC, age");
+		
+		result = studentMapper.findAll();
 		assertTrue(result.size() > 0);
 	};
 

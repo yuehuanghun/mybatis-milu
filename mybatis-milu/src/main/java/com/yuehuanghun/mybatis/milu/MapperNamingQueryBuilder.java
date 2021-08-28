@@ -492,7 +492,7 @@ public class MapperNamingQueryBuilder {
 		Class<?> entityClass = getGenericEntity(method.getDeclaringClass());
 		PartTree tree = new PartTree(getExpression(method), entityClass);
 		
-		return new NamedQuerySqlSource(configuration, SqlBuilder.instance(entityClass, method, tree, this.configuration).build(), parameterType);
+		return new NamedQuerySqlSource(configuration, SqlBuilder.instance(entityClass, method, tree, this.configuration).build(), parameterType, configuration.getMetaModel().getEntity(entityClass));
 	}
 
 	private String getExpression(Method method) {
