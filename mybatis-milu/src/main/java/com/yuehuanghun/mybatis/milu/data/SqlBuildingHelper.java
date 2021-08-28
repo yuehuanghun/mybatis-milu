@@ -290,7 +290,7 @@ public class SqlBuildingHelper {
 	}
 	
 	//转换PageHelper中的排序中的属性为column
-	public static void convertLocalPageOrder(Entity entity) {
+	public static void convertLocalPageOrder(Entity entity, MiluConfiguration configuration) {
 		Page<Object> page = PageHelper.getLocalPage();
 		if(page == null) {
 			return;
@@ -305,7 +305,7 @@ public class SqlBuildingHelper {
 			String[] orderEl = orderArray[0].trim().split("\\s");
 			Attribute attr = entity.getAttribute(orderEl[0]);
 			if(attr != null) {
-				page.setOrderBy(attr.getColumnName() + (orderEl.length == 1 ? StringUtils.EMPTY : Segment.SPACE + orderEl[1]));
+				page.setOrderBy(wrapIdentifier(attr.getColumnName(), configuration) + (orderEl.length == 1 ? StringUtils.EMPTY : Segment.SPACE + orderEl[1]));
 			}
 		} else {
 			Map<String, String> orderMap = new LinkedHashMap<>();
@@ -313,7 +313,7 @@ public class SqlBuildingHelper {
 				String[] orderEl = order.trim().split("\\s");
 				Attribute attr = entity.getAttribute(orderEl[0]);
 				if(attr != null) {
-					orderMap.put(attr.getColumnName(), orderEl.length == 1 ? StringUtils.EMPTY : orderEl[1]);
+					orderMap.put(wrapIdentifier(attr.getColumnName(), configuration), orderEl.length == 1 ? StringUtils.EMPTY : orderEl[1]);
 				} else {
 					orderMap.put(orderEl[0], orderEl.length == 1 ? StringUtils.EMPTY : orderEl[1]);
 				}

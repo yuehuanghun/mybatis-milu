@@ -67,6 +67,11 @@ public class TeacherMapperTest {
 		list = teacherMapper.findByAgeLessThan(100);
 		assertTrue(list.size() == 2);
 		assertNull(list.get(0).getAddTime());
+		
+		PageHelper.startPage(1, 10, "add_time DESC");
+		list = teacherMapper.findByAgeLessThan(100);
+		assertTrue(list.size() == 2);
+		assertNull(list.get(0).getAddTime());
 	}
 	
 	@Test
