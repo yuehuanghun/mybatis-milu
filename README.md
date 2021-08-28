@@ -311,9 +311,68 @@ CREATE TABLE `sequence` (
 直接指定数据库中设定的序列表即可，@GeneratedValue中generator设置无意义
 
 #### 五、分页
-本框架未自实现分页功能，使用PageHelper作为分页功能插件
+本框架使用PageHelper作为底层分页功能插件  
 
+除了使用pageHelper直接启动分页外，还有以下方式的分页开启方式：  
 
+##### Example查询中的分页
+以下SQL仅描述效果  
+
+1、使用有分页参数的通用方法  
+``` 
+someMapper.findByExample(entityExmaple, new PageRequest(1, 10)) 
+// SELECT ... LIMIT 10
+```  
+2、当example是一个Pageable对象时，可直接设置分页，仅当getPageNum > 0 并且getPageSize() > 0时开启分页
+```
+public class User extends PageRequest {
+	
+}
+
+User example = new User();
+example.setPageNum(1);
+example.setPageSize(10);
+userMapper.findByExample(example);
+// SELECT ... LIMIT 10
+
+```
+##### Criteria查询中的分页
+1、直接指定页码及页行数
+```
+someMapper.findByCriteria(p -> p.limit(2, 10))
+// SELECT ... LIMIT 10, 10
+```
+2、使用Pageable对象传参
+```
+someMapper.findByCriteria(p -> p.limit(new PageRequest(2, 10)))
+// SELECT ... LIMIT 10, 10
+```
+##### 查询创建器中的分页
+1、使用表达式，仅能查第一页的N条
+```
+public interface UserMapper extends BaseMapper<User, Long> {
+	List<User> findTop5ByUsernameLike(String username);
+}
+
+userMapper.findTop5ByUsernameLike("张%");
+//SELECT .... WHERE username LIKE '张%' LIMIT 5
+```
+2、在查询参数中直接加入Pageable参数
+```
+public interface UserMapper extends BaseMapper<User, Long> {
+	List<User> findByUsernameLike(String username, Pageable page);
+}
+
+userMapper.findByUsernameLike("张%", new PageRequest(5));
+//SELECT .... WHERE username LIKE '张%' LIMIT 5
+```
+
+另外，使用PageHelper排序时，可使用属性名，框架最终会转为列表
+```
+PageHelper.startPage(1, 10, "addTime DESC");
+
+//SELECT .... LIMIT 10 ORDER BY add_time DESC
+```
 #### 六、自动创建实体类的resultMap
 ```
 @EnableEntityGenericResultMap
