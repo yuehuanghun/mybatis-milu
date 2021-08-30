@@ -23,7 +23,7 @@ jdk >= 1.8
 <dependency>
    <groupId>com.yuehuanghun</groupId>
    <artifactId>mybatismilu-spring-boot-starter</artifactId>
-   <version>1.0.2</version> <!-- 获取最新版本 -->
+   <version>1.1.1</version> <!-- 获取最新版本 -->
 </dependency>
 ```
 
@@ -351,6 +351,7 @@ someMapper.findByCriteria(p -> p.limit(new PageRequest(2, 10)))
 1、使用表达式，仅能查第一页的N条
 ```
 public interface UserMapper extends BaseMapper<User, Long> {
+    @NamingQuery
 	List<User> findTop5ByUsernameLike(String username);
 }
 
@@ -367,7 +368,7 @@ userMapper.findByUsernameLike("张%", new PageRequest(5));
 //SELECT .... WHERE username LIKE '张%' LIMIT 5
 ```
 
-另外，使用PageHelper排序时，可使用属性名，框架最终会转为列表
+另外，使用PageHelper排序时，可使用属性名，同时也建议使用属性名，框架最终会转为列名（注：在MapperXML中自定义的查询，无法转换）
 ```
 PageHelper.startPage(1, 10, "addTime DESC");
 
