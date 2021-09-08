@@ -73,7 +73,9 @@ public class LambdaPredicateImpl<T> implements LambdaPredicate<T> {
 	@Override
 	public LambdaPredicate<T> and(Consumer<LambdaPredicate<T>> predicate) {
 		LambdaPredicateImpl<T> p = new LambdaPredicateImpl<>();
-		p.apply(entity);
+		if(entity != null) {
+			p.apply(entity);
+		}
 		p.getDelegate().setDepth(this.getDelegate().getDepth() + 1);
 		predicate.accept(p);
 		getDelegate().and(p);
@@ -89,7 +91,9 @@ public class LambdaPredicateImpl<T> implements LambdaPredicate<T> {
 	@Override
 	public LambdaPredicate<T> or(Consumer<LambdaPredicate<T>> predicate) {
 		LambdaPredicateImpl<T> p = new LambdaPredicateImpl<>();
-		p.apply(entity);
+		if(entity != null) {
+			p.apply(entity);
+		}
 		p.getDelegate().setDepth(this.getDelegate().getDepth() + 1);
 		predicate.accept(p);
 		getDelegate().or(p);
@@ -105,7 +109,9 @@ public class LambdaPredicateImpl<T> implements LambdaPredicate<T> {
 	@Override
 	public LambdaPredicate<T> not(Consumer<LambdaPredicate<T>> predicate) {
 		LambdaPredicateImpl<T> p = new LambdaPredicateImpl<>();
-		p.apply(entity);
+		if(entity != null) {
+			p.apply(entity);
+		}
 		p.getDelegate().setDepth(this.getDelegate().getDepth() + 1);
 		predicate.accept(p);
 		getDelegate().not(p);
