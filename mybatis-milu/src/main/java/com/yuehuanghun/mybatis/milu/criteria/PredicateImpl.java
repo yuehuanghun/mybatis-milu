@@ -37,7 +37,7 @@ import lombok.experimental.Accessors;
 
 public class PredicateImpl implements Predicate {
 
-	private Logic logic = Logic.AND;
+	protected final Logic logic;
 
 	private Mode conditionMode = Mode.NOT_EMPTY;
 
@@ -49,7 +49,7 @@ public class PredicateImpl implements Predicate {
 	private int depth;
 	
 	public PredicateImpl() {
-		
+		logic = Logic.AND;
 	}
 
 	private PredicateImpl(Logic logic, Condition... conditions) {
@@ -403,14 +403,18 @@ public class PredicateImpl implements Predicate {
 		if(group) {
 			expressionBuilder.append(Segment.LEFT_BRACKET);
 		}
-		
-		if(expressionBuilder.length() > 0 && !group && !expressionBuilder.toString().matches(".*\\(\\s*")) {
-			expressionBuilder.append(Segment.SPACE).append(logic.name()).append(Segment.SPACE);
-		}
-		
-		for(Condition condition : conditionList) {
+
+		StringBuilder subBuilder = new StringBuilder();
+		for(int i = 0; i < conditionList.size(); i++) {
+			Condition condition = conditionList.get(i);
+			if(i > 0 && condition instanceof PredicateImpl) {
+				Logic childLogic = ((PredicateImpl) condition).logic;
+				expressionBuilder.append(Segment.SPACE).append(childLogic.name()).append(Segment.SPACE);
+			}
 			paramIndex = condition.renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
 		}
+		
+		expressionBuilder.append(subBuilder);
 		
 		if(group) {
 			expressionBuilder.append(Segment.RIGHT_BRACKET);
@@ -442,4 +446,15 @@ public class PredicateImpl implements Predicate {
 		return Objects.equals(this.logic, that.logic) && Objects.equals(this.conditionMode, that.conditionMode) && 
 				Objects.equals(this.conditionList, that.conditionList) && this.depth == that.depth;
 	}
+	
+//	public static void main(String[] args) {
+//		PredicateImpl p = new PredicateImpl();
+//		p.eq("aa", "1").and(sp -> sp.eq("bb", "2").or(ssp -> ssp.eq("cc", "3").or(sssp -> sssp.eq("dd", "4").like("ee", "5"))));
+//		MiluConfiguration configuration = new MiluConfiguration();
+//		configuration.setDialect(new MysqlDialect());
+//		StringBuilder sb = new StringBuilder();
+//		Set<String> columns = new HashSet<>();
+//		p.renderSqlTemplate(configuration, sb, columns, 0);
+//		System.out.println(sb);
+//	}
 }
