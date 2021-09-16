@@ -17,6 +17,7 @@ package com.yuehuanghun.mybatis.milu.generic.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 import org.apache.ibatis.javassist.scopedpool.SoftValueHashMap;
@@ -35,7 +36,7 @@ import com.yuehuanghun.mybatis.milu.tool.Constants;
 
 public class GenericStatisticByCriteriaProviderSql implements GenericProviderSql {
 
-	private final Map<Expression, String> cache = new SoftValueHashMap<>();
+	private final Map<Class<?>, Map<Expression, String>> cache = new SoftValueHashMap<>();
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
@@ -65,7 +66,9 @@ public class GenericStatisticByCriteriaProviderSql implements GenericProviderSql
 			PageHelper.startPage(page.getPageNum(), page.getPageSize(), page.isCount());
 		}
 
-		String sqlExpression = cache.computeIfAbsent(predicate, (key) -> {
+		String sqlExpression = cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
+			return new ConcurrentHashMap<>();
+		}).computeIfAbsent(predicate, (key) -> {
 			return new StatisticSqlTemplateBuilder(context.getEntity(), context.getConfiguration(), predicate).build();
 		});
 		
