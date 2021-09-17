@@ -145,25 +145,37 @@ public class EntityBuilder {
 			entity.addAttribute(attr);
 
 			List<RangeCondition> rangeList = null;
-			if(field.isAnnotationPresent(AttributeOptions.class)) {
-				AttributeOptions options = field.getAnnotation(AttributeOptions.class);
-				
+			AttributeOptions options = getAttributeOptions(field);
+			if(options != null) {
 				ExampleQuery[] exampleQuerys = options.exampleQuery();
 				if(exampleQuerys.length > 0) {
 					attr.setExampleMatchType(exampleQuerys[0].matchType());
 
+					rangeList = new ArrayList<>();
 					for(ExampleQuery exampleQuery : exampleQuerys) {
-						if(StringUtils.isNotBlank(exampleQuery.startKeyName())) {
-							if(rangeList == null) rangeList = new ArrayList<>(2);
-							rangeList.add(new RangeCondition(exampleQuery.startKeyName(), exampleQuery.startValueContain() ? Type.GREATER_THAN_EQUAL : Type.GREATER_THAN, attr.getJavaType(), exampleQuery.valueConverter(), KeyType.START));
+						
+						String startKeyName = exampleQuery.startKeyName();
+						if(StringUtils.isBlank(startKeyName) && exampleQuery.autoKeying()) {
+							startKeyName = field.getName() + "Begin";
 						}
-						if(StringUtils.isNotBlank(exampleQuery.endKeyName())) {
-							if(rangeList == null) rangeList = new ArrayList<>(2);
-							rangeList.add(new RangeCondition(exampleQuery.endKeyName(), exampleQuery.endValueContain() ? Type.LESS_THAN_EQUAL : Type.LESS_THAN, attr.getJavaType(), exampleQuery.valueConverter(), KeyType.END));
+						if(StringUtils.isNotBlank(startKeyName)) {
+							rangeList.add(new RangeCondition(startKeyName, exampleQuery.startValueContain() ? Type.GREATER_THAN_EQUAL : Type.GREATER_THAN, attr.getJavaType(), exampleQuery.valueConverter(), KeyType.START));
 						}
-						if(StringUtils.isNotBlank(exampleQuery.inKeyName())) {
-							if(rangeList == null) rangeList = new ArrayList<>(1);
-							rangeList.add(new RangeCondition(exampleQuery.inKeyName(), Type.IN, attr.getJavaType(), exampleQuery.valueConverter(), KeyType.IN));
+						
+						String endKeyName = exampleQuery.endKeyName();
+						if(StringUtils.isBlank(endKeyName)) {
+							endKeyName = field.getName() + "End";
+						}
+						if(StringUtils.isNotBlank(endKeyName)) {
+							rangeList.add(new RangeCondition(endKeyName, exampleQuery.endValueContain() ? Type.LESS_THAN_EQUAL : Type.LESS_THAN, attr.getJavaType(), exampleQuery.valueConverter(), KeyType.END));
+						}
+						
+						String inKeyName = exampleQuery.inKeyName();
+						if(StringUtils.isBlank(inKeyName)) {
+							inKeyName = field.getName() + "List";
+						}
+						if(StringUtils.isNotBlank(inKeyName)) {
+							rangeList.add(new RangeCondition(inKeyName, Type.IN, attr.getJavaType(), exampleQuery.valueConverter(), KeyType.IN));
 						}
 					}
 				}
@@ -195,6 +207,21 @@ public class EntityBuilder {
 		}
 		
 		buildAttribute(entity, clazz.getSuperclass());
+	}
+	
+	private AttributeOptions getAttributeOptions(Field field) {
+		if(field.isAnnotationPresent(AttributeOptions.class)) {
+			return field.getAnnotation(AttributeOptions.class);
+		}
+		
+		for(Annotation annon : field.getAnnotations()) {
+			Class<? extends Annotation> annonClass = annon.getClass();
+			if(annonClass.isAnnotationPresent(AttributeOptions.class)) {
+				return annonClass.getAnnotation(AttributeOptions.class);
+			}
+		}
+		
+		return null;
 	}
 	
 	private Attribute forField(Field field) {
