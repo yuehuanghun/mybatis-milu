@@ -17,7 +17,7 @@ import com.yuehuanghun.mybatis.milu.tool.Constants;
 
 public class GenericCountByCriteriaProviderSql implements GenericProviderSql {
 
-	private final Map<Class<?>, Map<Expression, String>> cache = new SoftValueHashMap<>();
+	private final Map<Class<?>, Map<Expression, String>> cache = new ConcurrentHashMap<>();
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
@@ -38,7 +38,7 @@ public class GenericCountByCriteriaProviderSql implements GenericProviderSql {
 		((Map)params).putAll(queryParams);
 
 		String sqlExpression = cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
-			return new ConcurrentHashMap<>();
+			return new SoftValueHashMap<>();
 		}).computeIfAbsent(predicate, (key) -> {
 			return new CountSqlTemplateBuilder(context.getEntity(), context.getConfiguration(), predicate).build();
 		});
