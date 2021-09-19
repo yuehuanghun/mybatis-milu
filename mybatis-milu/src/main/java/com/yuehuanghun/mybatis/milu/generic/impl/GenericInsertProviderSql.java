@@ -47,7 +47,7 @@ public class GenericInsertProviderSql extends GenericCachingProviderSql {
 				continue;
 			}
 			sqlBuilder.append(" <if test=\"").append(attr.getName()).append(" != null\">").append(wrapIdentifier(attr.getColumnName(), context)).append(",</if> ");
-			values.append(" <if test=\"").append(attr.getName()).append(" != null\">").append("#{").append(attr.getName()).append("},</if> ");
+			values.append(" <if test=\"").append(attr.getName()).append(" != null\">").append("#{").append(attr.toParameter()).append("},</if> ");
 		}
 		sqlBuilder.append(" </trim>) ");
 		values.append("</trim>) ");

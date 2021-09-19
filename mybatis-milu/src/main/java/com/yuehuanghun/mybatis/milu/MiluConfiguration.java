@@ -15,10 +15,12 @@
  */
 package com.yuehuanghun.mybatis.milu;
 
+import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.mapping.Environment;
@@ -29,6 +31,7 @@ import com.yuehuanghun.mybatis.milu.db.DbEnum;
 import com.yuehuanghun.mybatis.milu.db.DbMeta;
 import com.yuehuanghun.mybatis.milu.dialect.Dialect;
 import com.yuehuanghun.mybatis.milu.dialect.PageDialectManager;
+import com.yuehuanghun.mybatis.milu.exception.OrmBuildingException;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericBatchInsertProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericCountByCriteriaProviderSql;
@@ -58,7 +61,10 @@ import com.yuehuanghun.mybatis.milu.id.IdentifierGenerator;
 import com.yuehuanghun.mybatis.milu.id.impl.UUIDIdentifierGenerator;
 import com.yuehuanghun.mybatis.milu.id.impl.snowflake.SnowflakeIdentifierGenerator;
 import com.yuehuanghun.mybatis.milu.metamodel.MetaModel;
+import com.yuehuanghun.mybatis.milu.tool.ConfigPropertyKeys;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
+import com.yuehuanghun.mybatis.milu.tool.converter.DefaultExampleQueryConverter;
+import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -79,11 +85,25 @@ public class MiluConfiguration extends Configuration {
 	@Getter
 	@Setter
 	private boolean identifierWrapQuote = true; //标识符（表名、字段名）是否使用引号
+	@Getter
+	private String defaultIdGenerator; //默认的ID构造器，添加ID被声明为@GeneratedValue(strategy = GenerationType.AUTO)时使用
+	@Getter
+	private Class<? extends ExampleQueryConverter> defaultExampleQueryConverter = DefaultExampleQueryConverter.class;
 
 	public MiluConfiguration() {
 		super();
 		registerGenericProviderSql();
 		registerDefaultIdentifierGenerator();
+		
+		variables = new Properties() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public synchronized void putAll(Map<? extends Object, ? extends Object> t) { //妥协处理
+				super.putAll(t);
+				afterVariablesSet();
+			}
+		};
 	}
 	
 	public MiluConfiguration(Environment environment) {
@@ -223,4 +243,30 @@ public class MiluConfiguration extends Configuration {
 			throw new RuntimeException(String.format("未知的数据库：%s", dbMeta.getDbName()));
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	private void afterVariablesSet() {
+		this.defaultIdGenerator = variables != null ? variables.getProperty(ConfigPropertyKeys.ID_GENERATOR) : this.defaultIdGenerator;
+		
+		String className = variables != null ? variables.getProperty(ConfigPropertyKeys.EXAMPLE_QUERY_CONVERTER) : null;
+		if(StringUtils.isNotBlank(className)) {
+			try {
+				Class<?> clazz = Class.forName(className);
+				if(!ExampleQueryConverter.class.isAssignableFrom(clazz) || ExampleQueryConverter.class == clazz || Modifier.isAbstract(clazz.getModifiers())) {
+					throw new OrmBuildingException(String.format("%s不是ExampleQueryConverter的实现类", className));
+				}
+				this.defaultExampleQueryConverter =  (Class<? extends ExampleQueryConverter>) clazz;
+			} catch (ClassNotFoundException e) {
+				throw new OrmBuildingException("找不到ExampleQueryConverter实现类", e);
+			}
+		}
+		
+	}
+
+	@Override
+	public void setVariables(Properties variables) {
+		super.setVariables(variables);
+		afterVariablesSet();
+	}
+
 }

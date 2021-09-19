@@ -39,13 +39,13 @@ import org.apache.ibatis.annotations.Arg;
 import org.apache.ibatis.annotations.Case;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Options.FlushCachePolicy;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.ResultType;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.SelectKey;
 import org.apache.ibatis.annotations.TypeDiscriminator;
+import org.apache.ibatis.annotations.Options.FlushCachePolicy;
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.cursor.Cursor;
@@ -87,9 +87,9 @@ import com.yuehuanghun.mybatis.milu.id.tablekey.TableKeySelectSqlSource;
 import com.yuehuanghun.mybatis.milu.id.tablekey.TableKeyUpdateSqlSource;
 import com.yuehuanghun.mybatis.milu.mapping.MiluMapperBuilderAssistant;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
+import com.yuehuanghun.mybatis.milu.metamodel.EntityBuilder;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.IdAttribute;
-import com.yuehuanghun.mybatis.milu.metamodel.EntityBuilder;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
 public class MapperNamingQueryBuilder {
@@ -183,7 +183,7 @@ public class MapperNamingQueryBuilder {
 	private void buildEntityResultMapping(Class<?> entityType, List<ResultMapping> resultMappings) {
 		for(Attribute attr : configuration.getMetaModel().getEntity(entityType).getAttributes()) {
 			if(attr.isSelectable()) {
-				ResultMapping resultMapping = assistant.buildResultMapping(entityType, attr.getName(), attr.getColumnName(), attr.getJavaType(), null, null, null, null, null, null, attr.isId() ? ID_FLAG_LIST : null);
+				ResultMapping resultMapping = assistant.buildResultMapping(entityType, attr.getName(), attr.getColumnName(), attr.getJavaType(), null, null, null, null, null, attr.getTypeHandler(), attr.isId() ? ID_FLAG_LIST : null);
 				resultMappings.add(resultMapping);
 			}
 		}
@@ -580,7 +580,7 @@ public class MapperNamingQueryBuilder {
 		assistant.addResultMap(resultMapId, returnType, null, null, resultMappings, null);
 		return resultMapId;
 	}
-	
+
 	void parseGenericStatement(Method method, Class<?> entityClass) {
 		String methodName = method.getName();
 		final String mappedStatementId = type.getName() + "." + methodName;
@@ -644,7 +644,7 @@ public class MapperNamingQueryBuilder {
 							}
 						}
 					} else if(generationType == GenerationType.AUTO){
-						keyGenerator = new AssignKeyGenerator(idAttr.getGenerator(), configuration, entityClass, keyProperty);
+						keyGenerator = new AssignKeyGenerator(StringUtils.defaultIfBlank(idAttr.getGenerator(), configuration.getDefaultIdGenerator()), configuration, entityClass, keyProperty);
 					}
 				}
 			}
