@@ -53,6 +53,13 @@ public class StringUtils {
 		return str;
 	}
 	
+	public static String defaultIfBlank(String str, String defaultValue) {
+		if(isBlank(str)) {
+			return defaultValue;
+		}
+		return str;
+	}
+	
 	//在sql模板中使用
 	public static boolean notBlank(final Object obj) {
 		if(obj == null) {

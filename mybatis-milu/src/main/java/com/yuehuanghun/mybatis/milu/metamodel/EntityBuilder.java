@@ -18,6 +18,7 @@ package com.yuehuanghun.mybatis.milu.metamodel;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -66,6 +67,8 @@ import com.yuehuanghun.mybatis.milu.metamodel.ref.ManyToManyReference.JoinTable;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.MappedReference;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.Reference;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
+import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter;
+import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter.AutoConverter;
 
 /**
  * 实体类构建器
@@ -145,7 +148,7 @@ public class EntityBuilder {
 			entity.addAttribute(attr);
 
 			List<RangeCondition> rangeList = null;
-			AttributeOptions options = getAttributeOptions(field);
+			AttributeOptions options = getAnnotation(field, AttributeOptions.class);
 			if(options != null) {
 				ExampleQuery[] exampleQuerys = options.exampleQuery();
 				if(exampleQuerys.length > 0) {
@@ -153,29 +156,21 @@ public class EntityBuilder {
 
 					rangeList = new ArrayList<>();
 					for(ExampleQuery exampleQuery : exampleQuerys) {
-						
+						Class<? extends ExampleQueryConverter> valueConverter = exampleQuery.valueConverter() == AutoConverter.class ? configuration.getDefaultExampleQueryConverter() : exampleQuery.valueConverter();
+				
 						String startKeyName = exampleQuery.startKeyName();
-						if(StringUtils.isBlank(startKeyName) && exampleQuery.autoKeying()) {
-							startKeyName = field.getName() + "Begin";
-						}
 						if(StringUtils.isNotBlank(startKeyName)) {
-							rangeList.add(new RangeCondition(startKeyName, exampleQuery.startValueContain() ? Type.GREATER_THAN_EQUAL : Type.GREATER_THAN, attr.getJavaType(), exampleQuery.valueConverter(), KeyType.START));
+							rangeList.add(new RangeCondition(startKeyName, exampleQuery.startValueContain() ? Type.GREATER_THAN_EQUAL : Type.GREATER_THAN, attr.getJavaType(), valueConverter, KeyType.START));
 						}
 						
 						String endKeyName = exampleQuery.endKeyName();
-						if(StringUtils.isBlank(endKeyName)) {
-							endKeyName = field.getName() + "End";
-						}
 						if(StringUtils.isNotBlank(endKeyName)) {
-							rangeList.add(new RangeCondition(endKeyName, exampleQuery.endValueContain() ? Type.LESS_THAN_EQUAL : Type.LESS_THAN, attr.getJavaType(), exampleQuery.valueConverter(), KeyType.END));
+							rangeList.add(new RangeCondition(endKeyName, exampleQuery.endValueContain() ? Type.LESS_THAN_EQUAL : Type.LESS_THAN, attr.getJavaType(), valueConverter, KeyType.END));
 						}
 						
 						String inKeyName = exampleQuery.inKeyName();
-						if(StringUtils.isBlank(inKeyName)) {
-							inKeyName = field.getName() + "List";
-						}
 						if(StringUtils.isNotBlank(inKeyName)) {
-							rangeList.add(new RangeCondition(inKeyName, Type.IN, attr.getJavaType(), exampleQuery.valueConverter(), KeyType.IN));
+							rangeList.add(new RangeCondition(inKeyName, Type.IN, attr.getJavaType(), valueConverter, KeyType.IN));
 						}
 					}
 				}
@@ -201,6 +196,14 @@ public class EntityBuilder {
 				if(options.updateMode() != Mode.AUTO) {
 					attr.setUpdateMode(options.updateMode());
 				}
+				
+				if(options.typeHandler().length > 0) {
+					attr.setTypeHandler(options.typeHandler()[0]);
+				}
+				
+				if(options.jdbcType().length > 0) {
+					attr.setJdbcType(options.jdbcType()[0]);
+				}
 			}
 
 			attr.setRangeList(rangeList == null ? Collections.emptyList() : rangeList);
@@ -209,26 +212,12 @@ public class EntityBuilder {
 		buildAttribute(entity, clazz.getSuperclass());
 	}
 	
-	private AttributeOptions getAttributeOptions(Field field) {
-		if(field.isAnnotationPresent(AttributeOptions.class)) {
-			return field.getAnnotation(AttributeOptions.class);
-		}
-		
-		for(Annotation annon : field.getAnnotations()) {
-			Class<? extends Annotation> annonClass = annon.getClass();
-			if(annonClass.isAnnotationPresent(AttributeOptions.class)) {
-				return annonClass.getAnnotation(AttributeOptions.class);
-			}
-		}
-		
-		return null;
-	}
-	
 	private Attribute forField(Field field) {
 		Attribute attribute;
-		if(field.isAnnotationPresent(Id.class)) {
+		
+		if(getAnnotation(field, Id.class) != null) {
 			attribute = new IdAttribute();
-			GeneratedValue generatedValue = field.getAnnotation(GeneratedValue.class);
+			GeneratedValue generatedValue = getAnnotation(field, GeneratedValue.class);
 			if(generatedValue != null) {
 				((IdAttribute)attribute).setGenerationType(generatedValue.strategy());
 				((IdAttribute)attribute).setGenerator(generatedValue.generator());
@@ -237,10 +226,18 @@ public class EntityBuilder {
 			attribute = new VersionAttribute();
 		} else if(field.isAnnotationPresent(OneToOne.class) || field.isAnnotationPresent(ManyToOne.class)) {
 			attribute = new AssociationAttribute();
+			attribute.setSelectable(false);
+			attribute.setInsertable(false);
+			attribute.setUpdateable(false);
 		}  else if(Collection.class.isAssignableFrom(field.getType())) {
 			attribute = new PluralAttribute();
 			ParameterizedType genericType = (ParameterizedType) field.getGenericType();
 			((PluralAttribute)attribute).setElementClass((Class<?>) genericType.getActualTypeArguments()[0]);
+			if(field.isAnnotationPresent(OneToMany.class) || field.isAnnotationPresent(ManyToMany.class)) {
+				attribute.setSelectable(false);
+				attribute.setInsertable(false);
+				attribute.setUpdateable(false);
+			}
 		} else if(field.getType().isArray()) {
 			attribute = new PluralAttribute();
 			((PluralAttribute)attribute).setElementClass(field.getType().getComponentType());
@@ -253,9 +250,9 @@ public class EntityBuilder {
 		if(field.isAnnotationPresent(Column.class)) {
 			Column column = field.getAnnotation(Column.class);
 			attribute.setColumnName(column.name());
-			attribute.setInsertable(column.insertable());
+			if(attribute.isSelectable()) attribute.setInsertable(column.insertable());
 			attribute.setNullable(column.nullable());
-			attribute.setUpdateable(column.updatable());
+			if(attribute.isUpdateable()) attribute.setUpdateable(column.updatable());
 		}
 		
 		if(StringUtils.isBlank(attribute.getColumnName())) {
@@ -263,10 +260,33 @@ public class EntityBuilder {
 		}
 		
 		attribute.setName(field.getName());
-		attribute.setSelectable(true); //TODO
 		attribute.setOptional(Optional.class.equals(field.getType()));
 		
 		return attribute;
+	}
+	
+	private <T extends Annotation> T getAnnotation(Field field, Class<T> annoClass) {
+		T anno = field.getAnnotation(annoClass);
+		if(anno != null) {
+			return anno;
+		}
+		
+		Annotation[] annotations = field.getAnnotations();
+		for(Annotation an : annotations) {
+			Method[] methods = an.annotationType().getMethods();
+			for(Method method : methods) {
+				anno = method.getAnnotation(annoClass);
+				if(anno != null) {
+					return anno;
+				}
+			}
+			anno = an.annotationType().getAnnotation(annoClass);
+			if(anno != null) {
+				return anno;
+			}
+		}
+		
+		return null;
 	}
 	
 	private Reference buildReference(Attribute attr, Entity ownerEntity) {

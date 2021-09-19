@@ -22,8 +22,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
-import com.yuehuanghun.mybatis.milu.tool.converter.DefaultExampleQueryConverter;
 import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter;
+import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter.AutoConverter;
 
 /**
  * 应用于通用查询方法findByExample、findByExampleAndSort、countByExample中，标记属性作为查询条件的匹配方法
@@ -75,7 +75,7 @@ public @interface ExampleQuery {
 	 * 如果不需要转换可以设置类为ExampleQueryConverter.NullConverter.class
 	 * @return 转换器
 	 */
-	Class<? extends ExampleQueryConverter> valueConverter() default DefaultExampleQueryConverter.class;
+	Class<? extends ExampleQueryConverter> valueConverter() default AutoConverter.class;
 	
 	/**
 	 * 当前属性IN查询时传值的键名<br>

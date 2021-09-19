@@ -25,10 +25,28 @@ import com.yuehuanghun.mybatis.milu.metamodel.KeyType;
  *
  */
 public interface ExampleQueryConverter {
+	/**
+	 * 无转换，原值是什么就返回什么
+	 * @author yuehuanghun
+	 *
+	 */
 	public static final class NullConverter implements ExampleQueryConverter {
 		@Override
 		public Object convert(Object target, Class<?> attrJavaType, String keyName, KeyType keyType) {
 			return target;
+		}
+	}
+	
+	/**
+	 * 自动，即使用默认的转换类<br>
+	 * 本来仅作标识使用
+	 * @author yuehuanghun
+	 *
+	 */
+	public static final class AutoConverter implements ExampleQueryConverter {
+		@Override
+		public Object convert(Object target, Class<?> attrJavaType, String keyName, KeyType keyType) {
+			throw new RuntimeException("不可用");
 		}
 		
 	}

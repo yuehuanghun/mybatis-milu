@@ -87,7 +87,7 @@ public class GenericBatchInsertProviderSql extends GenericCachingProviderSql {
 				continue;
 			}
 			sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context)).append(", ");
-			values.append("#{item.").append(attr.getName()).append("}, ");
+			values.append("#{item.").append(attr.toParameter()).append("}, ");
 		}
 		sqlBuilder.append(" </trim>) ");
 		values.append("</trim>)</foreach> ");

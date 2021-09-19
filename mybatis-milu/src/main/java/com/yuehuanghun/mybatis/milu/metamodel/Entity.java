@@ -26,6 +26,9 @@ import java.util.Map;
 
 import javax.persistence.GenerationType;
 
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.TypeHandler;
+
 import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery.MatchType;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Part;
@@ -109,6 +112,10 @@ public class Entity {
 		
 		private Class<?> javaType;
 		
+		private Class<? extends TypeHandler<?>> typeHandler;
+		
+		private JdbcType jdbcType;
+		
 		private boolean nullable = true;
 		
 		private boolean updateable = true;
@@ -144,19 +151,30 @@ public class Entity {
 		}
 		
 		public boolean isSelectable() {
-			return selectable && !isAssociation() && !isCollection();
+			return selectable;
 		}
 		
 		public boolean isConditionable() {
-			return !isAssociation() && !isCollection();
+			return isSelectable();
 		}
 		
 		public boolean isInsertable() {
-			return insertable && !isAssociation() && !isCollection();
+			return insertable;
 		}
 		
 		public boolean isUpdateable() {
-			return updateable && !isAssociation() && !isCollection() && !isId();
+			return updateable;
+		}
+		
+		public String toParameter() {
+			String param = getName();
+			if(getJdbcType() != null) {
+				param += ",jdbcType=" + getJdbcType().name();
+			}
+			if(getTypeHandler() != null) {
+				param += ",typeHandler=" + getTypeHandler().getName();
+			}
+			return param;
 		}
 	}
 	
@@ -171,6 +189,11 @@ public class Entity {
 		@Override
 		public boolean isId() {
 			return true;
+		}
+
+		@Override
+		public boolean isUpdateable() {
+			return false;
 		}
 	}
 	

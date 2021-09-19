@@ -21,6 +21,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.TypeHandler;
+
 /**
  * 字段配置
  * @author yuehuanghun
@@ -54,4 +57,17 @@ public @interface AttributeOptions {
 	 * @return 条件模式
 	 */
 	Mode conditionMode() default Mode.AUTO;
+	
+	/**
+	 * 设置类型处理器
+	 * @return 类型处理器, 最多一个元素有效
+	 */
+	Class<? extends TypeHandler<?>>[] typeHandler() default {};
+	
+	/**
+	 * JDBC类型，一般自动识别
+	 * @return 最多一个元素有效
+	 */
+	JdbcType[] jdbcType() default {};
+	
 }

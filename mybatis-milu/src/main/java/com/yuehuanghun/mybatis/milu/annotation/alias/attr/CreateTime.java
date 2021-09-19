@@ -1,4 +1,4 @@
-package com.yuehuanghun.mybatis.milu.annotation.alias;
+package com.yuehuanghun.mybatis.milu.annotation.alias.attr;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -7,7 +7,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
-import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery;
 import com.yuehuanghun.mybatis.milu.annotation.Filler;
 
 /**
@@ -17,7 +16,7 @@ import com.yuehuanghun.mybatis.milu.annotation.Filler;
  */
 @Retention(RUNTIME)
 @Target(FIELD)
-@AttributeOptions(filler = @Filler(fillOnInsert = true), exampleQuery = @ExampleQuery(autoKeying = true))
+@AttributeOptions(filler = @Filler(fillOnInsert = true))
 public @interface CreateTime {
 
 }
