@@ -22,8 +22,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import javax.persistence.Column;
+
 import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
 import com.yuehuanghun.mybatis.milu.annotation.Filler;
+import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
 /**
  * 通用的 @AttributeOptions 的短设置
@@ -32,7 +35,9 @@ import com.yuehuanghun.mybatis.milu.annotation.Filler;
  */
 @Retention(RUNTIME)
 @Target(FIELD)
-@AttributeOptions(filler = @Filler(fillOnInsert = true))
 public @interface CreateTime {
 
+    @AttributeOptions(filler = @Filler(fillOnInsert = true))
+    @Column(updatable = false)
+	String value() default StringUtils.EMPTY;
 }

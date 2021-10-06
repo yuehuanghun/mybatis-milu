@@ -31,7 +31,7 @@ import org.apache.ibatis.type.TypeHandler;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 public @interface AttributeOptions {
 
 	/**

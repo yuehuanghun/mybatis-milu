@@ -447,14 +447,4 @@ public class PredicateImpl implements Predicate {
 				Objects.equals(this.conditionList, that.conditionList) && this.depth == that.depth;
 	}
 	
-//	public static void main(String[] args) {
-//		PredicateImpl p = new PredicateImpl();
-//		p.eq("aa", "1").and(sp -> sp.eq("bb", "2").or(ssp -> ssp.eq("cc", "3").or(sssp -> sssp.eq("dd", "4").like("ee", "5"))));
-//		MiluConfiguration configuration = new MiluConfiguration();
-//		configuration.setDialect(new MysqlDialect());
-//		StringBuilder sb = new StringBuilder();
-//		Set<String> columns = new HashSet<>();
-//		p.renderSqlTemplate(configuration, sb, columns, 0);
-//		System.out.println(sb);
-//	}
 }

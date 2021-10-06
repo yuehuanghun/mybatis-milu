@@ -248,7 +248,7 @@ public class EntityBuilder {
 		attribute.setJavaType(field.getType());
 		
 		if(field.isAnnotationPresent(Column.class)) {
-			Column column = field.getAnnotation(Column.class);
+			Column column = getAnnotation(field, Column.class);
 			attribute.setColumnName(column.name());
 			if(attribute.isSelectable()) attribute.setInsertable(column.insertable());
 			attribute.setNullable(column.nullable());

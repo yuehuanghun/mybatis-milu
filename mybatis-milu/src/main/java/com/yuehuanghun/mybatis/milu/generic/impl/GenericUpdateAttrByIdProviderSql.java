@@ -99,7 +99,7 @@ public class GenericUpdateAttrByIdProviderSql extends GenericCachingProviderSql 
 					if(attr.getUpdateMode() == Mode.NOT_EMPTY && CharSequence.class.isAssignableFrom(attr.getJavaType())) {
 						sqlBuilder.append(" <if test=\"entity.").append(attr.getName()).append(" != null and entity.").append(attr.getName()).append("!=''\">").append(wrapIdentifier(attr.getColumnName(), context)).append(" = #{entity.").append(attr.getName()).append("}, </if> ");
 					} else {
-						sqlBuilder.append(" <if test=\"entity.").append(attr.getName()).append(" != null\">").append(wrapIdentifier(attr.getColumnName(), context)).append(" = #{entity.").append(attr.getName()).append("}, </if> ");
+						sqlBuilder.append(" <if test=\"entity.").append(attr.getName()).append(" != null\">").append(wrapIdentifier(attr.getColumnName(), context)).append(" = #{entity.").append(attr.toParameter()).append("}, </if> ");
 					}
 				}
 			}
