@@ -3,6 +3,9 @@
 mybatis: 
     mapperLocations: /mapper/**/*.xml
     identifierWrapQuote: true
+    configurationProperties: 
+        idGenerator: snowflake
+        exampleQueryConverter: com.yuehuanghun.mybatismilu.test.config.MyExampleQueryConverter
     
 spring.datasource:
     driverClassName: com.mysql.cj.jdbc.Driver

@@ -4,14 +4,14 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.yuehuanghun.mybatis.milu.tool.Constants;
+import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
+import com.yuehuanghun.mybatis.milu.annotation.alias.attr.CreateTime;
+import com.yuehuanghun.mybatis.milu.annotation.alias.id.SnowflakeId;
+import com.yuehuanghun.mybatismilu.test.config.JsonTypeHandler;
 
 import lombok.Data;
 
@@ -20,13 +20,16 @@ import lombok.Data;
 @Data
 public class Classs {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = Constants.ID_GENERATOR_SNOWFLAKE)
+	@SnowflakeId
 	private Long id; //使用分布式ID，内置的snowflakeId
 
+	@CreateTime
 	private Date addTime;
 	
 	private String name;
+	
+	@AttributeOptions(typeHandler = JsonTypeHandler.class)
+	private List<Long> data;
 	
 	@ManyToMany(mappedBy = "classList")
 	private List<Teacher> teacherList; //多对多关系演示，双向引用

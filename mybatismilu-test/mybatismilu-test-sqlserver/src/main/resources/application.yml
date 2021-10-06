@@ -7,7 +7,7 @@ spring.datasource:
     driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
     url: jdbc:sqlserver://127.0.0.1:1433;SelectMethod=cursor;databaseName=mybatis
     username: mybatis
-    password: jie123456
+    password: mybatis123456
     poolName: SpringBootHikariCP
     maximumPoolSize: 20
     minimumIdle: 3

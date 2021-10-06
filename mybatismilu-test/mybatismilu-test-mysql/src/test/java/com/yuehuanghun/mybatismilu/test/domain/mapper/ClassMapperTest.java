@@ -2,10 +2,14 @@ package com.yuehuanghun.mybatismilu.test.domain.mapper;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -165,5 +169,93 @@ public class ClassMapperTest {
 		assertEquals(result2.size(), 2);
 		assertNotNull(result2.get(0));
 		assertNotNull(result2.get(1));
+	}
+	
+	@Test
+	public void testFindById() {
+		Optional<Classs> clazzOpt = classMapper.findById(1L);
+		assertTrue(clazzOpt.isPresent());
+		
+		assertNotNull(clazzOpt.get().getData());
+		assertEquals(clazzOpt.get().getData().size(), 4);
+		System.out.println(clazzOpt.get());
+		
+		clazzOpt = classMapper.findById(2L);
+		assertTrue(clazzOpt.isPresent());
+		assertNull(clazzOpt.get().getData());
+	}
+	
+	@Test
+	@Transactional
+	public void testInsert() {
+		Classs clazz = new Classs();
+		clazz.setName("六年级");
+		clazz.setData(Arrays.asList(3L, 4L, 5L, 6L));
+		
+		classMapper.insert(clazz);
+		
+		Optional<Classs> clazzOpt = classMapper.findById(clazz.getId());
+		assertTrue(clazzOpt.isPresent());
+		
+		assertNotNull(clazzOpt.get().getData());
+		assertEquals(clazzOpt.get().getData().size(), 4);
+		assertNotNull(clazzOpt.get().getAddTime());
+	}
+	
+	@Test
+	@Transactional
+	public void testBatchInsert() {
+		Classs clazz = new Classs();
+		clazz.setName("六年级");
+		clazz.setData(Arrays.asList(3L, 4L, 5L, 6L));
+		
+		List<Classs> classList = new ArrayList<>();
+		classList.add(clazz);
+		
+		clazz = new Classs();
+		clazz.setName("五年级");
+		clazz.setData(Arrays.asList(1L, 3L, 7L, 8L));
+		
+		classList.add(clazz);
+		
+		int effect = classMapper.batchInsert(classList);
+		assertEquals(effect, 2);
+		
+		Optional<Classs> clazzOpt = classMapper.findById(clazz.getId());
+		assertTrue(clazzOpt.isPresent());
+		
+		assertNotNull(clazzOpt.get().getData());
+		assertEquals(clazzOpt.get().getData().size(), 4);
+		assertNotNull(clazzOpt.get().getAddTime());
+	}
+	
+	@Test
+	@Transactional
+	public void testUpdateById() {
+		Classs clazz = new Classs();
+		clazz.setName("六年级");
+		clazz.setData(Arrays.asList(3L, 4L, 5L, 6L));
+		clazz.setId(1L);
+		
+		int effect = classMapper.updateById(clazz);
+		assertEquals(effect, 1);
+	}
+	
+	@Test
+	@Transactional
+	public void testUpdateAttrById() {
+		int effect = classMapper.updateAttrById("data", Arrays.asList(3L, 4L, 5L, 6L), 1L);
+		assertEquals(effect, 1);
+	}
+	
+	@Test
+	@Transactional
+	public void testUpdateByCriteria() {
+		Classs clazz = new Classs();
+		clazz.setName("六年级");
+		clazz.setData(Arrays.asList(3L, 4L, 5L, 6L));
+		
+		int effect = classMapper.updateByCriteria(clazz, p -> p.eq("id", 1L));
+		assertEquals(effect, 1);
 	}
 }
