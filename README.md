@@ -23,12 +23,15 @@ jdk >= 1.8
 <dependency>
    <groupId>com.yuehuanghun</groupId>
    <artifactId>mybatismilu-spring-boot-starter</artifactId>
-   <version>1.1.1</version> <!-- 获取最新版本 -->
+   <version>1.2.0</version> <!-- 获取最新版本 -->
 </dependency>
 ```
 
 ### 使用说明
 克隆代码中的mybatismilu-test模块有详细的使用演示
+
+### 示范项目
+基于知名的开源项目“若依管理系统”改版的项目：[yadmin](https://gitee.com/yuehh/yadmin4j)
 
 #### 一、实体类声明
 
@@ -97,6 +100,83 @@ public class Classs {
 	private List<Student> studentList; //一对多关系演示，双向引用
 }
 ```
+##### 注解别名
+一些注解声明可配置项比较多并复杂，会比较美感度。  
+从1.2.0版本开始，在用注解声明实体信息时，可以对@Id、@AttributeOptions自定义一个配置的别名注解，降低配置声明的繁杂度  
+
+内置对ID字段的注解别名：@SnowflakeId、@UUID
+```
+@Retention(RUNTIME)
+@Target(FIELD)
+public @interface SnowflakeId {
+
+	@Id
+	@GeneratedValue(generator = Constants.ID_GENERATOR_SNOWFLAKE)
+	String value() default StringUtils.EMPTY;
+}
+
+@Retention(RUNTIME)
+@Target(FIELD)
+public @interface UUID {
+
+	@Id
+	@GeneratedValue(generator = Constants.ID_GENERATOR_UUID)
+	String value() default StringUtils.EMPTY;
+}
+
+```
+使得
+```
+public class SomeEntity {
+	@SnowflakeId
+	private Long id;
+}
+
+//等同于
+public class SomeEntity {
+	@Id
+	@GeneratedValue(generator = Constants.ID_GENERATOR_SNOWFLAKE)
+	private Long id;
+}
+
+```
+这样既简便又明了。  
+
+内置对通用字段的@AttributeOptions配置声明别名注解：@CrateTime、@UpdateTime
+```
+@Retention(RUNTIME)
+@Target(FIELD)
+public @interface CreateTime {
+
+    @AttributeOptions(filler = @Filler(fillOnInsert = true))
+    @Column(updatable = false)
+	String value() default StringUtils.EMPTY;
+}
+
+@Retention(RUNTIME)
+@Target(FIELD)
+@AttributeOptions(filler = @Filler(fillOnInsert = true, fillOnUpdate = true))
+public @interface UpdateTime {
+
+}
+```
+
+```
+public class SomeEntity {
+	@CreateTime
+	private LocalDateTime CreateTime;
+}
+
+//等同于
+public class SomeEntity {
+	@AttributeOptions(filler = @Filler(fillOnInsert = true)) //插入数据时自动添加当前日期，无需手动设值
+	@Column(updatable = false) //不可更新
+	private LocalDateTime CreateTime;
+}
+
+```
+别名注解可以自定义，目前可以被配置的有@Id、@GeneratedValue、@AttributeOptions、@Column  
+自定义可以参考示范项目
 
 #### 二、通用Mapper
 
