@@ -5,7 +5,7 @@
 
     <groupId>com.yuehuanghun</groupId>
     <artifactId>mybatis-milu</artifactId>
-    <version>1.1.4-snapshots</version>
+    <version>1.2.0</version>
     <packaging>jar</packaging>
 
     <name>mybatis-milu</name>
