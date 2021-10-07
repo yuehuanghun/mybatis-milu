@@ -8,6 +8,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.ibatis.type.JdbcType;
+
 import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
 import com.yuehuanghun.mybatis.milu.annotation.alias.attr.CreateTime;
 import com.yuehuanghun.mybatis.milu.annotation.alias.id.SnowflakeId;
@@ -28,7 +30,7 @@ public class Classs {
 	
 	private String name;
 	
-	@AttributeOptions(typeHandler = JsonTypeHandler.class)
+	@AttributeOptions(typeHandler = JsonTypeHandler.class, jdbcType = JdbcType.VARCHAR)
 	private List<Long> data;
 	
 	@ManyToMany(mappedBy = "classList")
