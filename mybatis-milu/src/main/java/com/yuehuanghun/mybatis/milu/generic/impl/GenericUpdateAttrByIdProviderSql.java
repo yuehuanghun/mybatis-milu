@@ -91,13 +91,13 @@ public class GenericUpdateAttrByIdProviderSql extends GenericCachingProviderSql 
 				continue;
 			}
 			if(attr.isVersion()) { //版本号 + 1，总是+1，如果指定更新的属性为一个Version属性，则更新是无效的
-				sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context)).append(" = #{entity.").append(attr.getName()).append("} + 1,");
+				sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context)).append(" = #{entity.").append(attr.toParameter()).append("} + 1,");
 			} else {
 				if(updateAttrName.equals(attr.getName())) { //指定更新属性总是会被更新的
-					sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context)).append(" = #{").append(Constants.VALUE).append("}, ");
+					sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context)).append(" = #{").append(attr.toParameter().replaceFirst(attr.getName(), Constants.VALUE)).append("}, ");
 				} else {
 					if(attr.getUpdateMode() == Mode.NOT_EMPTY && CharSequence.class.isAssignableFrom(attr.getJavaType())) {
-						sqlBuilder.append(" <if test=\"entity.").append(attr.getName()).append(" != null and entity.").append(attr.getName()).append("!=''\">").append(wrapIdentifier(attr.getColumnName(), context)).append(" = #{entity.").append(attr.getName()).append("}, </if> ");
+						sqlBuilder.append(" <if test=\"entity.").append(attr.getName()).append(" != null and entity.").append(attr.getName()).append("!=''\">").append(wrapIdentifier(attr.getColumnName(), context)).append(" = #{entity.").append(attr.toParameter()).append("}, </if> ");
 					} else {
 						sqlBuilder.append(" <if test=\"entity.").append(attr.getName()).append(" != null\">").append(wrapIdentifier(attr.getColumnName(), context)).append(" = #{entity.").append(attr.toParameter()).append("}, </if> ");
 					}
@@ -114,7 +114,6 @@ public class GenericUpdateAttrByIdProviderSql extends GenericCachingProviderSql 
 		sqlBuilder.append(Segment.WHERE_B).append(wrapIdentifier(idAttr.getColumnName(), context)).append(" = #{").append(Constants.ID).append(Segment.RIGHT_BRACE);
 
 		sqlBuilder.append(Segment.SCRIPT_LABEL_END);
-		
 		return sqlBuilder.toString();
 	}
 
