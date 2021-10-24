@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.yuehuanghun.AppTest;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
@@ -257,5 +258,14 @@ public class ClassMapperTest {
 		
 		int effect = classMapper.updateByCriteria(clazz, p -> p.eq("id", 1L));
 		assertEquals(effect, 1);
+	}
+	
+	@Test
+	@Transactional
+	public void testFindByCriteria_ref() {
+		List<Classs> list = classMapper.findByCriteria(p -> p.select("*","studentList*").eq("id", 1L));
+		System.out.println(JSON.toJSONString(list));
+		assertEquals(1, list.size());
+		assertNotNull(list.get(0).getStudentList());
 	}
 }

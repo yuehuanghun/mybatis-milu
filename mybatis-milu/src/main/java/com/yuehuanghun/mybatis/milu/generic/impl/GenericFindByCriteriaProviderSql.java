@@ -28,6 +28,7 @@ import com.yuehuanghun.mybatis.milu.criteria.Predicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.criteria.builder.QuerySqlTemplateBuilder;
+import com.yuehuanghun.mybatis.milu.criteria.builder.QuerySqlTemplateBuilder.BuildResult;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderSql;
 import com.yuehuanghun.mybatis.milu.mapping.ResultMapHelper;
@@ -36,7 +37,7 @@ import com.yuehuanghun.mybatis.milu.tool.Constants;
 
 public class GenericFindByCriteriaProviderSql implements GenericProviderSql {
 
-	private final Map<Class<?>, Map<Expression, String>> cache = new ConcurrentHashMap<>();
+	private final Map<Class<?>, Map<Expression, BuildResult>> cache = new ConcurrentHashMap<>();
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
@@ -65,13 +66,17 @@ public class GenericFindByCriteriaProviderSql implements GenericProviderSql {
 			PageHelper.startPage(page.getPageNum(), page.getPageSize(), page.isCount());
 		}
 
-		String sqlExpression = cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
+		BuildResult result = cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
 			return new SoftValueHashMap<>();
 		}).computeIfAbsent(predicate, (key) -> {
 			return new QuerySqlTemplateBuilder(context.getEntity(), context.getConfiguration(), predicate).build();
 		});
 		
-		return sqlExpression;
+		if(!result.getResultMappings().isEmpty()) {
+			ResultMapHelper.setResultMappingList(result.getResultMappings());
+		}
+		
+		return result.getSqlTemplate();
 	}
 
 	@Override

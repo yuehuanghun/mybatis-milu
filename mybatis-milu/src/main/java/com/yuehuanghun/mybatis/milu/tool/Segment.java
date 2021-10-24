@@ -60,6 +60,7 @@ public interface Segment {
     String HASH_LEFT_BRACE = "#{";
     String HASH_EXAMPLE = "#{example.";
     String HYPHEN = "-";
+    String UNDER_LINE = "_";
     String UPDATE = "UPDATE ";
     String WHERE_B = " WHERE ";
     String SCRIPT_LABEL = "<script>";

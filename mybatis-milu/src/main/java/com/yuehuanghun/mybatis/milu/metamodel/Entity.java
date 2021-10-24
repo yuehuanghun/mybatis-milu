@@ -107,6 +107,8 @@ public class Entity {
 		private String name;
 		
 		private String columnName;
+		//所属实体
+		private Entity owner;
 		
 		private Field field;
 		
@@ -123,8 +125,12 @@ public class Entity {
 		private boolean insertable = true;
 		
 		private boolean selectable = true;
-		
+		//目前没有什么用
 		private boolean optional;
+		//关联属性，外键属性
+		private boolean reference;
+		//实体类，仅reference为true有值，表示外键的实体类
+		private Class<?> entityClass;
 		
 		private MatchType exampleMatchType = MatchType.EQUAL;
 		

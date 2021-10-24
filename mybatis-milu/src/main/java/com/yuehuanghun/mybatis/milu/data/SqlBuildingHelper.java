@@ -133,7 +133,7 @@ public class SqlBuildingHelper {
 		}
 	}
 	
-	private static Map<String, String> possibleProperty(String property) {
+	public static Map<String, String> possibleProperty(String property) {
 		Map<String, String> possibleProperty = new HashMap<>();
 		
 		if(property.contains("_")) {

@@ -58,7 +58,7 @@ public class GenericProviderSqlSource implements SqlSource {
 	}
 
 	private SqlSource createSqlSource(Object parameterObject) {
-		ResultMapHelper.clearResultType(); //清除动态的resultType
+		ResultMapHelper.clear(); //清除动态的resultType
 		try {
 			String sql = providerSql.provideSql(providerContext, parameterObject);
 

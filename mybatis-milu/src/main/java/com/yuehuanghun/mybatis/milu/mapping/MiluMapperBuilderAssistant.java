@@ -192,4 +192,5 @@ public class MiluMapperBuilderAssistant extends MapperBuilderAssistant {
 		}
 		return false;
 	}
+
 }

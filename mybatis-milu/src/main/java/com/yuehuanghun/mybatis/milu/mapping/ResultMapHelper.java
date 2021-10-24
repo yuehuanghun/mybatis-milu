@@ -38,7 +38,14 @@ public class ResultMapHelper {
 	
 	private final static ThreadLocal<Class<?>> DYNAMIC_RETURN_TYPE = new ThreadLocal<>(); 
 	
+	private final static ThreadLocal<List<ResultMapping>> DYNAMIC_RESULT_MAPPINGS = new ThreadLocal<>(); 
+	
 	public static ResultMap replaceResultMap(ResultMap resultMap) {
+		if(DYNAMIC_RESULT_MAPPINGS.get() != null) { //主表与关系表同时查询时的处理
+			Configuration configuration = getConfiguration(resultMap);
+			return new ResultMap.Builder(configuration, resultMap.getId(), resultMap.getType(), DYNAMIC_RESULT_MAPPINGS.get(), true).build();
+		}
+		
 		Class<?> returnType = DYNAMIC_RETURN_TYPE.get();
 		if(returnType == null || resultMap.getType().isAssignableFrom(returnType)) {
 			return resultMap;
@@ -67,13 +74,19 @@ public class ResultMapHelper {
 	}
 	
 	//清除动态的resultType
-	public static void clearResultType() {
+	public static void clear() {
 		DYNAMIC_RETURN_TYPE.remove();
+		DYNAMIC_RESULT_MAPPINGS.remove();
 	}
 	
 	//设置动态的resultType
 	public static void setResultType(Class<?> resultType) {
 		DYNAMIC_RETURN_TYPE.set(resultType);
+	}
+	
+	//动态ResultMapping
+	public static void setResultMappingList(List<ResultMapping> resultMappings) {
+		DYNAMIC_RESULT_MAPPINGS.set(resultMappings);
 	}
 	
 	private static Configuration getConfiguration(ResultMap resultMap) {

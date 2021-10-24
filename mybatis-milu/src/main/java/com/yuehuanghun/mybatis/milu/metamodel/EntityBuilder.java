@@ -145,6 +145,7 @@ public class EntityBuilder {
 			}
 			
 			Attribute attr = forField(field);
+			attr.setOwner(entity);
 			entity.addAttribute(attr);
 
 			List<RangeCondition> rangeList = null;
@@ -229,14 +230,31 @@ public class EntityBuilder {
 			attribute.setSelectable(false);
 			attribute.setInsertable(false);
 			attribute.setUpdateable(false);
+			attribute.setReference(true);
+			
+			Class<?> targetEntity = field.isAnnotationPresent(OneToOne.class) ? field.getAnnotation(OneToOne.class).targetEntity() : field.getAnnotation(ManyToOne.class).targetEntity();			
+			if(targetEntity == void.class) {
+				attribute.setEntityClass(field.getType());
+			} else {
+				attribute.setEntityClass(targetEntity);
+			}
 		}  else if(Collection.class.isAssignableFrom(field.getType())) {
 			attribute = new PluralAttribute();
 			ParameterizedType genericType = (ParameterizedType) field.getGenericType();
-			((PluralAttribute)attribute).setElementClass((Class<?>) genericType.getActualTypeArguments()[0]);
+			Class<?> elementClass = (Class<?>) genericType.getActualTypeArguments()[0];
+			((PluralAttribute)attribute).setElementClass(elementClass);
 			if(field.isAnnotationPresent(OneToMany.class) || field.isAnnotationPresent(ManyToMany.class)) {
 				attribute.setSelectable(false);
 				attribute.setInsertable(false);
 				attribute.setUpdateable(false);
+				attribute.setReference(true);
+				
+				Class<?> targetEntity = field.isAnnotationPresent(OneToMany.class) ? field.getAnnotation(OneToMany.class).targetEntity() : field.getAnnotation(ManyToMany.class).targetEntity();			
+				if(targetEntity == void.class) {
+					attribute.setEntityClass(elementClass);
+				} else {
+					attribute.setEntityClass(targetEntity);
+				}
 			}
 		} else if(field.getType().isArray()) {
 			attribute = new PluralAttribute();

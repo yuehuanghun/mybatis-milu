@@ -432,4 +432,50 @@ public class StudentMapperTest {
 		assertTrue(studentList.size() == 2);
 		assertTrue(studentList.get(0).getName().startsWith("王"));
 	}
+	
+	@Test
+	public void testFindByCateria_ref() {
+		List<Student> list = studentMapper.findByCriteria(p -> p.select("*", "classs*").eq("id", 1L));
+		System.out.println(JSON.toJSONString(list));
+		assertEquals(1, list.size());
+		assertNotNull(list.get(0).getClasss());
+	}
+	
+	@Test
+	public void testFindByCateria_ref2() {
+		List<Student> list = studentMapper.findByCriteria(p -> p.select("*", "classs*", "studentProfile*").eq("id", 1L));
+		System.out.println(JSON.toJSONString(list));
+		assertEquals(1, list.size());
+		assertNotNull(list.get(0).getClasss());
+		assertNotNull(list.get(0).getStudentProfile());
+	}
+	
+	@Test
+	public void testFindByCateria_ref3() {
+		List<Student> list = studentMapper.findByCriteria(p -> p.select("id","addTime", "classsId", "classsName").eq("id", 1L));
+		System.out.println(JSON.toJSONString(list));
+		assertEquals(1, list.size());
+		assertNotNull(list.get(0).getAddTime());
+		assertNull(list.get(0).getName());
+		assertNotNull(list.get(0).getClasss());
+		assertNotNull(list.get(0).getClasss().getName());
+		assertNull(list.get(0).getClasss().getAddTime());
+	}
+	
+	@Test
+	public void testFindByCateria_ref4() {
+		List<Student> list = studentMapper.findByCriteria(p -> p.select("*", "classs*"));
+		System.out.println(JSON.toJSONString(list));
+		assertEquals(5, list.size());
+		assertNotNull(list.get(0).getClasss());
+	}
+	
+	@Test
+	public void testFindByCateria_ref5() {
+		List<Student> list = studentMapper.findByCriteria(p -> p.select("classs*").eq("id", 1L));
+		System.out.println(JSON.toJSONString(list));
+		assertEquals(1, list.size());
+		assertNull(list.get(0).getId());
+		assertNotNull(list.get(0).getClasss());
+	}
 }

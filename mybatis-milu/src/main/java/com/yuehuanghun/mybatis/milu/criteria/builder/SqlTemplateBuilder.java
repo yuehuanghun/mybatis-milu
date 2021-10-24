@@ -7,7 +7,6 @@ import java.util.Set;
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper.TableAliasDispacher;
-import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
@@ -60,18 +59,6 @@ public abstract class SqlTemplateBuilder {
 		}
 		return sqlTemplateTmp;
 	}
-	
-	protected void assertAttrExists(Set<String> attrs) {
-		if(attrs == null || attrs.isEmpty()) {
-			return;
-		}
-		
-		for(String attr : attrs) {
-			if(!entity.hasAttribute(attr)) {
-				throw new SqlExpressionBuildingException(String.format("实体类%s中不存在属性：%s", entity.getJavaType().getName(), attr));
-			}
-		}
-	}
-	
-	abstract String build();
+
+	abstract Object build();
 }
