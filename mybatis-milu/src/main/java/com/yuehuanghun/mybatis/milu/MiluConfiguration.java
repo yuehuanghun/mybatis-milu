@@ -53,7 +53,9 @@ import com.yuehuanghun.mybatis.milu.generic.impl.GenericFlushProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericInsertProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericStatisticByCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericStatisticByLambdaCriteriaProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdateAttrByCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdateAttrByIdProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdateAttrByLambdaCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdateByCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdateByIdProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdateByLambdaCriteriaProviderSql;
@@ -137,6 +139,8 @@ public class MiluConfiguration extends Configuration {
 		this.addGenericProviderSql(new GenericStatisticByCriteriaProviderSql());
 		this.addGenericProviderSql(new GenericStatisticByLambdaCriteriaProviderSql());
 		this.addGenericProviderSql(new GenericUpdateAttrByIdProviderSql());
+		this.addGenericProviderSql(new GenericUpdateAttrByLambdaCriteriaProviderSql());
+		this.addGenericProviderSql(new GenericUpdateAttrByCriteriaProviderSql());
 	}
 	
 	private void registerDefaultIdentifierGenerator() {

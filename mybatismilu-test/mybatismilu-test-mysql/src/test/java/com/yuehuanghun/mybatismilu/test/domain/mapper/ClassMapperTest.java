@@ -262,6 +262,32 @@ public class ClassMapperTest {
 	
 	@Test
 	@Transactional
+	public void testUpdateAttrByCriteria() {
+		int effect = classMapper.updateAttrByCriteria("data", Arrays.asList(3L, 4L, 5L, 6L), p -> p.eq("id", 1L));
+		assertEquals(effect, 1);
+		
+		effect = classMapper.updateAttrByCriteria("data", null, p -> p.eq("id", 1L));
+		assertEquals(effect, 1);
+		
+		Optional<Classs> classs = classMapper.findById(1L);
+		assertNull(classs.get().getData());
+	}
+	
+	@Test
+	@Transactional
+	public void testUpdateAttrByLambdaCriteria() {
+		int effect = classMapper.updateAttrByLambdaCriteria(Classs::getData, Arrays.asList(3L, 4L, 5L, 6L), p -> p.eq(Classs::getId, 1L));
+		assertEquals(effect, 1);
+		
+		effect = classMapper.updateAttrByLambdaCriteria(Classs::getData, null, p -> p.eq(Classs::getId, 1L));
+		assertEquals(effect, 1);
+		
+		Optional<Classs> classs = classMapper.findById(1L);
+		assertNull(classs.get().getData());
+	}
+	
+	@Test
+	@Transactional
 	public void testFindByCriteria_ref() {
 		List<Classs> list = classMapper.findByCriteria(p -> p.select("*","studentList*").eq("id", 1L));
 		System.out.println(JSON.toJSONString(list));

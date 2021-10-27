@@ -52,14 +52,14 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param id 主键
 	 * @return 唯一行
 	 */
-	Optional<T> findById(@Param(Constants.ID)ID id);
+	Optional<T> findById(@Param(Constants.ID) ID id);
 	
 	/**
 	 * 通过ID集合查询一组数据，如果实体类未声明ID，则不可使用此方法
 	 * @param ids 主键集合
 	 * @return 列表
 	 */
-	List<T> findByIds(@Param(Constants.IDS)Collection<ID> ids);
+	List<T> findByIds(@Param(Constants.IDS) Collection<ID> ids);
 	
 	/**
 	 * 查询表所有数据
@@ -72,14 +72,14 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param sort 排序
 	 * @return 列表
 	 */
-	List<T> findAllAndSort(@Param(Constants.SORT)Sort sort);
+	List<T> findAllAndSort(@Param(Constants.SORT) Sort sort);
 	
 	/**
 	 * 使用实体类作为查询参数，非null值才会参与查询，关联表属性无效
 	 * @param example 条件
 	 * @return 列表
 	 */
-	List<T> findByExample(@Param(Constants.EXAMPLE)T example);
+	List<T> findByExample(@Param(Constants.EXAMPLE) T example);
 
 	/**
 	 * 使用实体类作为查询参数，非null值才会参与查询，关联表属性无效
@@ -87,7 +87,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param pageable 分页参数
 	 * @return 列表
 	 */
-	List<T> findByExample(@Param(Constants.EXAMPLE)T example, @Param(Constants.PAGE)Pageable pageable);
+	List<T> findByExample(@Param(Constants.EXAMPLE) T example, @Param(Constants.PAGE) Pageable pageable);
 	
 	/**
 	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效
@@ -95,7 +95,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param sort 排序
 	 * @return 列表
 	 */
-	List<T> findByExampleAndSort(@Param(Constants.EXAMPLE)T example, @Param(Constants.SORT)Sort sort);
+	List<T> findByExampleAndSort(@Param(Constants.EXAMPLE) T example, @Param(Constants.SORT) Sort sort);
 	
 	/**
 	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效
@@ -104,7 +104,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param pageable 分页参数
 	 * @return 列表
 	 */
-	List<T> findByExampleAndSort(@Param(Constants.EXAMPLE)T example, @Param(Constants.SORT)Sort sort, @Param(Constants.PAGE)Pageable pageable);
+	List<T> findByExampleAndSort(@Param(Constants.EXAMPLE) T example, @Param(Constants.SORT) Sort sort, @Param(Constants.PAGE) Pageable pageable);
 	
 	/**
 	 * 插入一条数据
@@ -119,7 +119,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param entityList 新增实体对象列表
 	 * @return 影响行数
 	 */
-	int batchInsert(@Param(Constants.ENTITY_LIST)Collection<T> entityList);
+	int batchInsert(@Param(Constants.ENTITY_LIST) Collection<T> entityList);
 	
 	/**
 	 * 通过ID更新，默认非null值被更新，可以通过@AttributeOptions注解的updateMode设定更新的模式<br>
@@ -127,63 +127,63 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param entity 更新对象
 	 * @return 影响行数
 	 */
-	int updateById(@Param(Constants.ENTITY)T entity);
+	int updateById(@Param(Constants.ENTITY) T entity);
 	
 	/**
 	 * 通过ID删除单条数据
 	 * @param id 主键
 	 * @return 影响行数
 	 */
-	int deleteById(@Param(Constants.ID)ID id);
+	int deleteById(@Param(Constants.ID) ID id);
 	
 	/**
 	 * 通过ID集合删除批量数据
 	 * @param ids 主键集合
 	 * @return 影响行数
 	 */
-	int deleteByIds(@Param(Constants.IDS)Collection<ID> ids);
+	int deleteByIds(@Param(Constants.IDS) Collection<ID> ids);
 
 	/**
 	 * 以实体类为参数进行统计行数
 	 * @param example 条件
 	 * @return 影响行数
 	 */
-	int countByExample(@Param(Constants.EXAMPLE)T example);
+	int countByExample(@Param(Constants.EXAMPLE) T example);
 
 	/**
 	 * 动态条件计算行数
 	 * @param predicate 条件
 	 * @return 影响行数
 	 */
-	int countByCriteria(@Param(Constants.CRITERIA)Predicate predicate);
+	int countByCriteria(@Param(Constants.CRITERIA) Predicate predicate);
 	
 	/**
 	 * 动态条件计算行数
 	 * @param predicate 条件
 	 * @return 影响行数
 	 */
-	int countByCriteria(@Param(Constants.CRITERIA)Consumer<Predicate> predicate);
+	int countByCriteria(@Param(Constants.CRITERIA) Consumer<Predicate> predicate);
 	
 	/**
 	 * 动态条件计算行数
 	 * @param predicate 条件
 	 * @return 影响行数
 	 */
-	int countByLambdaCriteria(@Param(Constants.CRITERIA)Consumer<LambdaPredicate<T>> predicate);
+	int countByLambdaCriteria(@Param(Constants.CRITERIA) Consumer<LambdaPredicate<T>> predicate);
 	
 	/**
 	 * 动态条件查询<br>
 	 * @param predicate 条件
 	 * @return 列表
 	 */
-	List<T> findByCriteria(@Param(Constants.CRITERIA)QueryPredicate predicate);
+	List<T> findByCriteria(@Param(Constants.CRITERIA) QueryPredicate predicate);
 	
 	/**
 	 * 动态条件查询<br>
 	 * @param predicate 条件
 	 * @return 列表
 	 */
-	List<T> findByCriteria(@Param(Constants.CRITERIA)Consumer<QueryPredicate> predicate);
+	List<T> findByCriteria(@Param(Constants.CRITERIA) Consumer<QueryPredicate> predicate);
 	
 	/**
 	 * 动态条件查询<br>
@@ -192,14 +192,14 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param resultType 结果类
 	 * @return 列表
 	 */
-	<E> List<E> findByCriteria(@Param(Constants.CRITERIA)Consumer<QueryPredicate> predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType);
+	<E> List<E> findByCriteria(@Param(Constants.CRITERIA) Consumer<QueryPredicate> predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType);
 	
 	/**
 	 * lambda表达式动态条件查询
 	 * @param predicate 条件
 	 * @return 列表
 	 */
-	List<T> findByLambdaCriteria(@Param(Constants.CRITERIA)Consumer<LambdaQueryPredicate<T>> predicate);
+	List<T> findByLambdaCriteria(@Param(Constants.CRITERIA) Consumer<LambdaQueryPredicate<T>> predicate);
 
 	/**
 	 * 动态条件查询<br>
@@ -208,7 +208,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param resultType 结果类
 	 * @return 列表
 	 */
-	<E> List<E> findByLambdaCriteria(@Param(Constants.CRITERIA)Consumer<LambdaQueryPredicate<T>> predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType);
+	<E> List<E> findByLambdaCriteria(@Param(Constants.CRITERIA) Consumer<LambdaQueryPredicate<T>> predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType);
 	
 	/**
 	 * 动态条件更新<br>
@@ -217,7 +217,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param predicate 查询条件
 	 * @return 影响行数
 	 */
-	int updateByCriteria(@Param(Constants.ENTITY)T entity, @Param(Constants.CRITERIA)UpdatePredicate predicate);
+	int updateByCriteria(@Param(Constants.ENTITY) T entity, @Param(Constants.CRITERIA) UpdatePredicate predicate);
 	
 	/**
 	 * 动态条件更新<br>
@@ -226,7 +226,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param predicate 查询条件
 	 * @return 影响行数
 	 */
-	int updateByCriteria(@Param(Constants.ENTITY)T entity, @Param(Constants.CRITERIA)Consumer<UpdatePredicate> predicate);
+	int updateByCriteria(@Param(Constants.ENTITY) T entity, @Param(Constants.CRITERIA) Consumer<UpdatePredicate> predicate);
 	
 	/**
 	 * 动态条件更新<br>
@@ -234,28 +234,28 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param predicate 查询条件
 	 * @return 影响行数
 	 */
-	int updateByLambdaCriteria(@Param(Constants.ENTITY)T entity, @Param(Constants.CRITERIA)Consumer<LambdaUpdatePredicate<T>> predicate);
+	int updateByLambdaCriteria(@Param(Constants.ENTITY) T entity, @Param(Constants.CRITERIA) Consumer<LambdaUpdatePredicate<T>> predicate);
 	
 	/**
 	 * 动态条件删除<br>
 	 * @param predicate 条件
 	 * @return 影响行数
 	 */
-	int deleteByCriteria(@Param(Constants.CRITERIA)Predicate predicate);
+	int deleteByCriteria(@Param(Constants.CRITERIA) Predicate predicate);
 	
 	/**
 	 * 动态条件删除<br>
 	 * @param predicate 条件
 	 * @return 影响行数
 	 */
-	int deleteByCriteria(@Param(Constants.CRITERIA)Consumer<Predicate> predicate);
+	int deleteByCriteria(@Param(Constants.CRITERIA) Consumer<Predicate> predicate);
 	
 	/**
 	 * 动态条件删除<br>
 	 * @param predicate 条件
 	 * @return 影响行数
 	 */
-	int deleteByLambdaCriteria(@Param(Constants.CRITERIA)Consumer<LambdaPredicate<T>> predicate);
+	int deleteByLambdaCriteria(@Param(Constants.CRITERIA) Consumer<LambdaPredicate<T>> predicate);
 	
 	/**
 	 * 动态统计数据
@@ -299,11 +299,12 @@ public interface BaseMapper<T, ID extends Serializable> {
 	/**
 	 * 单属性更新<br>
 	 * 除了指定属性外，@Version及@AttributeOptions中声明为更新时自动填充的属性也会被更新<br>
-     * 指定更新属性为@Version属性是无意义的<br>
-     * 指定更新属性如果为@AttributeOptions声明为更新时自动填充的属性，则以指定值为准
+	 * 指定更新属性为@Version属性是无意义的<br>
+	 * 指定更新属性如果为@AttributeOptions声明为更新时自动填充的属性，则以指定值为准
+	 * 
 	 * @param attrName 属性名，本实体中的属性，不能为关联实体的属性。注意不要直接填字段名。
-	 * @param value 更新值，可以为null值
-	 * @param id 主键
+	 * @param value    更新值，可以为null值
+	 * @param id       主键
 	 * @return 影响行数
 	 */
 	int updateAttrById(@Param(Constants.ATTR_NAME) String attrName, @Param(Constants.VALUE) Object value, @Param(Constants.ID) ID id);
@@ -311,14 +312,54 @@ public interface BaseMapper<T, ID extends Serializable> {
 	/**
 	 * 单属性更新<br>
 	 * 除了指定属性外，@Version及@AttributeOptions中声明为更新时自动填充的属性也会被更新<br>
-     * 指定更新属性为@Version属性是无意义的<br>
-     * 指定更新属性如果为@AttributeOptions声明为更新时自动填充的属性，则以指定值为准
+	 * 指定更新属性为@Version属性是无意义的<br>
+	 * 指定更新属性如果为@AttributeOptions声明为更新时自动填充的属性，则以指定值为准
+	 * 
 	 * @param attrNameGetter 实体类属性名getter函数式。
-	 * @param value 更新值，可以为null值
-	 * @param id 主键
+	 * @param value          更新值，可以为null值
+	 * @param id             主键
 	 * @return 影响行数
 	 */
 	int updateAttrById(@Param(Constants.ATTR_NAME) SerializableFunction<T, ?> attrNameGetter, @Param(Constants.VALUE) Object value, @Param(Constants.ID) ID id);
+	
+	/**
+	 * 单属性更新<br>
+	 * 除了指定属性外，@Version及@AttributeOptions中声明为更新时自动填充的属性也会被更新<br>
+	 * 指定更新属性为@Version属性是无意义的<br>
+	 * 指定更新属性如果为@AttributeOptions声明为更新时自动填充的属性，则以指定值为准
+	 * 
+	 * @param attrName  实体类属性名。
+	 * @param value     更新值，可以为null值
+	 * @param predicate 条件
+	 * @return 影响行数
+	 */
+	int updateAttrByCriteria(@Param(Constants.ATTR_NAME) String attrName, @Param(Constants.VALUE) Object value, @Param(Constants.CRITERIA) UpdatePredicate predicate);
+	
+	/**
+	 * 单属性更新<br>
+	 * 除了指定属性外，@Version及@AttributeOptions中声明为更新时自动填充的属性也会被更新<br>
+	 * 指定更新属性为@Version属性是无意义的<br>
+	 * 指定更新属性如果为@AttributeOptions声明为更新时自动填充的属性，则以指定值为准
+	 * 
+	 * @param attrName  实体类属性名。
+	 * @param value     更新值，可以为null值
+	 * @param predicate 条件
+	 * @return 影响行数
+	 */
+	int updateAttrByCriteria(@Param(Constants.ATTR_NAME) String attrName, @Param(Constants.VALUE) Object value, @Param(Constants.CRITERIA) Consumer<UpdatePredicate> predicate);
+	
+	/**
+	 * 单属性更新<br>
+	 * 除了指定属性外，@Version及@AttributeOptions中声明为更新时自动填充的属性也会被更新<br>
+	 * 指定更新属性为@Version属性是无意义的<br>
+	 * 指定更新属性如果为@AttributeOptions声明为更新时自动填充的属性，则以指定值为准
+	 * 
+	 * @param attrNameGetter 实体类属性名getter函数式。
+	 * @param value          更新值，可以为null值
+	 * @param predicate      条件
+	 * @return 影响行数
+	 */
+	int updateAttrByLambdaCriteria(@Param(Constants.ATTR_NAME) SerializableFunction<T, ?> attrNameGetter, @Param(Constants.VALUE) Object value, @Param(Constants.CRITERIA) Consumer<LambdaUpdatePredicate<T>> predicate);
 	
 	/**
 	 * 刷新执行查询到数据库

@@ -361,4 +361,51 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	default int updateAttrById(SerializableFunction<T, ?> attrNameGetter, Object value, ID id) {
 		return getDomainMapper().updateAttrById(attrNameGetter, value, id);
 	}
+	
+
+	/**
+	 * 单属性更新<br>
+	 * 除了指定属性外，@Version及@AttributeOptions中声明为更新时自动填充的属性也会被更新<br>
+	 * 指定更新属性为@Version属性是无意义的<br>
+	 * 指定更新属性如果为@AttributeOptions声明为更新时自动填充的属性，则以指定值为准
+	 * 
+	 * @param attrName  实体类属性名。
+	 * @param value     更新值，可以为null值
+	 * @param predicate 条件
+	 * @return 影响行数
+	 */
+	default int updateAttrByCriteria(String attrName, Object value, UpdatePredicate predicate) {
+		return getDomainMapper().updateAttrByCriteria(attrName, value, predicate);
+	}
+	
+	/**
+	 * 单属性更新<br>
+	 * 除了指定属性外，@Version及@AttributeOptions中声明为更新时自动填充的属性也会被更新<br>
+	 * 指定更新属性为@Version属性是无意义的<br>
+	 * 指定更新属性如果为@AttributeOptions声明为更新时自动填充的属性，则以指定值为准
+	 * 
+	 * @param attrName  实体类属性名。
+	 * @param value     更新值，可以为null值
+	 * @param predicate 条件
+	 * @return 影响行数
+	 */
+	default int updateAttrByCriteria(String attrName, Object value, Consumer<UpdatePredicate> predicate) {
+		return getDomainMapper().updateAttrByCriteria(attrName, value, predicate);
+	}
+	
+	/**
+	 * 单属性更新<br>
+	 * 除了指定属性外，@Version及@AttributeOptions中声明为更新时自动填充的属性也会被更新<br>
+	 * 指定更新属性为@Version属性是无意义的<br>
+	 * 指定更新属性如果为@AttributeOptions声明为更新时自动填充的属性，则以指定值为准
+	 * 
+	 * @param attrNameGetter 实体类属性名getter函数式。
+	 * @param value          更新值，可以为null值
+	 * @param predicate      条件
+	 * @return 影响行数
+	 */
+	default int updateAttrByLambdaCriteria(SerializableFunction<T, ?> attrNameGetter, Object value, Consumer<LambdaUpdatePredicate<T>> predicate) {
+		return getDomainMapper().updateAttrByLambdaCriteria(attrNameGetter, value, predicate);
+	}
+	
 }

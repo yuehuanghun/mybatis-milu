@@ -1,5 +1,6 @@
 # mybatis-milu
-[详细文档](http://mybatis-milu.yuehuanghun.com/)
+[详细文档](http://mybatis-milu.yuehuanghun.com/)  
+[示范项目yadmin](https://gitee.com/yuehh/yadmin4j)
 ### 介绍
 mybatis-milu是基于mybatis的功能增强框架，遵循JPA规范的ORM，提供通用Mapper接口，提供类似Spring Data JPA的查询创建器，通过方法名解析查询语句，极大提高开发效率。
 本框架仅做功能增强，拓展statement的创建方式，不覆盖mybatis中的任何实现。
@@ -23,12 +24,9 @@ jdk >= 1.8
 <dependency>
    <groupId>com.yuehuanghun</groupId>
    <artifactId>mybatismilu-spring-boot-starter</artifactId>
-   <version>1.2.0</version> <!-- 获取最新版本 -->
+   <version>1.3.0</version> <!-- 获取最新版本 -->
 </dependency>
 ```
-
-### 使用说明
-克隆代码中的mybatismilu-test模块有详细的使用演示
 
 ### 示范项目
 基于知名的开源项目“若依管理系统”改版的项目：[yadmin](https://gitee.com/yuehh/yadmin4j)
@@ -183,36 +181,41 @@ public class SomeEntity {
 Mapper接口通过继承BaseMapper接口类，获得通用的数据访问能力。
 以下对一些特别的接口进行说明，简单的接口不再说明：
 
-1、example查询，使用entity对象作为查询条件。findByExample、findByExampleAndSort、countByExample
+##### 1、example查询，使用entity对象作为查询条件。findByExample、findByExampleAndSort、countByExample
 
 使用实体类对象作为查询条件。
 默认情况下entity的属性值不为空时（not empty模式），将被作为查询条件，可以使用@AttributeOptions(conditionMode=Mode.xxx)更改条件的生效模式。
 默认情况下属性作为查询条件时，使用值=匹配，可以@AttributeOptions(exampleQuery=@ExampleQuery(matchType=MatchType.xxx))更改查询匹配方式
 同样适用
 
-2、criteria查询。findByCriteria、updateByCriteria、deleteByCriteria、countByCriteria  
+##### 2、criteria查询。findByCriteria、updateByCriteria、deleteByCriteria、countByCriteria  
 自定义条件查询，通过实体属性设置查询条件
 ```
 //方式一
-classMapper.findByCriteria(new QueryPredicateImpl().eq("name", "一年级").order(Direction.DESC,"id").order("studentListAddTime"));
+List<Classs> list = classMapper.findByCriteria(new QueryPredicateImpl().eq("name", "一年级").order(Direction.DESC,"id").order("studentListAddTime"));
 
 //方式二
-classMapper.findByCriteria(p -> p.eq("name", "一年级").order(Direction.DESC,"id").order("studentListAddTime"));
+List<Classs> list = classMapper.findByCriteria(p -> p.eq("name", "一年级").order(Direction.DESC,"id").order("studentListAddTime"));
 
+//查询多表
+List<Classs> list = classMapper.findByCriteria(p -> p.select("*","studentList*").eq("id", 1L));
 ```
 
-3、lambdaCriteria查询。findByLambdaCriteria、updateByLambdaCriteria、deleteByLambdaCriteria、countByLambdaCriteria  
+##### 3、lambdaCriteria查询。findByLambdaCriteria、updateByLambdaCriteria、deleteByLambdaCriteria、countByLambdaCriteria  
 自定义条件查询，通过实体属性的lambda函数式设置查询条件
 ```
 Classs params = new Classs();
 params.setName("一年级");
 //方式一
-classMapper.findByLambdaCriteria(predicate -> predicate.apply(params).select(Classs::getName, Classs::getAddTime).eq(Classs::getName).limit(10, false));
-//方式二
-classMapper.findByLambdaCriteria(predicate -> predicate.select(Classs::getName, Classs::getAddTime).eq(Classs::getName, params.getName()).limit(10, false));
+List<Classs> list = classMapper.findByLambdaCriteria(predicate -> predicate.apply(params).select(Classs::getName, Classs::getAddTime).eq(Classs::getName).limit(10, false));
 
+//方式二
+List<Classs> list = classMapper.findByLambdaCriteria(predicate -> predicate.select(Classs::getName, Classs::getAddTime).eq(Classs::getName, params.getName()).limit(10, false));
+
+//查询多表
+List<Classs> list = classMapper.findByLambdaCriteria(p -> p.select("*","studentList*").eq(Classs::getId, 1L));
 ```
-4、criteria、lambdaCriteria统计  
+##### 4、criteria、lambdaCriteria统计  
 目前支持5个统计关键字：sum/count/min/max/avg
 ```
 List<Map<String, Object>> result = studentMapper.statisticByCriteria(p -> p.sum("age").avg("age").count("id").groupBy("classId").orderAsc("classId"));

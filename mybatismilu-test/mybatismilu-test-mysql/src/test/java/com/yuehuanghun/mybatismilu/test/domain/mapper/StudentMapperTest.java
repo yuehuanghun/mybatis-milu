@@ -31,6 +31,7 @@ import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
+import com.yuehuanghun.mybatismilu.test.domain.entity.Classs;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Student;
 import com.yuehuanghun.mybatismilu.test.dto.StudentStatistic;
 
@@ -477,5 +478,31 @@ public class StudentMapperTest {
 		assertEquals(1, list.size());
 		assertNull(list.get(0).getId());
 		assertNotNull(list.get(0).getClasss());
+	}
+	
+	@Test
+	@Transactional
+	public void testUpdateAttrByCriteria() {
+		int effect = studentMapper.updateAttrByCriteria("name", "狗剩", p -> p.eq("id", 1L));
+		assertEquals(effect, 1);
+		
+		effect = studentMapper.updateAttrByCriteria("name", null, p -> p.eq("id", 1L));
+		assertEquals(effect, 1);
+		
+		Optional<Student> classs = studentMapper.findById(1L);
+		assertNull(classs.get().getName());
+	}
+	
+	@Test
+	@Transactional
+	public void testUpdateAttrByLambdaCriteria() {
+		int effect = studentMapper.updateAttrByLambdaCriteria(Student::getName, "狗剩", p -> p.eq(Student::getId, 1L));
+		assertEquals(effect, 1);
+		
+		effect = studentMapper.updateAttrByLambdaCriteria(Student::getName, null, p -> p.eq(Student::getId, 1L));
+		assertEquals(effect, 1);
+		
+		Optional<Student> classs = studentMapper.findById(1L);
+		assertNull(classs.get().getName());
 	}
 }
