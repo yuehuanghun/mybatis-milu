@@ -53,4 +53,24 @@ public @interface Filler {
 	 * @return true/false
 	 */
 	boolean fillOnUpdate() default false;
+	
+	/**
+	 * 填充模式，默认值为FillMode.NOT_NULL<br>
+	 * FillMode.NOT_NULL 属性可以手动设值<br>
+	 * FillMode.ANY 不管属性有没有值，都通过Supplier获取一个新的值
+	 * @return FillMode.ANY：任何情况都填充，FillMode.NOT_NULL：属性值不为null时填充
+	 */
+	FillMode fillMode() default FillMode.NOT_NULL;
+	
+	
+	public static enum FillMode {
+		/**
+		 * 任何情况都填充
+		 */
+		ANY,
+		/**
+		 * 属性值不为null时填充
+		 */
+		NOT_NULL
+	}
 }

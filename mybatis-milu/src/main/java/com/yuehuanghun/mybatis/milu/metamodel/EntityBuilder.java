@@ -181,7 +181,7 @@ public class EntityBuilder {
 					if(metaClass == null) {
 						metaClass = MetaClass.forClass(clazz, REFLECTOR_FACTORY);
 					}
-					Filler filler = new Filler(metaClass, field, SupplierHelper.getSupplier(fillers[0].attributeValueSupplier()));
+					Filler filler = new Filler(metaClass, field, SupplierHelper.getSupplier(fillers[0].attributeValueSupplier()), fillers[0].fillMode());
 					if(fillers[0].fillOnInsert()) {
 						entity.getOnInsertFillers().add(filler);
 					}

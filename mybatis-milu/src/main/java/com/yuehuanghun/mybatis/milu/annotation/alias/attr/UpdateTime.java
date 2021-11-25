@@ -24,6 +24,7 @@ import java.lang.annotation.Target;
 
 import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
 import com.yuehuanghun.mybatis.milu.annotation.Filler;
+import com.yuehuanghun.mybatis.milu.annotation.Filler.FillMode;
 
 /**
  * 通用的 @AttributeOptions 的短设置
@@ -32,7 +33,7 @@ import com.yuehuanghun.mybatis.milu.annotation.Filler;
  */
 @Retention(RUNTIME)
 @Target(FIELD)
-@AttributeOptions(filler = @Filler(fillOnInsert = true, fillOnUpdate = true))
+@AttributeOptions(filler = @Filler(fillOnInsert = true, fillOnUpdate = true, fillMode = FillMode.ANY))
 public @interface UpdateTime {
 
 }

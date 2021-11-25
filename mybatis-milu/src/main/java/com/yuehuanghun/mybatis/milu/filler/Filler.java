@@ -21,6 +21,8 @@ import java.lang.reflect.InvocationTargetException;
 import org.apache.ibatis.reflection.MetaClass;
 import org.apache.ibatis.reflection.invoker.Invoker;
 
+import com.yuehuanghun.mybatis.milu.annotation.Filler.FillMode;
+
 import lombok.Getter;
 
 public class Filler {
@@ -34,7 +36,9 @@ public class Filler {
 	
 	private final Class<?> fieldClass;
 	
-	public Filler(MetaClass metaClass, Field field, AttributeValueSupplier<?> attributeValueSupplier) {
+	private final FillMode fillMode;
+	
+	public Filler(MetaClass metaClass, Field field, AttributeValueSupplier<?> attributeValueSupplier, FillMode fillMode) {
 		String fieldName = field.getName();
 		if(metaClass.hasGetter(fieldName)) {
 			getter = metaClass.getGetInvoker(fieldName);
@@ -44,14 +48,19 @@ public class Filler {
 		}
 		this.attributeValueSupplier = attributeValueSupplier;
 		this.fieldClass = field.getType();
+		this.fillMode = fillMode;
 	}
 	
-	public boolean hasValue(Object target) {
+	private boolean shouldFill(Object target) {
+		if(this.fillMode == FillMode.ANY) {
+			return true;
+		}
+		
 		if(getter == null) {
-			return false;
+			return true;
 		}
 		try {
-			return getter.invoke(target, EMPTY_ARRAY) != null;
+			return getter.invoke(target, EMPTY_ARRAY) == null;
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
@@ -61,7 +70,7 @@ public class Filler {
 		if(setter == null) {
 			return;
 		}
-		if(hasValue(target)) {
+		if(!shouldFill(target)) {
 			return;
 		}
 		

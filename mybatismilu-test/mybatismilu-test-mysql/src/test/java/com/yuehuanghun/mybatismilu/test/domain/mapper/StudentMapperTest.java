@@ -190,9 +190,12 @@ public class StudentMapperTest {
 		Student student = new Student();
 		student.setAge(10);
 		student.setId(2L);
+		Date now = new Date();
 		int result = studentMapper.updateById(student);
+		System.out.println(JSON.toJSONString(student));
 		assertTrue(result == 1);
 		assertNotNull(student.getUpdateTime());
+		assertTrue(now.compareTo(student.getUpdateTime()) <= 0);
 		assertNull(student.getAddTime());
 	};
 
