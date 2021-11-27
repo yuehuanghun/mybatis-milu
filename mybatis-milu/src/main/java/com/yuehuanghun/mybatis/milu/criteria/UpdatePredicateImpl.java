@@ -154,8 +154,20 @@ public class UpdatePredicateImpl extends PredicateImpl implements UpdatePredicat
 	}
 
 	@Override
+	public UpdatePredicate isNull(boolean accept, String attrName) {
+		super.isNull(accept, attrName);
+		return this;
+	}
+
+	@Override
 	public UpdatePredicate notNull(String attrName) {
 		super.notNull(attrName);
+		return this;
+	}
+
+	@Override
+	public UpdatePredicate notNull(boolean accept, String attrName) {
+		super.notNull(accept, attrName);
 		return this;
 	}
 

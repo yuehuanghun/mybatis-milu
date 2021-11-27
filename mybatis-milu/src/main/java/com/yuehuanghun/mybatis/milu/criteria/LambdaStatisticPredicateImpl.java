@@ -370,8 +370,20 @@ public class LambdaStatisticPredicateImpl<T> extends LambdaPredicateImpl<T> impl
 	}
 
 	@Override
+	public LambdaStatisticPredicate<T> isNull(boolean accept, SerializableFunction<T, ?> getterFn) {
+		super.isNull(accept, getterFn);
+		return this;
+	}
+
+	@Override
 	public LambdaStatisticPredicate<T> notNull(SerializableFunction<T, ?> getterFn) {
 		super.notNull(getterFn);
+		return this;
+	}
+
+	@Override
+	public LambdaStatisticPredicate<T> notNull(boolean accept, SerializableFunction<T, ?> getterFn) {
+		super.notNull(accept, getterFn);
 		return this;
 	}
 

@@ -235,8 +235,20 @@ public class LambdaUpdatePredicateImpl<T> extends LambdaPredicateImpl<T> impleme
 	}
 
 	@Override
+	public LambdaUpdatePredicate<T> isNull(boolean accept, SerializableFunction<T, ?> getterFn) {
+		super.isNull(accept, getterFn);
+		return this;
+	}
+
+	@Override
 	public LambdaUpdatePredicate<T> notNull(SerializableFunction<T, ?> getterFn) {
 		super.notNull(getterFn);
+		return this;
+	}
+
+	@Override
+	public LambdaUpdatePredicate<T> notNull(boolean accept, SerializableFunction<T, ?> getterFn) {
+		super.notNull(accept, getterFn);
 		return this;
 	}
 

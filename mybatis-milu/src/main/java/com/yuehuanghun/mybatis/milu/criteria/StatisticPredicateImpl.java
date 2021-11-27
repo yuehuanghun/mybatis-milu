@@ -279,8 +279,20 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 	}
 
 	@Override
+	public StatisticPredicate isNull(boolean accept, String attrName) {
+		super.isNull(accept, attrName);
+		return this;
+	}
+
+	@Override
 	public StatisticPredicate notNull(String attrName) {
 		super.notNull(attrName);
+		return this;
+	}
+
+	@Override
+	public StatisticPredicate notNull(boolean accept, String attrName) {
+		super.notNull(accept, attrName);
 		return this;
 	}
 	

@@ -126,7 +126,13 @@ public interface LambdaUpdatePredicate<T> extends LambdaPredicate<T> {
 	LambdaUpdatePredicate<T> isNull(SerializableFunction<T, ?> fn);
 
 	@Override
+	LambdaUpdatePredicate<T> isNull(boolean accept, SerializableFunction<T, ?> fn);
+
+	@Override
 	LambdaUpdatePredicate<T> notNull(SerializableFunction<T, ?> fn);
+
+	@Override
+	LambdaUpdatePredicate<T> notNull(boolean accept, SerializableFunction<T, ?> fn);
 
 	@Override
 	LambdaUpdatePredicate<T> in(SerializableFunction<T, ?> fn);

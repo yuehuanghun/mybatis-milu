@@ -296,11 +296,27 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> isNull(SerializableFunction<T, ?> getterFn);
 
 	/**
+	 * 增加一个值非空查询条件
+	 * @param accept 当值为true时，条件生效
+	 * @param getterFn 实体类的get方法函数式
+	 * @return 当前对象
+	 */
+	LambdaPredicate<T> isNull(boolean accept, SerializableFunction<T, ?> getterFn);
+
+	/**
 	 * 增加一个值为空查询条件
 	 * @param getterFn 实体类的get方法函数式
 	 * @return 当前对象
 	 */
 	LambdaPredicate<T> notNull(SerializableFunction<T, ?> getterFn);
+
+	/**
+	 * 增加一个值为空查询条件
+	 * @param accept 当值为true时，条件生效
+	 * @param getterFn 实体类的get方法函数式
+	 * @return 当前对象
+	 */
+	LambdaPredicate<T> notNull(boolean accept, SerializableFunction<T, ?> getterFn);
 	
 	/**
 	 * 增加一个IN查询条件，column IN (value[0],value[1]...)，当value != null并且非空集合时，条件生效

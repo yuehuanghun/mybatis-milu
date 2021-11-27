@@ -85,7 +85,13 @@ public interface UpdatePredicate extends Predicate {
 	UpdatePredicate isNull(String attrName);
 
 	@Override
+	UpdatePredicate isNull(boolean accept, String attrName);
+
+	@Override
 	UpdatePredicate notNull(String attrName);
+
+	@Override
+	UpdatePredicate notNull(boolean accept, String attrName);
 
 	@Override
 	UpdatePredicate in(String attrName, Object value);

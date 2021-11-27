@@ -341,8 +341,20 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 	}
 
 	@Override
+	public LambdaQueryPredicate<T> isNull(boolean accept, SerializableFunction<T, ?> getterFn) {
+		super.isNull(accept, getterFn);
+		return this;
+	}
+
+	@Override
 	public LambdaQueryPredicate<T> notNull(SerializableFunction<T, ?> getterFn) {
 		super.notNull(getterFn);
+		return this;
+	}
+
+	@Override
+	public LambdaQueryPredicate<T> notNull(boolean accept, SerializableFunction<T, ?> getterFn) {
+		super.notNull(accept, getterFn);
 		return this;
 	}
 

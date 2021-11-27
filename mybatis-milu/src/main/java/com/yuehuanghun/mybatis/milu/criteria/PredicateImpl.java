@@ -215,8 +215,24 @@ public class PredicateImpl implements Predicate {
 	}
 
 	@Override
+	public Predicate isNull(boolean accept, String attrName) {
+		if(accept) {
+			and(ConditionImpl.isNull(attrName));
+		}
+		return this;
+	}
+
+	@Override
 	public Predicate notNull(String attrName) {
 		and(ConditionImpl.isNotNull(attrName));
+		return this;
+	}
+
+	@Override
+	public Predicate notNull(boolean accept, String attrName) {
+		if(accept) {
+			and(ConditionImpl.isNotNull(attrName));
+		}
 		return this;
 	}
 

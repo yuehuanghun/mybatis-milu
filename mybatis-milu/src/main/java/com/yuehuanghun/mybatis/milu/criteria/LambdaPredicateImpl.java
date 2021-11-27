@@ -302,15 +302,25 @@ public class LambdaPredicateImpl<T> implements LambdaPredicate<T> {
 
 	@Override
 	public LambdaPredicate<T> isNull(SerializableFunction<T, ?> getterFn) {
-		assertEntityNotNull();
 		getDelegate().isNull(LambdaReflections.fnToFieldName(getterFn));
 		return this;
 	}
 
 	@Override
+	public LambdaPredicate<T> isNull(boolean accept, SerializableFunction<T, ?> getterFn) {
+		getDelegate().isNull(accept, LambdaReflections.fnToFieldName(getterFn));
+		return this;
+	}
+
+	@Override
 	public LambdaPredicate<T> notNull(SerializableFunction<T, ?> getterFn) {
-		assertEntityNotNull();
 		getDelegate().notNull(LambdaReflections.fnToFieldName(getterFn));
+		return this;
+	}
+
+	@Override
+	public LambdaPredicate<T> notNull(boolean accept, SerializableFunction<T, ?> getterFn) {
+		getDelegate().notNull(accept, LambdaReflections.fnToFieldName(getterFn));
 		return this;
 	}
 

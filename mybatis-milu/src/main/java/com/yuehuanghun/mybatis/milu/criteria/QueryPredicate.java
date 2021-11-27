@@ -181,7 +181,13 @@ public interface QueryPredicate extends Predicate {
 	QueryPredicate isNull(String attrName);
 
 	@Override
+	QueryPredicate isNull(boolean accept, String attrName);
+
+	@Override
 	QueryPredicate notNull(String attrName);
+
+	@Override
+	QueryPredicate notNull(boolean accept, String attrName);
 
 	@Override
 	QueryPredicate in(String attrName, Object value);

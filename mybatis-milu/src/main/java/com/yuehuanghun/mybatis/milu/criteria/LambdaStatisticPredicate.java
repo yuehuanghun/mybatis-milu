@@ -279,7 +279,13 @@ public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	LambdaStatisticPredicate<T> isNull(SerializableFunction<T, ?> fn);
 
 	@Override
+	LambdaStatisticPredicate<T> isNull(boolean accept, SerializableFunction<T, ?> fn);
+
+	@Override
 	LambdaStatisticPredicate<T> notNull(SerializableFunction<T, ?> fn);
+
+	@Override
+	LambdaStatisticPredicate<T> notNull(boolean accept, SerializableFunction<T, ?> fn);
 
 	@Override
 	LambdaStatisticPredicate<T> in(SerializableFunction<T, ?> fn);

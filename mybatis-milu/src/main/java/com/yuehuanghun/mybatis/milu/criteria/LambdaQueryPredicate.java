@@ -247,7 +247,13 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	LambdaQueryPredicate<T> isNull(SerializableFunction<T, ?> fn);
 
 	@Override
+	LambdaQueryPredicate<T> isNull(boolean accept, SerializableFunction<T, ?> fn);
+
+	@Override
 	LambdaQueryPredicate<T> notNull(SerializableFunction<T, ?> fn);
+
+	@Override
+	LambdaQueryPredicate<T> notNull(boolean accept, SerializableFunction<T, ?> fn);
 
 	@Override
 	LambdaQueryPredicate<T> in(SerializableFunction<T, ?> fn);

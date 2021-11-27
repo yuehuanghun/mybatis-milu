@@ -271,8 +271,20 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	}
 
 	@Override
+	public QueryPredicate isNull(boolean accept, String attrName) {
+		super.isNull(accept, attrName);
+		return this;
+	}
+
+	@Override
 	public QueryPredicate notNull(String attrName) {
 		super.notNull(attrName);
+		return this;
+	}
+
+	@Override
+	public QueryPredicate notNull(boolean accept, String attrName) {
+		super.notNull(accept, attrName);
 		return this;
 	}
 

@@ -222,7 +222,13 @@ public interface StatisticPredicate extends Predicate {
 	StatisticPredicate isNull(String attrName);
 
 	@Override
+	StatisticPredicate isNull(boolean accept, String attrName);
+
+	@Override
 	StatisticPredicate notNull(String attrName);
+
+	@Override
+	StatisticPredicate notNull(boolean accept, String attrName);
 
 	@Override
 	StatisticPredicate in(String attrName, Object value);
