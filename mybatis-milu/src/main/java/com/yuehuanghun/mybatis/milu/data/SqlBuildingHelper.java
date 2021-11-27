@@ -225,8 +225,9 @@ public class SqlBuildingHelper {
 				if(el == null) {
 					continue;
 				}
-				if(configuration.getMetaModel().hasEntity(el.getClass())) {
-					boolean hasFiller = fillEntity(configuration.getMetaModel().getEntity(el.getClass()), el, insert);
+				Class<?> entityClass = getEntityClass(el, configuration);
+				if(entityClass != null) {
+					boolean hasFiller = fillEntity(configuration.getMetaModel().getEntity(entityClass), el, insert);
 					if(!hasFiller) {
 						break;
 					}
@@ -235,10 +236,24 @@ public class SqlBuildingHelper {
 				}
 			}
 		} else {
-			if(configuration.getMetaModel().hasEntity(param.getClass())) {
-				fillEntity(configuration.getMetaModel().getEntity(param.getClass()), param, insert);
+			Class<?> entityClass = getEntityClass(param, configuration);
+			if(entityClass != null) { 
+				fillEntity(configuration.getMetaModel().getEntity(entityClass), param, insert);
 			}
 		}
+	}
+	
+	//支持实体类的子类
+	private static Class<?> getEntityClass(Object obj, MiluConfiguration configuration) {
+		Class<?> clazz = obj.getClass();
+		while(clazz != null && clazz != Object.class) {
+			if(configuration.getMetaModel().hasEntity(clazz)) {
+				return clazz;
+			}
+			clazz = clazz.getSuperclass();
+		}
+		
+		return null;
 	}
 	
 	private static boolean fillEntity(Entity entity, Object target, boolean insert) {

@@ -33,6 +33,7 @@ import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Classs;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Student;
+import com.yuehuanghun.mybatismilu.test.dto.StudentDTO;
 import com.yuehuanghun.mybatismilu.test.dto.StudentStatistic;
 
 @SpringBootTest(classes = AppTest.class)
@@ -507,5 +508,19 @@ public class StudentMapperTest {
 		
 		Optional<Student> classs = studentMapper.findById(1L);
 		assertNull(classs.get().getName());
+	}
+	
+	@Test
+	@Transactional
+	public void testEntitySubClass() {
+		StudentDTO student = new StudentDTO();
+		student.setClassId(1L);
+		student.setName("王大柱");
+		student.setAge(38);
+		
+		studentMapper.insert(student);
+		
+		assertNotNull(student.getAddTime());
+		assertNotNull(student.getUpdateTime());
 	}
 }
