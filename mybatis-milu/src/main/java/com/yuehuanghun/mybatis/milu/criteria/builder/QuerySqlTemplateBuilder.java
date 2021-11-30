@@ -90,6 +90,11 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 		StringBuilder sqlBuilder = new StringBuilder(1024).append(Segment.SCRIPT_LABEL);
 
 		sqlBuilder.append(Segment.SELECT);
+		
+		if (QueryPredicateImpl.class.isInstance(predicate) && ((QueryPredicateImpl) predicate).isDistinct()) {
+			sqlBuilder.append(Segment.DISTINCT);
+		}
+		
 		Iterator<Entry<String, List<Attribute>>> it = selectEntityAttrMap.entrySet().iterator();
 		boolean firstColumn = true;
 		while(it.hasNext()) {

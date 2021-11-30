@@ -358,6 +358,12 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	LambdaQueryPredicate<T> regex(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
 	
 	/**
+	 * 去除重复
+	 * @return 当前对象
+	 */
+	LambdaQueryPredicate<T> distinct();
+	
+	/**
 	 * 设置数据库锁模式
 	 * @param lockModeType {@link LockModeType}锁模式<br>
 	 * 本框架下模式READ/WRITE/OPTIMISTIC/OPTIMISTIC_FORCE_INCREMENT都等同于NONE，即无锁，乐观锁是实体在声明{@link Version}之后自动使用的<br>

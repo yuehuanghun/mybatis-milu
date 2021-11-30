@@ -37,6 +37,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	private final Sort sort = new SortImpl();
 	private Limit limit;
 	private Lock lock;
+	private Boolean distinct = Boolean.FALSE;
 	@Getter
 	private final Set<String> selectAttrs = new HashSet<>();
 	@Getter
@@ -396,6 +397,20 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		return this;
 	}
 
+	@Override
+	public QueryPredicate distinct() {
+		this.distinct = Boolean.TRUE;
+		return this;
+	}	
+	
+	/**
+	 * 查询是否去重
+	 * @return true/false
+	 */
+	public boolean isDistinct() {
+		return this.distinct.booleanValue();
+	}
+
 	public QueryPredicate lock(LockModeType lockModeType) {
 		if (lockModeType == null) {
 			this.lock = null;
@@ -451,6 +466,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		result = 31 * result + selectAttrs.hashCode();
 		result = 31 * result + exselectAttrs.hashCode();
 		result = 31 * result + (lock == null ? 0 : lock.hashCode());
+		result = 31 * result + distinct.hashCode();
 		return result;
 	}
 
@@ -466,6 +482,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		QueryPredicateImpl that = (QueryPredicateImpl) obj;
 
 		return Objects.equals(this.sort, that.sort) && Objects.equals(this.exselectAttrs, that.exselectAttrs)
-				&& Objects.equals(this.selectAttrs, that.selectAttrs) && Objects.equals(this.lock, that.lock);
+				&& Objects.equals(this.selectAttrs, that.selectAttrs) && Objects.equals(this.lock, that.lock)
+				&& Objects.equals(this.distinct, that.distinct);
 	}
 }

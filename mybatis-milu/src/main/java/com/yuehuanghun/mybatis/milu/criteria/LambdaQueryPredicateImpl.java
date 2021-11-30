@@ -563,6 +563,12 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 	}
 
 	@Override
+	public LambdaQueryPredicate<T> distinct() {
+		getDelegate().distinct();
+		return this;
+	}
+
+	@Override
 	public LambdaQueryPredicate<T> lock(LockModeType lockModeType) {
 		getDelegate().lock(lockModeType);
 		return this;

@@ -244,6 +244,12 @@ public interface QueryPredicate extends Predicate {
 	QueryPredicate regex(boolean accept, String attrName, Object value);
 	
 	/**
+	 * 去除重复
+	 * @return 当前对象
+	 */
+	QueryPredicate distinct();
+	
+	/**
 	 * 设置数据库锁模式
 	 * @param lockModeType {@link LockModeType}锁模式
 	 * 本框架下模式READ/WRITE/OPTIMISTIC/OPTIMISTIC_FORCE_INCREMENT都等同于NONE，即无锁，乐观锁是实体在声明{@link Version}之后自动使用的<br>

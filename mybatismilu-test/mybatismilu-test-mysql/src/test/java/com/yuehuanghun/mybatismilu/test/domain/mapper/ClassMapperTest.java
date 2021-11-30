@@ -294,4 +294,13 @@ public class ClassMapperTest {
 		assertEquals(1, list.size());
 		assertNotNull(list.get(0).getStudentList());
 	}
+	
+	@Test
+	public void testFindByCriteria_distinct() {
+		List<Classs> list = classMapper.findByCriteria(p -> p.like("studentListName", "王%"));
+		assertEquals(2, list.size());
+		
+		list = classMapper.findByCriteria(p -> p.like("studentListName", "王%").distinct());
+		assertEquals(1, list.size());
+	}
 }
