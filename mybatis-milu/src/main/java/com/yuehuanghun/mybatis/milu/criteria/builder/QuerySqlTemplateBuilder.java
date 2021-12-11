@@ -82,7 +82,9 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 		if(!selectEntityAttrMap.isEmpty()) {
 			selectEntityAttrMap.forEach((attrName, attributes) -> {
 				if(StringUtils.isNotBlank(attrName)) {
-					properties.add(attrName + StringUtils.capitalize(attributes.get(0).getName())); //只需要一个即可，用于解析关联表
+					attributes.forEach(subAttr -> {
+						properties.add(attrName + StringUtils.capitalize(subAttr.getName()));
+					});
 				}
 			});
 		}
@@ -178,7 +180,7 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 						try {
 							configuration.addResultMap(new ResultMap.Builder(configuration, resultMapId, javaType, refResultMappings, true).build());
 						} catch (IllegalArgumentException e) {
-							// 并发下的重复添加引起的异步，忽略
+							// 并发下的重复添加引起的异常，忽略
 						}
 					}
 					

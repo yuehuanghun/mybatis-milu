@@ -141,7 +141,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 
 	@Override
 	public QueryPredicate limit(Pageable page) {
-		this.limit = new LimitImpl(page);
+		this.limit = page == null ? null : new LimitImpl(page);
 		return this;
 	}
 
