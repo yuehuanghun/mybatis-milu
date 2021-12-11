@@ -19,6 +19,7 @@ import java.util.function.Consumer;
 
 import javax.persistence.LockModeType;
 
+import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.LambdaReflections;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.SerializableFunction;
@@ -577,6 +578,18 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 	@Override
 	public LambdaQueryPredicate<T> lock() {
 		getDelegate().lock();
+		return this;
+	}
+
+	@Override
+	public LambdaQueryPredicate<T> joinMode(JoinMode joinMode) {
+		getDelegate().joinMode(joinMode);
+		return this;
+	}
+
+	@Override
+	public LambdaQueryPredicate<T> joinMode(SerializableFunction<T, ?> refGetterFn, JoinMode joinMode) {
+		getDelegate().joinMode(LambdaReflections.fnToFieldName(refGetterFn), joinMode);
 		return this;
 	}
 }

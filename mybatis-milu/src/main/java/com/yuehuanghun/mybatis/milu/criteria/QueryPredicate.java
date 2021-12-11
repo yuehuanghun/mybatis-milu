@@ -18,6 +18,7 @@ package com.yuehuanghun.mybatis.milu.criteria;
 import javax.persistence.LockModeType;
 import javax.persistence.Version;
 
+import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
@@ -264,4 +265,19 @@ public interface QueryPredicate extends Predicate {
 	 * @return 当前对象
 	 */
 	QueryPredicate lock();
+	
+	/**
+	 * 设置全局联结模式
+	 * @param joinMode联结模式
+	 * @return 当前对象
+	 */
+	QueryPredicate joinMode(JoinMode joinMode);
+	
+	/**
+	 * 设置关联属性的实体联结模式
+	 * @propertyName 实体类关联实体（或实体集合）的属性名
+	 * @param joinMode联结模式
+	 * @return 当前对象
+	 */
+	QueryPredicate joinMode(String propertyName, JoinMode joinMode);
 }

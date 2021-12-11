@@ -27,6 +27,7 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.AppTest;
+import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
@@ -476,11 +477,36 @@ public class StudentMapperTest {
 	}
 	
 	@Test
+	public void testFindByCateria_ref4_joinMode() {
+		List<Student> list = studentMapper.findByCriteria(p -> p.joinMode(JoinMode.LEFT_JOIN).select("*", "classs*"));
+		System.out.println(JSON.toJSONString(list));
+		assertEquals(5, list.size());
+		assertNotNull(list.get(0).getClasss());
+	}
+	
+	@Test
 	public void testFindByCateria_ref5() {
 		List<Student> list = studentMapper.findByCriteria(p -> p.select("classs*").eq("id", 1L));
 		System.out.println(JSON.toJSONString(list));
 		assertEquals(1, list.size());
 		assertNull(list.get(0).getId());
+		assertNotNull(list.get(0).getClasss());
+	}
+	
+	@Test
+	public void testFindByCateria_ref5_joinMode() {
+		List<Student> list = studentMapper.findByCriteria(p -> p.joinMode("classs", JoinMode.LEFT_JOIN).select("classs*").eq("id", 1L));
+		System.out.println(JSON.toJSONString(list));
+		assertEquals(1, list.size());
+		assertNull(list.get(0).getId());
+		assertNotNull(list.get(0).getClasss());
+	}
+	
+	@Test
+	public void testFindByLambdaCateria_ref_joinMode() {
+		List<Student> list = studentMapper.findByLambdaCriteria(p -> p.joinMode(JoinMode.LEFT_JOIN).selects("*,classs*"));
+		System.out.println(JSON.toJSONString(list));
+		assertEquals(5, list.size());
 		assertNotNull(list.get(0).getClasss());
 	}
 	

@@ -57,6 +57,7 @@ public interface Segment {
     String RIGHT_BRACE = "}";
     String RIGHT_BRACKET = ")";
     String RIGHT_BRACKET_CLOSING = ")\">";
+    String RIGHT_JOIN_B = " RIGHT JOIN ";
     String HASH_LEFT_BRACE = "#{";
     String HASH_EXAMPLE = "#{example.";
     String HYPHEN = "-";

@@ -15,6 +15,7 @@
  */
 package com.yuehuanghun.mybatis.milu.criteria;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -24,9 +25,12 @@ import java.util.function.Consumer;
 import javax.persistence.LockModeType;
 
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
+import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
+import com.yuehuanghun.mybatis.milu.tool.Assert;
+import com.yuehuanghun.mybatis.milu.tool.Constants;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
@@ -42,6 +46,8 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	private final Set<String> selectAttrs = new HashSet<>();
 	@Getter
 	private final Set<String> exselectAttrs = new HashSet<>();
+	@Getter
+	private final Map<String, JoinMode> joinModeMap = new HashMap<>();
 
 	@Override
 	public QueryPredicate select(String... attrNames) {
@@ -465,8 +471,9 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		result = 31 * result + sort.hashCode();
 		result = 31 * result + selectAttrs.hashCode();
 		result = 31 * result + exselectAttrs.hashCode();
-		result = 31 * result + (lock == null ? 0 : lock.hashCode());
+		result = lock == null ? result : 31 * result + lock.hashCode();
 		result = 31 * result + distinct.hashCode();
+		result = joinModeMap.isEmpty() ? result : 31 * result + joinModeMap.hashCode();
 		return result;
 	}
 
@@ -483,6 +490,21 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 
 		return Objects.equals(this.sort, that.sort) && Objects.equals(this.exselectAttrs, that.exselectAttrs)
 				&& Objects.equals(this.selectAttrs, that.selectAttrs) && Objects.equals(this.lock, that.lock)
-				&& Objects.equals(this.distinct, that.distinct);
+				&& Objects.equals(this.distinct, that.distinct) && Objects.equals(this.joinModeMap, that.joinModeMap);
+	}
+
+	@Override
+	public QueryPredicate joinMode(JoinMode joinMode) {
+		Assert.notNull(joinMode, "joinMode不能为null");
+		this.joinModeMap.put(Constants.ANY_REF_PROPERTY, joinMode);
+		return this;
+	}
+
+	@Override
+	public QueryPredicate joinMode(String propertyName, JoinMode joinMode) {
+		Assert.notNull(joinMode, "joinMode不能为null");
+		Assert.notBlank(propertyName, "propertyName不能为空");
+		this.joinModeMap.put(propertyName, joinMode);
+		return this;
 	}
 }

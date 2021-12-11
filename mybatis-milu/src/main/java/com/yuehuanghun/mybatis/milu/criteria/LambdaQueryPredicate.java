@@ -20,6 +20,7 @@ import java.util.function.Consumer;
 import javax.persistence.LockModeType;
 import javax.persistence.Version;
 
+import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.SerializableFunction;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
@@ -378,4 +379,20 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	 * @return 当前对象
 	 */
 	LambdaQueryPredicate<T> lock();
+	
+	
+	/**
+	 * 设置全局联结模式
+	 * @param joinMode联结模式
+	 * @return 当前对象
+	 */
+	LambdaQueryPredicate<T> joinMode(JoinMode joinMode);
+	
+	/**
+	 * 设置关联属性的实体联结模式
+	 * refGetterFn 实体类属性的getter函数式
+	 * @param joinMode联结模式
+	 * @return 当前对象
+	 */
+	LambdaQueryPredicate<T> joinMode(SerializableFunction<T, ?> refGetterFn, JoinMode joinMode);
 }

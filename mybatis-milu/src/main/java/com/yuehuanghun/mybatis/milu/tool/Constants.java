@@ -41,6 +41,11 @@ public interface Constants {
 	 */
 	String TABLE_HOLDER = "__FromTablesHolder__";
 	
+	/**
+	 * 任意关联属性标识
+	 */
+	String ANY_REF_PROPERTY = "default";
+	
 	String CRITERIA = "criteria";
 	
 	String ID = "id";

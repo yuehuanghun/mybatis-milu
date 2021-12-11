@@ -33,6 +33,7 @@ import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
 
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
+import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
@@ -61,9 +62,11 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 	public BuildResult build() {
 		Set<String> selectAttrs = Collections.emptySet();
 		Set<String> exselectAttrs = Collections.emptySet();
+		Map<String, JoinMode> joinModeMap = Collections.emptyMap();
 		if (QueryPredicateImpl.class.isInstance(predicate)) {
 			selectAttrs = ((QueryPredicateImpl) predicate).getSelectAttrs();
 			exselectAttrs = ((QueryPredicateImpl) predicate).getExselectAttrs();
+			joinModeMap = ((QueryPredicateImpl) predicate).getJoinModeMap();
 		}
 
 		if(selectAttrs.isEmpty()) {
@@ -85,7 +88,7 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 		}
 
 		SqlBuildingHelper.analyseDomain(entity, properties, tableAliasDispacher, configuration, joinExpressMap,
-				joinQueryColumnNap);
+				joinQueryColumnNap, joinModeMap);
 
 		StringBuilder sqlBuilder = new StringBuilder(1024).append(Segment.SCRIPT_LABEL);
 

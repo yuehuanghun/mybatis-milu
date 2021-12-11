@@ -17,6 +17,7 @@ package com.yuehuanghun.mybatis.milu.data;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
+import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 import com.yuehuanghun.mybatis.milu.filler.Filler;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
@@ -35,11 +37,15 @@ import com.yuehuanghun.mybatis.milu.metamodel.Entity.PluralAttribute;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.ManyToManyReference;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.ManyToManyReference.JoinTable;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.Reference;
+import com.yuehuanghun.mybatis.milu.tool.Constants;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
 public class SqlBuildingHelper {
 	public static void analyseDomain(Entity entity, Collection<String> properties, TableAliasDispacher tableAliasDispacher, MiluConfiguration configuration, Map<String, String> joinExpressMap, Map<String, String> joinQueryColumnNap) {
+		analyseDomain(entity, properties, tableAliasDispacher, configuration, joinExpressMap, joinQueryColumnNap, Collections.emptyMap());
+	}
+	public static void analyseDomain(Entity entity, Collection<String> properties, TableAliasDispacher tableAliasDispacher, MiluConfiguration configuration, Map<String, String> joinExpressMap, Map<String, String> joinQueryColumnNap, Map<String, JoinMode> joinModeMap) {
 		String mainTableAlias = tableAliasDispacher.dispach(Segment.TABLE_ + entity.getTableName());
 		for(String property : properties) {
 			if(entity.hasAttribute(property)) {
@@ -77,6 +83,15 @@ public class SqlBuildingHelper {
 
 						String inverseTableAlias = tableAliasDispacher.dispach(Segment.ATTR_ + reference.getAttributeName());
 						
+						String joinExpression;
+						if(joinModeMap.containsKey(prop)) {
+							joinExpression = joinModeMap.get(prop).getExpression();
+						} else if(joinModeMap.containsKey(Constants.ANY_REF_PROPERTY)) {
+							joinExpression = joinModeMap.get(Constants.ANY_REF_PROPERTY).getExpression();
+						} else {
+							joinExpression = Segment.INNER_JOIN_B;
+						}
+						
 						if(reference instanceof ManyToManyReference) {
 							joinExpressMap.computeIfAbsent(reference.getInverseTableName(), key -> {
 								ManyToManyReference m2mRef = (ManyToManyReference) reference;
@@ -85,7 +100,7 @@ public class SqlBuildingHelper {
 								StringBuilder joinExpressBuilder = new StringBuilder();
 								String joinTableAlias = tableAliasDispacher.dispach(Segment.TABLE_ + joinTable.getTableName());
 								
-								joinExpressBuilder.append(Segment.INNER_JOIN_B);
+								joinExpressBuilder.append(joinExpression);
 								appendIdentifier(joinExpressBuilder, joinTable.getTableName(), configuration);
 								joinExpressBuilder.append(Segment.SPACE).append(joinTableAlias)
 								    .append(Segment.ON_BRACKET).append(mainTableAlias).append(Segment.DOT);
@@ -94,7 +109,7 @@ public class SqlBuildingHelper {
 								appendIdentifier(joinExpressBuilder, joinTable.getColumnName(), configuration);
 								joinExpressBuilder.append(Segment.RIGHT_BRACKET);
 								
-								joinExpressBuilder.append(Segment.INNER_JOIN_B);
+								joinExpressBuilder.append(joinExpression);
 								appendIdentifier(joinExpressBuilder, reference.getInverseTableName(), configuration);
 								joinExpressBuilder.append(Segment.SPACE).append(inverseTableAlias)
 							        .append(Segment.ON_BRACKET).append(joinTableAlias).append(Segment.DOT);
@@ -107,7 +122,7 @@ public class SqlBuildingHelper {
 						} else {
 							joinExpressMap.computeIfAbsent(reference.getInverseTableName(), key -> {
 								StringBuilder joinExpressBuilder = new StringBuilder();
-								joinExpressBuilder.append(Segment.INNER_JOIN_B);
+								joinExpressBuilder.append(joinExpression);
 								appendIdentifier(joinExpressBuilder, reference.getInverseTableName(), configuration);
 								joinExpressBuilder.append(Segment.SPACE).append(inverseTableAlias)
 								    .append(Segment.ON_BRACKET).append(mainTableAlias).append(Segment.DOT);
