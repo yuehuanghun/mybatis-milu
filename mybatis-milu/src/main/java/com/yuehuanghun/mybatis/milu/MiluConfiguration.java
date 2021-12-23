@@ -106,6 +106,8 @@ public class MiluConfiguration extends Configuration {
 				afterVariablesSet();
 			}
 		};
+		
+		this.addInterceptor(new MiluInterceptor());
 	}
 	
 	public MiluConfiguration(Environment environment) {
