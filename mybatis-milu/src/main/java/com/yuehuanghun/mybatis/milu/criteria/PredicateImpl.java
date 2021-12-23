@@ -71,6 +71,9 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate and(Condition... conditions) {
 		if(conditions.length == 1 && PredicateImpl.class.isInstance(conditions[0])) {
+			if(((PredicateImpl)conditions[0]).isEmpty()) {
+				return this;
+			}
 			conditionList.add(((PredicateImpl)conditions[0]).setDepth(getDepth() + 1));
 		} else if(conditions.length > 0) {
 			conditionList.add(new PredicateImpl(Logic.AND, conditions).setDepth(getDepth() + 1));	
@@ -81,14 +84,19 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate and(Consumer<Predicate> predicate) {
 		Predicate p = new PredicateImpl(Logic.AND).setDepth(getDepth() + 1);
-		conditionList.add(p);
 		predicate.accept(p);
+		if(!p.isEmpty()) {
+			conditionList.add(p);
+		}
 		return this;
 	}
 
 	@Override
 	public Predicate or(Condition... conditions) {
 		if(conditions.length == 1 && PredicateImpl.class.isInstance(conditions[0])) {
+			if(((PredicateImpl)conditions[0]).isEmpty()) {
+				return this;
+			}
 			conditionList.add(((PredicateImpl)conditions[0]).setDepth(getDepth() + 1));
 		} else if(conditions.length > 0) {
 			conditionList.add(new PredicateImpl(Logic.OR, conditions).setDepth(getDepth() + 1));	
@@ -99,14 +107,19 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate or(Consumer<Predicate> predicate) {
 		Predicate p = new PredicateImpl(Logic.OR).setDepth(getDepth() + 1);
-		conditionList.add(p);
 		predicate.accept(p);
+		if(!p.isEmpty()) {
+			conditionList.add(p);
+		}
 		return this;
 	}
 	
 	@Override
 	public Predicate not(Condition... conditions) {
 		if(conditions.length == 1 && PredicateImpl.class.isInstance(conditions[0])) {
+			if(((PredicateImpl)conditions[0]).isEmpty()) {
+				return this;
+			}
 			conditionList.add(((PredicateImpl)conditions[0]).setDepth(getDepth() + 1));
 		} else if(conditions.length > 0) {
 			conditionList.add(new PredicateImpl(Logic.NOT, conditions).setDepth(getDepth() + 1));	
@@ -117,8 +130,10 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate not(Consumer<Predicate> predicate) {
 		Predicate p = new PredicateImpl(Logic.NOT).setDepth(getDepth() + 1);
-		conditionList.add(p);
 		predicate.accept(p);
+		if(!p.isEmpty()) {
+			conditionList.add(p);
+		}
 		return this;
 	}
 
@@ -461,6 +476,11 @@ public class PredicateImpl implements Predicate {
 		
 		return Objects.equals(this.logic, that.logic) && Objects.equals(this.conditionMode, that.conditionMode) && 
 				Objects.equals(this.conditionList, that.conditionList) && this.depth == that.depth;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return conditionList.isEmpty();
 	}
 	
 }

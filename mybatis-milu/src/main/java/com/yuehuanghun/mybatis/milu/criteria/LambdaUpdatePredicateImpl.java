@@ -70,6 +70,24 @@ public class LambdaUpdatePredicateImpl<T> extends LambdaPredicateImpl<T> impleme
 		super.not(predicate);
 		return this;
 	}
+	
+	@Override
+	public LambdaUpdatePredicate<T> andP(Consumer<Predicate> predicate) {
+		super.andP(predicate);
+		return this;
+	}
+	
+	@Override
+	public LambdaUpdatePredicate<T> orP(Consumer<Predicate> predicate) {
+		super.orP(predicate);
+		return this;
+	}
+	
+	@Override
+	public LambdaUpdatePredicate<T> notP(Consumer<Predicate> predicate) {
+		super.notP(predicate);
+		return this;
+	}
 
 	@Override
 	public LambdaUpdatePredicate<T> eq(SerializableFunction<T, ?> getterFn) {

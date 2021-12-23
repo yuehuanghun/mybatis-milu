@@ -84,6 +84,15 @@ public class ClassMapperTest {
 		result = classMapper.findByCriteria(new QueryPredicateImpl().regex("name", "^一.*$" ));
 		assertTrue(result.size() == 1);
 	}
+	
+	@Test
+	public void testFindByLambdaCriteria_mix() {
+		List<Classs> result = classMapper.findByLambdaCriteria(p -> p.eq(Classs::getName, "一年级").andP(sp -> sp.eq("studentListName", "张三")));
+		assertTrue(result.size() == 1);
+		
+		result = classMapper.findByLambdaCriteria(p -> p.eq(Classs::getName, "一年级").andP(sp -> sp.eq("studentListName", null)));
+		assertTrue(result.size() == 1);
+	}
 
 	@Test
 	@Transactional

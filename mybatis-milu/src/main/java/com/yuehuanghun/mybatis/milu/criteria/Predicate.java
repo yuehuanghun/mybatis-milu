@@ -384,4 +384,10 @@ public interface Predicate extends Condition {
 	 * @return 当前对象
 	 */
 	Predicate regex(boolean accept, String attrName, Object value);
+	
+	/**
+	 * 条件集合是否为空
+	 * @return true/false
+	 */
+	boolean isEmpty();
 }

@@ -205,6 +205,24 @@ public class LambdaStatisticPredicateImpl<T> extends LambdaPredicateImpl<T> impl
 		super.not(predicate);
 		return this;
 	}
+	
+	@Override
+	public LambdaStatisticPredicate<T> andP(Consumer<Predicate> predicate) {
+		super.andP(predicate);
+		return this;
+	}
+	
+	@Override
+	public LambdaStatisticPredicate<T> orP(Consumer<Predicate> predicate) {
+		super.orP(predicate);
+		return this;
+	}
+	
+	@Override
+	public LambdaStatisticPredicate<T> notP(Consumer<Predicate> predicate) {
+		super.notP(predicate);
+		return this;
+	}
 
 	@Override
 	public LambdaStatisticPredicate<T> eq(SerializableFunction<T, ?> getterFn) {

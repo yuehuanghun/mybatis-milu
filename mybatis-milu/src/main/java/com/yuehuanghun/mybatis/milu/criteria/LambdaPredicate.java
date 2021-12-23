@@ -53,11 +53,18 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> and(Condition... conditions);
 
 	/**
-	 * 给定一个Predicate进行设置
+	 * 给定一个LambdaPredicate进行设置
 	 * @param predicate 条件
 	 * @return 当前对象
 	 */
 	LambdaPredicate<T> and(Consumer<LambdaPredicate<T>> predicate);
+
+	/**
+	 * 给定一个Predicate进行设置
+	 * @param predicate 条件
+	 * @return 当前对象
+	 */
+	LambdaPredicate<T> andP(Consumer<Predicate> predicate);
 	
 	/**
 	 * 或一组查询：OR (condition1 AND condition2 [AND conditionN])
@@ -67,11 +74,18 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> or(Condition... conditions);
 
 	/**
-	 * 给定一个Predicate进行设置
+	 * 给定一个LambdaPredicate进行设置
 	 * @param predicate 条件
 	 * @return 当前对象
 	 */
 	LambdaPredicate<T> or(Consumer<LambdaPredicate<T>> predicate);
+
+	/**
+	 * 给定一个Predicate进行设置
+	 * @param predicate 条件
+	 * @return 当前对象
+	 */
+	LambdaPredicate<T> orP(Consumer<Predicate> predicate);
 	
 	/**
 	 * 或一组查询：NOT (condition1 AND condition2 [AND conditionN])
@@ -81,11 +95,18 @@ public interface LambdaPredicate<T> extends Condition {
 	LambdaPredicate<T> not(Condition... conditions);
 
 	/**
-	 * 给定一个Predicate进行设置
+	 * 给定一个LambdaPredicate进行设置
 	 * @param predicate 条件
 	 * @return 当前对象
 	 */
 	LambdaPredicate<T> not(Consumer<LambdaPredicate<T>> predicate);
+
+	/**
+	 * 给定一个Predicate进行设置
+	 * @param predicate 条件
+	 * @return 当前对象
+	 */
+	LambdaPredicate<T> notP(Consumer<Predicate> predicate);
 
 	/**
 	 * 增加一个值相等查询条件，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）

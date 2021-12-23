@@ -152,18 +152,27 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	
 	@Override
 	LambdaQueryPredicate<T> and(Consumer<LambdaPredicate<T>> predicate);
+	
+	@Override
+	LambdaQueryPredicate<T> andP(Consumer<Predicate> predicate);
 
 	@Override
 	LambdaQueryPredicate<T> or(Condition... conditions);
 	
 	@Override
 	LambdaQueryPredicate<T> or(Consumer<LambdaPredicate<T>> predicate);
+	
+	@Override
+	LambdaQueryPredicate<T> orP(Consumer<Predicate> predicate);
 
 	@Override
 	LambdaQueryPredicate<T> not(Condition... conditions);
 	
 	@Override
 	LambdaQueryPredicate<T> not(Consumer<LambdaPredicate<T>> predicate);
+	
+	@Override
+	LambdaQueryPredicate<T> notP(Consumer<Predicate> predicate);
 
 	@Override
 	LambdaQueryPredicate<T> eq(SerializableFunction<T, ?> fn);

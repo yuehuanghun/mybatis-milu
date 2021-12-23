@@ -44,6 +44,15 @@ public interface LambdaUpdatePredicate<T> extends LambdaPredicate<T> {
 	LambdaUpdatePredicate<T> not(Consumer<LambdaPredicate<T>> predicate);
 
 	@Override
+	LambdaUpdatePredicate<T> andP(Consumer<Predicate> predicate);
+	
+	@Override
+	LambdaUpdatePredicate<T> orP(Consumer<Predicate> predicate);
+	
+	@Override
+	LambdaUpdatePredicate<T> notP(Consumer<Predicate> predicate);
+
+	@Override
 	LambdaUpdatePredicate<T> eq(SerializableFunction<T, ?> fn);
 
 	@Override

@@ -197,6 +197,15 @@ public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	LambdaStatisticPredicate<T> not(Consumer<LambdaPredicate<T>> predicate);
 
 	@Override
+	LambdaStatisticPredicate<T> andP(Consumer<Predicate> predicate);
+	
+	@Override
+	LambdaStatisticPredicate<T> orP(Consumer<Predicate> predicate);
+	
+	@Override
+	LambdaStatisticPredicate<T> notP(Consumer<Predicate> predicate);
+
+	@Override
 	LambdaStatisticPredicate<T> eq(SerializableFunction<T, ?> fn);
 
 	@Override

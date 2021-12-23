@@ -153,6 +153,12 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 		super.and(predicate);
 		return this;
 	}
+	
+	@Override
+	public LambdaQueryPredicate<T> andP(Consumer<Predicate> predicate) {
+		super.andP(predicate);
+		return this;
+	}
 
 	@Override
 	public LambdaQueryPredicate<T> or(Condition... conditions) {
@@ -165,6 +171,12 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 		super.or(predicate);
 		return this;
 	}
+	
+	@Override
+	public LambdaQueryPredicate<T> orP(Consumer<Predicate> predicate) {
+		super.orP(predicate);
+		return this;
+	}
 
 	@Override
 	public LambdaQueryPredicate<T> not(Condition... conditions) {
@@ -175,6 +187,12 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 	@Override
 	public LambdaQueryPredicate<T> not(Consumer<LambdaPredicate<T>> predicate) {
 		super.not(predicate);
+		return this;
+	}
+	
+	@Override
+	public LambdaQueryPredicate<T> notP(Consumer<Predicate> predicate) {
+		super.notP(predicate);
 		return this;
 	}
 
