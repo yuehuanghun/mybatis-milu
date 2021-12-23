@@ -67,10 +67,14 @@ public class SqlBuildingHelper {
 					
 					if(attribute.isAssociation() || attribute.isCollection()) {
 						Class<?> refClass;
-						if(PluralAttribute.class.isInstance(attribute)) {
-							refClass = ((PluralAttribute) attribute).getElementClass();
+						if(attribute.isReference()) {
+							refClass = attribute.getEntityClass();
 						} else {
-							refClass = attribute.getJavaType();
+							if(PluralAttribute.class.isInstance(attribute)) {
+								refClass = ((PluralAttribute) attribute).getElementClass();
+							} else {
+								refClass = attribute.getJavaType();
+							}
 						}
 						
 						Entity refEntity = configuration.getMetaModel().getEntity(refClass);
