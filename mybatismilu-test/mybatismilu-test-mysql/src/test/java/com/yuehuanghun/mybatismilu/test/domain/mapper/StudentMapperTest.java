@@ -445,6 +445,11 @@ public class StudentMapperTest {
 		System.out.println(JSON.toJSONString(list));
 		assertEquals(1, list.size());
 		assertNotNull(list.get(0).getClasss());
+		
+		list = studentMapper.findByCriteria(p -> p.select("*", "classs*").eq("id", 1L).limit(1));
+		System.out.println(JSON.toJSONString(list));
+		assertEquals(1, list.size());
+		assertNotNull(list.get(0).getClasss());
 	}
 	
 	@Test

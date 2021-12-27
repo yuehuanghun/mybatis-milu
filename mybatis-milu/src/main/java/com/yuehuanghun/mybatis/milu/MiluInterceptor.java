@@ -1,12 +1,15 @@
 package com.yuehuanghun.mybatis.milu;
 
-import java.sql.Statement;
-
-import org.apache.ibatis.executor.resultset.ResultSetHandler;
+import org.apache.ibatis.cache.CacheKey;
+import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Signature;
+import org.apache.ibatis.session.ResultHandler;
+import org.apache.ibatis.session.RowBounds;
 
 import com.yuehuanghun.mybatis.milu.mapping.ResultMapHelper;
 
@@ -16,15 +19,27 @@ import com.yuehuanghun.mybatis.milu.mapping.ResultMapHelper;
  * @author yuehuanghun
  *
  */
-@Intercepts({ @Signature(type = ResultSetHandler.class, method = "handleResultSets", args = { Statement.class }) })
+@Intercepts(
+        {
+                @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
+                @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
+        }
+)
 public class MiluInterceptor implements Interceptor {
-
+    private String countSuffix = "_COUNT";
+    
 	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
+		String statementId = null;
 		try {
+			MappedStatement statement = (MappedStatement) invocation.getArgs()[0];
+			statementId = statement.getId();
 			return invocation.proceed();
 		} finally {
-			ResultMapHelper.clear();
+			//判断是否为PageHelper的行数查询statement
+			if(statementId != null && !statementId.endsWith(countSuffix)) {
+				ResultMapHelper.clear();
+			}
 		}
 	}
 
