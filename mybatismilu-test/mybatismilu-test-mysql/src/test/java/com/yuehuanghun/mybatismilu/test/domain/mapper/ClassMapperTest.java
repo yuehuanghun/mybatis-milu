@@ -152,6 +152,14 @@ public class ClassMapperTest {
 		
 		assertTrue(result.size() == 1);
 	}
+
+	@Test
+	public void testFindByLambdaCriteria_subCriteria() {
+		Classs params = new Classs();
+		params.setName("一年级");
+		List<Classs> result = classMapper.findByLambdaCriteria(predicate -> predicate.apply(params).eq(Classs::getName).and(p -> p.lte(Classs::getAddTime, null).or(op -> op.gte(Classs::getAddTime, null))));
+		assertTrue(result.size() == 1);
+	}
 	
 	@Test
 	public void testFindByCriteria_resultType() {

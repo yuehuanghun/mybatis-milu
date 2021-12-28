@@ -623,4 +623,10 @@ public interface LambdaPredicate<T> extends Condition {
 	 * @return 当前对象
 	 */
 	LambdaPredicate<T> regex(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
+	
+	/**
+	 * 条件集合是否为空
+	 * @return true/false
+	 */
+	boolean isEmpty();
 }
