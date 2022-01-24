@@ -52,7 +52,7 @@ public abstract class AbstractDialect implements Dialect {
 		partTypeExpressionMap.put(Type.TRUE, " = TRUE");
 		partTypeExpressionMap.put(Type.FALSE, " = FALSE");
 		partTypeExpressionMap.put(Type.SIMPLE_PROPERTY, " = %s");
-		partTypeExpressionMap.put(Type.NEGATING_SIMPLE_PROPERTY, " <> %s");
+		partTypeExpressionMap.put(Type.NEGATING_SIMPLE_PROPERTY, " &lt;&gt; %s");
 	}
 	
 	protected void initFunctionMap() {

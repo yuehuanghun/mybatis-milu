@@ -141,4 +141,10 @@ public class TeacherMapperTest {
 		result = teacherMapper.updateById(conTeacher); //版本号未更新，更新失败
 		assertTrue(result == 0);
 	}
+	
+	@Test
+	public void testFindByCriteria() {
+		List<Teacher> teachers = teacherMapper.findByCriteria(p -> p.neq("id", 1L));
+		System.out.println(JSON.toJSONString(teachers));
+	}
 }
