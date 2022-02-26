@@ -327,14 +327,12 @@ public class LambdaPredicateImpl<T> implements LambdaPredicate<T> {
 
 	@Override
 	public LambdaPredicate<T> between(SerializableFunction<T, ?> getterFn, Object startValue, Object endValue) {
-		assertEntityNotNull();
 		getDelegate().between(LambdaReflections.fnToFieldName(getterFn), startValue, endValue);
 		return this;
 	}
 	
 	@Override
 	public LambdaPredicate<T> between(boolean accept, SerializableFunction<T, ?> getterFn, Object startValue, Object endValue) {
-		assertEntityNotNull();
 		getDelegate().between(accept, LambdaReflections.fnToFieldName(getterFn), startValue, endValue);
 		return this;
 	}
