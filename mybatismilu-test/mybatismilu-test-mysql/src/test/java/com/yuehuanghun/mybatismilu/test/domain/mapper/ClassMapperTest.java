@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.yuehuanghun.AppTest;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
+import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
@@ -83,6 +84,23 @@ public class ClassMapperTest {
 		
 		result = classMapper.findByCriteria(new QueryPredicateImpl().regex("name", "^一.*$" ));
 		assertTrue(result.size() == 1);
+	}
+	
+	@Test
+	public void testFindUniqueByCriteria() {
+		Classs classs = classMapper.findUniqueByCriteria(p -> p.eq("id", 1L));
+		assertNotNull(classs);
+		
+		classs = classMapper.findUniqueByCriteria(p -> p.orderAsc("id").limit(1));
+		
+		assertNotNull(classs);
+		assertEquals(classs.getId().longValue(), 1L);
+		
+		QueryPredicate p = new QueryPredicateImpl();
+		p.eq("id", 1L);
+		
+		classs = classMapper.findUniqueByCriteria(p);
+		assertNotNull(classs);
 	}
 	
 	@Test
@@ -151,6 +169,18 @@ public class ClassMapperTest {
 		result = classMapper.findByLambdaCriteria(predicate -> predicate.regex(Classs::getName, "^一.*$"));
 		
 		assertTrue(result.size() == 1);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testFindUniqueByLambdaCriteria() {
+		Classs classs = classMapper.findUniqueByLambdaCriteria(p -> p.eq(Classs::getId, 1L));
+		assertNotNull(classs);
+		
+		classs = classMapper.findUniqueByLambdaCriteria(p -> p.orderAsc(Classs::getId).limit(1));
+		
+		assertNotNull(classs);
+		assertEquals(classs.getId().longValue(), 1L);
 	}
 
 	@Test

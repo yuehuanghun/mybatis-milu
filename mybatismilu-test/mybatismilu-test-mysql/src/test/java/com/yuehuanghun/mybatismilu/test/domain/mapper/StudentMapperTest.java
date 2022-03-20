@@ -116,6 +116,14 @@ public class StudentMapperTest {
 		result = studentMapper.findByExample(example);
 		assertTrue(result.size() == 2);
 	};
+	
+	@Test
+	public void testFindUniqueByExample() {
+		Student example = new Student();
+		example.setId(1L);
+		Student student = studentMapper.findUniqueByExample(example, null);
+		assertNotNull(student);
+	}
 
 	@Test
 	public void testFindByExampleAndSort() throws ParseException {
@@ -148,6 +156,16 @@ public class StudentMapperTest {
 		result = studentMapper.findByExampleAndSort(example, sort);
 		assertTrue(result.size() == 4);
 	};
+	
+	@Test
+	public void testFindUniqueByExampleAndSort() {
+		Student example = new Student();
+		Sort sort = new Sort(Direction.DESC, "id");
+		
+		Student student = studentMapper.findUniqueByExampleAndSort(example, sort, new PageRequest(1));
+		
+		assertEquals(student.getId().longValue(), 5L);
+	}
 
 	@Test
 	@Transactional
