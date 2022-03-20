@@ -238,7 +238,7 @@ public class EntityBuilder {
 			} else {
 				attribute.setEntityClass(targetEntity);
 			}
-		}  else if(Collection.class.isAssignableFrom(field.getType())) {
+		} else if(Collection.class.isAssignableFrom(field.getType())) {
 			attribute = new PluralAttribute();
 			ParameterizedType genericType = (ParameterizedType) field.getGenericType();
 			Class<?> elementClass = (Class<?>) genericType.getActualTypeArguments()[0];
@@ -265,8 +265,8 @@ public class EntityBuilder {
 		attribute.setField(field);
 		attribute.setJavaType(field.getType());
 		
-		if(field.isAnnotationPresent(Column.class)) {
-			Column column = getAnnotation(field, Column.class);
+		Column column = getAnnotation(field, Column.class);
+		if(column != null) {
 			attribute.setColumnName(column.name());
 			if(attribute.isSelectable()) attribute.setInsertable(column.insertable());
 			attribute.setNullable(column.nullable());
