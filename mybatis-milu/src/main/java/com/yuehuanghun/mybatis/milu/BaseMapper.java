@@ -80,11 +80,20 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @return 列表
 	 */
 	List<T> findByExample(@Param(Constants.EXAMPLE) T example);
+	
+	/**
+	 * 使用实体类作为查询参数，非null值才会参与查询，关联表属性无效<br>
+	 * 结果集必须是0或1条数据，否则会报错。
+	 * @param example 条件
+	 * @param pageable 分页参数，可null
+	 * @return 列表
+	 */
+	T findUniqueByExample(@Param(Constants.EXAMPLE) T example, @Param(Constants.PAGE) Pageable pageable);
 
 	/**
 	 * 使用实体类作为查询参数，非null值才会参与查询，关联表属性无效
 	 * @param example 条件
-	 * @param pageable 分页参数
+	 * @param pageable 分页参数，可null
 	 * @return 列表
 	 */
 	List<T> findByExample(@Param(Constants.EXAMPLE) T example, @Param(Constants.PAGE) Pageable pageable);
@@ -92,7 +101,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	/**
 	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效
 	 * @param example 条件
-	 * @param sort 排序
+	 * @param sort 排序，可null
 	 * @return 列表
 	 */
 	List<T> findByExampleAndSort(@Param(Constants.EXAMPLE) T example, @Param(Constants.SORT) Sort sort);
@@ -100,11 +109,21 @@ public interface BaseMapper<T, ID extends Serializable> {
 	/**
 	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效
 	 * @param example 条件
-	 * @param sort 排序
+	 * @param sort 排序，可null，可null
 	 * @param pageable 分页参数
 	 * @return 列表
 	 */
 	List<T> findByExampleAndSort(@Param(Constants.EXAMPLE) T example, @Param(Constants.SORT) Sort sort, @Param(Constants.PAGE) Pageable pageable);
+	
+	/**
+	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效<br>
+	 * 结果集必须是0或1条数据，否则会报错。
+	 * @param example 条件
+	 * @param sort 排序，可null
+	 * @param pageable 分页参数，可null
+	 * @return 列表
+	 */
+	T findUniqueByExampleAndSort(@Param(Constants.EXAMPLE) T example, @Param(Constants.SORT) Sort sort, @Param(Constants.PAGE) Pageable pageable);
 	
 	/**
 	 * 插入一条数据
@@ -115,7 +134,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	
 	/**
 	 * 批量插入，使用单SQL插入方式，支持批量插入的数据库才能使用此方法<br>
-	 * 目前支持数据库：MySql、MariaDB、PostgreDB
+	 * 目前支持数据库：MySql、MariaDB、PostgreDB、Oracle、SqlServer，或兼容前所列数据库语法的数据库
 	 * @param entityList 新增实体对象列表
 	 * @return 影响行数
 	 */
@@ -179,11 +198,27 @@ public interface BaseMapper<T, ID extends Serializable> {
 	List<T> findByCriteria(@Param(Constants.CRITERIA) QueryPredicate predicate);
 	
 	/**
+	 * 动态条件查询唯一数据<br>
+	 * 结果集必须是0或1条数据，否则会报错。建议使用.limit(1)进行结果集行数限制。
+	 * @param predicate 条件
+	 * @return 列表
+	 */
+	T findUniqueByCriteria(@Param(Constants.CRITERIA) QueryPredicate predicate);
+	
+	/**
 	 * 动态条件查询<br>
 	 * @param predicate 条件
 	 * @return 列表
 	 */
 	List<T> findByCriteria(@Param(Constants.CRITERIA) Consumer<QueryPredicate> predicate);
+	
+	/**
+	 * 动态条件查询唯一数据<br>
+	 * 结果集必须是0或1条数据，否则会报错。建议使用.limit(1)进行结果集行数限制。
+	 * @param predicate 条件
+	 * @return 列表
+	 */
+	T findUniqueByCriteria(@Param(Constants.CRITERIA) Consumer<QueryPredicate> predicate);
 	
 	/**
 	 * 动态条件查询<br>
@@ -200,6 +235,14 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @return 列表
 	 */
 	List<T> findByLambdaCriteria(@Param(Constants.CRITERIA) Consumer<LambdaQueryPredicate<T>> predicate);
+	
+	/**
+	 * lambda表达式动态条件查询唯一数据<br>
+	 * 结果集必须是0或1条数据，否则会报错。建议使用.limit(1)进行结果集行数限制。
+	 * @param predicate 条件
+	 * @return 列表
+	 */
+	T findUniqueByLambdaCriteria(@Param(Constants.CRITERIA) Consumer<LambdaQueryPredicate<T>> predicate);
 
 	/**
 	 * 动态条件查询<br>

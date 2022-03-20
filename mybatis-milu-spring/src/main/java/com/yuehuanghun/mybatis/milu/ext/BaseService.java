@@ -94,7 +94,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	/**
 	 * 使用实体类作为查询参数，非null值才会参与查询，关联表属性无效
 	 * @param example 条件
-	 * @param pageable 分页参数
+	 * @param pageable 分页参数，可null
 	 * @return 列表
 	 */
 	default List<T> getByExample(T example, Pageable pageable){
@@ -102,9 +102,20 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	}
 
 	/**
+	 * 使用实体类作为查询参数，非null值才会参与查询，关联表属性无效<br>
+	 * 结果集必须是0或1条数据，否则会报错。
+	 * @param example 条件
+	 * @param pageable 分页参数，可null
+	 * @return 列表
+	 */
+	default T getUniqueByExample(T example, Pageable pageable){
+		return getDomainMapper().findUniqueByExample(example, pageable);
+	}
+
+	/**
 	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效
 	 * @param example 条件
-	 * @param sort 排序
+	 * @param sort 排序，可null
 	 * @return 列表
 	 */
 	default List<T> getByExampleAndSort(T example, Sort sort) {
@@ -114,12 +125,24 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	/**
 	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效
 	 * @param example 条件
-	 * @param sort 排序
-	 * @param pageable 分页参数
+	 * @param sort 排序，可null
+	 * @param pageable 分页参数，可null
 	 * @return 列表
 	 */
 	default List<T> getByExampleAndSort(T example, Sort sort, Pageable pageable){
 		return getDomainMapper().findByExampleAndSort(example, sort, pageable);
+	}
+	
+	/**
+	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效<br>
+	 * 结果集必须是0或1条数据，否则会报错。
+	 * @param example 条件
+	 * @param sort 排序，可null
+	 * @param pageable 分页参数，可null
+	 * @return 列表
+	 */
+	default T getUniqueByExampleAndSort(T example, Sort sort, Pageable pageable){
+		return getDomainMapper().findUniqueByExampleAndSort(example, sort, pageable);
 	}
 
 	/**
@@ -196,12 +219,32 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	}
 
 	/**
+	 * 动态条件查询唯一数据<br>
+	 * 结果集必须是0或1条数据，否则会报错。建议使用.limit(1)进行结果集行数限制。
+	 * @param predicate 条件
+	 * @return 列表
+	 */
+	default T getUniqueByCriteria(QueryPredicate predicate) {
+		return getDomainMapper().findUniqueByCriteria(predicate);
+	}
+
+	/**
 	 * 动态条件查询<br>
 	 * @param predicate 条件
 	 * @return 列表
 	 */
 	default List<T> getByCriteria(Consumer<QueryPredicate> predicate) {
 		return getDomainMapper().findByCriteria(predicate);
+	}
+
+	/**
+	 * 动态条件查询唯一数据<br>
+	 * 结果集必须是0或1条数据，否则会报错。建议使用.limit(1)进行结果集行数限制。
+	 * @param predicate 条件
+	 * @return 列表
+	 */
+	default T getUniqueByCriteria(Consumer<QueryPredicate> predicate) {
+		return getDomainMapper().findUniqueByCriteria(predicate);
 	}
 	
 	/**
@@ -222,6 +265,16 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 */
 	default List<T> getByLambdaCriteria(Consumer<LambdaQueryPredicate<T>> predicate) {
 		return getDomainMapper().findByLambdaCriteria(predicate);
+	}
+
+	/**
+	 * lambda表达式动态条件查询唯一数据<br>
+	 *  结果集必须是0或1条数据，否则会报错。建议使用.limit(1)进行结果集行数限制。
+	 * @param predicate 条件
+	 * @return 列表
+	 */
+	default T getUniqueByLambdaCriteria(Consumer<LambdaQueryPredicate<T>> predicate) {
+		return getDomainMapper().findUniqueByLambdaCriteria(predicate);
 	}
 	
 	/**
