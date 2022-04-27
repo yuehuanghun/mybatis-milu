@@ -596,7 +596,7 @@ public class MapperNamingQueryBuilder {
 			sqlCommandType = SqlCommandType.DELETE;
 		} else if(methodName.equals("insert") || methodName.equals("batchInsert")) {
 			sqlCommandType = SqlCommandType.INSERT;
-		} else if(methodName.startsWith("update")) {
+		} else if(methodName.startsWith("update") || methodName.startsWith("logic") || methodName.startsWith("resume")) {
 			sqlCommandType = SqlCommandType.UPDATE;
 		} else if(methodName.startsWith("flush")) {
 			sqlCommandType = SqlCommandType.FLUSH;

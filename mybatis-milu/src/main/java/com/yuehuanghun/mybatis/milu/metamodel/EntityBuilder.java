@@ -50,6 +50,7 @@ import org.apache.ibatis.reflection.ReflectorFactory;
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
 import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery;
+import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Part.Type;
 import com.yuehuanghun.mybatis.milu.exception.OrmBuildingException;
@@ -59,6 +60,7 @@ import com.yuehuanghun.mybatis.milu.filler.SupplierHelper;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.AssociationAttribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.IdAttribute;
+import com.yuehuanghun.mybatis.milu.metamodel.Entity.LogicDeleteAttribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.PluralAttribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.RangeCondition;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.VersionAttribute;
@@ -67,6 +69,8 @@ import com.yuehuanghun.mybatis.milu.metamodel.ref.ManyToManyReference.JoinTable;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.MappedReference;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.Reference;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
+import com.yuehuanghun.mybatis.milu.tool.converter.Converter;
+import com.yuehuanghun.mybatis.milu.tool.converter.ConverterUtils;
 import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter;
 import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter.AutoConverter;
 
@@ -205,6 +209,22 @@ public class EntityBuilder {
 				if(options.jdbcType().length > 0) {
 					attr.setJdbcType(options.jdbcType()[0]);
 				}
+				
+				LogicDelete[] logicDeletes = options.logicDelete();
+				if(logicDeletes.length > 0 && LogicDeleteAttribute.class.isInstance(attr)) {
+					LogicDelete logicDelete = logicDeletes[0];
+					LogicDeleteAttribute logicDeleteAttribute = (LogicDeleteAttribute) attr;
+					Converter<?> converter = ConverterUtils.getConverter(attr.getJavaType());
+					if(converter == null) {
+						throw new SqlExpressionBuildingException(String.format("找不到类%s的值转换器", attr.getJavaType().getName()));
+					}
+					logicDeleteAttribute.setDeleteValue(converter.convert(logicDelete.value()));
+					logicDeleteAttribute.setResumeValue(converter.convert(logicDelete.resumeValue()));
+					if(metaClass == null) {
+						metaClass = MetaClass.forClass(clazz, REFLECTOR_FACTORY);
+					}
+					logicDeleteAttribute.setSetter(metaClass.getSetInvoker(attr.getName()));
+				}
 			}
 
 			attr.setRangeList(rangeList == null ? Collections.emptyList() : rangeList);
@@ -225,6 +245,8 @@ public class EntityBuilder {
 			}
 		} else if(field.isAnnotationPresent(Version.class)) {
 			attribute = new VersionAttribute();
+		} else if(isLoginDeleteAttr(field)) {
+			attribute = new LogicDeleteAttribute();
 		} else if(field.isAnnotationPresent(OneToOne.class) || field.isAnnotationPresent(ManyToOne.class)) {
 			attribute = new AssociationAttribute();
 			attribute.setSelectable(false);
@@ -305,6 +327,14 @@ public class EntityBuilder {
 		}
 		
 		return null;
+	}
+	
+	private boolean isLoginDeleteAttr(Field field) {
+		AttributeOptions options = getAnnotation(field, AttributeOptions.class);
+		if(options == null) {
+			return false;
+		}
+		return options.logicDelete().length > 0;
 	}
 	
 	private Reference buildReference(Attribute attr, Entity ownerEntity) {

@@ -184,4 +184,12 @@ public class StringUtils {
 		}
 		return sb.toString();
 	}
+	
+	//是否整型数字
+	public static boolean isInteger(final CharSequence cs) {
+		if(cs == null) {
+			return false;
+		}
+		return cs.toString().matches("^\\d+$");
+	}
 }

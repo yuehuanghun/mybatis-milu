@@ -55,6 +55,14 @@ import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindUniqueByExampleProvi
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindUniqueByLambdaCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFlushProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericInsertProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericLogicDeleteByCriteriaProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericLogicDeleteByIdProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericLogicDeleteByIdsProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericLogicDeleteByLambdaCriteriaProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericResumeLogicDeleteByCriteriaProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericResumeLogicDeleteByIdProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericResumeLogicDeleteByIdsProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericResumeLogicDeleteByLambdaCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericStatisticByCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericStatisticByLambdaCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdateAttrByCriteriaProviderSql;
@@ -151,6 +159,14 @@ public class MiluConfiguration extends Configuration {
 		this.addGenericProviderSql(new GenericFindUniqueByExampleAndSortProviderSql());
 		this.addGenericProviderSql(new GenericFindUniqueByExampleProviderSql());
 		this.addGenericProviderSql(new GenericFindUniqueByLambdaCriteriaProviderSql());
+		this.addGenericProviderSql(new GenericLogicDeleteByIdProviderSql());
+		this.addGenericProviderSql(new GenericResumeLogicDeleteByIdProviderSql());
+		this.addGenericProviderSql(new GenericLogicDeleteByIdsProviderSql());
+		this.addGenericProviderSql(new GenericResumeLogicDeleteByIdsProviderSql());
+		this.addGenericProviderSql(new GenericLogicDeleteByCriteriaProviderSql());
+		this.addGenericProviderSql(new GenericResumeLogicDeleteByCriteriaProviderSql());
+		this.addGenericProviderSql(new GenericResumeLogicDeleteByLambdaCriteriaProviderSql());
+		this.addGenericProviderSql(new GenericLogicDeleteByLambdaCriteriaProviderSql());
 	}
 	
 	private void registerDefaultIdentifierGenerator() {

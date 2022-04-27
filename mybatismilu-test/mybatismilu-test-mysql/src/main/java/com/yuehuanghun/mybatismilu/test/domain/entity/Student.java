@@ -19,6 +19,7 @@ import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery;
 import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery.MatchType;
 import com.yuehuanghun.mybatis.milu.annotation.Filler;
 import com.yuehuanghun.mybatis.milu.annotation.Filler.FillMode;
+import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
 import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
 
 import lombok.Data;
@@ -46,6 +47,9 @@ public class Student extends PageRequest {
 	private Integer age;
 	
 	private Long classId;
+	
+	@AttributeOptions(logicDelete = @LogicDelete)
+	private Boolean isDeleted;
 	
 	@ManyToOne
 	@JoinColumn(name = "class_id", referencedColumnName = "id")

@@ -26,6 +26,7 @@ import java.util.Map;
 
 import javax.persistence.GenerationType;
 
+import org.apache.ibatis.reflection.invoker.Invoker;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
@@ -58,6 +59,8 @@ public class Entity {
 	
 	private VersionAttribute version;
 	
+	private List<LogicDeleteAttribute> logicDeleteAttributes = new ArrayList<>(2);
+	
 	private IdAttribute id;
 	
 	private final Map<String, Reference> referenceMap = new HashMap<>();
@@ -78,6 +81,10 @@ public class Entity {
 		if(VersionAttribute.class.isInstance(attribute)) {
 			version = (VersionAttribute)attribute;
 			hasVersion = true;
+		}
+		
+		if(LogicDeleteAttribute.class.isInstance(attribute)) {
+			logicDeleteAttributes.add((LogicDeleteAttribute) attribute);
 		}
 	}
 	
@@ -226,6 +233,18 @@ public class Entity {
 		public boolean isAssociation() {
 			return true;
 		}
+	}
+	
+	@Data
+	@EqualsAndHashCode(callSuper = true)
+	public static class LogicDeleteAttribute extends Attribute {
+		/** 逻辑删除值 */
+		private Object deleteValue;
+		/** 逻辑正常值 */
+		private Object resumeValue;
+		/** 属性设置器 */
+		@Getter
+		private Invoker setter;
 	}
 	
 	@Data

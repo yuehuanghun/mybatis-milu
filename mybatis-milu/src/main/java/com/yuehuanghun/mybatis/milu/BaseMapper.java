@@ -408,4 +408,66 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * 刷新执行查询到数据库
 	 */
 	void flush();
+	
+	/**
+	 * 逻辑删除<br>
+	 * 如果实体有乐观锁，依然会使用<br>
+	 * 如果有有实体属性在更新时自动填充，依然会生效
+	 * @param id 主键
+	 * @return 受影响的行数
+	 */
+	int logicDeleteById(@Param(Constants.ID) ID id);
+	
+	/**
+	 * 逻辑删除<br>
+	 * 如果实体有乐观锁，依然会使用<br>
+	 * 如果有有实体属性在更新时自动填充，依然会生效
+	 * @param ids 主键集合，不可为空
+	 * @return 受影响的行数
+	 */
+	int logicDeleteByIds(@Param(Constants.IDS) Collection<ID> ids);
+	
+	/**
+	 * 动态条件逻辑删除
+	 * @param predicate 条件
+	 * @return 影响行数
+	 */
+	int logicDeleteByCriteria(@Param(Constants.CRITERIA) Consumer<UpdatePredicate> predicate);
+	
+	/**
+	 * 动态条件逻辑删除
+	 * @param predicate 条件
+	 * @return 影响行数
+	 */
+	int logicDeleteByLambdaCriteria(@Param(Constants.CRITERIA) Consumer<LambdaUpdatePredicate<T>> predicate);
+	
+	/**
+	 * 恢复已被逻辑删除的状态<br>
+	 * 如果有有实体属性在更新时自动填充，依然会生效
+	 * @param id 主键
+	 * @return 受影响的行数
+	 */
+	int resumeLogicDeletedById(@Param(Constants.ID) ID id);
+	
+	/**
+	 * 恢复已被逻辑删除的状态<br>
+	 * 如果有有实体属性在更新时自动填充，依然会生效
+	 * @param ids 主键集合，不可为空
+	 * @return 受影响的行数
+	 */
+	int resumeLogicDeletedByIds(@Param(Constants.IDS) Collection<ID> ids);
+	
+	/**
+	 * 动态条件恢复已逻辑删除的状态
+	 * @param predicate 条件
+	 * @return 影响行数
+	 */
+	int resumeLogicDeletedByCriteria(@Param(Constants.CRITERIA) Consumer<UpdatePredicate> predicate);
+	
+	/**
+	 * 动态条件恢复已逻辑删除的状态
+	 * @param predicate 条件
+	 * @return 影响行数
+	 */
+	int resumeLogicDeletedByLambdaCriteria(@Param(Constants.CRITERIA) Consumer<LambdaUpdatePredicate<T>> predicate);
 }

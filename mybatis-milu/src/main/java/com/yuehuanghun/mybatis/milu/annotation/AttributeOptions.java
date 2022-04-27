@@ -41,7 +41,7 @@ public @interface AttributeOptions {
 	ExampleQuery[] exampleQuery() default {};
 	
 	/**
-	 * 仅可设置一个元素
+	 * 设置属性值自动填充器，仅可设置一个元素
 	 * @return 自动填充设置
 	 */
 	Filler[] filler() default {};
@@ -70,4 +70,9 @@ public @interface AttributeOptions {
 	 */
 	JdbcType[] jdbcType() default {};
 	
+	/**
+	 * 逻辑删除声明
+	 * @return 逻辑删除设置
+	 */
+	LogicDelete[] logicDelete() default {};
 }
