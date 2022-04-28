@@ -23,6 +23,7 @@ import org.apache.ibatis.scripting.xmltags.OgnlCache;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.RangeCondition;
+import com.yuehuanghun.mybatis.milu.metamodel.KeyType;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
 import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter;
 
@@ -45,6 +46,10 @@ public abstract class AbstractGenericExampleProviderSql extends GenericCachingPr
 		for(Attribute attr : context.getEntity().getAttributes()) {
 			for(RangeCondition condition : attr.getRangeList()) {
 				if(!condition.getKeyName().contains(".")) { //实体类直接属性不处理
+					continue;
+				}
+				
+				if(condition.getKeyType() == KeyType.IN) { //不处理
 					continue;
 				}
 				

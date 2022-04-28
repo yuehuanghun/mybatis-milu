@@ -26,6 +26,7 @@ import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Classs;
+import com.yuehuanghun.mybatismilu.test.domain.entity.Student;
 import com.yuehuanghun.mybatismilu.test.dto.ClassDTO;
 
 @SpringBootTest(classes = AppTest.class)
@@ -349,5 +350,27 @@ public class ClassMapperTest {
 		
 		list = classMapper.findByCriteria(p -> p.like("studentListName", "王%").distinct());
 		assertEquals(1, list.size());
+	}
+	
+	@Test
+	@Transactional
+	public void testLogicDelete() {
+		int effect = classMapper.logicDeleteById(1L);
+		
+		assertEquals(effect, 1);
+		
+		Optional<Classs> clazz = classMapper.findById(1L);
+		assertEquals(clazz.get().getIsDeleted(), "Y");
+	}
+	
+	@Test
+	@Transactional
+	public void testResumeLogicDelete() {
+		int effect = classMapper.resumeLogicDeletedById(1L);
+		
+		assertEquals(effect, 1);
+		
+		Optional<Classs> clazz = classMapper.findById(1L);
+		assertEquals(clazz.get().getIsDeleted(), "N");
 	}
 }

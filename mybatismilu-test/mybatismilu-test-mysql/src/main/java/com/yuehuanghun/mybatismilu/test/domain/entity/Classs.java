@@ -11,6 +11,7 @@ import javax.persistence.Table;
 import org.apache.ibatis.type.JdbcType;
 
 import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
+import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
 import com.yuehuanghun.mybatis.milu.annotation.alias.attr.CreateTime;
 import com.yuehuanghun.mybatis.milu.annotation.alias.id.SnowflakeId;
 import com.yuehuanghun.mybatismilu.test.config.JsonTypeHandler;
@@ -32,6 +33,9 @@ public class Classs {
 	
 	@AttributeOptions(typeHandler = JsonTypeHandler.class, jdbcType = JdbcType.VARCHAR)
 	private List<Long> data;
+	
+	@AttributeOptions(logicDelete = @LogicDelete(value = "Y", resumeValue = "N"))
+	private String isDeleted;
 	
 	@ManyToMany(mappedBy = "classList")
 	private List<Teacher> teacherList; //多对多关系演示，双向引用

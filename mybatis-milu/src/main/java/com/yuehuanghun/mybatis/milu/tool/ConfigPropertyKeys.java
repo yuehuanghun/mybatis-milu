@@ -27,4 +27,6 @@ public interface ConfigPropertyKeys {
 	String ID_GENERATOR = "idGenerator";
 	/** 全局默认Example查询的参数转换器 */
 	String EXAMPLE_QUERY_CONVERTER = "exampleQueryConverter";
+	/** 全局默认逻辑删除值提供器 */
+	String LOGIC_DELETE_PROVIDER = "logicDeleteProvider";
 }

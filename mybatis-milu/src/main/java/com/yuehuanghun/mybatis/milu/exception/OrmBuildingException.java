@@ -19,6 +19,10 @@ public class OrmBuildingException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
+	public OrmBuildingException() {
+		super();
+	}
+
 	public OrmBuildingException(String error) {
 		super(error);
 	}

@@ -79,41 +79,41 @@ public class StudentMapperTest {
 	@Test
 	public void testFindByExample() throws ParseException {
 		Student example = new Student();
-//		example.setName("张三");
-//		List<Student> result = studentMapper.findByExample(example);
-//		assertTrue(result.size() > 0);
-//		
-//		example = new Student();
-//		example.setName("");
-//		example.setAge(7);
-//		result = studentMapper.findByExample(example);
-//		assertTrue(result.size() == 1);
+		example.setName("张三");
+		List<Student> result = studentMapper.findByExample(example);
+		assertTrue(result.size() > 0);
+		
+		example = new Student();
+		example.setName("");
+		example.setAge(7);
+		result = studentMapper.findByExample(example);
+		assertTrue(result.size() == 1);
 		
 		example = new Student();
 		Date startDate = DateUtils.parseDate("2017-06-08", "yyyy-MM-dd");
 		Date endDate = new Date();
 		Map<String, Object> params = new HashMap<>();
-//		params.put("addTimeBegin", startDate);
-//		params.put("addTimeEnd", endDate);
+		params.put("addTimeBegin", startDate);
+		params.put("addTimeEnd", endDate);
 		example.setParams(params);
-//		
-//		result = studentMapper.findByExample(example);
-//		assertTrue(result.size() == 4);
-//		
-//		params.put("addTimeBegin", "2017-06-08");
-//		params.put("addTimeEnd", "");
-//		result = studentMapper.findByExample(example);
-//		assertTrue(result.size() == 4);
-//		
+		
+		result = studentMapper.findByExample(example);
+		assertTrue(result.size() == 4);
+		
+		params.put("addTimeBegin", "2017-06-08");
+		params.put("addTimeEnd", "");
+		result = studentMapper.findByExample(example);
+		assertTrue(result.size() == 4);
+		
 		params.clear();;
 		params.put("nameIn", new String[] {"张三", "李四"});
-		List<Student> result = studentMapper.findByExample(example);
+		result = studentMapper.findByExample(example);
 		assertTrue(result.size() == 2);
 		
-//		params.clear();;
-//		params.put("nameIn", "张三, 李四");
-//		result = studentMapper.findByExample(example);
-//		assertTrue(result.size() == 2);
+		params.clear();;
+		params.put("nameIn", "张三, 李四");
+		result = studentMapper.findByExample(example);
+		assertTrue(result.size() == 2);
 	};
 	
 	@Test
