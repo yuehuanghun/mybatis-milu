@@ -4,9 +4,11 @@
 -- HeidiSQL 版本:                  10.2.0.5599
 -- --------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `class` (
-  `id` bigint(20) NOT NULL COMMENT 'ID',
+  `id` bigint NOT NULL COMMENT 'ID',
   `add_time` datetime DEFAULT NULL COMMENT '增加时间',
   `name` varchar(255) DEFAULT NULL COMMENT '名字',
+  `data` varchar(1000) DEFAULT NULL COMMENT '数据',
+  `is_deleted` char(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -32,21 +34,23 @@ INSERT INTO `class_teacher_rel` (`id`, `add_time`, `class_id`, `teacher_id`) VAL
 	(3, '2017-08-21 16:50:13', 1, 2);
 
 CREATE TABLE IF NOT EXISTS `menu` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `pid` bigint(20) NOT NULL DEFAULT '0' COMMENT '父ID',
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `pid` bigint NOT NULL DEFAULT '0' COMMENT '父ID',
   `name` varchar(50) NOT NULL DEFAULT '' COMMENT '菜单名称',
   `add_time` datetime NOT NULL,
   `update_time` datetime NOT NULL,
+  `is_deleted` tinyint NOT NULL DEFAULT '0',
+  `delete_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='菜单';
 
 INSERT INTO `menu` (`id`, `pid`, `name`, `add_time`, `update_time`) VALUES
-	(1, 0, '一级1', '2021-04-02 22:21:11', '2021-04-02 22:21:13'),
-	(2, 0, '一级2', '2021-04-02 22:21:21', '2021-04-02 22:21:22'),
-	(3, 1, '二级1', '2021-04-02 22:21:30', '2021-04-02 22:21:31'),
-	(4, 1, '二级2', '2021-04-02 22:21:41', '2021-04-02 22:21:49'),
-	(5, 2, '二级3', '2021-04-02 22:22:02', '2021-04-02 22:22:02'),
-	(6, 5, '三级1', '2021-04-02 22:22:16', '2021-04-02 22:22:17');
+	(1, 0, '一级1', '2021-04-02 22:21:11', '2021-04-02 22:21:13', 0, NULL),
+	(2, 0, '一级2', '2021-04-02 22:21:21', '2022-04-30 12:47:47', 1, '2022-04-30 12:47:47'),
+	(3, 1, '二级1', '2021-04-02 22:21:30', '2021-04-02 22:21:31', 0, NULL),
+	(4, 1, '二级2', '2021-04-02 22:21:41', '2021-04-02 22:21:49', 0, NULL),
+	(5, 2, '二级3', '2021-04-02 22:22:02', '2021-04-02 22:22:02', 1, '2022-04-30 11:48:40'),
+	(6, 5, '三级1', '2021-04-02 22:22:16', '2021-04-02 22:22:17', 0, NULL);
 
 CREATE TABLE IF NOT EXISTS `sequence` (
   `id` int(10) unsigned NOT NULL COMMENT 'id',
@@ -60,12 +64,13 @@ INSERT INTO `sequence` (`id`, `current_seq`, `seq_name`, `update_time`) VALUES
 	(1, 500, '默认序列', '2021-03-14 15:26:09');
 
 CREATE TABLE IF NOT EXISTS `student` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint NOT NULL,
   `add_time` datetime DEFAULT NULL,
-  `age` int(11) NOT NULL,
+  `age` int NOT NULL,
   `name` varchar(255) DEFAULT NULL,
-  `class_id` bigint(20) DEFAULT NULL,
+  `class_id` bigint DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
+  `is_deleted` tinyint DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FKdwhkib64u47wc4yo4hk0cub90` (`class_id`),
   CONSTRAINT `FKdwhkib64u47wc4yo4hk0cub90` FOREIGN KEY (`class_id`) REFERENCES `class` (`id`)
@@ -95,12 +100,13 @@ INSERT INTO `student_profile` (`id`, `student_id`, `father_name`, `mother_name`,
 	(2, 2, '王海飞', '梁晓菊', 32, 29, '2021-03-14 10:39:34', '2021-03-14 19:14:11');
 
 CREATE TABLE `teacher` (
-	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-	`add_time` DATETIME NULL DEFAULT NULL,
-	`age` VARCHAR(255) NULL DEFAULT NULL,
-	`name` VARCHAR(255) NULL DEFAULT NULL,
-	`revision` INT(11) NULL DEFAULT '0',
-	PRIMARY KEY (`id`)
+`id` bigint NOT NULL AUTO_INCREMENT,
+  `add_time` datetime DEFAULT NULL,
+  `age` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `revision` int DEFAULT '0',
+  `is_deleted` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 INSERT INTO `teacher` (`id`, `add_time`, `age`, `name`,`revision`) VALUES

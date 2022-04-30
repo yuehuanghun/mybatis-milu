@@ -1,15 +1,18 @@
 package com.yuehuanghun.mybatismilu.test.domain.mapper;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.yuehuanghun.AppTest;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Menu;
@@ -37,5 +40,29 @@ public class MenuMapperTest {
 	public void testFindDistinctByChildrensNameAndChildrensAddTimeLessThan() {
 		List<Menu> list = menuMapper.findDistinctByChildrensNameAndChildrensAddTimeLessThan("三级1", new Date());
 		assertTrue(list.size() == 1);
+	}
+	
+	@Test
+	@Transactional
+	public void testLogicDelete() {
+		int effect = menuMapper.logicDeleteById(1L);
+		
+		assertEquals(effect, 1);
+		
+		Optional<Menu> menu = menuMapper.findById(1L);
+		assertTrue(menu.get().getIsDeleted() == 1);
+		assertTrue(menu.get().getDeleteTime() != null);
+	}
+	
+	@Test
+	@Transactional
+	public void testResumeLogicDelete() {
+		int effect = menuMapper.resumeLogicDeletedById(5L);
+		
+		assertEquals(effect, 1);
+		
+		Optional<Menu> menu = menuMapper.findById(1L);
+		assertTrue(menu.get().getIsDeleted() == 0);
+		assertTrue(menu.get().getDeleteTime() == null);
 	}
 }

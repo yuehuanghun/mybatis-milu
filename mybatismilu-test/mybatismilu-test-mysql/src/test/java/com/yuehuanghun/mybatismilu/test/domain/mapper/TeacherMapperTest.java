@@ -1,5 +1,6 @@
 package com.yuehuanghun.mybatismilu.test.domain.mapper;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -146,5 +147,27 @@ public class TeacherMapperTest {
 	public void testFindByCriteria() {
 		List<Teacher> teachers = teacherMapper.findByCriteria(p -> p.neq("id", 1L));
 		System.out.println(JSON.toJSONString(teachers));
+	}
+	
+	@Test
+	@Transactional
+	public void testLogicDelete() {
+		int effect = teacherMapper.logicDeleteById(1L);
+		
+		assertEquals(effect, 1);
+		
+		Optional<Teacher> techer = teacherMapper.findById(1L);
+		assertEquals(techer.get().getIsDeleted(), "YES");
+	}
+	
+	@Test
+	@Transactional
+	public void testResumeLogicDelete() {
+		int effect = teacherMapper.resumeLogicDeletedById(2L);
+		
+		assertEquals(effect, 1);
+		
+		Optional<Teacher> techer = teacherMapper.findById(2L);
+		assertEquals(techer.get().getIsDeleted(), "NO");
 	}
 }

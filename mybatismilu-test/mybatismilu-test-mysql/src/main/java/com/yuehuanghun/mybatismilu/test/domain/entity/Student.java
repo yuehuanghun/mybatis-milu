@@ -32,7 +32,7 @@ public class Student extends PageRequest {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "tableSequence")
-	@TableGenerator(name = "tableSequence", table = "sequence", valueColumnName = "current_seq", pkColumnName = "id", pkColumnValue = "1", allocationSize = 500)
+	@TableGenerator(name = "tableSequence", table = "sequence", valueColumnName = "current_seq", pkColumnName = "id", pkColumnValue = "1", allocationSize = 50)
 	private Long id; //使用数据表模拟数字序列
 	
 	@AttributeOptions(filler = @Filler(fillOnInsert = true), exampleQuery = @ExampleQuery(startKeyName = "params.addTimeBegin", endKeyName = "params.addTimeEnd")) //当在插入数据时，如果该属性为null则自动填充值

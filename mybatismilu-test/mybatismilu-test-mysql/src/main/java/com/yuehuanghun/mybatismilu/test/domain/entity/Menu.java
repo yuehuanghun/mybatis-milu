@@ -1,5 +1,6 @@
 package com.yuehuanghun.mybatismilu.test.domain.entity;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import javax.persistence.OneToMany;
 
 import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
 import com.yuehuanghun.mybatis.milu.annotation.Filler;
+import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
 
 import lombok.Data;
 
@@ -40,4 +42,10 @@ public class Menu {
 	@OneToMany
 	@JoinColumn(name = "id", referencedColumnName = "pid")
 	private List<Menu> childrens; //自身一对多引用
+	
+	@LogicDelete
+	private Integer isDeleted;
+	
+	@LogicDelete(value = "#{now}", resumeValue = "")
+	private LocalDateTime deleteTime;
 }

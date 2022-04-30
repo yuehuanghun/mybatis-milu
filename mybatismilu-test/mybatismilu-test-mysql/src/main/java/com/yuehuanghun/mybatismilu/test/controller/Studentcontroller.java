@@ -2,6 +2,8 @@ package com.yuehuanghun.mybatismilu.test.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +36,19 @@ public class Studentcontroller {
 	
 	@PostMapping
 	public void save(@RequestBody Student student) {
+		studentService.add(student);
+	}
+	
+	private AtomicInteger counter = new AtomicInteger();
+	private Random random = new Random();
+	
+	@PostMapping("/add")
+	public void save() {
+		Student student = new Student();
+		student.setName("李" + counter.incrementAndGet());
+		student.setAge(random.nextInt(100));
+		student.setIsDeleted(Boolean.FALSE);
+		student.setClassId(1L);
 		studentService.add(student);
 	}
 	
