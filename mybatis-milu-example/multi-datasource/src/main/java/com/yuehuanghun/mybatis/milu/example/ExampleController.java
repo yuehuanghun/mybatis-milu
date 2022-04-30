@@ -10,41 +10,41 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.yuehuanghun.mybatis.milu.example.example1.domain.ExampleOne;
-import com.yuehuanghun.mybatis.milu.example.example1.mapper.ExampleOneMapper;
+import com.yuehuanghun.mybatis.milu.example.example1.service.IExampleOneService;
 import com.yuehuanghun.mybatis.milu.example.example2.domain.ExampleTwo;
-import com.yuehuanghun.mybatis.milu.example.example2.mapper.ExampleTwoMapper;
+import com.yuehuanghun.mybatis.milu.example.example2.service.IExampleTwoService;
 
 @RestController
 @RequestMapping("/example")
 public class ExampleController {
 	
 	@Autowired
-	private ExampleOneMapper exampleOneMapper;
+	private IExampleOneService exampleOneService;
 	@Autowired
-	private ExampleTwoMapper exampleTwoMapper;
+	private IExampleTwoService exampleTwoService;
 
 	@PostMapping("/exampleOne")
 	public ExampleOne addExampleOne() {
 		ExampleOne exampleOne = new ExampleOne(randomName());
-		exampleOneMapper.insert(exampleOne);
+		exampleOneService.add(exampleOne);
 		return exampleOne;
 	}
 	
 	@PostMapping("/exampleTwo")
 	public ExampleTwo addExampleTwo() {
 		ExampleTwo exampleTwo = new ExampleTwo(UUID.randomUUID().toString(), randomName());
-		exampleTwoMapper.insert(exampleTwo);
+		exampleTwoService.add(exampleTwo);
 		return exampleTwo;
 	}
 	
 	@GetMapping("/exampleOne/{id}")
 	public ExampleOne getExampleOne(@PathVariable Long id) {
-		return exampleOneMapper.findById(id).orElse(null);
+		return exampleOneService.getById(id).orElse(null);
 	}
 	
 	@GetMapping("/exampleTwo/{id}")
 	public ExampleTwo getExampleTwo(@PathVariable Long id) {
-		return exampleTwoMapper.findById(id).orElse(null);
+		return exampleTwoService.getById(id).orElse(null);
 	}
 	
 	private static String randomName() {
