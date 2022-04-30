@@ -27,9 +27,13 @@ jdk >= 1.8
 <dependency>
    <groupId>com.yuehuanghun</groupId>
    <artifactId>mybatismilu-spring-boot-starter</artifactId>
-   <version>1.5.0</version> <!-- 获取最新版本 -->
+   <version>1.6.0</version> <!-- 获取最新版本 -->
 </dependency>
 ```
+
+### 核心功能
+
+![核心功能](http://static.yuehuanghun.com/mybatis-milu/framework.png)
 
 ### 示范项目
 基于知名的开源项目“若依管理系统”改版的项目：[yadmin](https://gitee.com/yuehh/yadmin4j)
@@ -531,6 +535,59 @@ List<Teacher> list = teacherMapper.findByCriteria(p -> p.eq("id", 1L).lock(LockM
 
 List<Teacher> list = teacherMapper.findByCriteria(p -> p.eq("id", 1L).lock(); //默认悲观写锁
 ```
+
+#### 九、逻辑删除
+逻辑删除实际是针对特定属性进行更新
+
+包含逻辑删除及恢复逻辑删除的接口，例如：  
+```java
+BaseMapper.logicDeleteById(ID id);
+
+BaseMapper.resumeLogicDeleteById(ID id);
+```
+
+使用逻辑删除接口，必须先在实体类中声明逻辑删除属性
+```java
+@LogicDelete
+Object someAttr;
+//或
+@AttributeOptions(logicDelete = @LogicDelete)
+Object someAttr;
+
+```
+@LogicDelete中，value是已删除状态的值，resumeValue是恢复到正常状态的值  
+value默认值为1、resumeValue默认值为0  
+更改默认值，例如：@LogicDelete(value = "Y", resumeValue = "N")  
+
+ > 值会被转换为属性实际类型的对象
+
+值中可以使用表达式，目前仅可用表达式为：#{now}，表示当前时间，会根据实际属性类型取值
+```
+public class Example {
+    //支持多个逻辑删除属性
+	@LogicDelete(value = "Y", resumeValue = "N")  
+	private Boolean isDeleted;
+	
+	@LogicDelete(value = "#{now}", resumeValue = "")  //删除时记录被删除的时间，恢复时更新为null
+	private LocalDateTime deleteTime;
+}
+
+````
+@LogicDelete可通过provider指定的一个值的提供者，指定类为LogicDeleteProvider的实现类   
+
+##### 全局LogicDeleteProvider
+如果想通过全局设置逻辑删除中，删除值与恢复值的的获取
+
+自动化配置参数  
+```yaml
+mybatis: 
+  configurationProperties: 
+     logicDeleteProvider: #实现类的类路径
+```
+
+如果是手动配置可以设置MiluConfiguration.setDefaultLogicDeleteProvider
+
+ > 属性上的provider优先级高于全局provider，一旦设置了provider则@LogicDelete上的value与resumeValue值将无用
 
 #### 参考
 
