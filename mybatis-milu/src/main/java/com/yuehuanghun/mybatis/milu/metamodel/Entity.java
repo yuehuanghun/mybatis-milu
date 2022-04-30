@@ -239,10 +239,6 @@ public class Entity {
 	@Data
 	@EqualsAndHashCode(callSuper = true)
 	public static class LogicDeleteAttribute extends Attribute {
-		/** 逻辑删除值，provider不为null时有效 */
-		private Object deleteValue;
-		/** 逻辑正常值，provider不为null时有效 */
-		private Object resumeValue;
 		/** 属性设置器 */
 		@Getter
 		private Invoker setter;

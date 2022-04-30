@@ -26,8 +26,6 @@ public interface LogicDeleteProvider {
 	 * 自动选择<br>
 	 * 当设置了全局默认provider时，则以全局provider为准，否则就等同于NoneProvider
 	 * 
-	 * @see com.yuehuanghun.mybatis.milu.tool.logicdel.LogicDeleteProvider.NoneProvider
-	 *
 	 */
 	class AutoProvider implements LogicDeleteProvider {
 
@@ -40,14 +38,6 @@ public interface LogicDeleteProvider {
 		public Object resumeValue(Context context) {
 			throw new OrmBuildingException();
 		}
-	}
-	
-	/**
-	 * 无数据提供者<br>
-	 * 直接使用@LogicDelete的value
-	 *
-	 */
-	class NoneProvider extends AutoProvider {
 	}
 	
 	/**

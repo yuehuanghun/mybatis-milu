@@ -50,11 +50,7 @@ public class GenericResumeLogicDeleteByIdProviderSql implements GenericProviderS
 			Object entityObj = entity.getJavaType().newInstance();
 			entity.getLogicDeleteAttributes().forEach(attr -> {
 				try {
-					if(attr.getProvider() != null) {
-						attr.getSetter().invoke(entityObj, new Object[] {attr.getProvider().resumeValue(new LogicDeleteProvider.Context(entity.getJavaType(), attr.getJavaType(), attr.getName()))});
-					} else {
-						attr.getSetter().invoke(entityObj, new Object[] {attr.getResumeValue()});
-					}
+					attr.getSetter().invoke(entityObj, new Object[] {attr.getProvider().resumeValue(new LogicDeleteProvider.Context(entity.getJavaType(), attr.getJavaType(), attr.getName()))});
 				} catch (IllegalAccessException | InvocationTargetException e) {
 					throw new SqlExpressionBuildingException(e);
 				}

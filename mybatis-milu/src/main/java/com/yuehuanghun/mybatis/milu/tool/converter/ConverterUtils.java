@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import com.yuehuanghun.mybatis.milu.tool.converter.impl.BigDecimalConverter;
 import com.yuehuanghun.mybatis.milu.tool.converter.impl.BooleanConverter;
@@ -50,7 +51,7 @@ public class ConverterUtils {
 		CONVERTER_MAP.put(clazz, converter);
 	}
 	
-	public static Converter<?> getConverter(Class<?> clazz){
-		return CONVERTER_MAP.get(clazz);
+	public static Optional<Converter<?>> getConverter(Class<?> clazz){
+		return Optional.ofNullable(CONVERTER_MAP.get(clazz));
 	}
 }

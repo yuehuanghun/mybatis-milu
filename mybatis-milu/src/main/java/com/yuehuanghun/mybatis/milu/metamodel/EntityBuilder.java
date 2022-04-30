@@ -70,8 +70,6 @@ import com.yuehuanghun.mybatis.milu.metamodel.ref.MappedReference;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.Reference;
 import com.yuehuanghun.mybatis.milu.tool.InstanceUtils;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
-import com.yuehuanghun.mybatis.milu.tool.converter.Converter;
-import com.yuehuanghun.mybatis.milu.tool.converter.ConverterUtils;
 import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter;
 import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter.AutoConverter;
 import com.yuehuanghun.mybatis.milu.tool.logicdel.LogicDeleteProvider;
@@ -212,25 +210,25 @@ public class EntityBuilder {
 					attr.setJdbcType(options.jdbcType()[0]);
 				}
 				
-				LogicDelete[] logicDeletes = options.logicDelete();
-				if(logicDeletes.length > 0 && LogicDeleteAttribute.class.isInstance(attr)) {
-					LogicDelete logicDelete = logicDeletes[0];
-					LogicDeleteAttribute logicDeleteAttribute = (LogicDeleteAttribute) attr;
-					Converter<?> converter = ConverterUtils.getConverter(attr.getJavaType());
-					if(converter == null) {
-						throw new SqlExpressionBuildingException(String.format("找不到类%s的值转换器", attr.getJavaType().getName()));
-					}
-					logicDeleteAttribute.setDeleteValue(converter.convert(logicDelete.value()));
-					logicDeleteAttribute.setResumeValue(converter.convert(logicDelete.resumeValue()));
-					if(metaClass == null) {
-						metaClass = MetaClass.forClass(clazz, REFLECTOR_FACTORY);
-					}
-					logicDeleteAttribute.setSetter(metaClass.getSetInvoker(attr.getName()));
-					if(logicDelete.provider() != LogicDeleteProvider.AutoProvider.class && logicDelete.provider() != LogicDeleteProvider.NoneProvider.class) {
-						logicDeleteAttribute.setProvider(InstanceUtils.getSigleton(logicDelete.provider()));
-					} else if(configuration.getDefaultLogicDeleteProvider() != null && logicDelete.provider() != LogicDeleteProvider.NoneProvider.class) {
-						logicDeleteAttribute.setProvider(InstanceUtils.getSigleton(configuration.getDefaultLogicDeleteProvider()));
-					}
+				if(clazz.getName() == "com.yuehuanghun.mybatismilu.test.domain.entity.Menu") {
+					System.out.println("1");
+				}
+			}		
+
+			LogicDelete logicDelete = getLogicDelete(field);
+			if(logicDelete != null && LogicDeleteAttribute.class.isInstance(attr)) {
+				LogicDeleteAttribute logicDeleteAttribute = (LogicDeleteAttribute) attr;
+				if(metaClass == null) {
+					metaClass = MetaClass.forClass(clazz, REFLECTOR_FACTORY);
+				}
+				logicDeleteAttribute.setSetter(metaClass.getSetInvoker(attr.getName()));
+				
+				if(logicDelete.provider() != LogicDeleteProvider.AutoProvider.class) {
+					logicDeleteAttribute.setProvider(InstanceUtils.getSigleton(logicDelete.provider()));
+				} else if(configuration.getDefaultLogicDeleteProvider() != null) {
+					logicDeleteAttribute.setProvider(InstanceUtils.getSigleton(configuration.getDefaultLogicDeleteProvider()));
+				} else {
+					logicDeleteAttribute.setProvider(new DefaultLogicDeleteProvider(logicDelete.value(), logicDelete.resumeValue(), attr.getJavaType()));
 				}
 			}
 
@@ -252,7 +250,7 @@ public class EntityBuilder {
 			}
 		} else if(field.isAnnotationPresent(Version.class)) {
 			attribute = new VersionAttribute();
-		} else if(isLoginDeleteAttr(field)) {
+		} else if(getLogicDelete(field) != null) {
 			attribute = new LogicDeleteAttribute();
 		} else if(field.isAnnotationPresent(OneToOne.class) || field.isAnnotationPresent(ManyToOne.class)) {
 			attribute = new AssociationAttribute();
@@ -336,12 +334,16 @@ public class EntityBuilder {
 		return null;
 	}
 	
-	private boolean isLoginDeleteAttr(Field field) {
-		AttributeOptions options = getAnnotation(field, AttributeOptions.class);
-		if(options == null) {
-			return false;
+	private LogicDelete getLogicDelete(Field field) {
+		LogicDelete anno = field.getAnnotation(LogicDelete.class);
+		if(anno != null) {
+			return anno;
 		}
-		return options.logicDelete().length > 0;
+		AttributeOptions options = field.getAnnotation(AttributeOptions.class);
+		if(options == null || options.logicDelete().length == 0) {
+			return null;
+		}
+		return options.logicDelete()[0];
 	}
 	
 	private Reference buildReference(Attribute attr, Entity ownerEntity) {

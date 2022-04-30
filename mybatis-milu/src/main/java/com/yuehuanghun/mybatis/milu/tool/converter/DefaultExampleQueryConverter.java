@@ -47,7 +47,7 @@ public class DefaultExampleQueryConverter implements ExampleQueryConverter {
 			return target;
 		}
 		
-		Converter<?> converter = ConverterUtils.getConverter(attrJavaType);
+		Converter<?> converter = ConverterUtils.getConverter(attrJavaType).orElse(null);
 		if(converter != null) {
 			Object result = converter.convert(target);
 			if(result != null) {
