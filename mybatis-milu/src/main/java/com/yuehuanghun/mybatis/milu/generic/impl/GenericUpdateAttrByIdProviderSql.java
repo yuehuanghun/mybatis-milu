@@ -91,7 +91,8 @@ public class GenericUpdateAttrByIdProviderSql extends GenericCachingProviderSql 
 				continue;
 			}
 			if(attr.isVersion()) { //版本号 + 1，总是+1，如果指定更新的属性为一个Version属性，则更新是无效的
-				sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context)).append(" = #{entity.").append(attr.toParameter()).append("} + 1,");
+				String colName = wrapIdentifier(attr.getColumnName(), context);
+				sqlBuilder.append(colName).append(" = ").append(colName).append(" + 1, ");
 			} else {
 				if(updateAttrName.equals(attr.getName())) { //指定更新属性总是会被更新的
 					sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context)).append(" = #{").append(attr.toParameter().replaceFirst(attr.getName(), Constants.VALUE)).append("}, ");

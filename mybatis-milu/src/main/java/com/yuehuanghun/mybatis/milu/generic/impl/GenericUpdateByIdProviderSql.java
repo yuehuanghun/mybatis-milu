@@ -48,7 +48,8 @@ public class GenericUpdateByIdProviderSql extends GenericCachingProviderSql {
 				continue;
 			}
 			if(attr.isVersion()) { //版本号 + 1，总是+1
-				sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context)).append(" = #{entity.").append(attr.getName()).append("} + 1,");
+				String colName = wrapIdentifier(attr.getColumnName(), context);
+				sqlBuilder.append(colName).append(" = ").append(colName).append(" + 1, ");
 			} else {
 				if(attr.getUpdateMode() == Mode.ALL) {
 					sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context)).append(" = #{entity.").append(attr.toParameter()).append(Segment.RIGHT_BRACE);

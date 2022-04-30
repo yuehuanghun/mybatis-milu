@@ -57,7 +57,8 @@ public class UpdateSqlTemplateBuilder extends SqlTemplateBuilder {
 				continue;
 			}
 			if(attr.isVersion()) { //版本号 + 1，总是+1
-				sqlBuilder.append(SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration)).append(" = #{entity.").append(attr.toParameter()).append("} + 1, ");
+				String colName = SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration);
+				sqlBuilder.append(colName).append(" = ").append(colName).append(" + 1, ");
 			} else {
 				if(predicate.getUpdateMode() == Mode.ALL || nullableUpdateAttrNames.contains(attr.getName())) {
 					sqlBuilder.append(SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration)).append(" = #{entity.").append(attr.toParameter()).append("}, ");

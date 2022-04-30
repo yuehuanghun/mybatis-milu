@@ -58,7 +58,8 @@ public class LogicDeleteSqlTemplateBuilder extends SqlTemplateBuilder {
 				continue;
 			}
 			if(attr.isVersion()) { //版本号 + 1，总是+1
-				sqlBuilder.append(SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration)).append(" = #{entity.").append(attr.getName()).append("} + 1,");
+				String colName = SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration);
+				sqlBuilder.append(colName).append(" = ").append(colName).append(" + 1, ");
 			} else {
 				if(logicDeleteAttributeNames.contains(attr.getName())) { //逻辑删除属性总是被更新
 					sqlBuilder.append(SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration)).append(" = #{entity.").append(attr.toParameter()).append("}, ");
