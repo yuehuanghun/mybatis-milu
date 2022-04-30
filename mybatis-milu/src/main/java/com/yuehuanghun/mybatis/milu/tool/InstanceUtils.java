@@ -24,7 +24,7 @@ public class InstanceUtils {
 	private static Map<Class<?>, Object> instanceCache = new ConcurrentHashMap<>();
 	
 	@SuppressWarnings("unchecked")
-	public static <T> T getSigleton(Class<? super T> clazz) {
+	public static <T> T getSigleton(Class<? extends T> clazz) {
 		Object instance = instanceCache.computeIfAbsent(clazz, key -> {
 			try {
 				return clazz.newInstance();
