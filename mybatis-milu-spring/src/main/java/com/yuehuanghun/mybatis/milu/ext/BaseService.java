@@ -461,4 +461,82 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 		return getDomainMapper().updateAttrByLambdaCriteria(attrNameGetter, value, predicate);
 	}
 	
+
+	/**
+	 * 逻辑删除<br>
+	 * 如果实体有乐观锁，依然会使用<br>
+	 * 如果有有实体属性在更新时自动填充，依然会生效
+	 * @param id 主键
+	 * @return 受影响的行数
+	 */
+	default int logicDeleteById(ID id) {
+		return getDomainMapper().logicDeleteById(id);
+	}
+	
+	/**
+	 * 逻辑删除<br>
+	 * 如果实体有乐观锁，依然会使用<br>
+	 * 如果有有实体属性在更新时自动填充，依然会生效
+	 * @param ids 主键集合，不可为空
+	 * @return 受影响的行数
+	 */
+	default int logicDeleteByIds(Collection<ID> ids) {
+		return getDomainMapper().logicDeleteByIds(ids);
+	}
+	
+	/**
+	 * 动态条件逻辑删除
+	 * @param predicate 条件
+	 * @return 影响行数
+	 */
+	default int logicDeleteByCriteria(Consumer<UpdatePredicate> predicate) {
+		return getDomainMapper().logicDeleteByCriteria(predicate);
+	}
+	
+	/**
+	 * 动态条件逻辑删除
+	 * @param predicate 条件
+	 * @return 影响行数
+	 */
+	default int logicDeleteByLambdaCriteria(Consumer<LambdaUpdatePredicate<T>> predicate) {
+		return getDomainMapper().logicDeleteByLambdaCriteria(predicate);
+	}
+	
+	/**
+	 * 恢复已被逻辑删除的状态<br>
+	 * 如果有有实体属性在更新时自动填充，依然会生效
+	 * @param id 主键
+	 * @return 受影响的行数
+	 */
+	default int resumeLogicDeletedById(ID id) {
+		return getDomainMapper().resumeLogicDeletedById(id);
+	}
+	
+	/**
+	 * 恢复已被逻辑删除的状态<br>
+	 * 如果有有实体属性在更新时自动填充，依然会生效
+	 * @param ids 主键集合，不可为空
+	 * @return 受影响的行数
+	 */
+	default int resumeLogicDeletedByIds(Collection<ID> ids) {
+		return resumeLogicDeletedByIds(ids);
+	}
+	
+	/**
+	 * 动态条件恢复已逻辑删除的状态
+	 * @param predicate 条件
+	 * @return 影响行数
+	 */
+	default int resumeLogicDeletedByCriteria(Consumer<UpdatePredicate> predicate) {
+		return resumeLogicDeletedByCriteria(predicate);
+	}
+	
+	/**
+	 * 动态条件恢复已逻辑删除的状态
+	 * @param predicate 条件
+	 * @return 影响行数
+	 */
+	default int resumeLogicDeletedByLambdaCriteria(Consumer<LambdaUpdatePredicate<T>> predicate) {
+		return resumeLogicDeletedByLambdaCriteria(predicate);
+	}
 }
