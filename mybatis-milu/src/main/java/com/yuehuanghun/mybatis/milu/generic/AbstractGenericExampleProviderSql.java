@@ -16,20 +16,17 @@
 package com.yuehuanghun.mybatis.milu.generic;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.ibatis.scripting.xmltags.OgnlCache;
 
-import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.RangeCondition;
 import com.yuehuanghun.mybatis.milu.metamodel.KeyType;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
+import com.yuehuanghun.mybatis.milu.tool.InstanceUtils;
 import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter;
 
 public abstract class AbstractGenericExampleProviderSql extends GenericCachingProviderSql {
-	private static Map<Class<? extends ExampleQueryConverter>, ExampleQueryConverter> converterCache = new ConcurrentHashMap<>();
-
 	@Override
 	public String provideSql(GenericProviderContext context, Object params) {
 		String sql =  super.provideSql(context, params);
@@ -67,14 +64,7 @@ public abstract class AbstractGenericExampleProviderSql extends GenericCachingPr
 					continue;
 				}
 				
-				Class<? extends ExampleQueryConverter> valueConverterClass = condition.getValueConverter();
-				ExampleQueryConverter converter = converterCache.computeIfAbsent(valueConverterClass, clazz -> {
-					try {
-						return clazz.newInstance();
-					} catch (InstantiationException | IllegalAccessException e) {
-						throw new SqlExpressionBuildingException(e);
-					}
-				});
+				ExampleQueryConverter converter = InstanceUtils.getSigleton(condition.getValueConverter());
 				Object convertedValue = converter.convert(value, condition.getAttrJavaType(), condition.getKeyName(), condition.getKeyType());
 				container.put(lastKey, convertedValue);
 			}

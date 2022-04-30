@@ -20,7 +20,6 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.mapping.Environment;
@@ -75,7 +74,6 @@ import com.yuehuanghun.mybatis.milu.id.IdentifierGenerator;
 import com.yuehuanghun.mybatis.milu.id.impl.UUIDIdentifierGenerator;
 import com.yuehuanghun.mybatis.milu.id.impl.snowflake.SnowflakeIdentifierGenerator;
 import com.yuehuanghun.mybatis.milu.metamodel.MetaModel;
-import com.yuehuanghun.mybatis.milu.tool.ConfigPropertyKeys;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 import com.yuehuanghun.mybatis.milu.tool.converter.DefaultExampleQueryConverter;
 import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter;
@@ -107,28 +105,16 @@ public class MiluConfiguration extends Configuration {
 	
 	//自动化配置 mybatis.configurationProperties.exampleQueryConverter
 	@Getter
-	@Setter
 	private Class<? extends ExampleQueryConverter> defaultExampleQueryConverter = DefaultExampleQueryConverter.class;
 	
 	//自动化配置 mybatis.configurationProperties.logicDeleteProvider
 	@Getter
-	private LogicDeleteProvider logicDeleteProvider = new LogicDeleteProvider.NoneProvider();
+	private Class<? extends LogicDeleteProvider> defaultLogicDeleteProvider;
 
 	public MiluConfiguration() {
 		super();
 		registerGenericProviderSql();
 		registerDefaultIdentifierGenerator();
-		
-		variables = new Properties() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public synchronized void putAll(Map<? extends Object, ? extends Object> t) { //妥协处理
-				super.putAll(t);
-				afterVariablesSet();
-			}
-		};
-		
 		this.addInterceptor(new MiluInterceptor());
 	}
 	
@@ -283,64 +269,58 @@ public class MiluConfiguration extends Configuration {
 			throw new RuntimeException(String.format("未知的数据库：%s", dbMeta.getDbName()));
 		}
 	}
-	
-//	@SuppressWarnings("unchecked")
-//	private void afterVariablesSet() {
-//		if(variables == null) {
-//			return;
-//		}
-//		
-//		String defineIdGenerator = variables.getProperty(ConfigPropertyKeys.ID_GENERATOR);
-//		if(StringUtils.isNotBlank(defineIdGenerator)) {
-//			this.defaultIdGenerator = defineIdGenerator;
-//		}
-//		String queryConverterClass = variables.getProperty(ConfigPropertyKeys.EXAMPLE_QUERY_CONVERTER);
-//		if(StringUtils.isNotBlank(queryConverterClass)) {
-//			try {
-//				Class<?> clazz = Class.forName(queryConverterClass);
-//				if(!ExampleQueryConverter.class.isAssignableFrom(clazz) || ExampleQueryConverter.class == clazz || Modifier.isAbstract(clazz.getModifiers())) {
-//					throw new OrmBuildingException(String.format("%s不是ExampleQueryConverter的实现类", queryConverterClass));
-//				}
-//				this.defaultExampleQueryConverter =  (Class<? extends ExampleQueryConverter>) clazz;
-//			} catch (ClassNotFoundException e) {
-//				throw new OrmBuildingException("找不到ExampleQueryConverter实现类", e);
-//			}
-//		}
-//	}
-//
-//	@Override
-//	public void setVariables(Properties variables) {
-//		super.setVariables(variables);
-//		afterVariablesSet();
-//	}
 
+	//IdGenerator的getName的值
+	public void setDefaultIdGenerator(String idGeneratorName) {
+		if(StringUtils.isNotBlank(idGeneratorName)) {
+			this.defaultIdGenerator = idGeneratorName;
+		}
+	}
 	
-	public void setLogicDeleteProvider(LogicDeleteProvider provider) {
+	public void setDefaultLogicDeleteProvider(Class<? extends LogicDeleteProvider> provider) {
 		if(provider == null) {
 			return;
 		}
 		
-		if(provider.getClass() == LogicDeleteProvider.AutoProvider.class) {
+		if(provider == LogicDeleteProvider.AutoProvider.class) {
 			throw new OrmBuildingException("不可设置为AutoProvider的对象");
 		}
 		
-		this.logicDeleteProvider = provider;
+		this.defaultLogicDeleteProvider = provider;
 	}
 	
-	public void setLogicDeleteProvider(String providerClassName) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void setDefaultLogicDeleteProvider(String providerClassName) {
 		if(StringUtils.isBlank(providerClassName)) {
 			return;
 		}
 		try {
-			Class<?> clazz = Class.forName(providerClassName);
+			Class clazz = Class.forName(providerClassName);
 			if(!LogicDeleteProvider.class.isAssignableFrom(clazz) || LogicDeleteProvider.class == clazz || Modifier.isAbstract(clazz.getModifiers())) {
 				throw new OrmBuildingException(String.format("%s不是LogicDeleteProvider的实现类", providerClassName));
 			}
-			this.logicDeleteProvider = (LogicDeleteProvider) clazz.newInstance();
+			this.defaultLogicDeleteProvider = clazz;
 		} catch (ClassNotFoundException e) {
 			throw new OrmBuildingException("找不到LogicDeleteProvider实现类", e);
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new OrmBuildingException("LogicDeleteProvider实例化失败", e);
+		}
+	}
+	
+	public void setDefaultExampleQueryConverter(Class<? extends ExampleQueryConverter> converter) {
+		this.defaultExampleQueryConverter = converter;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void setDefaultExampleQueryConverter(String converterClassName) {
+		if(StringUtils.isNotBlank(converterClassName)) {
+			try {
+				Class clazz = Class.forName(converterClassName);
+				if(!ExampleQueryConverter.class.isAssignableFrom(clazz) || ExampleQueryConverter.class == clazz || Modifier.isAbstract(clazz.getModifiers())) {
+					throw new OrmBuildingException(String.format("%s不是ExampleQueryConverter的实现类", converterClassName));
+				}
+				this.defaultExampleQueryConverter =  (Class<? extends ExampleQueryConverter>) clazz;
+			} catch (ClassNotFoundException e) {
+				throw new OrmBuildingException("找不到ExampleQueryConverter实现类", e);
+			}
 		}
 	}
 }

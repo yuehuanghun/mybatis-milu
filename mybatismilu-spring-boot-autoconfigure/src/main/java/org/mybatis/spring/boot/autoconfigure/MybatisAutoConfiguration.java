@@ -76,6 +76,7 @@ import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.id.IdentifierGenerator;
 import com.yuehuanghun.mybatis.milu.metamodel.EntityBuilder;
 import com.yuehuanghun.mybatis.milu.spring.MapperScanner;
+import com.yuehuanghun.mybatis.milu.tool.ConfigPropertyKeys;
 
 /**
  * {@link EnableAutoConfiguration Auto-Configuration} for Mybatis. Contributes a {@link SqlSessionFactory} and a
@@ -150,21 +151,14 @@ public class MybatisAutoConfiguration implements InitializingBean, ApplicationCo
 			Set<Class<?>> mapperClassSet = scanner.scan(Mapper.class);
 			
 			MiluConfiguration configuration = this.properties.getConfiguration();
-		    if (configuration == null && !StringUtils.hasText(this.properties.getConfigLocation())) {
-		      configuration = new MiluConfiguration();
-		    }
-		    
-		    this.properties.setConfiguration(configuration); //如果自定义sqlSessionFactory，需要注入MybatisProperties取configuration
 			
-		    if(configuration != null) {
-		    	for(Class<?> mapperClass : mapperClassSet) {
-		    		if(!BaseMapper.class.isAssignableFrom(mapperClass)) {
-		    			continue;
-		    		}
-		    		Class<?> entityClass = getGenericEntity(mapperClass);
-		    		EntityBuilder.instance(entityClass, (MiluConfiguration)configuration).buildEntityDefaultResultMap(mapperClass); //创建实体要比sqlSessionFactory实例化要早，以提供实体默认的ResultMap，sqlSessionFactory实例化时会解析MapperXML
-		    	}
-		    }
+			for(Class<?> mapperClass : mapperClassSet) {
+	    		if(!BaseMapper.class.isAssignableFrom(mapperClass)) {
+	    			continue;
+	    		}
+	    		Class<?> entityClass = getGenericEntity(mapperClass);
+	    		EntityBuilder.instance(entityClass, (MiluConfiguration)configuration).buildEntityDefaultResultMap(mapperClass); //创建实体要比sqlSessionFactory实例化要早，以提供实体默认的ResultMap，sqlSessionFactory实例化时会解析MapperXML
+	    	}
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
@@ -187,19 +181,23 @@ public class MybatisAutoConfiguration implements InitializingBean, ApplicationCo
 	
 	//为了初始化更多数据，必须提前处理
 	private void parseConfiguration() {
-		if(this.properties.getConfiguration() == null && StringUtils.hasText(this.properties.getConfigLocation())) {
-			try {
-				Resource configResource = this.resourceLoader.getResource(this.properties.getConfigLocation());
-				XMLConfigBuilder xmlConfigBuilder = new XMLConfigBuilder(configResource.getInputStream(), null, null);
-				Configuration targetConfiguration = xmlConfigBuilder.getConfiguration();
-				xmlConfigBuilder.parse();
-				
-				MiluConfiguration configuration = new MiluConfiguration();
-				BeanUtils.copyProperties(targetConfiguration, configuration);
-				this.properties.setConfiguration(configuration);
-				this.properties.setConfigLocation(null); //清除
-			} catch (Exception e) {
-				throw new RuntimeException(e);
+		if(this.properties.getConfiguration() == null) {
+			if(StringUtils.hasText(this.properties.getConfigLocation())) {
+				try {
+					Resource configResource = this.resourceLoader.getResource(this.properties.getConfigLocation());
+					XMLConfigBuilder xmlConfigBuilder = new XMLConfigBuilder(configResource.getInputStream(), null, null);
+					Configuration targetConfiguration = xmlConfigBuilder.getConfiguration();
+					xmlConfigBuilder.parse();
+					
+					MiluConfiguration configuration = new MiluConfiguration();
+					BeanUtils.copyProperties(targetConfiguration, configuration);
+					this.properties.setConfiguration(configuration);
+					this.properties.setConfigLocation(null); //清除
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			} else {
+				this.properties.setConfiguration(new MiluConfiguration());
 			}
 		}
 	}
@@ -257,26 +255,28 @@ public class MybatisAutoConfiguration implements InitializingBean, ApplicationCo
     return factory.getObject();
   }
 
-  private void applyConfiguration(SqlSessionFactoryBean factory, List<IdentifierGenerator> identifierGeneratorList) {
-	  MiluConfiguration configuration = this.properties.getConfiguration();
-    if (configuration == null && !StringUtils.hasText(this.properties.getConfigLocation())) {
-      configuration = new MiluConfiguration();
-    }
-    if(identifierGeneratorList != null && configuration != null) {
-    	for(IdentifierGenerator identifierGenerator : identifierGeneratorList) {
-    		configuration.addIdentifierGenerator(identifierGenerator);
-    	}
-    }
-    if (configuration != null && !CollectionUtils.isEmpty(this.configurationCustomizers)) {
-      for (ConfigurationCustomizer customizer : this.configurationCustomizers) {
-        customizer.customize(configuration);
-      }
-    }
-    if(configuration != null && properties != null) {
-    	configuration.setIdentifierWrapQuote(properties.isIdentifierWrapQuote());
-    }
-    factory.setConfiguration(configuration);
-  }
+	private void applyConfiguration(SqlSessionFactoryBean factory, List<IdentifierGenerator> identifierGeneratorList) {
+		MiluConfiguration configuration = this.properties.getConfiguration();
+		if (identifierGeneratorList != null) {
+			for (IdentifierGenerator identifierGenerator : identifierGeneratorList) {
+				configuration.addIdentifierGenerator(identifierGenerator);
+			}
+		}
+		
+		if(properties.getConfigurationProperties() != null) {
+			properties.getConfiguration().setDefaultIdGenerator(properties.getConfigurationProperties().getProperty(ConfigPropertyKeys.ID_GENERATOR));
+			properties.getConfiguration().setDefaultLogicDeleteProvider(properties.getConfigurationProperties().getProperty(ConfigPropertyKeys.LOGIC_DELETE_PROVIDER));
+			properties.getConfiguration().setDefaultExampleQueryConverter(properties.getConfigurationProperties().getProperty(ConfigPropertyKeys.EXAMPLE_QUERY_CONVERTER));
+		}
+
+		if (!CollectionUtils.isEmpty(this.configurationCustomizers)) {
+			for (ConfigurationCustomizer customizer : this.configurationCustomizers) {
+				customizer.customize(configuration);
+			}
+		}
+		configuration.setIdentifierWrapQuote(properties.isIdentifierWrapQuote());
+		factory.setConfiguration(configuration);
+	}
 
   @Bean
   @ConditionalOnMissingBean

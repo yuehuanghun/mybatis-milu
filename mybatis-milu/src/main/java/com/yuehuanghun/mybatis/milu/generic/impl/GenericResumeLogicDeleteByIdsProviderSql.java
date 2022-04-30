@@ -30,6 +30,7 @@ import com.yuehuanghun.mybatis.milu.generic.GenericProviderSql;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
+import com.yuehuanghun.mybatis.milu.tool.logicdel.LogicDeleteProvider;
 
 public class GenericResumeLogicDeleteByIdsProviderSql implements GenericProviderSql {
 
@@ -49,7 +50,11 @@ public class GenericResumeLogicDeleteByIdsProviderSql implements GenericProvider
 			Object entityObj = entity.getJavaType().newInstance();
 			entity.getLogicDeleteAttributes().forEach(attr -> {
 				try {
-					attr.getSetter().invoke(entityObj, new Object[] {attr.getResumeValue()});
+					if(attr.getProvider() != null) {
+						attr.getSetter().invoke(entityObj, new Object[] {attr.getProvider().resumeValue(new LogicDeleteProvider.Context(entity.getJavaType(), attr.getJavaType(), attr.getName()))});
+					} else {
+						attr.getSetter().invoke(entityObj, new Object[] {attr.getResumeValue()});
+					}
 				} catch (IllegalAccessException | InvocationTargetException e) {
 					throw new SqlExpressionBuildingException(e);
 				}

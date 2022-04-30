@@ -68,11 +68,13 @@ import com.yuehuanghun.mybatis.milu.metamodel.ref.ManyToManyReference;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.ManyToManyReference.JoinTable;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.MappedReference;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.Reference;
+import com.yuehuanghun.mybatis.milu.tool.InstanceUtils;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 import com.yuehuanghun.mybatis.milu.tool.converter.Converter;
 import com.yuehuanghun.mybatis.milu.tool.converter.ConverterUtils;
 import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter;
 import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter.AutoConverter;
+import com.yuehuanghun.mybatis.milu.tool.logicdel.LogicDeleteProvider;
 
 /**
  * 实体类构建器
@@ -224,6 +226,11 @@ public class EntityBuilder {
 						metaClass = MetaClass.forClass(clazz, REFLECTOR_FACTORY);
 					}
 					logicDeleteAttribute.setSetter(metaClass.getSetInvoker(attr.getName()));
+					if(logicDelete.provider() != LogicDeleteProvider.AutoProvider.class && logicDelete.provider() != LogicDeleteProvider.NoneProvider.class) {
+						logicDeleteAttribute.setProvider(InstanceUtils.getSigleton(logicDelete.provider()));
+					} else if(configuration.getDefaultLogicDeleteProvider() != null && logicDelete.provider() != LogicDeleteProvider.NoneProvider.class) {
+						logicDeleteAttribute.setProvider(InstanceUtils.getSigleton(configuration.getDefaultLogicDeleteProvider()));
+					}
 				}
 			}
 

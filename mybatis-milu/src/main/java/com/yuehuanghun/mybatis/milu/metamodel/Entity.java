@@ -36,6 +36,7 @@ import com.yuehuanghun.mybatis.milu.data.Part;
 import com.yuehuanghun.mybatis.milu.filler.Filler;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.Reference;
 import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter;
+import com.yuehuanghun.mybatis.milu.tool.logicdel.LogicDeleteProvider;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -238,13 +239,15 @@ public class Entity {
 	@Data
 	@EqualsAndHashCode(callSuper = true)
 	public static class LogicDeleteAttribute extends Attribute {
-		/** 逻辑删除值 */
+		/** 逻辑删除值，provider不为null时有效 */
 		private Object deleteValue;
-		/** 逻辑正常值 */
+		/** 逻辑正常值，provider不为null时有效 */
 		private Object resumeValue;
 		/** 属性设置器 */
 		@Getter
 		private Invoker setter;
+		/** 逻辑删除值提供器 */
+		private LogicDeleteProvider provider;
 	}
 	
 	@Data
