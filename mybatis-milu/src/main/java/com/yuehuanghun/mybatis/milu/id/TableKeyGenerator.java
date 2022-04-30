@@ -45,6 +45,8 @@ public class TableKeyGenerator implements KeyGenerator {
 	
 	private KeyManager keyManager = new KeyManager();
 
+	private final ReentrantLock rLock = new ReentrantLock();
+	
 	public TableKeyGenerator(MappedStatement selectStatement, MappedStatement updateStatement, int capacity) {
 		this.selectStatement = selectStatement;
 		this.updateStatement = updateStatement;
@@ -75,7 +77,6 @@ public class TableKeyGenerator implements KeyGenerator {
 	private class KeyManager {
 		private AtomicLong curKey = new AtomicLong();
 		private volatile long maxKey = 0;
-		private ReentrantLock rLock = new ReentrantLock();
 		private static final long MAX_WAIT_TIMEOUT_MILLS = 30000L;
 		
 		public Long getNextKey() {
