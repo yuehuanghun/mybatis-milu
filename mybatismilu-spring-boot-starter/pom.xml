@@ -5,7 +5,7 @@
 
 	<groupId>com.yuehuanghun</groupId>
 	<artifactId>mybatismilu-spring-boot-starter</artifactId>
-	<version>1.5.0</version>
+	<version>1.6.0</version>
 	<packaging>jar</packaging>
 
 	<name>mybatismilu-spring-boot-starter</name>
@@ -20,7 +20,7 @@
 		<dependency>
 			<groupId>com.yuehuanghun</groupId>
 			<artifactId>mybatismilu-spring-boot-autoconfigure</artifactId>
-			<version>1.5.0</version>
+			<version>1.6.0</version>
 		</dependency>
         <dependency>
             <groupId>com.github.pagehelper</groupId>
