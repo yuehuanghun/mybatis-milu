@@ -677,4 +677,21 @@ public class StudentMapperTest {
 		student = studentMapper.findById(2L);
 		assertTrue(!student.get().getIsDeleted());
 	}
+	
+	@Test
+	public void testMultiSortOrder() {
+		List<Student> list = studentMapper.findByLambdaCriteria(p -> p.orderDesc(Student::getAge, Student::getClassId));
+		System.out.println(JSON.toJSONString(list));
+		list = studentMapper.findByLambdaCriteria(p -> p.orderDesc(Student::getClassId, Student::getAge));
+		System.out.println(JSON.toJSONString(list));
+		
+		list = studentMapper.findByLambdaCriteria(p -> p.orderAsc(Student::getClassId, Student::getAge));
+		System.out.println(JSON.toJSONString(list));
+		
+		list = studentMapper.findByLambdaCriteria(p -> p.orderAsc(Student::getClassId, Student::getAge, Student::getName));
+		System.out.println(JSON.toJSONString(list));
+		
+		Sort sort = Sort.asc(Student::getAge).andDesc(Student::getClassId);
+		list = studentMapper.findAllAndSort(sort);
+	}
 }

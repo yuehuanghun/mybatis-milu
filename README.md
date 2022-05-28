@@ -27,7 +27,7 @@ jdk >= 1.8
 <dependency>
    <groupId>com.yuehuanghun</groupId>
    <artifactId>mybatismilu-spring-boot-starter</artifactId>
-   <version>1.6.0</version> <!-- 获取最新版本 -->
+   <version>1.6.1</version> <!-- 获取最新版本 -->
 </dependency>
 ```
 
