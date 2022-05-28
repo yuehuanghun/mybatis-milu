@@ -16,13 +16,13 @@
 
 package com.yuehuanghun.mybatis.milu.criteria;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
-public class SortImpl extends HashSet<com.yuehuanghun.mybatis.milu.criteria.Sort.Order> implements Sort {
+public class SortImpl extends LinkedHashSet<com.yuehuanghun.mybatis.milu.criteria.Sort.Order> implements Sort {
 
 	private static final long serialVersionUID = 1L;
 

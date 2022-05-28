@@ -209,10 +209,6 @@ public class EntityBuilder {
 				if(options.jdbcType().length > 0) {
 					attr.setJdbcType(options.jdbcType()[0]);
 				}
-				
-				if(clazz.getName() == "com.yuehuanghun.mybatismilu.test.domain.entity.Menu") {
-					System.out.println("1");
-				}
 			}		
 
 			LogicDelete logicDelete = getLogicDelete(field);
