@@ -18,7 +18,6 @@ package com.yuehuanghun.mybatis.milu.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -55,7 +54,7 @@ public class Sort implements Streamable<com.yuehuanghun.mybatis.milu.data.Sort.O
 
 		Assert.notNull(orders, "Orders不可为 null!");
 
-		this.orders = Collections.unmodifiableList(orders);
+		this.orders = orders;
 	}
 
 	private Sort(String... properties) {
@@ -135,9 +134,29 @@ public class Sort implements Streamable<com.yuehuanghun.mybatis.milu.data.Sort.O
 		return by(direction, properties);
 	}
 	
+	public Sort and(Direction direction, String... properties) {
+		for(String prop : properties) {
+			orders.add(new Order(direction, prop));
+		}
+		return this;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T, M> Sort and(Direction direction, SerializableFunction<T, M>... propertyGetterFns) {
+		for(SerializableFunction<T, M> fn : propertyGetterFns) {
+			orders.add(new Order(direction, LambdaReflections.fnToFieldName(fn)));
+		}
+		return this;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static <T, M> Sort desc(SerializableFunction<T, M>... propertyGetterFns) {
 		return by(Direction.DESC, propertyGetterFns);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T, M> Sort andDesc(SerializableFunction<T, M>... propertyGetterFns) {
+		return and(Direction.DESC, propertyGetterFns);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -145,12 +164,25 @@ public class Sort implements Streamable<com.yuehuanghun.mybatis.milu.data.Sort.O
 		return by(Direction.ASC, propertyGetterFns);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public <T, M> Sort andAsc(SerializableFunction<T, M>... propertyGetterFns) {
+		return and(Direction.ASC, propertyGetterFns);
+	}
+	
 	public static Sort desc(String... properties) {
 		return by(Direction.DESC, properties);
 	}
 	
+	public Sort andDesc(String... properties) {
+		return and(Direction.DESC, properties);
+	}
+	
 	public static Sort asc(String... properties) {
 		return by(Direction.ASC, properties);
+	}
+	
+	public Sort andAsc(String... properties) {
+		return and(Direction.ASC, properties);
 	}
 
 	public static Sort unsorted() {
@@ -174,16 +206,12 @@ public class Sort implements Streamable<com.yuehuanghun.mybatis.milu.data.Sort.O
 	}
 
 	public Sort and(Sort sort) {
-
 		Assert.notNull(sort, "Sort must not be null!");
-
-		ArrayList<Order> these = new ArrayList<>(this.orders);
-
 		for (Order order : sort) {
-			these.add(order);
+			orders.add(order);
 		}
 
-		return Sort.by(these);
+		return this;
 	}
 
 	public Order getOrderFor(String property) {
