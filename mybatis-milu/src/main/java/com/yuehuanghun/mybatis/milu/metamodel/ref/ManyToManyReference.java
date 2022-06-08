@@ -15,36 +15,35 @@
  */
 package com.yuehuanghun.mybatis.milu.metamodel.ref;
 
-import lombok.AllArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-public class ManyToManyReference extends MappedReference {
-	@Getter
-	@Setter
-	private JoinTable joinTable;
+@Data
+public class ManyToManyReference implements Reference {
 
-	public ManyToManyReference(String columnName, String mappedBy, String inverseTableName, String inverseColumnName) {
-		super(columnName, mappedBy, inverseTableName, inverseColumnName);
+	private String attributeName;
+	
+	private String joinTableName;
+
+	private String inverseTableName;
+	
+	private List<JoinCondition> joinConditionList = new ArrayList<>(3);
+	
+	private List<JoinCondition> inverseJoinConditionList = new ArrayList<>(3);
+	
+	public ManyToManyReference(String attributeName, String joinTableName, String inverseTableName) {
+		this.attributeName = attributeName;
+		this.joinTableName = joinTableName;
+		this.inverseTableName = inverseTableName;
 	}
 
-	@Data
-	@AllArgsConstructor
-	@NoArgsConstructor
-	public static class JoinTable {
-		/**
-		 * 中间表
-		 */
-		private String tableName;
-		/**
-		 * 映射主表的外键列
-		 */
-		private String columnName;
-		/**
-		 * 映射关联表的外键列
-		 */
-		private String inverseColumnName;
+	public void addJoinCondition(JoinCondition condition) {
+		joinConditionList.add(condition);
+	}
+	
+	public void addInverseJoinCondition(JoinCondition condition) {
+		inverseJoinConditionList.add(condition);
 	}
 }

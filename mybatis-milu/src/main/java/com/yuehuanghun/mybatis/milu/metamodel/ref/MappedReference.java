@@ -15,24 +15,31 @@
  */
 package com.yuehuanghun.mybatis.milu.metamodel.ref;
 
-import lombok.AllArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class MappedReference implements Reference {
-	/**
-	 * 本表列名
-	 */
-	private String columnName;
+	
+	private String inverseTableName;
 	
 	private String attributeName;
-	/**
-	 * 关联表名
-	 */
-	private String inverseTableName;
-	/**
-	 * 关联表列名
-	 */
-	private String inverseColumnName;
+	
+	private List<JoinCondition> joinConditionList = new ArrayList<>(3);
+
+	public MappedReference(String attributeName, String inverseTableName) {
+		this.inverseTableName = inverseTableName;
+		this.attributeName = attributeName;
+	}
+	
+	public MappedReference(String attributeName, String inverseTableName, JoinCondition condition) {
+		this(attributeName, inverseTableName);
+		joinConditionList.add(condition);
+	}
+	
+	public void addJoinCondition(JoinCondition condition) {
+		joinConditionList.add(condition);
+	}
 }

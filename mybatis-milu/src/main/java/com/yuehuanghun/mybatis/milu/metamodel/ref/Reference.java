@@ -15,13 +15,28 @@
  */
 package com.yuehuanghun.mybatis.milu.metamodel.ref;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 public interface Reference {
+
+	/**
+	 * 本实体属性名
+	 */
+	String getAttributeName();
 	
-	public String getColumnName();
+	String getInverseTableName();
 	
-	public String getAttributeName();
-	
-	public String getInverseTableName();
-	
-	public String getInverseColumnName();
+	@Data
+	@AllArgsConstructor
+	public class JoinCondition {
+		/**
+		 * 本实体列名
+		 */
+		private String columnName;
+		/**
+		 * 关联实体列名
+		 */
+		private String inverseColumnName;
+	}
 }

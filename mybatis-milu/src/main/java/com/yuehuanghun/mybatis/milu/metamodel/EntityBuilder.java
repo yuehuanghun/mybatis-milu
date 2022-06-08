@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -33,6 +34,7 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -42,6 +44,8 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaClass;
@@ -65,9 +69,9 @@ import com.yuehuanghun.mybatis.milu.metamodel.Entity.PluralAttribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.RangeCondition;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.VersionAttribute;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.ManyToManyReference;
-import com.yuehuanghun.mybatis.milu.metamodel.ref.ManyToManyReference.JoinTable;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.MappedReference;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.Reference;
+import com.yuehuanghun.mybatis.milu.metamodel.ref.Reference.JoinCondition;
 import com.yuehuanghun.mybatis.milu.tool.InstanceUtils;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter;
@@ -80,6 +84,8 @@ import com.yuehuanghun.mybatis.milu.tool.logicdel.LogicDeleteProvider;
  *
  */
 public class EntityBuilder {
+	private static Log log = LogFactory.getLog(EntityBuilder.class);
+	
 	private final MiluConfiguration configuration;
 	private final Class<?> entityClass;
 	
@@ -366,9 +372,7 @@ public class EntityBuilder {
 		
 		Entity inverseEntity = forClass(refEntityClass);
 		Field field = attr.getField();
-		
-		IdAttribute idAttr = ownerEntity.getId();
-		
+
 		if(field.isAnnotationPresent(OneToOne.class) || field.isAnnotationPresent(OneToMany.class)) {
 			String mappedBy = field.isAnnotationPresent(OneToOne.class) ? field.getAnnotation(OneToOne.class).mappedBy() : field.getAnnotation(OneToMany.class).mappedBy();
 			if(StringUtils.isNotBlank(mappedBy)) {
@@ -376,65 +380,42 @@ public class EntityBuilder {
 				if(inverseAttr == null) {
 					throw new SqlExpressionBuildingException(String.format("类%s中未找到属性%s", refEntityClass.getName(), mappedBy));
 				}
-				if(inverseAttr.getField().isAnnotationPresent(JoinColumn.class)) {
-					JoinColumn joinColumn = inverseAttr.getField().getAnnotation(JoinColumn.class);
-					String name = StringUtils.isNotBlank(joinColumn.name()) ? joinColumn.name() : inverseAttr.getColumnName(); //处理默认值，下同
-					String referencedColumnName = StringUtils.isNotBlank(joinColumn.referencedColumnName()) ? joinColumn.referencedColumnName() : idAttr != null ? idAttr.getColumnName() : name;
-					return new MappedReference(referencedColumnName, field.getName(), inverseEntity.getTableName(), name); //对方的join与本方join字段方向相反
+				
+				List<JoinColumn> joinColumns = getJoinColumns(inverseAttr.getField());
+				if(!joinColumns.isEmpty()) {
+					return buildMappedReference(attr, inverseEntity, joinColumns, inverseAttr);
 				}
+//				if(inverseAttr.getField().isAnnotationPresent(JoinColumn.class)) {
+//					JoinColumn joinColumn = inverseAttr.getField().getAnnotation(JoinColumn.class);
+//					String name = StringUtils.isNotBlank(joinColumn.name()) ? joinColumn.name() : inverseAttr.getColumnName(); //处理默认值，下同
+//					String referencedColumnName = StringUtils.isNotBlank(joinColumn.referencedColumnName()) ? joinColumn.referencedColumnName() : idAttr != null ? idAttr.getColumnName() : name;
+//					return new MappedReference(referencedColumnName, field.getName(), inverseEntity.getTableName(), name); //对方的join与本方join字段方向相反
+//				}
 			} 
 			
 			//通过mappedBy无法获得关联时，即单向关联
-			String name = null;
-			String referencedColumnName = null;
-			
-			JoinColumn joinColumn = field.getAnnotation(JoinColumn.class);
-			if(joinColumn != null) {
-				name = joinColumn.name();
-				referencedColumnName = joinColumn.referencedColumnName();
+			List<JoinColumn> joinColumns = getJoinColumns(field);
+			if(!joinColumns.isEmpty()) {
+				return buildMappedReference(attr, inverseEntity, joinColumns, null);
 			}
-			if(StringUtils.isBlank(name)) {
-				name = attr.getColumnName();
-			}
-			if(StringUtils.isBlank(referencedColumnName)) { //一对多的情况，应当不能为空
-				referencedColumnName = name;
-			}
-			String tableName = inverseEntity.getTableName();
-
-			return new MappedReference(name, field.getName(), tableName, referencedColumnName); 
+			log.warn(String.format("类%s的属性%s中未找到JoinColumn声明", ownerEntity.getName(), attr.getName()));
+			return null; 
 			
 		} else if(field.isAnnotationPresent(ManyToOne.class)) {
 			
-			String name = null;
-			String referencedColumnName = null;
+			List<JoinColumn> joinColumns = getJoinColumns(field);
+			if(!joinColumns.isEmpty()) {
+				return buildMappedReference(attr, inverseEntity, joinColumns, null);
+			}
 			
-			JoinColumn joinColumn = field.getAnnotation(JoinColumn.class);
-			if(joinColumn != null) {
-				name = joinColumn.name();
-				referencedColumnName = joinColumn.referencedColumnName();
-			}
-			if(StringUtils.isBlank(name)) {
-				name = attr.getColumnName();
-			}
-			if(StringUtils.isBlank(referencedColumnName)) { //多对一时，外键默认值应为对方主键
-				referencedColumnName = idAttr != null ? idAttr.getColumnName() : name;
-			}
-			String tableName = inverseEntity.getTableName();
-
-			return new MappedReference(name, field.getName(), tableName, referencedColumnName); 
+			String columnName = attr.getColumnName();
+			return new MappedReference(attr.getName(), inverseEntity.getTableName(), new JoinCondition(columnName, columnName)); 
 			 
 		} else if(field.isAnnotationPresent(ManyToMany.class)) {
 			ManyToMany refAnnon = field.getAnnotation(ManyToMany.class);
 			String mappedBy = refAnnon.mappedBy();
-			
-			String columnName = null ; //关联主表（当前实体）的列名
-			String refColumnName = null; //关联主表的中间表的列名
-			String inverseColumnName = null; //关联对方表的列名
-			String inverseRefColumnName = null; //关联从表的中间表的列名
-			String inverseRefTableName = inverseEntity.getTableName();
 			String joinTableName = null;
 			
-			boolean mapped = false;
 			if(StringUtils.isNotBlank(mappedBy)) {
 				Attribute inverseAttr = inverseEntity.getAttribute(mappedBy);
 				if(inverseAttr == null) {
@@ -446,89 +427,93 @@ public class EntityBuilder {
 					joinTableName = joinTableAnno.name();
 					
 					JoinColumn[] joinColumns = joinTableAnno.joinColumns();
-					if(joinColumns.length > 1) {
-						throw new SqlExpressionBuildingException(String.format("@JoinTable中joinColumns期望0个或1个@JoinColumn值，但存在多个。类%s的属性%s。", refEntityClass.getName(), inverseAttr.getName()));
-					}
-					if(joinColumns.length > 0) { //对方的正方为本文的反方
-						inverseColumnName = joinColumns[0].referencedColumnName();
-						inverseRefColumnName = joinColumns[0].name();
+					if(joinColumns.length == 0) {
+						throw new SqlExpressionBuildingException(String.format("@JoinTable中joinColumns期望至少一个@JoinColumn值。类%s的属性%s。", refEntityClass.getName(), inverseAttr.getName()));
 					}
 					JoinColumn[] inverseJoinColumns = joinTableAnno.inverseJoinColumns();
-					if(inverseJoinColumns.length > 1) {
-						throw new SqlExpressionBuildingException(String.format("@JoinTable中inverseJoinColumns期望0个或1个@JoinColumn值，但存在多个。类%s的属性%s。", refEntityClass.getName(), inverseAttr.getName()));
+					if(inverseJoinColumns.length == 0) {
+						throw new SqlExpressionBuildingException(String.format("@JoinTable中inverseJoinColumns期望至少一个@JoinColumn值。类%s的属性%s。", refEntityClass.getName(), inverseAttr.getName()));
 					}
-					if(inverseJoinColumns.length > 0) { //对方的反方为本文的正方
-						columnName = inverseJoinColumns[0].referencedColumnName();
-						refColumnName = inverseJoinColumns[0].name();
-					}
-					mapped = true;
+					return buildManyToManyReference(attr, joinTableName, inverseEntity, joinColumns, inverseJoinColumns, inverseAttr);
 				}
 			}
 			
-			if(!mapped && field.isAnnotationPresent(javax.persistence.JoinTable.class)) {
+			if(field.isAnnotationPresent(javax.persistence.JoinTable.class)) {
 				javax.persistence.JoinTable joinTableAnno = field.getAnnotation(javax.persistence.JoinTable.class);
 				joinTableName = joinTableAnno.name();
 				
 				JoinColumn[] joinColumns = joinTableAnno.joinColumns();
-				if(joinColumns.length > 1) {
-					throw new SqlExpressionBuildingException(String.format("@JoinTable中joinColumns期望0个或1个@JoinColumn值，但存在多个。类%s的属性%s。", refEntityClass.getName(), field.getName()));
-				}
-				if(joinColumns.length > 0) {
-					columnName = joinColumns[0].referencedColumnName();
-					refColumnName = joinColumns[0].name();
+				if(joinColumns.length == 0) {
+					throw new SqlExpressionBuildingException(String.format("@JoinTable中joinColumns期望至少一个@JoinColumn值。类%s的属性%s。", refEntityClass.getName(), field.getName()));
 				}
 				JoinColumn[] inverseJoinColumns = joinTableAnno.inverseJoinColumns();
-				if(inverseJoinColumns.length > 1) {
-					throw new SqlExpressionBuildingException(String.format("@JoinTable中inverseJoinColumns期望0个或1个@JoinColumn值，但存在多个。类%s的属性%s。", refEntityClass.getName(), field.getName()));
+				if(inverseJoinColumns.length == 0) {
+					throw new SqlExpressionBuildingException(String.format("@JoinTable中inverseJoinColumns期望至少一个@JoinColumn值。类%s的属性%s。", refEntityClass.getName(), field.getName()));
 				}
-				if(inverseJoinColumns.length > 0) {
-					inverseColumnName = inverseJoinColumns[0].referencedColumnName();
-					inverseRefColumnName = inverseJoinColumns[0].name();
-				}
-			}
-
-			if(StringUtils.isBlank(joinTableName)) {
-				joinTableName = defaultJoinTableName(ownerEntity, inverseEntity); //由主表与关联表名组合成中间关系表的表名
+				
+				return buildManyToManyReference(attr, joinTableName, inverseEntity, joinColumns, inverseJoinColumns, null);
 			}
 			
-			if(StringUtils.isBlank(columnName)) {
-				if(idAttr == null) { //无法创建
-					return null;
-				}
-				columnName = idAttr.getColumnName(); //使用主表主键列名
-			}
-			
-			if(StringUtils.isBlank(inverseColumnName)) {
-				IdAttribute inverseIdAttr = inverseEntity.getId();
-				if(inverseIdAttr == null) {
-					return null;
-				}
-				inverseColumnName = inverseIdAttr.getColumnName();
-			}
-			
-			if(StringUtils.isBlank(refColumnName)) {
-				if(idAttr == null) { //无法创建
-					return null;
-				}
-				refColumnName = ownerEntity.getTableName() + "_" + idAttr.getColumnName(); //默认值=表名+主键名
-			}
-			
-			if(StringUtils.isBlank(inverseRefColumnName)) {
-				IdAttribute inverseIdAttr = inverseEntity.getId();
-				if(inverseIdAttr == null) {
-					return null;
-				}
-				inverseRefColumnName = inverseEntity.getTableName() + "_" + inverseIdAttr.getColumnName(); //默认值=表名+主键名
-			}
-			
-			ManyToManyReference manyToManyReference =  new ManyToManyReference(columnName, field.getName(), inverseRefTableName, inverseColumnName);
-			JoinTable joinTable = new JoinTable(joinTableName, refColumnName, inverseRefColumnName);
-			manyToManyReference.setJoinTable(joinTable);
-			
-			return manyToManyReference; 
+			log.warn(String.format("类%s的属性%s中未找到JoinTable声明", ownerEntity.getName(), attr.getName()));
 		}
 		
 		return null;
+	}
+	
+	private MappedReference buildMappedReference(Attribute attr, Entity inverseEntity, List<JoinColumn> joinColumns, Attribute inverseMappedByAttr) {
+		MappedReference ref = new MappedReference(attr.getName(), inverseEntity.getTableName());
+		for(JoinColumn joinColumn : joinColumns) {
+			if(inverseMappedByAttr != null) {
+				String name = StringUtils.defaultIfBlank(joinColumn.name(), inverseMappedByAttr.getColumnName());
+				String inverseName = StringUtils.defaultIfBlank(joinColumn.referencedColumnName(), name);
+				ref.addJoinCondition(new JoinCondition(inverseName, name));
+			} else {
+				String name = StringUtils.defaultIfBlank(joinColumn.name(), attr.getColumnName());
+				String inverseName = StringUtils.defaultIfBlank(joinColumn.referencedColumnName(), name);
+				ref.addJoinCondition(new JoinCondition(name, inverseName));
+			}
+		}
+		return ref;
+	}
+	
+	private ManyToManyReference buildManyToManyReference(Attribute attr, String joinTableName, Entity inverseEntity, JoinColumn[] joinColumns, JoinColumn[] inverseJoinColumns, Attribute inverseMappedByAttr) {
+		ManyToManyReference ref = new ManyToManyReference(attr.getName(), joinTableName, inverseEntity.getTableName());
+		for(JoinColumn joinColumn : joinColumns) {
+			if(inverseMappedByAttr != null) {
+				String name = StringUtils.defaultIfBlank(joinColumn.name(), inverseMappedByAttr.getColumnName());
+				String inverseName = StringUtils.defaultIfBlank(joinColumn.referencedColumnName(), name);
+				ref.addInverseJoinCondition(new JoinCondition(name, inverseName));
+			} else {
+				String name = StringUtils.defaultIfBlank(joinColumn.name(), attr.getColumnName());
+				String inverseName = StringUtils.defaultIfBlank(joinColumn.referencedColumnName(), name);
+				ref.addJoinCondition(new JoinCondition(name, inverseName));
+			}
+		}
+		
+		for(JoinColumn joinColumn : inverseJoinColumns) {
+			if(inverseMappedByAttr != null) {
+				String name = StringUtils.defaultIfBlank(joinColumn.name(), inverseMappedByAttr.getColumnName());
+				String inverseName = StringUtils.defaultIfBlank(joinColumn.referencedColumnName(), name);
+				ref.addJoinCondition(new JoinCondition(name, inverseName));
+			} else {
+				String name = StringUtils.defaultIfBlank(joinColumn.name(), attr.getColumnName());
+				String inverseName = StringUtils.defaultIfBlank(joinColumn.referencedColumnName(), name);
+				ref.addInverseJoinCondition(new JoinCondition(name, inverseName));
+			}
+		}
+		return ref;
+	}
+	
+	private List<JoinColumn> getJoinColumns(Field field){
+		JoinColumn joinColumn = field.getAnnotation(JoinColumn.class);
+		if(joinColumn != null) {
+			return Arrays.asList(joinColumn);
+		}
+		JoinColumns joinColumns = field.getAnnotation(JoinColumns.class);
+		if(joinColumns != null) {
+			return Arrays.asList(joinColumns.value());
+		}
+		return Collections.emptyList();
 	}
 	
 	private static Annotation getReferenceAnnotation(Field field) {
@@ -555,10 +540,6 @@ public class EntityBuilder {
 				| SecurityException e) {
 			throw new SqlExpressionBuildingException(e);
 		}
-	}
-	
-	private static String defaultJoinTableName(Entity ownerEntity, Entity refEntity) {
-		return refEntity.getTableName() + "_" + ownerEntity.getTableName();
 	}
 	
 	public void buildEntityDefaultResultMap(Class<?> mapperClass) {		

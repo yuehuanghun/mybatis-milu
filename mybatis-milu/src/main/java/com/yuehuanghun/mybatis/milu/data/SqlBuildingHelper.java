@@ -35,7 +35,7 @@ import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.PluralAttribute;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.ManyToManyReference;
-import com.yuehuanghun.mybatis.milu.metamodel.ref.ManyToManyReference.JoinTable;
+import com.yuehuanghun.mybatis.milu.metamodel.ref.MappedReference;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.Reference;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
@@ -99,40 +99,64 @@ public class SqlBuildingHelper {
 						if(reference instanceof ManyToManyReference) {
 							joinExpressMap.computeIfAbsent(reference.getInverseTableName(), key -> {
 								ManyToManyReference m2mRef = (ManyToManyReference) reference;
-								JoinTable joinTable = m2mRef.getJoinTable();
 								
 								StringBuilder joinExpressBuilder = new StringBuilder();
-								String joinTableAlias = tableAliasDispacher.dispach(Segment.TABLE_ + joinTable.getTableName());
+								String joinTableAlias = tableAliasDispacher.dispach(Segment.TABLE_ + m2mRef.getJoinTableName());
 								
 								joinExpressBuilder.append(joinExpression);
-								appendIdentifier(joinExpressBuilder, joinTable.getTableName(), configuration);
+								appendIdentifier(joinExpressBuilder, m2mRef.getJoinTableName(), configuration);
 								joinExpressBuilder.append(Segment.SPACE).append(joinTableAlias)
-								    .append(Segment.ON_BRACKET).append(mainTableAlias).append(Segment.DOT);
-								appendIdentifier(joinExpressBuilder, reference.getColumnName(), configuration);
-								joinExpressBuilder.append(Segment.EQUALS_B).append(joinTableAlias).append(Segment.DOT);
-								appendIdentifier(joinExpressBuilder, joinTable.getColumnName(), configuration);
+								    .append(Segment.ON_BRACKET);
+
+								//多个join条件
+								String joinCond = m2mRef.getJoinConditionList().stream().map(cond -> {									
+									StringBuilder temp =  new StringBuilder(joinTableAlias).append(Segment.DOT);
+									appendIdentifier(temp, cond.getColumnName(), configuration);
+									temp.append(Segment.EQUALS_B).append(mainTableAlias).append(Segment.DOT);
+									appendIdentifier(temp, cond.getInverseColumnName(), configuration);
+									return temp.toString();
+								}).collect(Collectors.joining(Segment.AND_B));
+								
+								joinExpressBuilder.append(joinCond);
 								joinExpressBuilder.append(Segment.RIGHT_BRACKET);
 								
 								joinExpressBuilder.append(joinExpression);
 								appendIdentifier(joinExpressBuilder, reference.getInverseTableName(), configuration);
 								joinExpressBuilder.append(Segment.SPACE).append(inverseTableAlias)
-							        .append(Segment.ON_BRACKET).append(joinTableAlias).append(Segment.DOT);
-								appendIdentifier(joinExpressBuilder, joinTable.getInverseColumnName(), configuration);
-								joinExpressBuilder.append(Segment.EQUALS_B).append(inverseTableAlias).append(Segment.DOT);
-								appendIdentifier(joinExpressBuilder, reference.getInverseColumnName(), configuration);
+							        .append(Segment.ON_BRACKET);
+												
+								//多个join条件
+								joinCond = m2mRef.getInverseJoinConditionList().stream().map(cond -> {									
+									StringBuilder temp =  new StringBuilder(joinTableAlias).append(Segment.DOT);
+									appendIdentifier(temp, cond.getColumnName(), configuration);
+									temp.append(Segment.EQUALS_B).append(inverseTableAlias).append(Segment.DOT);
+									appendIdentifier(temp, cond.getInverseColumnName(), configuration);
+									return temp.toString();
+								}).collect(Collectors.joining(Segment.AND_B));
+								
+								joinExpressBuilder.append(joinCond);
 								joinExpressBuilder.append(Segment.RIGHT_BRACKET);
 								return joinExpressBuilder.toString();
 							});
 						} else {
 							joinExpressMap.computeIfAbsent(reference.getInverseTableName(), key -> {
+								MappedReference ref = (MappedReference) reference;
 								StringBuilder joinExpressBuilder = new StringBuilder();
 								joinExpressBuilder.append(joinExpression);
 								appendIdentifier(joinExpressBuilder, reference.getInverseTableName(), configuration);
 								joinExpressBuilder.append(Segment.SPACE).append(inverseTableAlias)
-								    .append(Segment.ON_BRACKET).append(mainTableAlias).append(Segment.DOT);
-								appendIdentifier(joinExpressBuilder, reference.getColumnName(), configuration);
-								joinExpressBuilder.append(Segment.EQUALS_B).append(inverseTableAlias).append(Segment.DOT);
-								appendIdentifier(joinExpressBuilder, reference.getInverseColumnName(), configuration);
+								    .append(Segment.ON_BRACKET);
+							
+								//多个join条件
+								String joinCond = ref.getJoinConditionList().stream().map(cond -> {									
+									StringBuilder temp =  new StringBuilder(mainTableAlias).append(Segment.DOT);
+									appendIdentifier(temp, cond.getColumnName(), configuration);
+									temp.append(Segment.EQUALS_B).append(inverseTableAlias).append(Segment.DOT);
+									appendIdentifier(temp, cond.getInverseColumnName(), configuration);
+									return temp.toString();
+								}).collect(Collectors.joining(Segment.AND_B));
+								
+								joinExpressBuilder.append(joinCond);
 								joinExpressBuilder.append(Segment.RIGHT_BRACKET);
 								return joinExpressBuilder.toString();
 							});
