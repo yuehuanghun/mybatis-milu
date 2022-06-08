@@ -113,3 +113,46 @@ INSERT INTO `teacher` (`id`, `add_time`, `age`, `name`,`revision`) VALUES
 	(1, '2017-08-21 09:03:28', '30', '黄老师',0),
 	(2, '2017-08-21 16:49:56', '28', '何老师',0);
 
+	
+CREATE TABLE IF NOT EXISTS `attachment` (
+  `id` bigint NOT NULL,
+  `file_name` varchar(50) NOT NULL DEFAULT '',
+  `file_path` varchar(500) NOT NULL DEFAULT '',
+  `create_time` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='附件表';
+
+INSERT INTO `attachment` (`id`, `file_name`, `file_path`, `create_time`) VALUES
+	(1, '一年级数学上册', '/dd/dd.pdf', '2022-06-07 22:50:48'),
+	(2, '一年级语文上册', '/ee/ee.pdf', '2022-06-07 22:51:27'),
+	(3, '二年级数学上册', '/ff/ff.pdf', '2022-06-07 23:08:39'),
+	(4, '二年级思想与政治上册', '/gg/gg.pdf', '2022-06-07 23:09:17');
+
+CREATE TABLE IF NOT EXISTS `attachment_ref` (
+  `id` bigint NOT NULL,
+  `attachment_id` bigint NOT NULL,
+  `attachment_type` varchar(10) NOT NULL DEFAULT '',
+  `ref_id` bigint NOT NULL,
+  `create_time` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='附件引用';
+
+INSERT INTO `attachment_ref` (`id`, `attachment_id`, `attachment_type`, `ref_id`, `create_time`) VALUES
+	(1, 1, '1', 1, '2022-06-07 22:52:17'),
+	(2, 2, '1', 1, '2022-06-07 22:52:29'),
+	(3, 3, '1', 2, '2022-06-07 23:10:05'),
+	(4, 4, '1', 2, '2022-06-07 23:10:14');
+
+CREATE TABLE IF NOT EXISTS `teaching_plan` (
+  `id` bigint NOT NULL,
+  `plan_name` varchar(50) NOT NULL DEFAULT '',
+  `plan_descp` varchar(100) DEFAULT '',
+  `attachment_type` varchar(10) NOT NULL DEFAULT '',
+  `create_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='教案';
+
+INSERT INTO `teaching_plan` (`id`, `plan_name`, `plan_descp`, `attachment_type`, `create_time`) VALUES
+	(1, '一年级教案集', '这是描述', '1', '2022-06-07 22:51:59'),
+	(2, '二年级教案集', '这是描述', '1', '2022-06-07 23:09:46');
+
