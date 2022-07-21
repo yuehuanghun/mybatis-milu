@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -169,5 +170,26 @@ public class TeacherMapperTest {
 		
 		Optional<Teacher> techer = teacherMapper.findById(2L);
 		assertEquals(techer.get().getIsDeleted(), "NO");
+	}
+	
+	@Test
+	@Transactional
+	public void testBatchInsert() {
+		List<Teacher> teachers = new ArrayList<>();
+		
+		for(int i = 0; i < 5; i++) {
+			Teacher teacher = new Teacher();
+			
+			teacher.setAge(22);
+			teacher.setIsDeleted("N");
+			teacher.setRevision(0);
+			teacher.setName("张三");
+			
+			teachers.add(teacher);
+		}
+		
+		teacherMapper.batchInsert(teachers);
+		System.out.println(JSON.toJSONString(teachers));
+		teachers.forEach(teacher -> assertNotNull(teacher.getId()));
 	}
 }
