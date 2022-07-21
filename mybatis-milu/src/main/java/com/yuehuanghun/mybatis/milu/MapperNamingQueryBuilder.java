@@ -663,7 +663,7 @@ public class MapperNamingQueryBuilder {
 		
 		SqlSource sqlSource = new GenericProviderSqlSource(configuration, genericProviderSql, type, method, keyGenerator, entity);
 		
-		if("batchInsert".equals(methodName)) { //特殊处理
+		if("batchInsert".equals(methodName) && Jdbc3KeyGenerator.INSTANCE != keyGenerator) { //特殊处理
 			keyGenerator = NoKeyGenerator.INSTANCE;
 		}
 		
