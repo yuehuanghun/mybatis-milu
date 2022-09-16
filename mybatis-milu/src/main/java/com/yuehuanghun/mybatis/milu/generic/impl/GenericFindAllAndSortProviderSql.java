@@ -64,7 +64,7 @@ public class GenericFindAllAndSortProviderSql extends GenericCachingProviderSql 
 			sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context));
 		}
 		
-		sqlBuilder.append(Segment.FROM_B).append(wrapIdentifier(entity.getTableName(), context));
+		sqlBuilder.append(Segment.FROM_B).append(wrapTableName(entity, context));
 		
 		Sort sort = (Sort)((Map<String, Object>)params).get(Segment.SORT);
 		if(sort != null) {

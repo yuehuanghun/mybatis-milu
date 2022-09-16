@@ -46,7 +46,7 @@ public class GenericFindAllProviderSql extends GenericCachingProviderSql {
 			}
 			sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context));
 		}
-		sqlBuilder.append(Segment.FROM_B).append(wrapIdentifier(entity.getTableName(), context));
+		sqlBuilder.append(Segment.FROM_B).append(wrapTableName(entity, context));
 		
 		return sqlBuilder.toString();
 	}

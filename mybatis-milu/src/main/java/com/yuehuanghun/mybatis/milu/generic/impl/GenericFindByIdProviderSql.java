@@ -54,7 +54,7 @@ public class GenericFindByIdProviderSql extends GenericCachingProviderSql {
 		}
 		
 		
-		sqlBuilder.append(Segment.FROM_B).append(wrapIdentifier(entity.getTableName(), context));
+		sqlBuilder.append(Segment.FROM_B).append(wrapTableName(entity, context));
 		sqlBuilder.append(Segment.WHERE_B).append(wrapIdentifier(idAttr.getColumnName(), context)).append(" = #{id}");
 		
 		return sqlBuilder.toString();

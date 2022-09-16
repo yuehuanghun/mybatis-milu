@@ -40,7 +40,7 @@ public class GenericUpdateByIdProviderSql extends GenericCachingProviderSql {
 		Collection<Attribute> attributes = entity.getAttributes();
 		StringBuilder sqlBuilder = new StringBuilder(256).append(Segment.SCRIPT_LABEL);
 		
-		sqlBuilder.append(Segment.UPDATE).append(wrapIdentifier(entity.getTableName(), context));
+		sqlBuilder.append(Segment.UPDATE).append(wrapTableName(entity, context));
 		sqlBuilder.append(Segment.SET_LABEL);
 		
 		for(Attribute attr : attributes) {

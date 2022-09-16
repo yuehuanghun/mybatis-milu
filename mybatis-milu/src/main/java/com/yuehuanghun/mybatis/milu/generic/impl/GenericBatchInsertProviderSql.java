@@ -74,7 +74,7 @@ public class GenericBatchInsertProviderSql extends GenericCachingProviderSql {
 		Collection<Attribute> attributes = entity.getAttributes();
 		
 		StringBuilder sqlBuilder = new StringBuilder(1024).append("<script>");
-		sqlBuilder.append("INSERT INTO ").append(wrapIdentifier(entity.getTableName(), context));
+		sqlBuilder.append("INSERT INTO ").append(wrapTableName(entity, context));
 		sqlBuilder.append(" (<trim suffixOverrides=\",\">");
 		
 		StringBuilder values = new StringBuilder(" VALUES <foreach collection=\"entityList\" item=\"item\" separator=\",\">(<trim suffixOverrides=\",\">");
@@ -101,7 +101,7 @@ public class GenericBatchInsertProviderSql extends GenericCachingProviderSql {
 		Collection<Attribute> attributes = entity.getAttributes();
 		
 		StringBuilder sqlBuilder = new StringBuilder(1024).append("<script>");
-		sqlBuilder.append("INSERT INTO ").append(wrapIdentifier(entity.getTableName(), context));
+		sqlBuilder.append("INSERT INTO ").append(wrapTableName(entity, context));
 		sqlBuilder.append(" (<trim suffixOverrides=\",\">");
 		
 		StringBuilder values = new StringBuilder(" <foreach collection=\"entityList\" item=\"item\" separator=\"UNION ALL\">");
@@ -130,7 +130,7 @@ public class GenericBatchInsertProviderSql extends GenericCachingProviderSql {
 		Collection<Attribute> attributes = entity.getAttributes();
 		
 		StringBuilder sqlBuilder = new StringBuilder(1024).append("<script>");
-		sqlBuilder.append("INSERT INTO ").append(wrapIdentifier(entity.getTableName(), context));
+		sqlBuilder.append("INSERT INTO ").append(wrapTableName(entity, context));
 		sqlBuilder.append(" (<trim suffixOverrides=\",\">");
 		
 		StringBuilder values = new StringBuilder(" <foreach collection=\"entityList\" item=\"item\" separator=\"UNION ALL\">");

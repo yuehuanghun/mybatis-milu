@@ -107,7 +107,7 @@ public class GenericFindByExampleProviderSql extends AbstractGenericExampleProvi
 			}
 		}
 		condition.append(Segment.WHERE_LABEL_END);
-		sqlBuilder.append(Segment.FROM_B).append(wrapIdentifier(entity.getTableName(), context));
+		sqlBuilder.append(Segment.FROM_B).append(wrapTableName(entity, context));
 		sqlBuilder.append(condition).append(Segment.SCRIPT_LABEL_END);
 
 		return sqlBuilder.toString();

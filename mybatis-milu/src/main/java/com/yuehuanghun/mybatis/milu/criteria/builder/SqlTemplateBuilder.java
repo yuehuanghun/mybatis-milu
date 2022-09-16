@@ -29,7 +29,8 @@ public abstract class SqlTemplateBuilder {
 		this.mainTableAlias = tableAliasDispacher.dispach(Segment.TABLE_ + entity.getTableName());
 	}
 	
-	protected void buildTableSegment(StringBuilder sqlBuilder) {		
+	protected void buildTableSegment(StringBuilder sqlBuilder) {	
+		SqlBuildingHelper.appendSchema(sqlBuilder, entity.getSchema(), configuration);
 		SqlBuildingHelper.appendIdentifier(sqlBuilder, entity.getTableName(), configuration); //表名
 		if(!joinExpressMap.isEmpty()) { //没有关联查询时，不需要使用表别名
 			sqlBuilder.append(Segment.SPACE).append(mainTableAlias);

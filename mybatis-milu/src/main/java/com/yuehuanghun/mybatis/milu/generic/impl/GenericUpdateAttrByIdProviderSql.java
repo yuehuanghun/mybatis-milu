@@ -82,7 +82,7 @@ public class GenericUpdateAttrByIdProviderSql extends GenericCachingProviderSql 
 		Collection<Attribute> attributes = entity.getAttributes();
 		StringBuilder sqlBuilder = new StringBuilder(256).append(Segment.SCRIPT_LABEL);
 		
-		sqlBuilder.append(Segment.UPDATE).append(wrapIdentifier(entity.getTableName(), context));
+		sqlBuilder.append(Segment.UPDATE).append(wrapTableName(entity, context));
 		sqlBuilder.append(Segment.SET_LABEL);
 		
 		String updateAttrName = (String)((Map)params).get(Constants.ATTR_NAME);

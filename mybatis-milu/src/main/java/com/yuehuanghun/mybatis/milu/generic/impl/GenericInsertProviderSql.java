@@ -38,7 +38,7 @@ public class GenericInsertProviderSql extends GenericCachingProviderSql {
 		Collection<Attribute> attributes = entity.getAttributes();
 		StringBuilder sqlBuilder = new StringBuilder(256).append(Segment.SCRIPT_LABEL);
 		
-		sqlBuilder.append("INSERT INTO ").append(wrapIdentifier(entity.getTableName(), context));
+		sqlBuilder.append("INSERT INTO ").append(wrapTableName(entity, context));
 		sqlBuilder.append(" (<trim suffixOverrides=\",\">");
 		
 		StringBuilder values = new StringBuilder(" VALUES(<trim suffixOverrides=\",\">");

@@ -28,7 +28,7 @@ public class GenericDeleteByIdProviderSql extends GenericCachingProviderSql {
 		Entity entity = context.getEntity();
 		StringBuilder sqlBuilder = new StringBuilder(64);
 		
-		sqlBuilder.append(Segment.DELETE_FROM).append(wrapIdentifier(entity.getTableName(), context));
+		sqlBuilder.append(Segment.DELETE_FROM).append(wrapTableName(entity, context));
 		
 		IdAttribute idAttr = entity.getId();
 		

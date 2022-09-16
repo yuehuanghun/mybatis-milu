@@ -52,6 +52,8 @@ public class Entity {
 	
 	private String tableName;
 	
+	private String schema;
+	
 	private final Map<String, Attribute> attributeMap = new LinkedHashMap<>();
 
 	private boolean hasId;

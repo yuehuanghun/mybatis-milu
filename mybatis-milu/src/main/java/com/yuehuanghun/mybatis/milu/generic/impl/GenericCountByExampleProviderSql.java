@@ -35,7 +35,7 @@ public class GenericCountByExampleProviderSql extends AbstractGenericExampleProv
 		Collection<Attribute> attributes = entity.getAttributes();
 		StringBuilder sqlBuilder = new StringBuilder(1024).append(Segment.SCRIPT_LABEL);
 		
-		sqlBuilder.append(Segment.SELECT_COUNT_FROM).append(wrapIdentifier(entity.getTableName(), context));
+		sqlBuilder.append(Segment.SELECT_COUNT_FROM).append(wrapTableName(entity, context));
 		
 		sqlBuilder.append(Segment.WHERE_LABEL);
 		for(Attribute attr : attributes) {

@@ -124,7 +124,7 @@ public class GenericFindByExampleAndSortProviderSql extends AbstractGenericExamp
 			}
 		}
 		condition.append(Segment.WHERE_LABEL_END);
-		sqlBuilder.append(Segment.FROM_B).append(wrapIdentifier(entity.getTableName(), context));
+		sqlBuilder.append(Segment.FROM_B).append(wrapTableName(entity, context));
 		sqlBuilder.append(condition);
 		
 		Sort sort = (Sort)((Map<String, Object>)params).get(Segment.SORT);

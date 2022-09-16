@@ -104,6 +104,7 @@ public class SqlBuildingHelper {
 								String joinTableAlias = tableAliasDispacher.dispach(Segment.TABLE_ + m2mRef.getJoinTableName());
 								
 								joinExpressBuilder.append(joinExpression);
+								appendSchema(joinExpressBuilder, entity.getSchema(), configuration);
 								appendIdentifier(joinExpressBuilder, m2mRef.getJoinTableName(), configuration);
 								joinExpressBuilder.append(Segment.SPACE).append(joinTableAlias)
 								    .append(Segment.ON_BRACKET);
@@ -143,6 +144,7 @@ public class SqlBuildingHelper {
 								MappedReference ref = (MappedReference) reference;
 								StringBuilder joinExpressBuilder = new StringBuilder();
 								joinExpressBuilder.append(joinExpression);
+								appendSchema(joinExpressBuilder, entity.getSchema(), configuration);
 								appendIdentifier(joinExpressBuilder, reference.getInverseTableName(), configuration);
 								joinExpressBuilder.append(Segment.SPACE).append(inverseTableAlias)
 								    .append(Segment.ON_BRACKET);
@@ -211,6 +213,13 @@ public class SqlBuildingHelper {
 		}
 	}
 	
+	public static void appendSchema(StringBuilder stringBuilder , String schema, MiluConfiguration configuration) {
+		if(StringUtils.isNotBlank(schema)) {
+			appendIdentifier(stringBuilder, schema, configuration);
+			stringBuilder.append(Segment.DOT);
+		}
+	}
+	
 	public static String wrapIdentifier(String identifier, MiluConfiguration configuration) {
 		if(!configuration.isIdentifierWrapQuote()) {
 			return identifier;
@@ -221,6 +230,14 @@ public class SqlBuildingHelper {
 		} else {
 			return identifierQuoteString + identifier + identifierQuoteString;
 		}
+	}
+	
+	public static String wrapTableName(Entity entity, MiluConfiguration configuration) {
+		if(StringUtils.isBlank(entity.getSchema())) {
+			return wrapIdentifier(entity.getTableName(), configuration);
+		}
+		
+		return wrapIdentifier(entity.getSchema(), configuration) + Segment.DOT + wrapIdentifier(entity.getTableName(), configuration);
 	}
 	
 	public static class TableAliasDispacher {
