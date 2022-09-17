@@ -16,7 +16,7 @@
 
 package com.yuehuanghun.mybatis.milu.criteria;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
@@ -27,7 +27,7 @@ import com.yuehuanghun.mybatis.milu.tool.Segment;
  * @author yuehuanghun
  *
  */
-public class GroupImpl extends HashSet<String> implements Group {
+public class GroupImpl extends LinkedHashSet<String> implements Group {
 	private static final long serialVersionUID = 1L;
 
 	@Override
