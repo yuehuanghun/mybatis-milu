@@ -29,14 +29,17 @@ public class ManyToManyReference implements Reference {
 
 	private String inverseTableName;
 	
+	private String inverseSchema;
+	
 	private List<JoinCondition> joinConditionList = new ArrayList<>(3);
 	
 	private List<JoinCondition> inverseJoinConditionList = new ArrayList<>(3);
 	
-	public ManyToManyReference(String attributeName, String joinTableName, String inverseTableName) {
+	public ManyToManyReference(String attributeName, String joinTableName, String inverseTableName, String inverseSchema) {
 		this.attributeName = attributeName;
 		this.joinTableName = joinTableName;
 		this.inverseTableName = inverseTableName;
+		this.inverseSchema = inverseSchema;
 	}
 
 	public void addJoinCondition(JoinCondition condition) {

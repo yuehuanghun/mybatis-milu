@@ -25,17 +25,20 @@ public class MappedReference implements Reference {
 	
 	private String inverseTableName;
 	
+	private String inverseSchema;
+	
 	private String attributeName;
 	
 	private List<JoinCondition> joinConditionList = new ArrayList<>(3);
 
-	public MappedReference(String attributeName, String inverseTableName) {
+	public MappedReference(String attributeName, String inverseTableName, String inverseSchema) {
 		this.inverseTableName = inverseTableName;
 		this.attributeName = attributeName;
+		this.inverseSchema = inverseSchema;
 	}
 	
-	public MappedReference(String attributeName, String inverseTableName, JoinCondition condition) {
-		this(attributeName, inverseTableName);
+	public MappedReference(String attributeName, String inverseTableName, String inverseSchema, JoinCondition condition) {
+		this(attributeName, inverseTableName, inverseSchema);
 		joinConditionList.add(condition);
 	}
 	

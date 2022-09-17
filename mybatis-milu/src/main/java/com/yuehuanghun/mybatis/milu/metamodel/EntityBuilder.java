@@ -412,7 +412,7 @@ public class EntityBuilder {
 			}
 			
 			String columnName = attr.getColumnName();
-			return new MappedReference(attr.getName(), inverseEntity.getTableName(), new JoinCondition(columnName, columnName)); 
+			return new MappedReference(attr.getName(), inverseEntity.getTableName(), inverseEntity.getSchema(), new JoinCondition(columnName, columnName)); 
 			 
 		} else if(field.isAnnotationPresent(ManyToMany.class)) {
 			ManyToMany refAnnon = field.getAnnotation(ManyToMany.class);
@@ -464,7 +464,7 @@ public class EntityBuilder {
 	}
 	
 	private MappedReference buildMappedReference(Attribute attr, Entity inverseEntity, List<JoinColumn> joinColumns, Attribute inverseMappedByAttr) {
-		MappedReference ref = new MappedReference(attr.getName(), inverseEntity.getTableName());
+		MappedReference ref = new MappedReference(attr.getName(), inverseEntity.getTableName(), inverseEntity.getSchema());
 		for(JoinColumn joinColumn : joinColumns) {
 			if(inverseMappedByAttr != null) {
 				String name = StringUtils.defaultIfBlank(joinColumn.name(), inverseMappedByAttr.getColumnName());
@@ -480,7 +480,7 @@ public class EntityBuilder {
 	}
 	
 	private ManyToManyReference buildManyToManyReference(Attribute attr, String joinTableName, Entity inverseEntity, JoinColumn[] joinColumns, JoinColumn[] inverseJoinColumns, Attribute inverseMappedByAttr) {
-		ManyToManyReference ref = new ManyToManyReference(attr.getName(), joinTableName, inverseEntity.getTableName());
+		ManyToManyReference ref = new ManyToManyReference(attr.getName(), joinTableName, inverseEntity.getTableName(), inverseEntity.getSchema());
 		for(JoinColumn joinColumn : joinColumns) {
 			if(inverseMappedByAttr != null) {
 				String name = StringUtils.defaultIfBlank(joinColumn.name(), inverseMappedByAttr.getColumnName());

@@ -27,6 +27,8 @@ public interface Reference {
 	
 	String getInverseTableName();
 	
+	String getInverseSchema();
+	
 	@Data
 	@AllArgsConstructor
 	public class JoinCondition {

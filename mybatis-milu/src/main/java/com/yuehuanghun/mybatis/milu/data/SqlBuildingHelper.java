@@ -104,7 +104,6 @@ public class SqlBuildingHelper {
 								String joinTableAlias = tableAliasDispacher.dispach(Segment.TABLE_ + m2mRef.getJoinTableName());
 								
 								joinExpressBuilder.append(joinExpression);
-								appendSchema(joinExpressBuilder, entity.getSchema(), configuration);
 								appendIdentifier(joinExpressBuilder, m2mRef.getJoinTableName(), configuration);
 								joinExpressBuilder.append(Segment.SPACE).append(joinTableAlias)
 								    .append(Segment.ON_BRACKET);
@@ -122,6 +121,7 @@ public class SqlBuildingHelper {
 								joinExpressBuilder.append(Segment.RIGHT_BRACKET);
 								
 								joinExpressBuilder.append(joinExpression);
+								appendSchema(joinExpressBuilder, reference.getInverseSchema(), configuration);
 								appendIdentifier(joinExpressBuilder, reference.getInverseTableName(), configuration);
 								joinExpressBuilder.append(Segment.SPACE).append(inverseTableAlias)
 							        .append(Segment.ON_BRACKET);
@@ -144,7 +144,7 @@ public class SqlBuildingHelper {
 								MappedReference ref = (MappedReference) reference;
 								StringBuilder joinExpressBuilder = new StringBuilder();
 								joinExpressBuilder.append(joinExpression);
-								appendSchema(joinExpressBuilder, entity.getSchema(), configuration);
+								appendSchema(joinExpressBuilder, reference.getInverseSchema(), configuration);
 								appendIdentifier(joinExpressBuilder, reference.getInverseTableName(), configuration);
 								joinExpressBuilder.append(Segment.SPACE).append(inverseTableAlias)
 								    .append(Segment.ON_BRACKET);
