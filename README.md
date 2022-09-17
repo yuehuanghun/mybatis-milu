@@ -27,7 +27,7 @@ jdk >= 1.8
 <dependency>
    <groupId>com.yuehuanghun</groupId>
    <artifactId>mybatismilu-spring-boot-starter</artifactId>
-   <version>1.6.1</version> <!-- 获取最新版本 -->
+   <version>1.8.0</version> <!-- 获取最新版本 -->
 </dependency>
 ```
 
@@ -87,6 +87,7 @@ public class Student {
 ```
 @Entity
 @Table(name = "class")
+// @Table(name = "class", schema="指定schema") //指定schema可以访问非当前数据源默认库
 @Data
 public class Classs {
 
@@ -224,6 +225,7 @@ List<Classs> list = classMapper.findByLambdaCriteria(p -> p.select("*","studentL
 ```
 ##### 4、criteria、lambdaCriteria统计  
 目前支持5个统计关键字：sum/count/min/max/avg
+
 ```
 List<Map<String, Object>> result = studentMapper.statisticByCriteria(p -> p.sum("age").avg("age").count("id").groupBy("classId").orderAsc("classId"));
 // SELECT SUM(`age`) `ageSum`, AVG(`age`) `ageAvg`, COUNT(`id`) `idCount`, `class_id` classId FROM `student` GROUP BY `class_id` ORDER BY `class_id` ASC
@@ -233,6 +235,15 @@ List<Map<String, Object>> result = studentMapper.statisticByCriteria(p -> p.sum(
 可以指resultType
 ```
 List<StudentStatistic> result = studentMapper.statisticByCriteria(p -> p.sum("age").avg("age").count("id").groupBy("classId").orderAsc("classId"), StudentStatistic.class);
+```
+
+##### 5、criteria动态条件指定查询逻辑删除状态数据
+```
+classMapper.findByCriteria(p -> p.undeleted());
+// 示意 -> SELECT * FROM classs WHERE is_deleted ='N';
+
+classMapper.findByCriteria(p -> p.deleted());
+// 示意 -> SELECT * FROM classs WHERE is_deleted ='Y';
 ```
 #### 三、 查询创建器
 与Spring Data JPA的查询创建器一致，并进行了拓展
@@ -559,7 +570,8 @@ Object someAttr;
 value默认值为1、resumeValue默认值为0  
 更改默认值，例如：@LogicDelete(value = "Y", resumeValue = "N")  
 
- > 值会被转换为属性实际类型的对象
+ > 值会被转换为属性实际类型的对象  
+ > @LogicDelete的main属性值，当值为true时，在Criteria查询中的undeleted()、deleted()条件中作为查询条件
 
 值中可以使用表达式，目前仅可用表达式为：#{now}，表示当前时间，会根据实际属性类型取值
 ```
