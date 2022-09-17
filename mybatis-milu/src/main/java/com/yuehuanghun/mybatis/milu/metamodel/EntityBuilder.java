@@ -233,6 +233,8 @@ public class EntityBuilder {
 				} else {
 					logicDeleteAttribute.setProvider(new DefaultLogicDeleteProvider(logicDelete.value(), logicDelete.resumeValue(), attr.getJavaType()));
 				}
+				
+				logicDeleteAttribute.setMain(logicDelete.main());
 			}
 
 			attr.setRangeList(rangeList == null ? Collections.emptyList() : rangeList);

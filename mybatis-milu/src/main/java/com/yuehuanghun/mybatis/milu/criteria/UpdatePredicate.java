@@ -146,4 +146,10 @@ public interface UpdatePredicate extends Predicate {
 
 	@Override
 	UpdatePredicate regex(boolean accept, String attrName, Object value);
+	
+	@Override
+	UpdatePredicate undeleted();
+	
+	@Override
+	UpdatePredicate deleted();
 }

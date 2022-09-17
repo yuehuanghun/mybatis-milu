@@ -18,18 +18,17 @@ package com.yuehuanghun.mybatis.milu.criteria.builder;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.criteria.StatisticPredicate;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
-import com.yuehuanghun.mybatis.milu.metamodel.Entity;
+import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
 public class StatisticSqlTemplateBuilder extends SqlTemplateBuilder {
 	private final StatisticPredicate predicate;
 
-	public StatisticSqlTemplateBuilder(Entity entity, MiluConfiguration configuration, StatisticPredicate predicate) {
-		super(entity, configuration);
+	public StatisticSqlTemplateBuilder(GenericProviderContext context, StatisticPredicate predicate) {
+		super(context);
 		this.predicate = predicate;
 	}
 
@@ -37,7 +36,7 @@ public class StatisticSqlTemplateBuilder extends SqlTemplateBuilder {
 	public String build() {
 		StringBuilder expressionBuilder = new StringBuilder(256);
 		Set<String> properties = new HashSet<>();
-		predicate.renderSqlTemplate(configuration, expressionBuilder, properties, 0);
+		predicate.renderSqlTemplate(context, expressionBuilder, properties, 0);
 
 		SqlBuildingHelper.analyseDomain(entity, properties, tableAliasDispacher, configuration, joinExpressMap, joinQueryColumnNap);
 

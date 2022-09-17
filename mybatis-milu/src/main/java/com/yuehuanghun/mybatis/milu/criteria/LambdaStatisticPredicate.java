@@ -398,4 +398,10 @@ public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	@Override
 	LambdaStatisticPredicate<T> regex(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
 
+	@Override
+	LambdaStatisticPredicate<T> undeleted();
+	
+	@Override
+	LambdaStatisticPredicate<T> deleted();
+
 }

@@ -244,6 +244,12 @@ public interface QueryPredicate extends Predicate {
 	@Override
 	QueryPredicate regex(boolean accept, String attrName, Object value);
 	
+	@Override
+	QueryPredicate undeleted();
+	
+	@Override
+	QueryPredicate deleted();
+	
 	/**
 	 * 去除重复
 	 * @return 当前对象

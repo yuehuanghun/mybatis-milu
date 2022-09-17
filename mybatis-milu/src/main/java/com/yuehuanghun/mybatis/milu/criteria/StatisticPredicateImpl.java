@@ -21,10 +21,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.dialect.Dialect;
+import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
@@ -412,42 +412,54 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 		super.regex(accept, attrName, value);
 		return this;
 	}
+
+	@Override
+	public StatisticPredicate undeleted() {
+		super.undeleted();
+		return this;
+	}
+
+	@Override
+	public StatisticPredicate deleted() {
+		super.deleted();
+		return this;
+	}
 	
 	@Override
-	public int renderSqlTemplate(MiluConfiguration configuration, StringBuilder expressionBuilder, Set<String> columns,
+	public int renderSqlTemplate(GenericProviderContext context, StringBuilder expressionBuilder, Set<String> columns,
 			int paramIndex) {
-		paramIndex = select.renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
+		paramIndex = select.renderSqlTemplate(context, expressionBuilder, columns, paramIndex);
 		
 		expressionBuilder.append(Segment.FROM_B).append(Constants.TABLE_HOLDER).append(Segment.WHERE_LABEL);
 		
 		StringBuilder conditionBuilder = new StringBuilder();
-		paramIndex = super.renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
+		paramIndex = super.renderSqlTemplate(context, expressionBuilder, columns, paramIndex);
 		
 		expressionBuilder.append(conditionBuilder).append(Segment.WHERE_LABEL_END);
 		
-		paramIndex = group.renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
+		paramIndex = group.renderSqlTemplate(context, expressionBuilder, columns, paramIndex);
 		
-		sort.renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
+		sort.renderSqlTemplate(context, expressionBuilder, columns, paramIndex);
 	
 		if(limit != null) {
-			limit.renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
+			limit.renderSqlTemplate(context, expressionBuilder, columns, paramIndex);
 		}
 		
 		return paramIndex;
 	}
 
 	@Override
-	public int renderParams(Map<String, Object> params, int paramIndex) {
-		paramIndex = select.renderParams(params, paramIndex);
+	public int renderParams(GenericProviderContext context, Map<String, Object> params, int paramIndex) {
+		paramIndex = select.renderParams(context, params, paramIndex);
 		
-		paramIndex = super.renderParams(params, paramIndex);
+		paramIndex = super.renderParams(context, params, paramIndex);
 		
-		paramIndex = group.renderParams(params, paramIndex);;
+		paramIndex = group.renderParams(context, params, paramIndex);;
 		
-		paramIndex = sort.renderParams(params, paramIndex);
+		paramIndex = sort.renderParams(context, params, paramIndex);
 	
 		if(limit != null) {
-			paramIndex = limit.renderParams(params, paramIndex);
+			paramIndex = limit.renderParams(context, params, paramIndex);
 		}
 		
 		return paramIndex;

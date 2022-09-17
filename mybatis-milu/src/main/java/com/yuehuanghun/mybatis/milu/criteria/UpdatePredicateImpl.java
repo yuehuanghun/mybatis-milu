@@ -280,6 +280,18 @@ public class UpdatePredicateImpl extends PredicateImpl implements UpdatePredicat
 	}
 
 	@Override
+	public UpdatePredicate undeleted() {
+		super.undeleted();
+		return this;
+	}
+
+	@Override
+	public UpdatePredicate deleted() {
+		super.deleted();
+		return this;
+	}
+
+	@Override
 	public int hashCode() {
 		return 31 * super.hashCode() + updateMode.hashCode();
 	}

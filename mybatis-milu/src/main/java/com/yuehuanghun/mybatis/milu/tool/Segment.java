@@ -67,6 +67,7 @@ public interface Segment {
     String SCRIPT_LABEL = "<script>";
     String SCRIPT_LABEL_END = "</script>";
     String SELECT_COUNT_FROM = "SELECT COUNT(*) FROM ";
+    String SIGLE_QUOT = "'";
     String TABLE_ = "table_";
     String WHERE_LABEL = "<where>";
     String WHERE_LABEL_END = "</where>";
@@ -76,4 +77,6 @@ public interface Segment {
     String SELECT_COUNT = "SELECT COUNT(*)";
     String SORT = "sort";
     String SPACE = " ";
+    String DELETE_COND_HODLER = "$deledHolder$";
+    String UNDELETE_COND_HODLER = "$undeledHolder$";
 }

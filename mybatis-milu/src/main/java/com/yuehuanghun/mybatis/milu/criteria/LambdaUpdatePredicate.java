@@ -244,4 +244,10 @@ public interface LambdaUpdatePredicate<T> extends LambdaPredicate<T> {
 	
 	@Override
 	LambdaUpdatePredicate<T> regex(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
+
+	@Override
+	LambdaUpdatePredicate<T> undeleted();
+	
+	@Override
+	LambdaUpdatePredicate<T> deleted();
 }

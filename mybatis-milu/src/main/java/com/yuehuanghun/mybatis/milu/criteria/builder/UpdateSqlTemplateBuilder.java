@@ -20,11 +20,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.UpdatePredicate;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
-import com.yuehuanghun.mybatis.milu.metamodel.Entity;
+import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
@@ -33,8 +32,8 @@ public class UpdateSqlTemplateBuilder extends SqlTemplateBuilder {
 	private final UpdatePredicate predicate;
 	private List<String> nullableUpdateAttrNames = Collections.emptyList();
 
-	public UpdateSqlTemplateBuilder(Entity entity, MiluConfiguration configuration, UpdatePredicate predicate) {
-		super(entity, configuration);
+	public UpdateSqlTemplateBuilder(GenericProviderContext context, UpdatePredicate predicate) {
+		super(context);
 		this.predicate = predicate;
 	}
 
@@ -42,7 +41,7 @@ public class UpdateSqlTemplateBuilder extends SqlTemplateBuilder {
 	public String build() {
 		StringBuilder expressionBuilder = new StringBuilder(256);
 		Set<String> properties = new HashSet<>();
-		predicate.renderSqlTemplate(configuration, expressionBuilder, properties, 0);
+		predicate.renderSqlTemplate(context, expressionBuilder, properties, 0);
 
 		SqlBuildingHelper.analyseDomain(entity, properties, tableAliasDispacher, configuration, joinExpressMap, joinQueryColumnNap);
 

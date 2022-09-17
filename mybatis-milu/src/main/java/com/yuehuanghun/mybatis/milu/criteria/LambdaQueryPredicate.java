@@ -366,6 +366,12 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	
 	@Override
 	LambdaQueryPredicate<T> regex(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
+
+	@Override
+	LambdaQueryPredicate<T> undeleted();
+	
+	@Override
+	LambdaQueryPredicate<T> deleted();
 	
 	/**
 	 * 去除重复

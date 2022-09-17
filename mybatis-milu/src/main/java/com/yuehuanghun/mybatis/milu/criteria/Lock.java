@@ -20,7 +20,7 @@ import java.util.Set;
 
 import javax.persistence.LockModeType;
 
-import com.yuehuanghun.mybatis.milu.MiluConfiguration;
+import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,10 +38,10 @@ public class Lock implements Expression {
 	private LockModeType lockModeType;
 
 	@Override
-	public int renderSqlTemplate(MiluConfiguration configuration, StringBuilder expressionBuilder, Set<String> columns,
+	public int renderSqlTemplate(GenericProviderContext context, StringBuilder expressionBuilder, Set<String> columns,
 			int paramIndex) {
 		if(lockModeType != null && LockModeType.NONE != lockModeType) {
-			String lockSql = configuration.getDialect().getLockSql(expressionBuilder.toString(), lockModeType);
+			String lockSql = context.getConfiguration().getDialect().getLockSql(expressionBuilder.toString(), lockModeType);
 			expressionBuilder.setLength(0);
 			expressionBuilder.append(lockSql);
 		}

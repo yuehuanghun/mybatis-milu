@@ -582,6 +582,18 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 	}
 
 	@Override
+	public LambdaQueryPredicate<T> undeleted() {
+		getDelegate().undeleted();
+		return this;
+	}
+
+	@Override
+	public LambdaQueryPredicate<T> deleted() {
+		getDelegate().deleted();
+		return this;
+	}
+
+	@Override
 	public LambdaQueryPredicate<T> distinct() {
 		getDelegate().distinct();
 		return this;

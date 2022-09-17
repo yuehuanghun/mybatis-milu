@@ -19,8 +19,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.data.Part.Type;
+import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
@@ -132,8 +132,8 @@ public class ConditionImpl implements Condition {
 	}
 
 	@Override
-	public int renderSqlTemplate(MiluConfiguration configuration, StringBuilder expressionBuilder, Set<String> columns, int paramIndex) {
-		String express = configuration.getDialect().getPartTypeExpression(getType());
+	public int renderSqlTemplate(GenericProviderContext context, StringBuilder expressionBuilder, Set<String> columns, int paramIndex) {
+		String express = context.getConfiguration().getDialect().getPartTypeExpression(getType());
 
 		Object[] keys = new Object[getParams().length];
 		if(getType().getNumberOfArguments() > 0) {
@@ -161,7 +161,7 @@ public class ConditionImpl implements Condition {
 	}
 
 	@Override
-	public int renderParams(Map<String, Object> params, int paramIndex) {
+	public int renderParams(GenericProviderContext context, Map<String, Object> params, int paramIndex) {
 		Object[] keys = new Object[getParams().length];
 		if(getType().getNumberOfArguments() > 0) {
 			for(int i = 0; i < getParams().length; i++) {

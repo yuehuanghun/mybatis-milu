@@ -50,13 +50,13 @@ public class GenericUpdateByCriteriaProviderSql implements GenericProviderSql {
 		}
 		
 		Map<String, Object> queryParams = new HashMap<>();
-		predicate.renderParams(queryParams, 0);
+		predicate.renderParams(context, queryParams, 0);
 		((Map)params).putAll(queryParams);
 
 		String sqlExpression = cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
 			return new SoftValueHashMap<>();
 		}).computeIfAbsent(predicate, (key) -> {
-			return new UpdateSqlTemplateBuilder(context.getEntity(), context.getConfiguration(), predicate).build();
+			return new UpdateSqlTemplateBuilder(context, predicate).build();
 		});
 		
 		return sqlExpression;

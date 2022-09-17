@@ -609,4 +609,16 @@ public class LambdaStatisticPredicateImpl<T> extends LambdaPredicateImpl<T> impl
 		return this;
 	}
 
+	@Override
+	public LambdaStatisticPredicate<T> undeleted() {
+		getDelegate().undeleted();
+		return this;
+	}
+
+	@Override
+	public LambdaStatisticPredicate<T> deleted() {
+		getDelegate().deleted();
+		return this;
+	}
+
 }

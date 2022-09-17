@@ -17,6 +17,7 @@ package com.yuehuanghun.mybatis.milu.criteria;
 
 import java.util.function.Consumer;
 
+import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 
 /**
@@ -384,6 +385,20 @@ public interface Predicate extends Condition {
 	 * @return 当前对象
 	 */
 	Predicate regex(boolean accept, String attrName, Object value);
+	
+	/**
+	 * 增加查询未被逻辑删除的数据的查询条件
+	 * @see LogicDelete
+	 * @return
+	 */
+	Predicate undeleted();
+	
+	/**
+	 * 增加查询已被逻辑删除的数据的查询条件
+	 * @see LogicDelete
+	 * @return
+	 */
+	Predicate deleted();
 	
 	/**
 	 * 条件集合是否为空

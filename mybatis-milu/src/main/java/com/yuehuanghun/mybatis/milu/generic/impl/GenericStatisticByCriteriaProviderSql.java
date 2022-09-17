@@ -58,7 +58,7 @@ public class GenericStatisticByCriteriaProviderSql implements GenericProviderSql
 		}
 		
 		Map<String, Object> queryParams = new HashMap<>();
-		predicate.renderParams(queryParams, 0);		
+		predicate.renderParams(context, queryParams, 0);		
 		((Map)params).putAll(queryParams);
 		
 		if(((Map)params).containsKey(Constants.PAGE_KEY)) {
@@ -69,7 +69,7 @@ public class GenericStatisticByCriteriaProviderSql implements GenericProviderSql
 		String sqlExpression = cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
 			return new SoftValueHashMap<>();
 		}).computeIfAbsent(predicate, (key) -> {
-			return new StatisticSqlTemplateBuilder(context.getEntity(), context.getConfiguration(), predicate).build();
+			return new StatisticSqlTemplateBuilder(context,  predicate).build();
 		});
 		
 		return sqlExpression;

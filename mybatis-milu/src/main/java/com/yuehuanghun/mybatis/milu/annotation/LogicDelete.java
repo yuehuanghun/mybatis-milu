@@ -42,4 +42,12 @@ public @interface LogicDelete {
 	 * @return LogicDeleteProvider实现类
 	 */
 	Class<? extends LogicDeleteProvider> provider() default LogicDeleteProvider.AutoProvider.class;
+	
+	/**
+	 * 主逻辑删除属性<br>
+	 * 在Criteria查询中，使用undeleted()或deleted()设定查询条件时，当为主删除属性时才会被用于查询条件中<br>
+	 * 举例：获取未被逻辑删除的数据：someMapper.findByCriteria(p -> p.undeleted());
+	 * @return
+	 */
+	boolean main() default true;
 }

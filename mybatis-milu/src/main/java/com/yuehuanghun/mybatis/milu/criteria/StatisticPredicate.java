@@ -284,4 +284,9 @@ public interface StatisticPredicate extends Predicate {
 	@Override
 	StatisticPredicate regex(boolean accept, String attrName, Object value);
 
+	@Override
+	StatisticPredicate undeleted();
+	
+	@Override
+	StatisticPredicate deleted();
 }

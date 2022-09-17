@@ -67,11 +67,11 @@ public class GenericLogicDeleteByIdsProviderSql implements GenericProviderSql {
 			SqlBuildingHelper.fill(entityObj, false, context.getConfiguration());
 			
 			Map<String, Object> queryParams = new HashMap<>();
-			predicate.renderParams(queryParams, 0);
+			predicate.renderParams(context, queryParams, 0);
 			((Map)params).putAll(queryParams);
 
 			return cache.computeIfAbsent(context.getMapperType(), (key) -> {
-				return new LogicDeleteSqlTemplateBuilder(context.getEntity(), context.getConfiguration(), predicate).build();
+				return new LogicDeleteSqlTemplateBuilder(context, predicate).build();
 			});				
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new SqlExpressionBuildingException(e);

@@ -360,6 +360,24 @@ public class ClassMapperTest {
 		
 		Optional<Classs> clazz = classMapper.findById(1L);
 		assertEquals(clazz.get().getIsDeleted(), "Y");
+		
+		List<Classs> classList = classMapper.findByCriteria(p -> p.deleted());
+		assertEquals(classList.size(), 2);
+		
+		classList = classMapper.findByCriteria(p -> p.undeleted());
+		assertEquals(classList.size(), 0);
+		
+		classList = classMapper.findByCriteria(p -> p.eq("name", "一年级").deleted());
+		assertEquals(classList.size(), 1);
+		
+		classList = classMapper.findByLambdaCriteria(p -> p.deleted());
+		assertEquals(classList.size(), 2);
+		
+		classList = classMapper.findByCriteria(p -> p.eq("name", "一年级").or(op -> op.eq("name", "二年级").undeleted()));
+		assertEquals(classList.size(), 1);
+		
+		classList = classMapper.findByCriteria(p -> p.eq("name", "一年级").deleted().or(op -> op.eq("name", "二年级").undeleted()));
+		assertEquals(classList.size(), 1);
 	}
 	
 	@Test

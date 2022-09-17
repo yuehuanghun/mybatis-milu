@@ -20,9 +20,9 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
+import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
@@ -41,7 +41,7 @@ public class SelectImpl implements Select {
 	}
 
 	@Override
-	public int renderSqlTemplate(MiluConfiguration configuration, StringBuilder expressionBuilder, Set<String> columns,
+	public int renderSqlTemplate(GenericProviderContext context,  StringBuilder expressionBuilder, Set<String> columns,
 			int paramIndex) {
 		if(functions.isEmpty()) {
 			throw new SqlExpressionBuildingException("未设置统计字段属性");
@@ -49,11 +49,11 @@ public class SelectImpl implements Select {
 		
 		expressionBuilder.append(Segment.SELECT);
 		functions.forEach(function -> {
-			expressionBuilder.append(String.format(configuration.getDialect().getFunctionExpression(function.getFunctionName()), columnHolder(function.getPropertyName())));
+			expressionBuilder.append(String.format(context.getConfiguration().getDialect().getFunctionExpression(function.getFunctionName()), columnHolder(function.getPropertyName())));
 			if(StringUtils.isNotBlank(function.getAlias())) {
-				expressionBuilder.append(Segment.SPACE).append(SqlBuildingHelper.wrapIdentifier(function.getAlias(), configuration));
+				expressionBuilder.append(Segment.SPACE).append(SqlBuildingHelper.wrapIdentifier(function.getAlias(), context.getConfiguration()));
 			} else {
-				expressionBuilder.append(Segment.SPACE).append(SqlBuildingHelper.wrapIdentifier(getAlias(function.getFunctionName(), function.getPropertyName()), configuration));
+				expressionBuilder.append(Segment.SPACE).append(SqlBuildingHelper.wrapIdentifier(getAlias(function.getFunctionName(), function.getPropertyName()), context.getConfiguration()));
 			}
 			expressionBuilder.append(Segment.COMMA_B);
 			columns.add(function.getPropertyName());

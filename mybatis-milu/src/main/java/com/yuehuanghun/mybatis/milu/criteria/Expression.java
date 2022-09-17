@@ -18,16 +18,16 @@ package com.yuehuanghun.mybatis.milu.criteria;
 import java.util.Map;
 import java.util.Set;
 
-import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
+import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 
 public interface Expression {
 	
-	default int renderSqlTemplate(MiluConfiguration configuration, StringBuilder expressionBuilder, Set<String> columns, int paramIndex) {
+	default int renderSqlTemplate(GenericProviderContext context, StringBuilder expressionBuilder, Set<String> columns, int paramIndex) {
 		return paramIndex;
 	}
 
-	default int renderParams(Map<String, Object> params, int paramIndex) {
+	default int renderParams(GenericProviderContext context, Map<String, Object> params, int paramIndex) {
 		return paramIndex;
 	}
 	

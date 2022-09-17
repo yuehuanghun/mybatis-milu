@@ -20,10 +20,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.criteria.UpdatePredicate;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
-import com.yuehuanghun.mybatis.milu.metamodel.Entity;
+import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.LogicDeleteAttribute;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
@@ -32,8 +31,8 @@ import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 public class LogicDeleteSqlTemplateBuilder extends SqlTemplateBuilder {
 	private final UpdatePredicate predicate;
 
-	public LogicDeleteSqlTemplateBuilder(Entity entity, MiluConfiguration configuration, UpdatePredicate predicate) {
-		super(entity, configuration);
+	public LogicDeleteSqlTemplateBuilder(GenericProviderContext context, UpdatePredicate predicate) {
+		super(context);
 		this.predicate = predicate;
 	}
 
@@ -41,7 +40,7 @@ public class LogicDeleteSqlTemplateBuilder extends SqlTemplateBuilder {
 	public String build() {
 		StringBuilder expressionBuilder = new StringBuilder(256);
 		Set<String> properties = new HashSet<>();
-		predicate.renderSqlTemplate(configuration, expressionBuilder, properties, 0);
+		predicate.renderSqlTemplate(context, expressionBuilder, properties, 0);
 
 		SqlBuildingHelper.analyseDomain(entity, properties, tableAliasDispacher, configuration, joinExpressMap, joinQueryColumnNap);
 

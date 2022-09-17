@@ -24,10 +24,10 @@ import java.util.function.Consumer;
 
 import javax.persistence.LockModeType;
 
-import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
+import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 import com.yuehuanghun.mybatis.milu.tool.Assert;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
@@ -404,6 +404,18 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	}
 
 	@Override
+	public QueryPredicate undeleted() {
+		super.undeleted();
+		return this;
+	}
+
+	@Override
+	public QueryPredicate deleted() {
+		super.deleted();
+		return this;
+	}
+
+	@Override
 	public QueryPredicate distinct() {
 		this.distinct = Boolean.TRUE;
 		return this;
@@ -433,33 +445,33 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	}
 
 	@Override
-	public int renderSqlTemplate(MiluConfiguration configuration, StringBuilder expressionBuilder, Set<String> columns,
+	public int renderSqlTemplate(GenericProviderContext context, StringBuilder expressionBuilder, Set<String> columns,
 			int paramIndex) {
-		paramIndex = super.renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
+		paramIndex = super.renderSqlTemplate(context, expressionBuilder, columns, paramIndex);
 
-		sort.renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
+		sort.renderSqlTemplate(context, expressionBuilder, columns, paramIndex);
 
 		if (limit != null) {
-			limit.renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
+			limit.renderSqlTemplate(context, expressionBuilder, columns, paramIndex);
 		}
 
 		if (lock != null) {
-			lock.renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
+			lock.renderSqlTemplate(context, expressionBuilder, columns, paramIndex);
 		}
 
 		return paramIndex;
 	}
 
 	@Override
-	public int renderParams(Map<String, Object> params, int paramIndex) {
-		paramIndex = super.renderParams(params, paramIndex);
-		paramIndex = sort.renderParams(params, paramIndex);
+	public int renderParams(GenericProviderContext context, Map<String, Object> params, int paramIndex) {
+		paramIndex = super.renderParams(context, params, paramIndex);
+		paramIndex = sort.renderParams(context, params, paramIndex);
 		if (limit != null) {
-			paramIndex = limit.renderParams(params, paramIndex);
+			paramIndex = limit.renderParams(context, params, paramIndex);
 		}
 
 		if (lock != null) {
-			paramIndex = lock.renderParams(params, paramIndex);
+			paramIndex = lock.renderParams(context, params, paramIndex);
 		}
 		return paramIndex;
 	}

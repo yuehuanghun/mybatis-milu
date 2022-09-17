@@ -81,13 +81,13 @@ public class GenericUpdateAttrByCriteriaProviderSql implements GenericProviderSq
 		}
 		
 		Map<String, Object> queryParams = new HashMap<>();
-		predicate.renderParams(queryParams, 0);
+		predicate.renderParams(context, queryParams, 0);
 		((Map)params).putAll(queryParams);
 
 		String sqlExpression = cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
 			return new SoftValueHashMap<>();
 		}).computeIfAbsent(predicate, (key) -> {
-			return new UpdateSqlTemplateBuilder(context.getEntity(), context.getConfiguration(), predicate).setNullableUpdateAttrNames(Arrays.asList(attrName)).build();
+			return new UpdateSqlTemplateBuilder(context, predicate).setNullableUpdateAttrNames(Arrays.asList(attrName)).build();
 		});
 		
 		return sqlExpression;

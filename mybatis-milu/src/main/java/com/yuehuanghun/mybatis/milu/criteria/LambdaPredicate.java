@@ -17,6 +17,7 @@ package com.yuehuanghun.mybatis.milu.criteria;
 
 import java.util.function.Consumer;
 
+import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.SerializableFunction;
 
@@ -623,6 +624,20 @@ public interface LambdaPredicate<T> extends Condition {
 	 * @return 当前对象
 	 */
 	LambdaPredicate<T> regex(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
+	
+	/**
+	 * 增加查询未被逻辑删除的数据的查询条件
+	 * @see LogicDelete
+	 * @return
+	 */
+	LambdaPredicate<T> undeleted();
+	
+	/**
+	 * 增加查询已被逻辑删除的数据的查询条件
+	 * @see LogicDelete
+	 * @return
+	 */
+	LambdaPredicate<T> deleted();
 	
 	/**
 	 * 条件集合是否为空

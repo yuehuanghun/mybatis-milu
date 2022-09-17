@@ -474,4 +474,16 @@ public class LambdaUpdatePredicateImpl<T> extends LambdaPredicateImpl<T> impleme
 		return this;
 	}
 
+	@Override
+	public LambdaUpdatePredicate<T> undeleted() {
+		getDelegate().undeleted();
+		return this;
+	}
+
+	@Override
+	public LambdaUpdatePredicate<T> deleted() {
+		getDelegate().deleted();
+		return this;
+	}
+
 }

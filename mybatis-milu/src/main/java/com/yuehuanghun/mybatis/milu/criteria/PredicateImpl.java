@@ -24,9 +24,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
+import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.tool.Assert;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
@@ -390,6 +390,18 @@ public class PredicateImpl implements Predicate {
 		}
 		return this;
 	}
+
+	@Override
+	public Predicate undeleted() {
+		and(new Deleted(false));
+		return this;
+	}
+
+	@Override
+	public Predicate deleted() {
+		and(new Deleted(true));
+		return this;
+	}
 	
 	protected boolean acceptCondition(Object value) {
 		if(conditionMode == Mode.NOT_NULL) {
@@ -424,7 +436,7 @@ public class PredicateImpl implements Predicate {
 	}
 
 	@Override
-	public int renderSqlTemplate(MiluConfiguration configuration, StringBuilder expressionBuilder, Set<String> columns,
+	public int renderSqlTemplate(GenericProviderContext context, StringBuilder expressionBuilder, Set<String> columns,
 			int paramIndex) {
 		if(conditionList.isEmpty()) {
 			return paramIndex;
@@ -442,7 +454,7 @@ public class PredicateImpl implements Predicate {
 				Logic childLogic = ((PredicateImpl) condition).logic;
 				expressionBuilder.append(Segment.SPACE).append(childLogic.name()).append(Segment.SPACE);
 			}
-			paramIndex = condition.renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
+			paramIndex = condition.renderSqlTemplate(context, expressionBuilder, columns, paramIndex);
 		}
 		
 		expressionBuilder.append(subBuilder);
@@ -454,9 +466,9 @@ public class PredicateImpl implements Predicate {
 	}
 
 	@Override
-	public int renderParams(Map<String, Object> params, int paramIndex) {
+	public int renderParams(GenericProviderContext context, Map<String, Object> params, int paramIndex) {
 		for(Condition condition : conditionList) {
-			paramIndex = condition.renderParams(params, paramIndex);
+			paramIndex = condition.renderParams(context, params, paramIndex);
 		}
 		return paramIndex;
 	}

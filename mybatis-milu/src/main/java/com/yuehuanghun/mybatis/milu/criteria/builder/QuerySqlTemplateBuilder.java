@@ -32,12 +32,12 @@ import org.apache.ibatis.mapping.ResultFlag;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
 
-import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
+import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.mapping.MiluMapperBuilderAssistant;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
@@ -54,8 +54,8 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 	private final static Pattern ORDER_BY_PT = Pattern.compile("^\\s*ORDER BY.*$");
 	private final static List<ResultFlag> ID_FLAG_LIST = Arrays.asList(ResultFlag.ID);
 
-	public QuerySqlTemplateBuilder(Entity entity, MiluConfiguration configuration, QueryPredicate queryPredicate) {
-		super(entity, configuration);
+	public QuerySqlTemplateBuilder(GenericProviderContext context, QueryPredicate queryPredicate) {
+		super(context);
 		this.predicate = queryPredicate;
 	}
 
@@ -77,7 +77,7 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 
 		StringBuilder expressionBuilder = new StringBuilder(256);
 		Set<String> properties = new HashSet<>();
-		predicate.renderSqlTemplate(configuration, expressionBuilder, properties, 0);
+		predicate.renderSqlTemplate(context, expressionBuilder, properties, 0);
 		
 		if(!selectEntityAttrMap.isEmpty()) {
 			selectEntityAttrMap.forEach((attrName, attributes) -> {

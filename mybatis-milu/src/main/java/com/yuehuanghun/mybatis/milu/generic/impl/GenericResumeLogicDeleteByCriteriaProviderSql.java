@@ -71,13 +71,13 @@ public class GenericResumeLogicDeleteByCriteriaProviderSql implements GenericPro
 		}
 		
 		Map<String, Object> queryParams = new HashMap<>();
-		predicate.renderParams(queryParams, 0);
+		predicate.renderParams(context, queryParams, 0);
 		((Map)params).putAll(queryParams);
 
 		return cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
 			return new SoftValueHashMap<>();
 		}).computeIfAbsent(predicate, (key) -> {
-			return new LogicDeleteSqlTemplateBuilder(context.getEntity(), context.getConfiguration(), predicate).build();
+			return new LogicDeleteSqlTemplateBuilder(context, predicate).build();
 		});
 	}
 

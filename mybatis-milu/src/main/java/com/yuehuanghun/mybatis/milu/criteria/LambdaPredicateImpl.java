@@ -20,10 +20,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.LambdaReflections;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.SerializableFunction;
+import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.tool.Assert;
 
 import lombok.Getter;
@@ -35,14 +35,14 @@ public class LambdaPredicateImpl<T> implements LambdaPredicate<T> {
 	private PredicateImpl delegate = new PredicateImpl();
 
 	@Override
-	public int renderSqlTemplate(MiluConfiguration configuration, StringBuilder expressionBuilder, Set<String> columns,
+	public int renderSqlTemplate(GenericProviderContext context, StringBuilder expressionBuilder, Set<String> columns,
 			int paramIndex) {
-		return getDelegate().renderSqlTemplate(configuration, expressionBuilder, columns, paramIndex);
+		return getDelegate().renderSqlTemplate(context, expressionBuilder, columns, paramIndex);
 	}
 
 	@Override
-	public int renderParams(Map<String, Object> params, int paramIndex) {
-		return getDelegate().renderParams(params, paramIndex);
+	public int renderParams(GenericProviderContext context, Map<String, Object> params, int paramIndex) {
+		return getDelegate().renderParams(context, params, paramIndex);
 	}
 
 	@Override
@@ -566,6 +566,18 @@ public class LambdaPredicateImpl<T> implements LambdaPredicate<T> {
 	@Override
 	public LambdaPredicate<T> regex(boolean accept, SerializableFunction<T, ?> getterFn, Object value) {
 		getDelegate().regex(accept, LambdaReflections.fnToFieldName(getterFn), value);
+		return this;
+	}
+
+	@Override
+	public LambdaPredicate<T> undeleted() {
+		getDelegate().undeleted();
+		return this;
+	}
+
+	@Override
+	public LambdaPredicate<T> deleted() {
+		getDelegate().deleted();
 		return this;
 	}
 

@@ -19,7 +19,7 @@ package com.yuehuanghun.mybatis.milu.criteria;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.yuehuanghun.mybatis.milu.MiluConfiguration;
+import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
 /**
@@ -31,7 +31,7 @@ public class GroupImpl extends LinkedHashSet<String> implements Group {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public int renderSqlTemplate(MiluConfiguration configuration, StringBuilder expressionBuilder, Set<String> columns,
+	public int renderSqlTemplate(GenericProviderContext context, StringBuilder expressionBuilder, Set<String> columns,
 			int paramIndex) {
 		if(this.isEmpty()) {
 			return paramIndex;

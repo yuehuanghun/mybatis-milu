@@ -7,6 +7,7 @@ import java.util.Set;
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper.TableAliasDispacher;
+import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
@@ -14,6 +15,7 @@ import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
 public abstract class SqlTemplateBuilder {
 
+	protected final GenericProviderContext context;
 	protected final Entity entity;
 	protected final MiluConfiguration configuration;
 
@@ -22,10 +24,11 @@ public abstract class SqlTemplateBuilder {
 	protected Map<String, String> joinQueryColumnNap = new HashMap<>();
 	protected String mainTableAlias;
 	
-	public SqlTemplateBuilder(Entity entity, MiluConfiguration configuration) {
+	public SqlTemplateBuilder(GenericProviderContext context) {
 		super();
-		this.entity = entity;
-		this.configuration = configuration;
+		this.context = context;
+		this.entity = context.getEntity();
+		this.configuration = context.getConfiguration();
 		this.mainTableAlias = tableAliasDispacher.dispach(Segment.TABLE_ + entity.getTableName());
 	}
 	
