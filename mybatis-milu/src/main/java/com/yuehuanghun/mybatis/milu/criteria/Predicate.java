@@ -389,14 +389,14 @@ public interface Predicate extends Condition {
 	/**
 	 * 增加查询未被逻辑删除的数据的查询条件
 	 * @see LogicDelete
-	 * @return
+	 * @return 当前对象
 	 */
 	Predicate undeleted();
 	
 	/**
 	 * 增加查询已被逻辑删除的数据的查询条件
 	 * @see LogicDelete
-	 * @return
+	 * @return 当前对象
 	 */
 	Predicate deleted();
 	

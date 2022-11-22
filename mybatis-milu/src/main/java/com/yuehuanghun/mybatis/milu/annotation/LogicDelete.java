@@ -46,8 +46,8 @@ public @interface LogicDelete {
 	/**
 	 * 主逻辑删除属性<br>
 	 * 在Criteria查询中，使用undeleted()或deleted()设定查询条件时，当为主删除属性时才会被用于查询条件中<br>
-	 * 举例：获取未被逻辑删除的数据：someMapper.findByCriteria(p -> p.undeleted());
-	 * @return
+	 * 举例：获取未被逻辑删除的数据：someMapper.findByCriteria(p -&gt; p.undeleted());
+	 * @return true/false
 	 */
 	boolean main() default true;
 }

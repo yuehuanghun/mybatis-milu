@@ -601,6 +601,28 @@ mybatis:
 
  > 属性上的provider优先级高于全局provider，一旦设置了provider则@LogicDelete上的value与resumeValue值将无用
 
+#### 十、其它支持
+为了方便支持C(controller)-S(service)-D(dao)编程规范中使用查询，框架中特别提供了BaseService接口，以简化Serice层的编写。  
+
+代码示例：  
+
+```
+@Entity
+public class SomeEntity {
+  @Id
+  private Long id;
+}
+
+public interface ISomeEntitySerice extends BaseService<SomeEntity, Long, SomeEntityMapper> {
+  
+}
+
+@Service
+public class SomeEntitySericeImpl extends BaseServiceImpl<SomeEntity, Long, SomeEntityMapper> implements ISomeEntitySerice  {
+  
+}
+```
+即可在Controller中使用BaseService定义的大量通用接口。
 #### 参考
 
 1.  Hibernate
