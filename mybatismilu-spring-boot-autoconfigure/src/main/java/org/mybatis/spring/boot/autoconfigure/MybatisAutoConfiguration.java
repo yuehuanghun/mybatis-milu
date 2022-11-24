@@ -73,6 +73,7 @@ import org.springframework.util.StringUtils;
 
 import com.yuehuanghun.mybatis.milu.BaseMapper;
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
+import com.yuehuanghun.mybatis.milu.PlaceholderResolver;
 import com.yuehuanghun.mybatis.milu.id.IdentifierGenerator;
 import com.yuehuanghun.mybatis.milu.metamodel.EntityBuilder;
 import com.yuehuanghun.mybatis.milu.spring.MapperScanner;
@@ -115,11 +116,14 @@ public class MybatisAutoConfiguration implements InitializingBean, ApplicationCo
   private final List<ConfigurationCustomizer> configurationCustomizers;
   
   private ApplicationContext applicationContext;
+  
+  private PlaceholderResolver placeholderResolver;
 
   public MybatisAutoConfiguration(MybatisProperties properties, ObjectProvider<Interceptor[]> interceptorsProvider,
       ObjectProvider<TypeHandler[]> typeHandlersProvider, ObjectProvider<LanguageDriver[]> languageDriversProvider,
       ResourceLoader resourceLoader, ObjectProvider<DatabaseIdProvider> databaseIdProvider,
-      ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider) {
+      ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider, 
+      ObjectProvider<PlaceholderResolver> placeholderResolver) {
     this.properties = properties;
     this.interceptors = interceptorsProvider.getIfAvailable();
     this.typeHandlers = typeHandlersProvider.getIfAvailable();
@@ -127,6 +131,7 @@ public class MybatisAutoConfiguration implements InitializingBean, ApplicationCo
     this.resourceLoader = resourceLoader;
     this.databaseIdProvider = databaseIdProvider.getIfAvailable();
     this.configurationCustomizers = configurationCustomizersProvider.getIfAvailable();
+    this.placeholderResolver = placeholderResolver.getIfAvailable();
   }
 
   @Override
@@ -199,6 +204,9 @@ public class MybatisAutoConfiguration implements InitializingBean, ApplicationCo
 			} else {
 				this.properties.setConfiguration(new MiluConfiguration());
 			}
+		}
+		if(this.properties.getConfiguration() != null) {
+			this.properties.getConfiguration().setPlaceholderResolver(this.placeholderResolver);
 		}
 	}
 

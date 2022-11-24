@@ -110,6 +110,10 @@ public class MiluConfiguration extends Configuration {
 	//自动化配置 mybatis.configurationProperties.logicDeleteProvider
 	@Getter
 	private Class<? extends LogicDeleteProvider> defaultLogicDeleteProvider;
+	
+	@Getter
+	@Setter
+	private PlaceholderResolver placeholderResolver;
 
 	public MiluConfiguration() {
 		super();

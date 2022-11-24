@@ -20,15 +20,15 @@ import javax.persistence.SequenceGenerator;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
-import org.apache.ibatis.session.Configuration;
 
-import com.yuehuanghun.mybatis.milu.tool.StringUtils;
+import com.yuehuanghun.mybatis.milu.MiluConfiguration;
+import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 
 public class SequenceSqlSource implements SqlSource {
 	private final SequenceGenerator sequenceGenerator;
-	private final Configuration configuration;
+	private final MiluConfiguration configuration;
 	
-	public SequenceSqlSource(Configuration configuration, SequenceGenerator sequenceGenerator) {
+	public SequenceSqlSource(MiluConfiguration configuration, SequenceGenerator sequenceGenerator) {
 		this.configuration = configuration;
 		this.sequenceGenerator = sequenceGenerator;
 	}
@@ -38,9 +38,7 @@ public class SequenceSqlSource implements SqlSource {
 		
 		StringBuilder sqlBuilder = new StringBuilder("SELECT ");
 		sqlBuilder.append(sequenceGenerator.sequenceName()).append(".nextval FROM ");
-		if(StringUtils.isNotBlank(sequenceGenerator.schema())) {
-			sqlBuilder.append(sequenceGenerator.schema()).append(".");
-		}
+		SqlBuildingHelper.appendSchema(sqlBuilder, sequenceGenerator.schema(), configuration);
 		sqlBuilder.append("dual");
 		
 		return configuration.getLanguageDriver(XMLLanguageDriver.class).createSqlSource(configuration, sqlBuilder.toString(), Object.class).getBoundSql(parameterObject);

@@ -215,6 +215,9 @@ public class SqlBuildingHelper {
 	
 	public static void appendSchema(StringBuilder stringBuilder , String schema, MiluConfiguration configuration) {
 		if(StringUtils.isNotBlank(schema)) {
+			if(configuration.getPlaceholderResolver() != null) {
+				schema = configuration.getPlaceholderResolver().resolvePlaceholder(schema);
+			}
 			appendIdentifier(stringBuilder, schema, configuration);
 			stringBuilder.append(Segment.DOT);
 		}
@@ -233,11 +236,16 @@ public class SqlBuildingHelper {
 	}
 	
 	public static String wrapTableName(Entity entity, MiluConfiguration configuration) {
-		if(StringUtils.isBlank(entity.getSchema())) {
+		String schema = entity.getSchema();
+		if(StringUtils.isBlank(schema)) {
 			return wrapIdentifier(entity.getTableName(), configuration);
 		}
 		
-		return wrapIdentifier(entity.getSchema(), configuration) + Segment.DOT + wrapIdentifier(entity.getTableName(), configuration);
+		if(configuration.getPlaceholderResolver() != null) {
+			schema = configuration.getPlaceholderResolver().resolvePlaceholder(schema);
+		}
+		
+		return wrapIdentifier(schema, configuration) + Segment.DOT + wrapIdentifier(entity.getTableName(), configuration);
 	}
 	
 	public static class TableAliasDispacher {
