@@ -79,6 +79,14 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	/**
 	 * 添加排序，指定排序方向
 	 * @param direction 排序方向枚举
+	 * @param getterFn 实体类的getter函数式
+	 * @return 当前对象
+	 */
+	LambdaQueryPredicate<T> order(Direction direction, SerializableFunction<T, ?> getterFn);
+	
+	/**
+	 * 添加排序，指定排序方向
+	 * @param direction 排序方向枚举
 	 * @param getterFns 实体类的getter函数式
 	 * @return 当前对象
 	 */
@@ -87,11 +95,25 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 
 	/**
 	 * 添加升序排序
+	 * @param getterFn 实体类的getter函数式
+	 * @return 当前对象
+	 */
+	LambdaQueryPredicate<T> orderAsc(SerializableFunction<T, ?> getterFn);
+
+	/**
+	 * 添加升序排序
 	 * @param getterFns 实体类的getter函数式
 	 * @return 当前对象
 	 */
 	@SuppressWarnings("unchecked")
 	LambdaQueryPredicate<T> orderAsc(SerializableFunction<T, ?>... getterFns);
+	
+	/**
+	 * 添加降序排序
+	 * @param getterFn 实体类的getter函数式
+	 * @return 当前对象
+	 */
+	LambdaQueryPredicate<T> orderDesc(SerializableFunction<T, ?> getterFn);
 	
 	/**
 	 * 添加降序排序

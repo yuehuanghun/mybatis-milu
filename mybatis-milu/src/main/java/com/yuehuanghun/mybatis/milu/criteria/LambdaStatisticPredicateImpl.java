@@ -89,6 +89,12 @@ public class LambdaStatisticPredicateImpl<T> extends LambdaPredicateImpl<T> impl
 		return this;
 	}
 	
+	@Override
+	public LambdaStatisticPredicate<T> groupBy(SerializableFunction<T, ?> getterFn) {
+		getDelegate().groupBy(LambdaReflections.fnToFieldName(getterFn));
+		return this;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public LambdaStatisticPredicate<T> groupBy(SerializableFunction<T, ?>... getterFns) {
@@ -100,11 +106,22 @@ public class LambdaStatisticPredicateImpl<T> extends LambdaPredicateImpl<T> impl
 		getDelegate().groupBy(attrNames);
 		return this;
 	}
+	
+	public LambdaStatisticPredicate<T> groupByAs(SerializableFunction<T, ?> getterFn, String alias) {
+		getDelegate().groupByAs(LambdaReflections.fnToFieldName(getterFn), alias);
+		return this;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public LambdaStatisticPredicate<T> order(SerializableFunction<T, ?>... getterFns) {
 		this.order(null, getterFns);
+		return this;
+	}
+	
+	@Override
+	public LambdaStatisticPredicate<T> order(SerializableFunction<T, ?> getterFn) {
+		this.order(null, getterFn);
 		return this;
 	}
 
@@ -119,6 +136,12 @@ public class LambdaStatisticPredicateImpl<T> extends LambdaPredicateImpl<T> impl
 		getDelegate().order(direction, attrNames);
 		return this;
 	}
+	
+	@Override
+	public LambdaStatisticPredicate<T> order(Direction direction, SerializableFunction<T, ?> getterFn) {
+		getDelegate().order(direction, LambdaReflections.fnToFieldName(getterFn));
+		return this;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -126,11 +149,23 @@ public class LambdaStatisticPredicateImpl<T> extends LambdaPredicateImpl<T> impl
 		this.order(Direction.ASC, getterFns);
 		return this;
 	}
+	
+	@Override
+	public LambdaStatisticPredicate<T> orderAsc(SerializableFunction<T, ?> getterFn) {
+		this.order(Direction.ASC, getterFn);
+		return this;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public LambdaStatisticPredicate<T> orderDesc(SerializableFunction<T, ?>... getterFns) {
 		this.order(Direction.DESC, getterFns);
+		return this;
+	}
+
+	@Override
+	public LambdaStatisticPredicate<T> orderDesc(SerializableFunction<T, ?> getterFn) {
+		this.order(Direction.DESC, getterFn);
 		return this;
 	}
 

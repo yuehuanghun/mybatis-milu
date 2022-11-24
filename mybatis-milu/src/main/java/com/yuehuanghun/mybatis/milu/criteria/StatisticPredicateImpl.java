@@ -27,6 +27,7 @@ import com.yuehuanghun.mybatis.milu.dialect.Dialect;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
+import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
 public class StatisticPredicateImpl extends PredicateImpl implements StatisticPredicate {
 	private Select select = new SelectImpl();
@@ -404,6 +405,17 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 			group.add(attrName);
 			select.add(attrName);
 		}
+		return this;
+	}
+	
+	@Override
+	public StatisticPredicate groupByAs(String attrName, String alias) {
+		if(StringUtils.isBlank(alias)) {
+			select.add(attrName);
+		} else {
+			select.add(StringUtils.EMPTY, attrName, alias);
+		}
+		group.add(attrName);
 		return this;
 	}
 

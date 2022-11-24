@@ -49,7 +49,11 @@ public class SelectImpl implements Select {
 		
 		expressionBuilder.append(Segment.SELECT);
 		functions.forEach(function -> {
-			expressionBuilder.append(String.format(context.getConfiguration().getDialect().getFunctionExpression(function.getFunctionName()), columnHolder(function.getPropertyName())));
+			if(StringUtils.isBlank(function.getFunctionName())) {
+				expressionBuilder.append(columnHolder(function.getPropertyName()));
+			} else {
+				expressionBuilder.append(String.format(context.getConfiguration().getDialect().getFunctionExpression(function.getFunctionName()), columnHolder(function.getPropertyName())));
+			}
 			if(StringUtils.isNotBlank(function.getAlias())) {
 				expressionBuilder.append(Segment.SPACE).append(SqlBuildingHelper.wrapIdentifier(function.getAlias(), context.getConfiguration()));
 			} else {

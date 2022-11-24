@@ -129,7 +129,15 @@ public interface StatisticPredicate extends Predicate {
 	 * @param attrNames 属性名
 	 * @return 当前对象
 	 */
-	StatisticPredicate groupBy(String... attrNames);
+	StatisticPredicate groupBy(String... attrNames);	
+
+	/**
+	 * 分组，并指定分组属性在查询字段中的别名
+	 * @param attrName 属性名
+	 * @param alias 别名
+	 * @return 当前对象
+	 */
+	StatisticPredicate groupByAs(String attrName, String alias);
 
 	/**
 	 * 获取第1页的pageSize条数据

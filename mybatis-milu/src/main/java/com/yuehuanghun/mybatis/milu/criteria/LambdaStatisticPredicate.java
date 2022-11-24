@@ -100,11 +100,26 @@ public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 
 	/**
 	 * 分组
+	 * @param getterFn 实体类的getter函数式
+	 * @return 当前对象
+	 */
+	LambdaStatisticPredicate<T> groupBy(SerializableFunction<T, ?> getterFn);
+
+	/**
+	 * 分组
 	 * @param getterFns 实体类的getter函数式
 	 * @return 当前对象
 	 */
 	@SuppressWarnings("unchecked")
 	LambdaStatisticPredicate<T> groupBy(SerializableFunction<T, ?>... getterFns);
+
+	/**
+	 * 分组
+	 * @param getterFn 实体类的getter函数式
+	 * @param alias 别名
+	 * @return 当前对象
+	 */
+	LambdaStatisticPredicate<T> groupByAs(SerializableFunction<T, ?> getterFn, String alias);
 	
 	/**
 	 * 添加排序，不指定排序方向，以数据库默认排序为准
@@ -115,6 +130,13 @@ public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	LambdaStatisticPredicate<T> order(SerializableFunction<T, ?>... getterFns);
 	
 	/**
+	 * 添加排序，不指定排序方向，以数据库默认排序为准
+	 * @param getterFn 实体类的getter函数式
+	 * @return 当前对象
+	 */
+	LambdaStatisticPredicate<T> order(SerializableFunction<T, ?> getterFn);
+	
+	/**
 	 * 添加排序，指定排序方向
 	 * @param direction 排序方向枚举
 	 * @param getterFns 实体类的getter函数式
@@ -122,6 +144,14 @@ public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	LambdaStatisticPredicate<T> order(Direction direction, SerializableFunction<T, ?>... getterFns);
+	
+	/**
+	 * 添加排序，指定排序方向
+	 * @param direction 排序方向枚举
+	 * @param getterFn 实体类的getter函数式
+	 * @return 当前对象
+	 */
+	LambdaStatisticPredicate<T> order(Direction direction, SerializableFunction<T, ?> getterFn);
 
 	/**
 	 * 添加升序排序
@@ -130,6 +160,13 @@ public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	LambdaStatisticPredicate<T> orderAsc(SerializableFunction<T, ?>... getterFns);
+
+	/**
+	 * 添加升序排序
+	 * @param getterFn 实体类的getter函数式
+	 * @return 当前对象
+	 */
+	LambdaStatisticPredicate<T> orderAsc(SerializableFunction<T, ?> getterFn);
 	
 	/**
 	 * 添加降序排序
@@ -138,6 +175,13 @@ public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	LambdaStatisticPredicate<T> orderDesc(SerializableFunction<T, ?>... getterFns);
+	
+	/**
+	 * 添加降序排序
+	 * @param getterFn 实体类的getter函数式
+	 * @return 当前对象
+	 */
+	LambdaStatisticPredicate<T> orderDesc(SerializableFunction<T, ?> getterFns);
 
 	/**
 	 * 获取第1页的pageSize条数据

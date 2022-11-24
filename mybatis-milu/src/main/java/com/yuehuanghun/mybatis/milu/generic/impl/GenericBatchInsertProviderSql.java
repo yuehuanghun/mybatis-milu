@@ -84,6 +84,8 @@ public class GenericBatchInsertProviderSql extends GenericCachingProviderSql {
 			}
 	 
 			if(attr.isId() && (context.getKeyGenerator() == NoKeyGenerator.INSTANCE || Jdbc3KeyGenerator.class.isInstance(context.getKeyGenerator()))) {
+				sqlBuilder.append(" <if test=\"entityList[0].").append(attr.getName()).append(" != null\">").append(wrapIdentifier(attr.getColumnName(), context)).append(",</if> ");
+				values.append(" <if test=\"entityList[0].").append(attr.getName()).append(" != null\">").append("#{item.").append(attr.toParameter()).append("},</if> ");
 				continue;
 			}
 			sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context)).append(", ");

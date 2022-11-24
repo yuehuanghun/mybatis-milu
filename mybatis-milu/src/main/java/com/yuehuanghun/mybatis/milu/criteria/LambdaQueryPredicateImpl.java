@@ -73,6 +73,12 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 		this.order(null, getterFns);
 		return this;
 	}
+	
+	@Override
+	public LambdaQueryPredicate<T> order(Direction direction, SerializableFunction<T, ?> getterFn) {
+		getDelegate().order(direction, LambdaReflections.fnToFieldName(getterFn));
+		return this;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -86,10 +92,22 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 		return this;
 	}
 
+	@Override
+	public LambdaQueryPredicate<T> orderAsc(SerializableFunction<T, ?> getterFn) {
+		this.order(Direction.ASC, getterFn);
+		return this;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public LambdaQueryPredicate<T> orderAsc(SerializableFunction<T, ?>... getterFns) {
 		this.order(Direction.ASC, getterFns);
+		return this;
+	}
+
+	@Override
+	public LambdaQueryPredicate<T> orderDesc(SerializableFunction<T, ?> getterFn) {
+		this.order(Direction.DESC, getterFn);
 		return this;
 	}
 
