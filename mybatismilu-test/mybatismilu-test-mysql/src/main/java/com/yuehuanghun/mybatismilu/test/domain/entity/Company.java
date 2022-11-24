@@ -11,7 +11,7 @@ import com.yuehuanghun.mybatis.milu.annotation.alias.id.SnowflakeId;
 import lombok.Data;
 
 @Data
-@Table(schema = "demo2")
+@Table(schema = "${db2}")
 @Entity
 public class Company {
 

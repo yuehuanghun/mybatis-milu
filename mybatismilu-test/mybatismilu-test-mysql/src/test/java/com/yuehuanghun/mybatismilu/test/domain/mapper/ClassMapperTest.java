@@ -171,7 +171,6 @@ public class ClassMapperTest {
 		assertTrue(result.size() == 1);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testFindUniqueByLambdaCriteria() {
 		Classs classs = classMapper.findUniqueByLambdaCriteria(p -> p.eq(Classs::getId, 1L));

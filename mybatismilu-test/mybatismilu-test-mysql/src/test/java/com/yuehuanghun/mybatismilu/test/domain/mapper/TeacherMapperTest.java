@@ -192,4 +192,26 @@ public class TeacherMapperTest {
 		System.out.println(JSON.toJSONString(teachers));
 		teachers.forEach(teacher -> assertNotNull(teacher.getId()));
 	}
+	
+	@Test
+	@Transactional
+	public void testBatchInsert2() {
+		List<Teacher> teachers = new ArrayList<>();
+		
+		for(int i = 0; i < 2; i++) {
+			Teacher teacher = new Teacher();
+			
+			teacher.setId(3L + i);
+			teacher.setAge(22);
+			teacher.setIsDeleted("N");
+			teacher.setRevision(0);
+			teacher.setName("张三");
+			
+			teachers.add(teacher);
+		}
+		
+		teacherMapper.batchInsert(teachers);
+		System.out.println(JSON.toJSONString(teachers));
+		teachers.forEach(teacher -> assertNotNull(teacher.getId()));
+	}
 }

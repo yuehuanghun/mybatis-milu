@@ -27,3 +27,5 @@ spring.datasource:
 logging:
     level.com.yuehuanghun: debug
     file: ./logs/milutest.log
+    
+db2: demo2

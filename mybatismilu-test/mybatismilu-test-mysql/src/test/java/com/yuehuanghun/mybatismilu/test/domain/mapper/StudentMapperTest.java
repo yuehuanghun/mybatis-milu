@@ -373,6 +373,10 @@ public class StudentMapperTest {
 		assertTrue(result.size() > 0);
 		System.out.println(JSON.toJSONString(result));
 		
+		result = studentMapper.statisticByCriteria(p -> p.sum("age").avg("age").count("id").groupByAs("classId", "class").orderAsc("classId"));
+		assertTrue(result.size() > 0);
+		System.out.println(JSON.toJSONString(result));
+		
 		result = studentMapper.statisticByLambdaCriteria(p -> p.sum(Student::getAge).avg(Student::getAge).count(Student::getId).groupBy(Student::getClassId).orderAsc(Student::getClassId));
 		assertTrue(result.size() > 0);
 		System.out.println(JSON.toJSONString(result));
