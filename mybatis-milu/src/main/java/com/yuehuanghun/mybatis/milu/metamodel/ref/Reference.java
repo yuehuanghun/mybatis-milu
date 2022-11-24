@@ -22,6 +22,7 @@ public interface Reference {
 
 	/**
 	 * 本实体属性名
+	 * @return 属性名
 	 */
 	String getAttributeName();
 	

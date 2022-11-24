@@ -181,7 +181,7 @@ public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	 * @param getterFn 实体类的getter函数式
 	 * @return 当前对象
 	 */
-	LambdaStatisticPredicate<T> orderDesc(SerializableFunction<T, ?> getterFns);
+	LambdaStatisticPredicate<T> orderDesc(SerializableFunction<T, ?> getterFn);
 
 	/**
 	 * 获取第1页的pageSize条数据
