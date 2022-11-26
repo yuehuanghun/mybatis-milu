@@ -27,7 +27,7 @@ jdk >= 1.8
 <dependency>
    <groupId>com.yuehuanghun</groupId>
    <artifactId>mybatismilu-spring-boot-starter</artifactId>
-   <version>1.8.0</version> <!-- 获取最新版本 -->
+   <version>1.9.0</version> <!-- 获取最新版本 -->
 </dependency>
 ```
 
@@ -196,9 +196,39 @@ Mapper接口通过继承BaseMapper接口类，获得通用的数据访问能力�
 默认情况下属性作为查询条件时，使用值=匹配，可以@AttributeOptions(exampleQuery=@ExampleQuery(matchType=MatchType.xxx))更改查询匹配方式
 同样适用
 
+###### example中的范围查询
+
+通过@AttributeOptions(exampleQuery=@ExampleQuery(startKeyName="", endKeyName=""))指定传值的参数名  
+@AttributeOptions(exampleQuery=@ExampleQuery(startValueContain=true, endValueContain=true)) 可指定范围是开区间还是闭区间
+
+```java
+
+@AttributeOptions(exampleQuery=@ExampleQuery(startKeyName="params.createTimeBegin", endKeyName="params.createTimeEnd"))
+LocalDateTime createTime();
+
+// SomeEntity example = new SomeEntity();
+// example.getParams.put("createTimeBegin", LocalDateTime.now());
+
+```
+
+当范围是集合时，可使用@AttributeOptions(exampleQuery=@ExampleQuery(inKeyName=""))指定传值的参数名  
+值可为集合、数组或以半角逗号隔开多值的字符串。
+
+```java
+
+@AttributeOptions(exampleQuery=@ExampleQuery(startKeyName="inKeyName="params.statusList"))
+String status();
+
+// SomeEntity example = new SomeEntity();
+// example.getParams.put("statusList", "1,2,3");
+// 或
+// example.getParams.put("statusList", new String[]{"1","2","3"});
+
+```
+
 ##### 2、criteria查询。findByCriteria、updateByCriteria、deleteByCriteria、countByCriteria  
 自定义条件查询，通过实体属性设置查询条件
-```
+```java
 //方式一
 List<Classs> list = classMapper.findByCriteria(new QueryPredicateImpl().eq("name", "一年级").order(Direction.DESC,"id").order("studentListAddTime"));
 
@@ -211,7 +241,7 @@ List<Classs> list = classMapper.findByCriteria(p -> p.select("*","studentList*")
 
 ##### 3、lambdaCriteria查询。findByLambdaCriteria、updateByLambdaCriteria、deleteByLambdaCriteria、countByLambdaCriteria  
 自定义条件查询，通过实体属性的lambda函数式设置查询条件
-```
+```java
 Classs params = new Classs();
 params.setName("一年级");
 //方式一
@@ -233,12 +263,12 @@ List<Map<String, Object>> result = studentMapper.statisticByCriteria(p -> p.sum(
 统计字段别名为统计属性名+统计函数名，分组字段也会自动作为查询字段  
 
 可以指resultType
-```
+```java
 List<StudentStatistic> result = studentMapper.statisticByCriteria(p -> p.sum("age").avg("age").count("id").groupBy("classId").orderAsc("classId"), StudentStatistic.class);
 ```
 
 ##### 5、criteria动态条件指定查询逻辑删除状态数据
-```
+```java
 classMapper.findByCriteria(p -> p.undeleted());
 // 示意 -> SELECT * FROM classs WHERE is_deleted ='N';
 
@@ -248,7 +278,7 @@ classMapper.findByCriteria(p -> p.deleted());
 #### 三、 查询创建器
 与Spring Data JPA的查询创建器一致，并进行了拓展
 
-```
+```java
 @Mapper
 public interface StudentMapper extends BaseMapper<Student, Long> {
 
@@ -266,7 +296,7 @@ public interface StudentMapper extends BaseMapper<Student, Long> {
 ```
 在mapper中，使用@NamingQuery标识一个接口为查询创建器，否则会认为映射的的是由xml配置的statement  
 与spring data jpa一样，查询属性可以为关联实体的属性
-```
+```java
 @Mapper
 public interface ClassMapper extends BaseMapper<Classs, Long> {
 
@@ -332,7 +362,7 @@ public interface ClassMapper extends BaseMapper<Classs, Long> {
 | First | findFirstByLastname | select ... where x.lastname = ?1 limit 1|
 
 分页，直接在查询中添加Pageable参数即可，不需要在方法名上写表达式，并且参数位置任意。
-```
+```java
 	@NamingQuery
 	public List<Student> findByNameLike(String name, Pageable page);
 ```
@@ -351,7 +381,7 @@ public interface ClassMapper extends BaseMapper<Classs, Long> {
 
 ##### 1.  GenerationType.AUTO
 AUTO的意义已经不是原JPA的定义，在本框架中的用途是设置一个自定义的ID生成器。
-```
+```java
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = Constants.ID_GENERATOR_SNOWFLAKE)
 	private Long id; 
@@ -363,7 +393,7 @@ com.yuehuanghun.mybatis.milu.id.impl.snowflake.SnowflakeIdentifierGenerator com.
 
 在springboot中，可以快速自定义一个主键生成器
 
-```
+```java
 @Component
 public class MyIdentifierGenerator implements IdentifierGenerator {
 
@@ -382,7 +412,7 @@ public class MyIdentifierGenerator implements IdentifierGenerator {
 
 ##### 2. GenerationType.TABLE
 使用数据表来模拟一个自增序列
-```
+```java
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "tableSequence")
 	@TableGenerator(name = "tableSequence", table = "sequence", valueColumnName = "current_seq", pkColumnName = "id", pkColumnValue = "1")
@@ -390,7 +420,7 @@ public class MyIdentifierGenerator implements IdentifierGenerator {
 ```
 
 对应表
-```
+```java
 CREATE TABLE `sequence` (
 	`id` INT(10) UNSIGNED NOT NULL COMMENT 'id',
 	`current_seq` BIGINT(20) UNSIGNED NOT NULL,
@@ -402,7 +432,7 @@ CREATE TABLE `sequence` (
 
 ##### 3. GenerationType.SEQUENCE
 适合ORCLE或类ORCEL数据库等可以配置自增序列的数据库
-```
+```java
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ignore")
 	@SequenceGenerator(sequenceName = "SEQ_STUDENT_ID", name = "ignore")
@@ -420,12 +450,12 @@ CREATE TABLE `sequence` (
 以下SQL仅描述效果  
 
 1、使用有分页参数的通用方法  
-``` 
+``` java
 someMapper.findByExample(entityExmaple, new PageRequest(1, 10)) 
 // SELECT ... LIMIT 10
 ```  
 2、当example是一个Pageable对象时，可直接设置分页，仅当getPageNum > 0 并且getPageSize() > 0时开启分页
-```
+```java
 public class User extends PageRequest {
 	
 }
@@ -439,18 +469,18 @@ userMapper.findByExample(example);
 ```
 ##### Criteria查询中的分页
 1、直接指定页码及页行数
-```
+```java
 someMapper.findByCriteria(p -> p.limit(2, 10))
 // SELECT ... LIMIT 10, 10
 ```
 2、使用Pageable对象传参
-```
+```java
 someMapper.findByCriteria(p -> p.limit(new PageRequest(2, 10)))
 // SELECT ... LIMIT 10, 10
 ```
 ##### 查询创建器中的分页
 1、使用表达式，仅能查第一页的N条
-```
+```java
 public interface UserMapper extends BaseMapper<User, Long> {
     @NamingQuery
 	List<User> findTop5ByUsernameLike(String username);
@@ -460,7 +490,7 @@ userMapper.findTop5ByUsernameLike("张%");
 //SELECT .... WHERE username LIKE '张%' LIMIT 5
 ```
 2、在查询参数中直接加入Pageable参数
-```
+```java
 public interface UserMapper extends BaseMapper<User, Long> {
 	List<User> findByUsernameLike(String username, Pageable page);
 }
@@ -470,13 +500,13 @@ userMapper.findByUsernameLike("张%", new PageRequest(5));
 ```
 
 另外，使用PageHelper排序时，可使用属性名，同时也建议使用属性名，框架最终会转为列名（注：在MapperXML中自定义的查询，无法转换）
-```
+```java
 PageHelper.startPage(1, 10, "addTime DESC");
 
 //SELECT .... LIMIT 10 ORDER BY add_time DESC
 ```
 #### 六、自动创建实体类的resultMap
-```
+```java
 @EnableEntityGenericResultMap
 public class App 
 {
@@ -524,7 +554,7 @@ public class App
 > 写锁，是指在本事务内，将会更新锁定的数据，只有一个事务能获取指定数据的写锁。
 
 ##### 在命名查询创建器中声明锁
-```
+```java
 @NamingQuery
 	@StatementOptions(asExpression = "findById", lockModeType = LockModeType.PESSIMISTIC_WRITE)
 	public Teacher findByIdWithLock(Long id);
@@ -541,7 +571,7 @@ LockModeType是JPA规范中的枚举类型，枚举类型有很多，如果使�
 
 ##### 在Criteria查询中使用锁
 使用Criteria或LambdaCriteria查询时，如果在查询时上锁，只要调用lock方法即可。  
-```
+```java
 List<Teacher> list = teacherMapper.findByCriteria(p -> p.eq("id", 1L).lock(LockModeType.PESSIMISTIC_WRITE)); //指定锁模式
 
 List<Teacher> list = teacherMapper.findByCriteria(p -> p.eq("id", 1L).lock(); //默认悲观写锁
@@ -574,7 +604,7 @@ value默认值为1、resumeValue默认值为0
  > @LogicDelete的main属性值，当值为true时，在Criteria查询中的undeleted()、deleted()条件中作为查询条件
 
 值中可以使用表达式，目前仅可用表达式为：#{now}，表示当前时间，会根据实际属性类型取值
-```
+```java
 public class Example {
     //支持多个逻辑删除属性
 	@LogicDelete(value = "Y", resumeValue = "N")  
@@ -602,11 +632,13 @@ mybatis:
  > 属性上的provider优先级高于全局provider，一旦设置了provider则@LogicDelete上的value与resumeValue值将无用
 
 #### 十、其它支持
+
+##### 基础服务接口
 为了方便支持C(controller)-S(service)-D(dao)编程规范中使用查询，框架中特别提供了BaseService接口，以简化Serice层的编写。  
 
 代码示例：  
 
-```
+```java
 @Entity
 public class SomeEntity {
   @Id
@@ -623,6 +655,17 @@ public class SomeEntitySericeImpl extends BaseServiceImpl<SomeEntity, Long, Some
 }
 ```
 即可在Controller中使用BaseService定义的大量通用接口。
+
+##### 占位符填充
+
+占位符的应用场景目前有
+
+1. @Table(schema="${someDbSchemaName}")
+
+实现接口PlaceholderResolver并设置到MiluConfiguration对象中
+
+在SpringBoot环境中，已实现了SpringPlaceholderResolver并自动配置，可以直接使用SpEL进行占位符定义。
+
 #### 参考
 
 1.  Hibernate
