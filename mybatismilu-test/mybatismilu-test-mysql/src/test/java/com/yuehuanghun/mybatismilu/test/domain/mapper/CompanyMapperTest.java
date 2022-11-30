@@ -1,6 +1,7 @@
 package com.yuehuanghun.mybatismilu.test.domain.mapper;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -96,5 +97,19 @@ public class CompanyMapperTest {
 		company.setCompanyName("阑珊处");
 		
 		companyMapper.updateById(company);
+	}
+	
+	@Test
+	public void testFindByCompanyName() {
+		List<Company> list = companyMapper.findByCompanyName("千百度");
+		
+		assertEquals(list.size(), 1);
+	}
+	
+	@Test
+	public void testFindByEmployeeName() {
+		Company company = companyMapper.findByEmployeesName("张三");
+		
+		assertNotNull(company);
 	}
 }

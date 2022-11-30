@@ -98,7 +98,7 @@ public class SqlBuilder {
 		}
 		
 		// table and join table 表与关联表
-		appendIdentifier(sqlBuilder, entity.getTableName()); //表名
+		appendTableName(sqlBuilder, entity);
 		if(!joinExpressMap.isEmpty()) { //没有关联查询时，不需要使用表别名
 			sqlBuilder.append(Segment.SPACE).append(mainTableAlias);
 
@@ -328,6 +328,11 @@ public class SqlBuilder {
 	
 	private void appendIdentifier(StringBuilder stringBuilder , String identifier) {
 		SqlBuildingHelper.appendIdentifier(stringBuilder, identifier, configuration);
+	}
+	
+	private void appendTableName(StringBuilder stringBuilder, Entity entity) {
+		String tableName = SqlBuildingHelper.wrapTableName(entity, configuration);
+		stringBuilder.append(tableName);
 	}
 	
 	private void setOptions(Method method) {
