@@ -71,7 +71,7 @@ public class StringUtils {
 		return true;
 	}
 	
-	public static Object toCollectioin(final Object obj) {
+	public static Object toCollection(final Object obj) {
 		if(obj == null || Collection.class.isInstance(obj) || obj.getClass().isArray()) {
 			return obj;
 		}

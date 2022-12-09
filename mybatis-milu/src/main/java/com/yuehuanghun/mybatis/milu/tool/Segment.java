@@ -37,7 +37,7 @@ public interface Segment {
     String EQUALS = "=";
     String EQUALS_B = " = ";
     String EMPTY = "";
-    String EXAMPLE_TO_COLLECTION = "@com.yuehuanghun.mybatis.milu.tool.StringUtils@toCollectioin(example.";
+    String EXAMPLE_TO_COLLECTION = "@com.yuehuanghun.mybatis.milu.tool.StringUtils@toCollection(example.";
     String FOR_UPDATE = " FOR UPDATE";
     String FROM_B = " FROM ";
     String GROUP_BY_B = " GROUP BY ";

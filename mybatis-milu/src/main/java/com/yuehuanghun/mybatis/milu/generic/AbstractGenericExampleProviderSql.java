@@ -15,6 +15,11 @@
  */
 package com.yuehuanghun.mybatis.milu.generic;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.scripting.xmltags.OgnlCache;
@@ -24,6 +29,7 @@ import com.yuehuanghun.mybatis.milu.metamodel.Entity.RangeCondition;
 import com.yuehuanghun.mybatis.milu.metamodel.KeyType;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
 import com.yuehuanghun.mybatis.milu.tool.InstanceUtils;
+import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter;
 
 public abstract class AbstractGenericExampleProviderSql extends GenericCachingProviderSql {
@@ -46,10 +52,6 @@ public abstract class AbstractGenericExampleProviderSql extends GenericCachingPr
 					continue;
 				}
 				
-				if(condition.getKeyType() == KeyType.IN) { //不处理
-					continue;
-				}
-				
 				int index = condition.getKeyName().lastIndexOf(".");
 				String preKey = condition.getKeyName().substring(0, index);
 				Object containerObj = OgnlCache.getValue(preKey, example);
@@ -65,7 +67,28 @@ public abstract class AbstractGenericExampleProviderSql extends GenericCachingPr
 				}
 				
 				ExampleQueryConverter converter = InstanceUtils.getSigleton(condition.getValueConverter());
+	
+				if(condition.getKeyType() == KeyType.IN) {
+					Object collection = StringUtils.toCollection(value);
+					List<Object> values = new ArrayList<>();
+					if(collection.getClass().isArray()) {
+						for(int i = 0; i < Array.getLength(collection); i++) {
+							values.add(converter.convert(Array.get(collection, i), condition.getAttrJavaType(), condition.getKeyName(), condition.getKeyType()));
+						}
+						collection = values;
+					} else if(collection instanceof Collection) {
+						Iterator it = ((Collection)collection).iterator();
+						while(it.hasNext()) {
+							values.add(converter.convert(it.next(), condition.getAttrJavaType(), condition.getKeyName(), condition.getKeyType()));
+						}
+						collection = values;
+					}
+					container.put(lastKey, collection);
+					continue;
+				}
+				
 				Object convertedValue = converter.convert(value, condition.getAttrJavaType(), condition.getKeyName(), condition.getKeyType());
+				
 				container.put(lastKey, convertedValue);
 			}
 		}
