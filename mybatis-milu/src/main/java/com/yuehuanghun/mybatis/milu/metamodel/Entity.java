@@ -20,9 +20,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.GenerationType;
 
@@ -183,7 +187,11 @@ public class Entity {
 		}
 		
 		public String toParameter() {
-			String param = getName();
+			return toParameter(getName());
+		}
+		
+		public String toParameter(String name) {
+			String param = name;
 			if(getJdbcType() != null) {
 				param += ",jdbcType=" + getJdbcType().name();
 			}
@@ -191,6 +199,34 @@ public class Entity {
 				param += ",typeHandler=" + getTypeHandler().getName();
 			}
 			return param;
+		}
+		
+		public String formatParameterExpression(String expression) {
+			if(getJdbcType() == null && getTypeHandler() == null) {
+				return expression;
+			}
+			
+			String tail = "";
+			if(getJdbcType() != null) {
+				tail += ",jdbcType=" + getJdbcType().name();
+			}
+			if(getTypeHandler() != null) {
+				tail += ",typeHandler=" + getTypeHandler().getName();
+			}
+			
+			Pattern pattern = Pattern.compile("#\\{.+?}");
+			Matcher matcher = pattern.matcher(expression);
+			
+			Set<String> paramSet = new HashSet<>();
+			while(matcher.find()) { // 提取#{xxx}的参数
+				paramSet.add(matcher.group());
+			}
+			
+			for(String param : paramSet) {
+				String formatParam = param.substring(0, param.length() - 1) + tail + "}";
+				expression = expression.replace(param, formatParam);
+			}
+			return expression;
 		}
 	}
 	
@@ -268,5 +304,19 @@ public class Entity {
 		private Class<? extends ExampleQueryConverter> valueConverter;
 		
 		private KeyType keyType;
+	}
+	
+	public static void main(String[] args) {
+		String str = " IN (<foreach collection=\"%s\" item=\"item\" separator=\",\">#{item}</foreach>)#{item2}";
+		String regex = "#\\{.+?}";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(str);
+		while(matcher.find()) {
+//			int groupCount = matcher.groupCount();
+//			for(int i = 0; i < groupCount; i ++) {
+//				System.out.println(matcher.group(i + 1));
+//			}
+			System.out.println(matcher.group());
+		}
 	}
 }

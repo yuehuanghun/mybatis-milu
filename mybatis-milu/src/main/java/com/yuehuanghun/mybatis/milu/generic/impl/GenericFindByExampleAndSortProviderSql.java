@@ -119,7 +119,7 @@ public class GenericFindByExampleAndSortProviderSql extends AbstractGenericExamp
 				condition.append(Segment.IF_TEST_EXAMPLE_NOT_BLANK)
 				    .append(range.getKeyName()).append(Segment.RIGHT_BRACKET_CLOSING).append(Segment.AND_B)
 				    .append(wrapIdentifier(attr.getColumnName(), context))
-				    .append(SqlBuildingHelper.matchExpression(range.getType(), range.getKeyName(), context.getConfiguration()))
+				    .append(SqlBuildingHelper.matchExpression(range.getType(), range.getKeyName(), attr, context.getConfiguration()))
 				    .append(Segment.IF_LABEL_END);
 			}
 		}
