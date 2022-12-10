@@ -36,6 +36,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
+import com.yuehuanghun.mybatis.milu.PlaceholderResolver;
 import com.yuehuanghun.mybatis.milu.id.IdentifierGenerator;
 
 @Configuration
@@ -53,19 +54,24 @@ public class MybatisMiluConfiguration {
 	private final DatabaseIdProvider databaseIdProvider;
 
 	private final List<ConfigurationCustomizer> configurationCustomizers;
+	  
+	private PlaceholderResolver placeholderResolver;
+	
 
 	@SuppressWarnings("rawtypes")
 	public MybatisMiluConfiguration(ObjectProvider<Interceptor[]> interceptorsProvider,
 			ObjectProvider<TypeHandler[]> typeHandlersProvider,
 			ObjectProvider<LanguageDriver[]> languageDriversProvider, ResourceLoader resourceLoader,
 			ObjectProvider<DatabaseIdProvider> databaseIdProvider,
-			ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider) {
+			ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider, 
+		    ObjectProvider<PlaceholderResolver> placeholderResolver) {
 		this.interceptors = interceptorsProvider.getIfAvailable();
 		this.typeHandlers = typeHandlersProvider.getIfAvailable();
 		this.languageDrivers = languageDriversProvider.getIfAvailable();
 		this.resourceLoader = resourceLoader;
 		this.databaseIdProvider = databaseIdProvider.getIfAvailable();
 		this.configurationCustomizers = configurationCustomizersProvider.getIfAvailable();
+	    this.placeholderResolver = placeholderResolver.getIfAvailable();
 	}
 
 	@Bean
@@ -247,6 +253,9 @@ public class MybatisMiluConfiguration {
 			} else {
 				properties.setConfiguration(new MiluConfiguration());
 			}
+		}
+		if(properties.getConfiguration() != null) {
+			properties.getConfiguration().setPlaceholderResolver(this.placeholderResolver);
 		}
 	}
 }
