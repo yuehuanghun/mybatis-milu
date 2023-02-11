@@ -163,9 +163,35 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	default int batchAdd(Collection<T> entityList) {
 		return getDomainMapper().batchInsert(entityList);
 	}
+	
+	/**
+	 * 批量保存（新增）<br>
+	 * batchAdd是单sql模式，而这个是使用mybatis的批处理模式<br>
+	 * @param entityList 新增实体对象列表
+	 */
+	void batchSave(Collection<T> entityList);
+	
+	/**
+	 * 通过主键批量更新
+	 * @param entityList 被更新的实体对象列表
+	 */
+	void batchUpdateById(Collection<T> entityList);
+	
+	/**
+	 * 批量动态条件更新<br>
+	 * <br>示例: <br>
+	 * Collection&lt;Pair&lt;SomeEntity, Consumer&lt;LambdaUpdatePredicate&lt;SomeEntity&gt;&gt;&gt;&gt; entityAndPredicateList = entityList.stream().map(item -&gt; { <br>
+	 *&nbsp;&nbsp;Pair&lt;SomeEntity, Consumer&lt;LambdaUpdatePredicate&lt;SomeEntity&gt;&gt;&gt; pair = Pair.of(item, p -&gt; p.eq(SomeEntity::getId, item.getId()));<br>
+	 *&nbsp;&nbsp;return pair;<br>
+	 *	}).collect(Collectors.toList());<br><br>
+	 *	service.batchUpdateByLambdaCriteria(entityAndPredicateList);<br>
+	 * <br><br>
+	 * @param entityAndPredicateList 被更新的内容与条件集合
+	 */
+	void batchUpdateByLambdaCriteria(Collection<Pair<T, Consumer<LambdaUpdatePredicate<T>>>> entityAndPredicateList);
 
 	/**
-	 * 通过ID更新，默认非null值被更新，可以通过@AttributeOptions注解的updateMode设定更新的模式<br>
+	 * 通过主键更新，默认非null值被更新，可以通过@AttributeOptions注解的updateMode设定更新的模式<br>
 	 * @param entity 更新对象
 	 * @return 影响行数
 	 */
