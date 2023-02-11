@@ -24,12 +24,13 @@ import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.LambdaReflections;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.SerializableFunction;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
+import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 
 import lombok.Getter;
 
 public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implements LambdaQueryPredicate<T> {
-	
+
 	@Getter
 	private QueryPredicateImpl delegate = new QueryPredicateImpl();
 
@@ -37,7 +38,7 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 	@Override
 	public LambdaQueryPredicate<T> select(SerializableFunction<T, ?>... getterFns) {
 		String[] attrNames = new String[getterFns.length];
-		for(int i = 0; i < getterFns.length; i++) {
+		for (int i = 0; i < getterFns.length; i++) {
 			attrNames[i] = LambdaReflections.fnToFieldName(getterFns[i]);
 		}
 		getDelegate().select(attrNames);
@@ -54,7 +55,7 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 	@Override
 	public LambdaQueryPredicate<T> exselect(SerializableFunction<T, ?>... getterFns) {
 		String[] attrNames = new String[getterFns.length];
-		for(int i = 0; i < getterFns.length; i++) {
+		for (int i = 0; i < getterFns.length; i++) {
 			attrNames[i] = LambdaReflections.fnToFieldName(getterFns[i]);
 		}
 		getDelegate().exselect(attrNames);
@@ -66,14 +67,14 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 		getDelegate().exselects(attrNameChain);
 		return this;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public LambdaQueryPredicate<T> order(SerializableFunction<T, ?>... getterFns) {
 		this.order(null, getterFns);
 		return this;
 	}
-	
+
 	@Override
 	public LambdaQueryPredicate<T> order(Direction direction, SerializableFunction<T, ?> getterFn) {
 		getDelegate().order(direction, LambdaReflections.fnToFieldName(getterFn));
@@ -84,11 +85,17 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 	@Override
 	public LambdaQueryPredicate<T> order(Direction direction, SerializableFunction<T, ?>... getterFns) {
 		String[] attrNames = new String[getterFns.length];
-		for(int i = 0; i < getterFns.length; i++) {
+		for (int i = 0; i < getterFns.length; i++) {
 			SerializableFunction<T, ?> getterFn = getterFns[i];
 			attrNames[i] = LambdaReflections.fnToFieldName(getterFn);
 		}
 		getDelegate().order(direction, attrNames);
+		return this;
+	}
+
+	@Override
+	public LambdaQueryPredicate<T> order(Sort sort) {
+		getDelegate().order(sort);
 		return this;
 	}
 
@@ -153,7 +160,7 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 		super.apply(entity);
 		return this;
 	}
-	
+
 	@Override
 	public LambdaQueryPredicate<T> conditionMode(Mode conditionMode) {
 		super.conditionMode(conditionMode);
@@ -165,13 +172,13 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 		super.and(conditions);
 		return this;
 	}
-	
+
 	@Override
 	public LambdaQueryPredicate<T> and(Consumer<LambdaPredicate<T>> predicate) {
 		super.and(predicate);
 		return this;
 	}
-	
+
 	@Override
 	public LambdaQueryPredicate<T> andP(Consumer<Predicate> predicate) {
 		super.andP(predicate);
@@ -183,13 +190,13 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 		super.or(conditions);
 		return this;
 	}
-	
+
 	@Override
 	public LambdaQueryPredicate<T> or(Consumer<LambdaPredicate<T>> predicate) {
 		super.or(predicate);
 		return this;
 	}
-	
+
 	@Override
 	public LambdaQueryPredicate<T> orP(Consumer<Predicate> predicate) {
 		super.orP(predicate);
@@ -207,7 +214,7 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 		super.not(predicate);
 		return this;
 	}
-	
+
 	@Override
 	public LambdaQueryPredicate<T> notP(Consumer<Predicate> predicate) {
 		super.notP(predicate);
@@ -586,13 +593,13 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 		super.notIn(accept, getterFn, value);
 		return this;
 	}
-	
+
 	@Override
 	public LambdaQueryPredicate<T> regex(SerializableFunction<T, ?> getterFn, Object value) {
 		super.regex(getterFn, value);
 		return this;
 	}
-	
+
 	@Override
 	public LambdaQueryPredicate<T> regex(boolean accept, SerializableFunction<T, ?> getterFn, Object value) {
 		super.regex(accept, getterFn, value);

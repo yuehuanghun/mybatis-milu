@@ -25,6 +25,7 @@ import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.SerializableFunction;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
+import com.yuehuanghun.mybatis.milu.data.Sort;
 
 /**
  * 使用实体类的getter函数式作为查询条件，如实体类属性（的get方法）有变更能通过IDE直接感知<br>
@@ -92,6 +93,13 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	LambdaQueryPredicate<T> order(Direction direction, SerializableFunction<T, ?>... getterFns);
+	
+	/**
+	 * 指定排序
+	 * @param sort 排序
+	 * @return 当前对象
+	 */
+	LambdaQueryPredicate<T> order(Sort sort);
 
 	/**
 	 * 添加升序排序

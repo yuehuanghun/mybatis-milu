@@ -71,6 +71,13 @@ public interface QueryPredicate extends Predicate {
 	QueryPredicate order(Direction direction, String... attrNames);
 	
 	/**
+	 * 指定排序
+	 * @param sort 排序
+	 * @return 当前对象
+	 */
+	QueryPredicate order(com.yuehuanghun.mybatis.milu.data.Sort sort);
+	
+	/**
 	 * 添加升序排序
 	 * @param attrNames 属性名
 	 * @return 当前对象

@@ -102,6 +102,12 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		}
 		return this;
 	}
+	
+	@Override
+	public QueryPredicate order(com.yuehuanghun.mybatis.milu.data.Sort sort) {
+		sort.forEach(order -> this.sort.add(order.getProperty(), order.getDirection()));
+		return this;
+	}
 
 	@Override
 	public QueryPredicate orderAsc(String... attrNames) {
