@@ -109,6 +109,16 @@ public class Sort implements Streamable<com.yuehuanghun.mybatis.milu.data.Sort.O
 
 		return new Sort(orders);
 	}
+	
+	/**
+	 * 创建排序
+	 * @param direction 排序方向，DESC/ASC
+	 * @param properties 排序属性
+	 * @return
+	 */
+	public static Sort by(String direction, String[] properties) {
+		return by(Direction.fromString(direction), properties);
+	}
 
 	public static Sort by(Direction direction, String... properties) {
 
@@ -132,6 +142,16 @@ public class Sort implements Streamable<com.yuehuanghun.mybatis.milu.data.Sort.O
 			properties[i] = LambdaReflections.fnToFieldName(propertyGetterFns[i]);
 		}
 		return by(direction, properties);
+	}
+	
+	/**
+	 * 增加排序
+	 * @param direction 排序方向，DESC/ASC
+	 * @param properties 排序属性
+	 * @return
+	 */
+	public Sort and(String direction, String... properties) {
+		return and(Direction.fromString(direction), properties);
 	}
 	
 	public Sort and(Direction direction, String... properties) {
