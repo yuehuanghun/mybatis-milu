@@ -5,16 +5,21 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,19 +33,24 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.AppTest;
 import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
+import com.yuehuanghun.mybatis.milu.criteria.LambdaUpdatePredicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
+import com.yuehuanghun.mybatis.milu.ext.Pair;
 import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Student;
 import com.yuehuanghun.mybatismilu.test.dto.StudentDTO;
 import com.yuehuanghun.mybatismilu.test.dto.StudentStatistic;
+import com.yuehuanghun.mybatismilu.test.service.StudentService;
 
 @SpringBootTest(classes = AppTest.class)
 @RunWith(SpringRunner.class)
 public class StudentMapperTest {
 	@Autowired
 	private StudentMapper studentMapper;
+	@Autowired
+	private StudentService studentService;
 
 	@Test
 	public void testFindById() {
@@ -701,5 +711,86 @@ public class StudentMapperTest {
 		
 		Sort sort = Sort.asc(Student::getAge).andDesc(Student::getClassId);
 		list = studentMapper.findAllAndSort(sort);
+	}
+	
+	@Test
+	public void testCriteriaSort() {
+		List<Student> list = studentMapper.findByCriteria(p -> p.order(Sort.asc("classId")));
+		System.out.println(JSON.toJSONString(list));
+		
+		System.out.println(studentMapper.getClass().getName());
+		Field[] fields = studentMapper.getClass().getFields();
+		System.out.println("fields : " + fields.length);
+		for(Field field : fields) {
+			System.out.println(field.getName());
+		}
+		
+		list = studentMapper.findByLambdaCriteria(p -> p.order(Sort.desc(Student::getClassId)));
+		System.out.println(JSON.toJSONString(list));
+		
+		list = studentMapper.findByLambdaCriteria(p -> p.order(Sort.desc(Student::getClassId, Student::getAge)));
+		System.out.println(JSON.toJSONString(list));
+	}
+	
+	@Test
+	@Transactional
+	public void testBatchSave() {
+		List<Student> list = new ArrayList<>();
+		
+		for(int i = 0; i < 10; i++) {
+			Student student = new Student();
+			student.setAge(RandomUtils.nextInt(9, 11));
+			student.setClassId(1L);
+			student.setName(randomName());
+			
+			if(i > 5) {
+				student.setIsDeleted(Boolean.FALSE);
+			}
+			
+			list.add(student);
+		}
+		
+		studentService.batchSave(list);
+	}
+
+	@Test
+	@Transactional
+	public void testBatchUpdateById() {
+		List<Student> list = studentService.getAll();
+		
+		list.forEach(item -> item.setAge(20));
+		
+		studentService.batchUpdateById(list);
+	}
+	
+	@Test
+	@Transactional
+	public void testBatchUpdateByLambdaCriteria() {
+		List<Student> list = studentService.getAll();
+		
+		Collection<Pair<Student, Consumer<LambdaUpdatePredicate<Student>>>> entityAndPredicateList = list.stream().map(item -> {
+			Pair<Student, Consumer<LambdaUpdatePredicate<Student>>> pair = Pair.of(item, p -> p.eq(Student::getId, item.getId()));
+			return pair;
+		}).collect(Collectors.toList());
+		
+		list.forEach(item -> {
+			item.setAge(22);
+			item.setIsDeleted(Boolean.TRUE);
+		});
+		
+		studentService.batchUpdateByLambdaCriteria(entityAndPredicateList);
+		
+		Student updateParam1 = new Student();
+		updateParam1.setAge(10);
+		
+		Student updateParam2 = new Student();
+		updateParam2.setAge(11);
+		updateParam2.setIsDeleted(Boolean.TRUE);
+		
+		Pair<Student, Consumer<LambdaUpdatePredicate<Student>>> pair1 = Pair.of(updateParam1, p -> p.lt(Student::getId, 3L).gt(Student::getId, 0L));
+		
+		Pair<Student, Consumer<LambdaUpdatePredicate<Student>>> pair2 = Pair.of(updateParam2, p -> p.gte(Student::getId, 3L));
+		
+		studentService.batchUpdateByLambdaCriteria(Arrays.asList(pair1, pair2));
 	}
 }
