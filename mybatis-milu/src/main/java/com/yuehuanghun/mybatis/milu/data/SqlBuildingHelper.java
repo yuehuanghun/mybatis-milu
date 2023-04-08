@@ -97,7 +97,7 @@ public class SqlBuildingHelper {
 						}
 						
 						if(reference instanceof ManyToManyReference) {
-							joinExpressMap.computeIfAbsent(reference.getInverseTableName(), key -> {
+							joinExpressMap.computeIfAbsent(prop, key -> {
 								ManyToManyReference m2mRef = (ManyToManyReference) reference;
 								
 								StringBuilder joinExpressBuilder = new StringBuilder();
@@ -140,7 +140,7 @@ public class SqlBuildingHelper {
 								return joinExpressBuilder.toString();
 							});
 						} else {
-							joinExpressMap.computeIfAbsent(reference.getInverseTableName(), key -> {
+							joinExpressMap.computeIfAbsent(prop, key -> {
 								MappedReference ref = (MappedReference) reference;
 								StringBuilder joinExpressBuilder = new StringBuilder();
 								joinExpressBuilder.append(joinExpression);

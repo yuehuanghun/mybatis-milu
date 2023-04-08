@@ -1,6 +1,7 @@
 package com.yuehuanghun.mybatismilu.test.domain.mapper;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
@@ -64,5 +65,14 @@ public class MenuMapperTest {
 		Optional<Menu> menu = menuMapper.findById(1L);
 		assertTrue(menu.get().getIsDeleted() == 0);
 		assertTrue(menu.get().getDeleteTime() == null);
+	}
+	
+	@Test
+	public void testJoin() {
+		Menu menu = menuMapper.findUniqueByLambdaCriteria(p -> p.selects("*, parent*, childrens*").eq(Menu::getId, 5L));
+		assertNotNull(menu);
+		assertNotNull(menu.getParent());
+		assertNotNull(menu.getChildrens());
+		assertEquals(menu.getChildrens().size(), 1);
 	}
 }
