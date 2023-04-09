@@ -5,7 +5,7 @@
 
     <groupId>com.yuehuanghun</groupId>
     <artifactId>mybatis-milu</artifactId>
-    <version>1.10.0</version>
+    <version>1.11.0</version>
     <packaging>jar</packaging>
 
     <name>mybatis-milu</name>
@@ -45,7 +45,7 @@
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
-            <version>3.5.10</version>
+            <version>3.5.13</version>
         </dependency>
         <dependency>
             <groupId>com.github.pagehelper</groupId>
