@@ -29,6 +29,7 @@ import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.criteria.builder.QuerySqlTemplateBuilder;
 import com.yuehuanghun.mybatis.milu.criteria.builder.QuerySqlTemplateBuilder.BuildResult;
+import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderSql;
 import com.yuehuanghun.mybatis.milu.mapping.ResultMapHelper;
@@ -59,6 +60,9 @@ public class GenericFindByCriteriaProviderSql implements GenericProviderSql {
 		
 		Map<String, Object> queryParams = new HashMap<>();
 		predicate.renderParams(context, queryParams, 0);
+		
+		 // 处理主动使用PageHelper发起分页设置的，转换排序中的属性为列名
+		SqlBuildingHelper.convertLocalPageOrder(context.getEntity(), context.getConfiguration());
 		
 		if(queryParams.containsKey(Constants.PAGE_KEY)) {
 			Pageable page = (Pageable)queryParams.remove(Constants.PAGE_KEY);

@@ -78,6 +78,17 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * @param sort 排序
 	 * @return 列表
 	 */
+	default List<T> getAll(Sort sort) {
+		return getDomainMapper().findAll(sort);
+	}
+
+	/**
+	 * 查询表所有数据，并指定排序方式
+	 * @param sort 排序
+	 * @return 列表
+	 * @deprecated 使用getAll(Sort sort)方法替代
+	 */
+	@Deprecated
 	default List<T> getAllAndSort(Sort sort) {
 		return getDomainMapper().findAllAndSort(sort);
 	}

@@ -15,40 +15,40 @@
  */
 package com.yuehuanghun.mybatis.milu.generic.impl;
 
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.yuehuanghun.mybatis.milu.generic.GenericCachingProviderSql;
+import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
+import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
+import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
-import com.yuehuanghun.mybatis.milu.metamodel.Entity;
-import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
+import com.yuehuanghun.mybatis.milu.tool.Constants;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
-public class GenericFindAllProviderSql extends GenericCachingProviderSql {
+public class GenericFindAllProviderSql extends GenericFindByCriteriaProviderSql {
 
+	private final QueryPredicate EMPTY = new QueryPredicateImpl();
+	
+	@SuppressWarnings("unchecked")
 	@Override
-	public String provideCachingSql(GenericProviderContext context, Object params) {
-		Entity entity = context.getEntity();
-		Collection<Attribute> attributes = entity.getAttributes();
-		
-		StringBuilder sqlBuilder = new StringBuilder(512);		
-		sqlBuilder.append(Segment.SELECT);
-		
-		boolean first = true;
-		
-		for(Attribute attr : attributes) {
-			if(!attr.isSelectable()) {
-				continue;
-			}
-			if(!first) {
-				sqlBuilder.append(Segment.COMMA_B);
+	public String provideSql(GenericProviderContext context, Object params) {		
+		QueryPredicate predicate;
+		if(params == null) {
+			predicate = EMPTY;
+			params = new HashMap<>();
+		} else {
+			Sort sort = (Sort)((Map<String, Object>)params).remove(Segment.SORT);
+			if(sort == null) {
+				predicate = EMPTY;
 			} else {
-				first = false;
+				predicate = new QueryPredicateImpl();
+				predicate.order(sort);
 			}
-			sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context));
 		}
-		sqlBuilder.append(Segment.FROM_B).append(wrapTableName(entity, context));
 		
-		return sqlBuilder.toString();
+		((Map<String, Object>)params).put(Constants.CRITERIA, predicate);
+		
+		return super.provideSql(context, params);
 	}
 
 	@Override

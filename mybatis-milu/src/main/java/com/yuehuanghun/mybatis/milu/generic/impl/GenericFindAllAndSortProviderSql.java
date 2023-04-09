@@ -26,6 +26,7 @@ import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
+@Deprecated
 public class GenericFindAllAndSortProviderSql extends GenericCachingProviderSql {
 	
 	@SuppressWarnings("unchecked")

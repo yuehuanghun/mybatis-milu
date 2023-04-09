@@ -69,9 +69,18 @@ public interface BaseMapper<T, ID extends Serializable> {
 	
 	/**
 	 * 查询表所有数据，并指定排序方式
-	 * @param sort 排序
+	 * @param sort 排序，可null
 	 * @return 列表
 	 */
+	List<T> findAll(@Param(Constants.SORT) Sort sort);
+	
+	/**
+	 * 查询表所有数据，并指定排序方式
+	 * @param sort 排序
+	 * @return 列表
+	 * @Deprecated 使用findAll(Sort sort)方法替代
+	 */
+	@Deprecated
 	List<T> findAllAndSort(@Param(Constants.SORT) Sort sort);
 	
 	/**
