@@ -43,7 +43,7 @@ public class GenericFindByCriteriaProviderSql implements GenericProviderSql {
 	@Override
 	public String provideSql(GenericProviderContext context, Object params) {
 		Map paramMap = ((Map)params);
-		Object criteria = paramMap.get(Constants.CRITERIA);
+		Object criteria = paramMap.remove(Constants.CRITERIA);
 		QueryPredicate predicate;
 		
 		if(Consumer.class.isInstance(criteria)) {
@@ -58,13 +58,14 @@ public class GenericFindByCriteriaProviderSql implements GenericProviderSql {
 		}
 		
 		Map<String, Object> queryParams = new HashMap<>();
-		predicate.renderParams(context, queryParams, 0);		
-		paramMap.putAll(queryParams);
+		predicate.renderParams(context, queryParams, 0);
 		
-		if(paramMap.containsKey(Constants.PAGE_KEY)) {
-			Pageable page = (Pageable)paramMap.get(Constants.PAGE_KEY);
+		if(queryParams.containsKey(Constants.PAGE_KEY)) {
+			Pageable page = (Pageable)queryParams.remove(Constants.PAGE_KEY);
 			PageHelper.startPage(page.getPageNum(), page.getPageSize(), page.isCount());
 		}
+		
+		paramMap.putAll(queryParams);
 
 		BuildResult result = cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
 			return new SoftValueHashMap<>();

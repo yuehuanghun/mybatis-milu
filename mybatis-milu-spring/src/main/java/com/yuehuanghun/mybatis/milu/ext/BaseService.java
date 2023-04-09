@@ -83,7 +83,8 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	}
 
 	/**
-	 * 使用实体类作为查询参数，非null值才会参与查询，关联表属性无效
+	 * 使用实体类作为查询参数，非null值才会参与查询<br>
+	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
 	 * @param example 条件
 	 * @return 列表
 	 */
@@ -92,7 +93,8 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	}
 
 	/**
-	 * 使用实体类作为查询参数，非null值才会参与查询，关联表属性无效
+	 * 使用实体类作为查询参数，非null值才会参与查询<br>
+	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
 	 * @param example 条件
 	 * @param pageable 分页参数，可null
 	 * @return 列表
@@ -102,7 +104,44 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	}
 
 	/**
-	 * 使用实体类作为查询参数，非null值才会参与查询，关联表属性无效<br>
+	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询<br>
+	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * @param example 条件
+	 * @param sort 排序，可null
+	 * @return 列表
+	 */
+	default List<T> getByExample(T example, Sort sort) {
+		return getDomainMapper().findByExample(example, sort);
+	}
+	
+	/**
+	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询<br>
+	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * @param example 条件
+	 * @param sort 排序，可null
+	 * @param pageable 分页参数，可null
+	 * @return 列表
+	 */
+	default List<T> getByExample(T example, Sort sort, Pageable pageable) {
+		return getDomainMapper().findByExample(example, sort, pageable);
+	}
+	
+	/**
+	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询<br>
+	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * @param example 条件
+	 * @param sort 排序，可null
+	 * @param pageable 分页参数，可null
+	 * @param group 查询引用属性分组，可null，见@EntityOptions注解
+	 * @return 列表
+	 */
+	default List<T> getByExample(T example, Sort sort, Pageable pageable, String group) {
+		return getDomainMapper().findByExample(example, sort, pageable, group);
+	}
+
+	/**
+	 * 使用实体类作为查询参数，非null值才会参与查询<br>
+	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
 	 * 结果集必须是0或1条数据，否则会报错。
 	 * @param example 条件
 	 * @param pageable 分页参数，可null
@@ -110,27 +149,6 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 */
 	default T getUniqueByExample(T example, Pageable pageable){
 		return getDomainMapper().findUniqueByExample(example, pageable);
-	}
-
-	/**
-	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效
-	 * @param example 条件
-	 * @param sort 排序，可null
-	 * @return 列表
-	 */
-	default List<T> getByExampleAndSort(T example, Sort sort) {
-		return getDomainMapper().findByExampleAndSort(example, sort);
-	}
-	
-	/**
-	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效
-	 * @param example 条件
-	 * @param sort 排序，可null
-	 * @param pageable 分页参数，可null
-	 * @return 列表
-	 */
-	default List<T> getByExampleAndSort(T example, Sort sort, Pageable pageable){
-		return getDomainMapper().findByExampleAndSort(example, sort, pageable);
 	}
 	
 	/**
@@ -141,7 +159,59 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * @param pageable 分页参数，可null
 	 * @return 列表
 	 */
-	default T getUniqueByExampleAndSort(T example, Sort sort, Pageable pageable){
+	default T getUniqueByExample(T example, Sort sort, Pageable pageable) {
+		return getDomainMapper().findUniqueByExample(example, sort, pageable);
+	}
+	
+	/**
+	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效<br>
+	 * 结果集必须是0或1条数据，否则会报错。
+	 * @param example 条件
+	 * @param sort 排序，可null
+	 * @param pageable 分页参数，可null
+	 * @param group 查询引用属性分组，可null，见@EntityOptions注解
+	 * @return 列表
+	 */
+	default T getUniqueByExample(T example, Sort sort, Pageable pageable, String group) {
+		return getDomainMapper().findUniqueByExample(example, sort, pageable, group);
+	}
+
+	/**
+	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效
+	 * @param example 条件
+	 * @param sort 排序，可null
+	 * @return 列表
+	 * @Deprecated 使用getByExample(T example, Sort sort)替代
+	 */
+	@Deprecated
+	default List<T> getByExampleAndSort(T example, Sort sort) {
+		return getDomainMapper().findByExampleAndSort(example, sort);
+	}
+	
+	/**
+	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效
+	 * @param example 条件
+	 * @param sort 排序，可null
+	 * @param pageable 分页参数，可null
+	 * @return 列表
+	 * @Deprecated 使用getByExample(T example, Sort sort, Pageable pageable)进行替代
+	 */
+	@Deprecated
+	default List<T> getByExampleAndSort(T example, Sort sort, Pageable pageable) {
+		return getDomainMapper().findByExampleAndSort(example, sort, pageable);
+	}
+	
+	/**
+	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效<br>
+	 * 结果集必须是0或1条数据，否则会报错。
+	 * @param example 条件
+	 * @param sort 排序，可null
+	 * @param pageable 分页参数，可null
+	 * @return 列表
+	 * @Deprecated 使用getUniqueByExample(T example, Sort sort, Pageable pageable)进行替代
+	 */
+	@Deprecated
+	default T getUniqueByExampleAndSort(T example, Sort sort, Pageable pageable) {
 		return getDomainMapper().findUniqueByExampleAndSort(example, sort, pageable);
 	}
 

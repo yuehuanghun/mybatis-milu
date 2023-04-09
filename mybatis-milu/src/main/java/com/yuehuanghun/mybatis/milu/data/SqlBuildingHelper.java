@@ -15,6 +15,8 @@
  */
 package com.yuehuanghun.mybatis.milu.data;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,21 +27,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.ibatis.scripting.xmltags.OgnlCache;
+
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
+import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery.MatchType;
 import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
+import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
+import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
+import com.yuehuanghun.mybatis.milu.data.Part.Type;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 import com.yuehuanghun.mybatis.milu.filler.Filler;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.PluralAttribute;
+import com.yuehuanghun.mybatis.milu.metamodel.Entity.RangeCondition;
+import com.yuehuanghun.mybatis.milu.metamodel.KeyType;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.ManyToManyReference;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.MappedReference;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.Reference;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
+import com.yuehuanghun.mybatis.milu.tool.InstanceUtils;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
+import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter;
 
 public class SqlBuildingHelper {
 	public static void analyseDomain(Entity entity, Collection<String> properties, TableAliasDispacher tableAliasDispacher, MiluConfiguration configuration, Map<String, String> joinExpressMap, Map<String, String> joinQueryColumnNap) {
@@ -406,5 +418,82 @@ public class SqlBuildingHelper {
 			String orderEl = orderMap.entrySet().stream().map(item -> item.getKey() + Segment.SPACE + item.getValue()).collect(Collectors.joining(", "));
 			page.setOrderBy(orderEl);
 		}
+	}
+	
+	/**
+	 * example条件转为criteria条件
+	 * @param entity 实体类对象
+	 * @param example 查询样例条件
+	 * @return 动态查询条件
+	 */
+	public static QueryPredicate exampleToQueryPredicate(Entity entity, Object example) {
+		QueryPredicateImpl predicate = new QueryPredicateImpl();
+		
+		for(Attribute attr : entity.getAttributes()) {
+			String attrName = attr.getName();
+			
+			if(attr.getExampleMatchType() == MatchType.EQUAL) {
+				predicate.eq(attrName, OgnlCache.getValue(attrName, example));
+			} else if(attr.getExampleMatchType() == MatchType.CONTAIN) {
+				predicate.contain(attrName, OgnlCache.getValue(attrName, example));
+			} else if(attr.getExampleMatchType() == MatchType.LIKE) {
+				predicate.like(attrName, OgnlCache.getValue(attrName, example));
+			} else if(attr.getExampleMatchType() == MatchType.START_WITH) {
+				predicate.startWith(attrName, OgnlCache.getValue(attrName, example));
+			} else if(attr.getExampleMatchType() == MatchType.END_WITH) {
+				predicate.endWith(attrName, OgnlCache.getValue(attrName, example));
+			}
+			
+			for(RangeCondition condition : attr.getRangeList()) {
+				Object value = OgnlCache.getValue(condition.getKeyName(), example);
+				if(value == null) {
+					continue;
+				}
+				
+				ExampleQueryConverter converter = InstanceUtils.getSigleton(condition.getValueConverter());
+	
+				if(condition.getKeyType() == KeyType.IN) {
+					Object collection = StringUtils.toCollection(value);
+					List<Object> values = new ArrayList<>();
+					if(collection.getClass().isArray()) {
+						for(int i = 0; i < Array.getLength(collection); i++) {
+							values.add(converter.convert(Array.get(collection, i), condition.getAttrJavaType(), condition.getKeyName(), condition.getKeyType()));
+						}
+						collection = values;
+					} else if(collection instanceof Collection) {
+						Iterator<?> it = ((Collection<?>)collection).iterator();
+						while(it.hasNext()) {
+							values.add(converter.convert(it.next(), condition.getAttrJavaType(), condition.getKeyName(), condition.getKeyType()));
+						}
+						collection = values;
+					}
+					
+					predicate.in(attrName, collection);
+					continue;
+				}
+				
+				Object convertedValue = converter.convert(value, condition.getAttrJavaType(), condition.getKeyName(), condition.getKeyType());
+				
+				if(condition.getKeyType() == KeyType.START) {
+					if(condition.getType() == Type.GREATER_THAN) {
+						predicate.gt(attrName, convertedValue);
+					} else {
+						predicate.gte(attrName, convertedValue);
+					}
+					continue;
+				}
+				
+				if(condition.getKeyType() == KeyType.END) {
+					if(condition.getType() == Type.LESS_THAN) {
+						predicate.lt(attrName, convertedValue);
+					} else {
+						predicate.lte(attrName, convertedValue);
+					}
+					continue;
+				}
+			}
+		}
+		
+		return predicate;
 	}
 }

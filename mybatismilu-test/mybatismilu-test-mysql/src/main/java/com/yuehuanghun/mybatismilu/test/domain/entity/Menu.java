@@ -12,13 +12,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
+import com.yuehuanghun.mybatis.milu.annotation.EntityOptions;
+import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery;
+import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery.MatchType;
 import com.yuehuanghun.mybatis.milu.annotation.Filler;
 import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
+import com.yuehuanghun.mybatis.milu.annotation.EntityOptions.FetchRef;
 
 import lombok.Data;
 
 @Entity
 @Data
+@FetchRef(refAttrs = {"parent","childrens"})
+@EntityOptions(fetchRefs = {@FetchRef(group = "parent", refAttrs = "parent"), @FetchRef(group = "children", refAttrs = "childrens")})
 public class Menu {
 
 	@Id
@@ -26,6 +32,8 @@ public class Menu {
 	
 	private Long pid;
 	
+	@ExampleQuery(matchType = MatchType.CONTAIN)
+	@AttributeOptions(exampleQuery = @ExampleQuery(matchType = MatchType.EQUAL))
 	private String name;
 	
 	@AttributeOptions(filler = @Filler(fillOnInsert = true)) //插入时不需要设置值 
@@ -36,7 +44,7 @@ public class Menu {
 	private Date updateTime;
 	
 	@ManyToOne
-	@JoinColumn(name = "pid"/* , referencedColumnName = "id" */) //当referencedColumnName为对方的主键时，是可以省略设置的
+	@JoinColumn(name = "pid", referencedColumnName = "id")
 	private Menu parent; //自身多对一引用
 	
 	@OneToMany

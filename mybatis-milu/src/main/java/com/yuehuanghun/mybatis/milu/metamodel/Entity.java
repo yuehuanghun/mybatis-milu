@@ -35,6 +35,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
 import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery.MatchType;
+import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Part;
 import com.yuehuanghun.mybatis.milu.filler.Filler;
@@ -78,6 +79,8 @@ public class Entity {
 
 	private final List<Filler> onInsertFillers = new ArrayList<>();
 	
+	private final Map<String, FetchRef> exampleQueryFetchRefs = new HashMap<>();
+	
 	public void addAttribute(Attribute attribute) {
 		attributeMap.put(attribute.getName(), attribute);
 		if(IdAttribute.class.isInstance(attribute)) {
@@ -113,6 +116,14 @@ public class Entity {
 	
 	public Reference getReference(String fieldName) {
 		return referenceMap.get(fieldName);
+	}
+	
+	public void addFetchRef(String group, String[] refAttrs, JoinMode joinMode) {
+		exampleQueryFetchRefs.put(group, new FetchRef(refAttrs, joinMode));
+	}
+	
+	public FetchRef getFetchRefs(String group) {
+		return exampleQueryFetchRefs.get(group);
 	}
 	
 	@Data
@@ -304,19 +315,5 @@ public class Entity {
 		private Class<? extends ExampleQueryConverter> valueConverter;
 		
 		private KeyType keyType;
-	}
-	
-	public static void main(String[] args) {
-		String str = " IN (<foreach collection=\"%s\" item=\"item\" separator=\",\">#{item}</foreach>)#{item2}";
-		String regex = "#\\{.+?}";
-		Pattern pattern = Pattern.compile(regex);
-		Matcher matcher = pattern.matcher(str);
-		while(matcher.find()) {
-//			int groupCount = matcher.groupCount();
-//			for(int i = 0; i < groupCount; i ++) {
-//				System.out.println(matcher.group(i + 1));
-//			}
-			System.out.println(matcher.group());
-		}
 	}
 }

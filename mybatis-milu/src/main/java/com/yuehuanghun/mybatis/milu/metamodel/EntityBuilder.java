@@ -53,6 +53,8 @@ import org.apache.ibatis.reflection.ReflectorFactory;
 
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
+import com.yuehuanghun.mybatis.milu.annotation.EntityOptions;
+import com.yuehuanghun.mybatis.milu.annotation.EntityOptions.FetchRef;
 import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery;
 import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
@@ -137,6 +139,36 @@ public class EntityBuilder {
 		
 		buildAttribute(entity, entityClass);
 		
+		EntityOptions entityOptions = entityClass.getAnnotation(EntityOptions.class);
+		if(entityOptions != null) {
+			for(FetchRef fetchRef : entityOptions.fetchRefs()) {
+				for(String attrName : fetchRef.refAttrs()) {
+					Attribute attribute = entity.getAttribute(attrName);
+					if(attribute == null) {
+						throw new OrmBuildingException(String.format("实体类%s无引用属性%s", entityClass.getName(), attrName));
+					}
+					if(!attribute.isReference()) {
+						throw new OrmBuildingException(String.format("实体类%s属性%s非引用属性", entityClass.getName(), attrName));
+					}
+				}
+				entity.addFetchRef(fetchRef.group(), fetchRef.refAttrs(), fetchRef.joinMode());
+			}
+		}
+		
+		FetchRef fetchRef = entityClass.getAnnotation(FetchRef.class);
+		if(fetchRef != null) {
+			for(String attrName : fetchRef.refAttrs()) {
+				Attribute attribute = entity.getAttribute(attrName);
+				if(attribute == null) {
+					throw new OrmBuildingException(String.format("实体类%s无引用属性%s", entityClass.getName(), attrName));
+				}
+				if(!attribute.isReference()) {
+					throw new OrmBuildingException(String.format("实体类%s属性%s非引用属性", entityClass.getName(), attrName));
+				}
+			}
+			entity.addFetchRef(fetchRef.group(), fetchRef.refAttrs(), fetchRef.joinMode());
+		}
+		
 		return entity;
 	}
 	
@@ -161,29 +193,24 @@ public class EntityBuilder {
 
 			List<RangeCondition> rangeList = null;
 			AttributeOptions options = getAnnotation(field, AttributeOptions.class);
+			ExampleQuery directExampleQuery = getAnnotation(field, ExampleQuery.class);
+			if(directExampleQuery != null) {
+				attr.setExampleMatchType(directExampleQuery.matchType());
+				rangeList = new ArrayList<>();
+				buildRange(directExampleQuery, rangeList, attr);
+			}
 			if(options != null) {
 				ExampleQuery[] exampleQuerys = options.exampleQuery();
 				if(exampleQuerys.length > 0) {
-					attr.setExampleMatchType(exampleQuerys[0].matchType());
+					if(directExampleQuery == null) {
+						attr.setExampleMatchType(exampleQuerys[0].matchType());
+					}
 
-					rangeList = new ArrayList<>();
+					if(rangeList == null) {
+						rangeList = new ArrayList<>();
+					}
 					for(ExampleQuery exampleQuery : exampleQuerys) {
-						Class<? extends ExampleQueryConverter> valueConverter = exampleQuery.valueConverter() == AutoConverter.class ? configuration.getDefaultExampleQueryConverter() : exampleQuery.valueConverter();
-				
-						String startKeyName = exampleQuery.startKeyName();
-						if(StringUtils.isNotBlank(startKeyName)) {
-							rangeList.add(new RangeCondition(startKeyName, exampleQuery.startValueContain() ? Type.GREATER_THAN_EQUAL : Type.GREATER_THAN, attr.getJavaType(), valueConverter, KeyType.START));
-						}
-						
-						String endKeyName = exampleQuery.endKeyName();
-						if(StringUtils.isNotBlank(endKeyName)) {
-							rangeList.add(new RangeCondition(endKeyName, exampleQuery.endValueContain() ? Type.LESS_THAN_EQUAL : Type.LESS_THAN, attr.getJavaType(), valueConverter, KeyType.END));
-						}
-						
-						String inKeyName = exampleQuery.inKeyName();
-						if(StringUtils.isNotBlank(inKeyName)) {
-							rangeList.add(new RangeCondition(inKeyName, Type.IN, attr.getJavaType(), valueConverter, KeyType.IN));
-						}
+						buildRange(exampleQuery, rangeList, attr);
 					}
 				}
 				
@@ -241,6 +268,25 @@ public class EntityBuilder {
 		}
 		
 		buildAttribute(entity, clazz.getSuperclass());
+	}
+	
+	private void buildRange(ExampleQuery exampleQuery, List<RangeCondition> rangeList, Attribute attr) {
+		Class<? extends ExampleQueryConverter> valueConverter = exampleQuery.valueConverter() == AutoConverter.class ? configuration.getDefaultExampleQueryConverter() : exampleQuery.valueConverter();
+		
+		String startKeyName = exampleQuery.startKeyName();
+		if(StringUtils.isNotBlank(startKeyName)) {
+			rangeList.add(new RangeCondition(startKeyName, exampleQuery.startValueContain() ? Type.GREATER_THAN_EQUAL : Type.GREATER_THAN, attr.getJavaType(), valueConverter, KeyType.START));
+		}
+		
+		String endKeyName = exampleQuery.endKeyName();
+		if(StringUtils.isNotBlank(endKeyName)) {
+			rangeList.add(new RangeCondition(endKeyName, exampleQuery.endValueContain() ? Type.LESS_THAN_EQUAL : Type.LESS_THAN, attr.getJavaType(), valueConverter, KeyType.END));
+		}
+		
+		String inKeyName = exampleQuery.inKeyName();
+		if(StringUtils.isNotBlank(inKeyName)) {
+			rangeList.add(new RangeCondition(inKeyName, Type.IN, attr.getJavaType(), valueConverter, KeyType.IN));
+		}
 	}
 	
 	private Attribute forField(Field field) {

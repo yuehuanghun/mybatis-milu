@@ -67,4 +67,6 @@ public interface Constants {
 	String ATTR_NAME = "attrName";
 	
 	String VALUE = "value";
+
+	String GROUP = "group";
 }

@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.yuehuanghun.mybatis.milu.dialect.db;
 
-import com.yuehuanghun.mybatis.milu.dialect.AbstractDialect;
+package com.yuehuanghun.mybatis.milu.metamodel;
 
-/**
- * sqlserver 任意版本
- * @author yuehuanghun
- *
- */
-public class SqlServerDialect extends AbstractDialect {
-	public static final SqlServerDialect instance = new SqlServerDialect();
+import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
 
-	@Override
-	public String getTopLimitSql(String sql, int topRows) {
-		return sql.replaceFirst("^(?i)\\s*SELECT", "SELECT TOP " + topRows);
-	}
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class FetchRef {
+
+	private String[] refAttrs;
+	
+	private JoinMode joinMode;
 }

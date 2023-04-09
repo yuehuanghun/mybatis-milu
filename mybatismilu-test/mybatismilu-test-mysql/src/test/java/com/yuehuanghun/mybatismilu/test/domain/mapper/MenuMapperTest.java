@@ -2,6 +2,7 @@ package com.yuehuanghun.mybatismilu.test.domain.mapper;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
@@ -74,5 +75,40 @@ public class MenuMapperTest {
 		assertNotNull(menu.getParent());
 		assertNotNull(menu.getChildrens());
 		assertEquals(menu.getChildrens().size(), 1);
+	}
+	
+	@Test
+	public void testExampleQuery() {
+		Menu example = new Menu();
+		example.setName("一级");
+		
+		List<Menu> list = menuMapper.findByExample(example);
+		assertEquals(list.size(), 2);
+	}
+	
+	@Test
+	public void testExampleFetchRef() {
+		Menu example = new Menu();
+		example.setName("二级");
+		List<Menu> list = menuMapper.findByExample(example, null, null, "parent");
+		assertEquals(list.size(), 3);
+		assertNotNull(list.get(0).getParent());
+		assertNull(list.get(0).getChildrens());
+		
+		list = menuMapper.findByExample(example);
+		assertEquals(list.size(), 3);
+		assertNotNull(list.get(0).getParent());
+		assertEquals(list.stream().filter(item -> item.getId().longValue() == 5).findAny().get().getChildrens().size(), 1);
+		
+		example = new Menu();
+		example.setName("一级");
+		list = menuMapper.findByExample(example, null, null, "children");
+		assertEquals(list.size(), 2);
+		assertNull(list.get(0).getParent());
+		assertNotNull(list.get(0).getChildrens());
+		assertEquals(list.get(0).getChildrens().size(), 2);
+		assertNull(list.get(1).getParent());
+		assertNotNull(list.get(1).getChildrens());
+		assertEquals(list.get(1).getChildrens().size(), 1);
 	}
 }

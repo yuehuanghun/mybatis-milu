@@ -32,7 +32,7 @@ import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter.AutoCon
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.ANNOTATION_TYPE)
+@Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})
 public @interface ExampleQuery {
 
 	/**

@@ -75,35 +75,93 @@ public interface BaseMapper<T, ID extends Serializable> {
 	List<T> findAllAndSort(@Param(Constants.SORT) Sort sort);
 	
 	/**
-	 * 使用实体类作为查询参数，非null值才会参与查询，关联表属性无效
+	 * 使用实体类作为查询参数，非null值才会参与查询<br>
+	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
 	 * @param example 条件
 	 * @return 列表
 	 */
 	List<T> findByExample(@Param(Constants.EXAMPLE) T example);
 	
 	/**
-	 * 使用实体类作为查询参数，非null值才会参与查询，关联表属性无效<br>
+	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询<br>
+	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * @param example 条件
+	 * @param sort 排序，可null
+	 * @return 列表
+	 */
+	List<T> findByExample(@Param(Constants.EXAMPLE) T example, @Param(Constants.SORT) Sort sort);
+
+	/**
+	 * 使用实体类作为查询参数，非null值才会参与查询<br>
+	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * @param example 条件
+	 * @param pageable 分页参数，可null
+	 * @return 列表
+	 */
+	List<T> findByExample(@Param(Constants.EXAMPLE) T example, @Param(Constants.PAGE) Pageable pageable);
+
+	/**
+	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询<br>
+	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * @param example 条件
+	 * @param sort 排序，可null
+	 * @param pageable 分页参数，可null
+	 * @return 列表
+	 */
+	List<T> findByExample(@Param(Constants.EXAMPLE) T example, @Param(Constants.SORT) Sort sort, @Param(Constants.PAGE) Pageable pageable);
+
+	/**
+	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询<br>
+	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * @param example 条件
+	 * @param sort 排序，可null
+	 * @param pageable 分页参数，可null
+	 * @param group 查询引用属性分组，可null，见@EntityOptions注解
+	 * @return 列表
+	 */
+	List<T> findByExample(@Param(Constants.EXAMPLE) T example, @Param(Constants.SORT) Sort sort, @Param(Constants.PAGE) Pageable pageable, @Param(Constants.GROUP) String group);
+	
+	/**
+	 * 使用实体类作为查询参数，非null值才会参与查询<br>
+	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
 	 * 结果集必须是0或1条数据，否则会报错。
 	 * @param example 条件
 	 * @param pageable 分页参数，可null
 	 * @return 列表
 	 */
 	T findUniqueByExample(@Param(Constants.EXAMPLE) T example, @Param(Constants.PAGE) Pageable pageable);
-
+	
 	/**
-	 * 使用实体类作为查询参数，非null值才会参与查询，关联表属性无效
+	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询<br>
+	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * 结果集必须是0或1条数据，否则会报错。
 	 * @param example 条件
+	 * @param sort 排序，可null
 	 * @param pageable 分页参数，可null
 	 * @return 列表
 	 */
-	List<T> findByExample(@Param(Constants.EXAMPLE) T example, @Param(Constants.PAGE) Pageable pageable);
+	T findUniqueByExample(@Param(Constants.EXAMPLE) T example, @Param(Constants.SORT) Sort sort, @Param(Constants.PAGE) Pageable pageable);
+	
+	/**
+	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询<br>
+	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * 结果集必须是0或1条数据，否则会报错。
+	 * @param example 条件
+	 * @param sort 排序，可null
+	 * @param pageable 分页参数，可null
+	 * @param group 查询引用属性分组，可null，见@EntityOptions注解
+	 * @return 列表
+	 */
+	T findUniqueByExample(@Param(Constants.EXAMPLE) T example, @Param(Constants.SORT) Sort sort, @Param(Constants.PAGE) Pageable pageable, @Param(Constants.GROUP) String group);
 	
 	/**
 	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效
 	 * @param example 条件
 	 * @param sort 排序，可null
 	 * @return 列表
+	 * @deprecated 使用findByExample(T example, Sort sort)方法替代
 	 */
+	@Deprecated
 	List<T> findByExampleAndSort(@Param(Constants.EXAMPLE) T example, @Param(Constants.SORT) Sort sort);
 	
 	/**
@@ -112,7 +170,9 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param sort 排序，可null，可null
 	 * @param pageable 分页参数
 	 * @return 列表
+	 * @deprecated 使用findByExampleAndSort(T example, Sort sort, Pageable pageable)方法替代
 	 */
+	@Deprecated 
 	List<T> findByExampleAndSort(@Param(Constants.EXAMPLE) T example, @Param(Constants.SORT) Sort sort, @Param(Constants.PAGE) Pageable pageable);
 	
 	/**
@@ -122,7 +182,9 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @param sort 排序，可null
 	 * @param pageable 分页参数，可null
 	 * @return 列表
+	 * @deprecated 使用#findUniqueByExample(T example, Sort sort, Pageable pageable)方法替代
 	 */
+	@Deprecated
 	T findUniqueByExampleAndSort(@Param(Constants.EXAMPLE) T example, @Param(Constants.SORT) Sort sort, @Param(Constants.PAGE) Pageable pageable);
 	
 	/**

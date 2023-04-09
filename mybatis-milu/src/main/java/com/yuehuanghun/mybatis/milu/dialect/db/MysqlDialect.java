@@ -21,7 +21,7 @@ import com.yuehuanghun.mybatis.milu.dialect.AbstractDialect;
 
 /**
  * MYSQL 数据库
- * @author fengjie
+ * @author yuehuanghun
  *
  */
 public class MysqlDialect extends AbstractDialect {

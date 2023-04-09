@@ -19,7 +19,7 @@ import com.yuehuanghun.mybatis.milu.dialect.AbstractDialect;
 
 /**
  * sqlserver &gt;= 2012版本
- * @author fengjie
+ * @author yuehuanghun
  *
  */
 public class SqlServer2012Dialect extends AbstractDialect {
