@@ -192,7 +192,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * @param example 条件
 	 * @param sort 排序，可null
 	 * @return 列表
-	 * @Deprecated 使用getByExample(T example, Sort sort)替代
+	 * @deprecated 使用getByExample(T example, Sort sort)替代
 	 */
 	@Deprecated
 	default List<T> getByExampleAndSort(T example, Sort sort) {
@@ -205,7 +205,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * @param sort 排序，可null
 	 * @param pageable 分页参数，可null
 	 * @return 列表
-	 * @Deprecated 使用getByExample(T example, Sort sort, Pageable pageable)进行替代
+	 * @deprecated 使用getByExample(T example, Sort sort, Pageable pageable)进行替代
 	 */
 	@Deprecated
 	default List<T> getByExampleAndSort(T example, Sort sort, Pageable pageable) {
@@ -219,7 +219,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * @param sort 排序，可null
 	 * @param pageable 分页参数，可null
 	 * @return 列表
-	 * @Deprecated 使用getUniqueByExample(T example, Sort sort, Pageable pageable)进行替代
+	 * @deprecated 使用getUniqueByExample(T example, Sort sort, Pageable pageable)进行替代
 	 */
 	@Deprecated
 	default T getUniqueByExampleAndSort(T example, Sort sort, Pageable pageable) {

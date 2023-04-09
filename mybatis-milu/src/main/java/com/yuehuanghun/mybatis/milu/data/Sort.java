@@ -114,7 +114,7 @@ public class Sort implements Streamable<com.yuehuanghun.mybatis.milu.data.Sort.O
 	 * 创建排序
 	 * @param direction 排序方向，DESC/ASC
 	 * @param properties 排序属性
-	 * @return
+	 * @return 自身
 	 */
 	public static Sort by(String direction, String[] properties) {
 		return by(Direction.fromString(direction), properties);
@@ -148,7 +148,7 @@ public class Sort implements Streamable<com.yuehuanghun.mybatis.milu.data.Sort.O
 	 * 增加排序
 	 * @param direction 排序方向，DESC/ASC
 	 * @param properties 排序属性
-	 * @return
+	 * @return 自身
 	 */
 	public Sort and(String direction, String... properties) {
 		return and(Direction.fromString(direction), properties);

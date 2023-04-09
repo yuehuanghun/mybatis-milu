@@ -102,7 +102,7 @@ public class BaseServiceImpl<T, ID extends Serializable, M extends BaseMapper<T,
 
 	/**
 	 * 批量处理中提交缓冲区的阈值
-	 * @return
+	 * @return 阈值
 	 */
 	protected int getBatchFlushSize() {
 		return 500;

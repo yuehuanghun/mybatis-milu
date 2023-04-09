@@ -27,7 +27,7 @@ jdk >= 1.8
 <dependency>
    <groupId>com.yuehuanghun</groupId>
    <artifactId>mybatismilu-spring-boot-starter</artifactId>
-   <version>1.10.0</version> <!-- 获取最新版本 -->
+   <version>1.11.0</version> <!-- 获取最新版本 -->
 </dependency>
 ```
 
@@ -40,7 +40,7 @@ jdk >= 1.8
 
 #### 一、实体类声明
 
-如果你熟悉使用Hibernate，可以忽略此节内容。  
+如果你熟悉使用Hibernate等JPA框架，以下内容你会比较容易理解。  
 使用javax.persistence.Entity注解一个类为实体类。  
 可以使用javax.persistence.Table注解声明覆盖实体类的默认值。  
 可以使用javax.persistence.Column注解声明覆盖字段的默认值。  
@@ -184,17 +184,32 @@ public class SomeEntity {
 别名注解可以自定义，目前可以被配置的有@Id、@GeneratedValue、@AttributeOptions、@Column  
 自定义可以参考示范项目
 
+##### MyBatis-Milu中的自定义注解
+JPA提供注解未能完全满足需要，因此也有一些此框架中自定义的注解  
+为了方便记忆，大部分拓展配置都可以通过以下三个注解进行声明，可以通过类的注释内容了解它们的功能
+
+1. EnityOptions  
+实体选项  
+
+2. AttributeOptions  
+实体属性的选项
+
+3. StatementOptions  
+Mapper查询方法的选项
+
 #### 二、通用Mapper
 
 Mapper接口通过继承BaseMapper接口类，获得通用的数据访问能力。
 以下对一些特别的接口进行说明，简单的接口不再说明：
 
-##### 1、example查询，使用entity对象作为查询条件。findByExample、findByExampleAndSort、countByExample
+##### 1、example查询，使用entity对象作为查询条件。findByExample、findUniqueByExample、countByExample
 
 使用实体类对象作为查询条件。
 默认情况下entity的属性值不为空时（not empty模式），将被作为查询条件，可以使用@AttributeOptions(conditionMode=Mode.xxx)更改条件的生效模式。
 默认情况下属性作为查询条件时，使用值=匹配，可以@AttributeOptions(exampleQuery=@ExampleQuery(matchType=MatchType.xxx))更改查询匹配方式
 同样适用
+
+默认只查询主体的字段，如果你希望返回引用属性（关联表）的数据，可以在实体类上使用@FetchRef或@EntityOptions(fetchRefs={@FetchRef})进行声明
 
 ###### example中的范围查询
 
