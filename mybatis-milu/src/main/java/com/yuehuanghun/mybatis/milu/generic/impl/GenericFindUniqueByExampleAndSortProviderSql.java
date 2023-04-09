@@ -15,6 +15,7 @@
  */
 package com.yuehuanghun.mybatis.milu.generic.impl;
 
+@Deprecated
 public class GenericFindUniqueByExampleAndSortProviderSql extends GenericFindByExampleAndSortProviderSql {
 	
 	@Override

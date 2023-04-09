@@ -27,7 +27,9 @@ public @interface EntityOptions {
 	FetchRef[] fetchRefs() default {};
 
 	/**
-	 * exampleQuery中，自定义需要返回的引用属性
+	 * exampleQuery中，自定义需要返回的引用属性<br>
+	 * 
+	 * 引用属性是指实体中由@ManyToOne、@OneToOne、@OneToMany注解的属性
 	 *
 	 */
 	@Documented
@@ -36,7 +38,7 @@ public @interface EntityOptions {
 	public static @interface FetchRef {
 
 		/**
-		 * 分组，exampleQuery中指定配置分组
+		 * 分组，可在exampleQuery中指定配置分组
 		 * @return 分组
 		 */
 		String group() default "default";

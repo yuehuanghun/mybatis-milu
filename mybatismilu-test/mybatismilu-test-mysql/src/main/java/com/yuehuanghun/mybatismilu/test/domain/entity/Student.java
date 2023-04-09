@@ -20,6 +20,7 @@ import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery.MatchType;
 import com.yuehuanghun.mybatis.milu.annotation.Filler;
 import com.yuehuanghun.mybatis.milu.annotation.Filler.FillMode;
 import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
+import com.yuehuanghun.mybatis.milu.annotation.EntityOptions.FetchRef;
 import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
 
 import lombok.Data;
@@ -28,6 +29,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Entity
+@FetchRef(group = "class", refAttrs = "classs")
 public class Student extends PageRequest {
 
 	@Id

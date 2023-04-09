@@ -127,11 +127,48 @@ public class StudentMapperTest {
 	};
 	
 	@Test
-	public void testFindUniqueByExample() {
+	public void testFindByExample2() throws ParseException {
+		Student example = new Student();
+		example.setName("张");
+		
+		Sort sort = new Sort(Direction.DESC, "addTime");
+		
+		List<Student> result = studentMapper.findByExample(example, sort);
+		assertTrue(result.size() > 0);
+		
+		sort = Sort.by(Direction.DESC, Student::getAddTime);
+		
+		result = studentMapper.findByExample(example, sort);
+		assertTrue(result.size() > 0);
+		
+		example = new Student();
+		Date startDate = DateUtils.parseDate("2017-06-08", "yyyy-MM-dd");
+		Date endDate = new Date();
+		Map<String, Object> params = new HashMap<>();
+		params.put("addTimeBegin", startDate);
+		params.put("addTimeEnd", endDate);
+		example.setParams(params);
+		
+		result = studentMapper.findByExample(example, sort);
+		assertTrue(result.size() == 4);
+		
+		params.put("addTimeBegin", "2017-06-08");
+		params.put("addTimeEnd", "");
+		result = studentMapper.findByExample(example, sort);
+		assertTrue(result.size() == 4);	
+
+		result = studentMapper.findByExample(example, sort, new PageRequest(1), "class");
+		assertTrue(result.size() == 1);
+		assertNotNull(result.get(0).getClasss());
+	}
+	
+	@Test
+	public void testFindUniqueByExample() throws ParseException {
 		Student example = new Student();
 		example.setId(1L);
 		Student student = studentMapper.findUniqueByExample(example, null);
 		assertNotNull(student);
+		
 	}
 
 	@Test
