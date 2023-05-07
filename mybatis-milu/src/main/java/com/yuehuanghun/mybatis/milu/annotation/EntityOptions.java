@@ -25,6 +25,14 @@ public @interface EntityOptions {
 	 * @return 实体引用属性名
 	 */
 	FetchRef[] fetchRefs() default {};
+	
+	/**
+	 * 是否过滤逻辑删除的数据<br>
+	 * 目前仅作用于example查询中<br>
+	 * 在criteria查询中，可以使用undeleted()方法快捷过滤
+	 * @return true：过滤已逻辑删除数据，false：不过滤
+	 */
+	boolean filterLogicDeletedData() default true;
 
 	/**
 	 * exampleQuery中，自定义需要返回的引用属性<br>

@@ -24,6 +24,7 @@ import java.util.function.Consumer;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.yuehuanghun.mybatis.milu.annotation.EntityOptions;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaQueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaStatisticPredicate;
@@ -85,7 +86,8 @@ public interface BaseMapper<T, ID extends Serializable> {
 	
 	/**
 	 * 使用实体类作为查询参数，非null值才会参与查询<br>
-	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * 查询关联表（引用属性）使用{@link EntityOptions}注解对实体类声明<br>
+	 * 当有实体逻辑删除属性时，将自动添加查询未删除数据的条件，可通用{@link EntityOptions#filterLogicDeletedData()}设置关闭
 	 * @param example 条件
 	 * @return 列表
 	 */
@@ -93,7 +95,8 @@ public interface BaseMapper<T, ID extends Serializable> {
 	
 	/**
 	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询<br>
-	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * 查询关联表（引用属性）使用{@link EntityOptions}注解对实体类声明<br>
+	 * 当有实体逻辑删除属性时，将自动添加查询未删除数据的条件，可通用{@link EntityOptions#filterLogicDeletedData()}设置关闭
 	 * @param example 条件
 	 * @param sort 排序，可null
 	 * @return 列表
@@ -102,7 +105,8 @@ public interface BaseMapper<T, ID extends Serializable> {
 
 	/**
 	 * 使用实体类作为查询参数，非null值才会参与查询<br>
-	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * 查询关联表（引用属性）使用{@link EntityOptions}注解对实体类声明<br>
+	 * 当有实体逻辑删除属性时，将自动添加查询未删除数据的条件，可通用{@link EntityOptions#filterLogicDeletedData()}设置关闭
 	 * @param example 条件
 	 * @param pageable 分页参数，可null
 	 * @return 列表
@@ -111,7 +115,8 @@ public interface BaseMapper<T, ID extends Serializable> {
 
 	/**
 	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询<br>
-	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * 查询关联表（引用属性）使用{@link EntityOptions}注解对实体类声明<br>
+	 * 当有实体逻辑删除属性时，将自动添加查询未删除数据的条件，可通用{@link EntityOptions#filterLogicDeletedData()}设置关闭
 	 * @param example 条件
 	 * @param sort 排序，可null
 	 * @param pageable 分页参数，可null
@@ -121,18 +126,20 @@ public interface BaseMapper<T, ID extends Serializable> {
 
 	/**
 	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询<br>
-	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * 查询关联表（引用属性）使用{@link EntityOptions}注解对实体类声明<br>
+	 * 当有实体逻辑删除属性时，将自动添加查询未删除数据的条件，可通用{@link EntityOptions#filterLogicDeletedData()}设置关闭
 	 * @param example 条件
 	 * @param sort 排序，可null
 	 * @param pageable 分页参数，可null
-	 * @param group 查询引用属性分组，可null，见@EntityOptions注解
+	 * @param group 查询引用属性分组，可null，见{@link EntityOptions}注解
 	 * @return 列表
 	 */
 	List<T> findByExample(@Param(Constants.EXAMPLE) T example, @Param(Constants.SORT) Sort sort, @Param(Constants.PAGE) Pageable pageable, @Param(Constants.GROUP) String group);
 	
 	/**
 	 * 使用实体类作为查询参数，非null值才会参与查询<br>
-	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * 查询关联表（引用属性）使用{@link EntityOptions}注解对实体类声明<br>
+	 * 当有实体逻辑删除属性时，将自动添加查询未删除数据的条件，可通用{@link EntityOptions#filterLogicDeletedData()}设置关闭
 	 * 结果集必须是0或1条数据，否则会报错。
 	 * @param example 条件
 	 * @param pageable 分页参数，可null
@@ -142,7 +149,8 @@ public interface BaseMapper<T, ID extends Serializable> {
 	
 	/**
 	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询<br>
-	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * 查询关联表（引用属性）使用{@link EntityOptions}注解对实体类声明<br>
+	 * 当有实体逻辑删除属性时，将自动添加查询未删除数据的条件，可通用{@link EntityOptions#filterLogicDeletedData()}设置关闭
 	 * 结果集必须是0或1条数据，否则会报错。
 	 * @param example 条件
 	 * @param sort 排序，可null
@@ -153,12 +161,13 @@ public interface BaseMapper<T, ID extends Serializable> {
 	
 	/**
 	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询<br>
-	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * 查询关联表（引用属性）使用{@link EntityOptions}注解对实体类声明<br>
+	 * 当有实体逻辑删除属性时，将自动添加查询未删除数据的条件，可通用{@link EntityOptions#filterLogicDeletedData()}设置关闭
 	 * 结果集必须是0或1条数据，否则会报错。
 	 * @param example 条件
 	 * @param sort 排序，可null
 	 * @param pageable 分页参数，可null
-	 * @param group 查询引用属性分组，可null，见@EntityOptions注解
+	 * @param group 查询引用属性分组，可null，见{@link EntityOptions}注解
 	 * @return 列表
 	 */
 	T findUniqueByExample(@Param(Constants.EXAMPLE) T example, @Param(Constants.SORT) Sort sort, @Param(Constants.PAGE) Pageable pageable, @Param(Constants.GROUP) String group);

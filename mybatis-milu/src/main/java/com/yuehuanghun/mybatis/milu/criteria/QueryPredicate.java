@@ -293,4 +293,13 @@ public interface QueryPredicate extends Predicate {
 	 * @return 当前对象
 	 */
 	QueryPredicate joinMode(String propertyName, JoinMode joinMode);
+	
+	/**
+	 * 设置关联属性的实体联结模式
+	 * @param propertyName 实体类关联实体（或实体集合）的属性名
+	 * @param joinMode 联结模式
+	 * @param joinPredicate 联结附加条件。通过Predicates.predicate()创建一个Predicate
+	 * @return 当前对象
+	 */
+	QueryPredicate joinMode(String propertyName, JoinMode joinMode, Predicate joinPredicate);
 }

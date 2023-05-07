@@ -153,6 +153,8 @@ public class EntityBuilder {
 				}
 				entity.addFetchRef(fetchRef.group(), fetchRef.refAttrs(), fetchRef.joinMode());
 			}
+			
+			entity.setFilterLogicDeletedData(entityOptions.filterLogicDeletedData());
 		}
 		
 		FetchRef fetchRef = entityClass.getAnnotation(FetchRef.class);

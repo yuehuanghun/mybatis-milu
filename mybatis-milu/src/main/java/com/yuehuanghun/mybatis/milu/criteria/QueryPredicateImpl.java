@@ -47,7 +47,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	@Getter
 	private final Set<String> exselectAttrs = new HashSet<>();
 	@Getter
-	private final Map<String, JoinMode> joinModeMap = new HashMap<>();
+	private final Map<String, Join> joinModeMap = new HashMap<>();
 
 	@Override
 	public QueryPredicate select(String... attrNames) {
@@ -516,15 +516,21 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	@Override
 	public QueryPredicate joinMode(JoinMode joinMode) {
 		Assert.notNull(joinMode, "joinMode不能为null");
-		this.joinModeMap.put(Constants.ANY_REF_PROPERTY, joinMode);
+		this.joinModeMap.put(Constants.ANY_REF_PROPERTY, new Join(joinMode, null));
 		return this;
 	}
 
 	@Override
 	public QueryPredicate joinMode(String propertyName, JoinMode joinMode) {
+		this.joinMode(propertyName, joinMode, null);
+		return this;
+	}
+
+	@Override
+	public QueryPredicate joinMode(String propertyName, JoinMode joinMode, Predicate joinPredicate) {
 		Assert.notNull(joinMode, "joinMode不能为null");
 		Assert.notBlank(propertyName, "propertyName不能为空");
-		this.joinModeMap.put(propertyName, joinMode);
+		this.joinModeMap.put(propertyName, new Join(joinMode, joinPredicate));
 		return this;
 	}
 }

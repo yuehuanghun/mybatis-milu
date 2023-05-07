@@ -33,7 +33,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery.MatchType;
-import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
+import com.yuehuanghun.mybatis.milu.criteria.Join;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.Part.Type;
@@ -57,7 +57,7 @@ public class SqlBuildingHelper {
 	public static void analyseDomain(Entity entity, Collection<String> properties, TableAliasDispacher tableAliasDispacher, MiluConfiguration configuration, Map<String, String> joinExpressMap, Map<String, String> joinQueryColumnNap) {
 		analyseDomain(entity, properties, tableAliasDispacher, configuration, joinExpressMap, joinQueryColumnNap, Collections.emptyMap());
 	}
-	public static void analyseDomain(Entity entity, Collection<String> properties, TableAliasDispacher tableAliasDispacher, MiluConfiguration configuration, Map<String, String> joinExpressMap, Map<String, String> joinQueryColumnNap, Map<String, JoinMode> joinModeMap) {
+	public static void analyseDomain(Entity entity, Collection<String> properties, TableAliasDispacher tableAliasDispacher, MiluConfiguration configuration, Map<String, String> joinExpressMap, Map<String, String> joinQueryColumnNap, Map<String, Join> joinMap) {
 		String mainTableAlias = tableAliasDispacher.dispach(Segment.TABLE_ + entity.getTableName());
 		for(String property : properties) {
 			if(entity.hasAttribute(property)) {
@@ -100,12 +100,16 @@ public class SqlBuildingHelper {
 						String inverseTableAlias = tableAliasDispacher.dispach(Segment.ATTR_ + reference.getAttributeName());
 						
 						String joinExpression;
-						if(joinModeMap.containsKey(prop)) {
-							joinExpression = joinModeMap.get(prop).getExpression();
-						} else if(joinModeMap.containsKey(Constants.ANY_REF_PROPERTY)) {
-							joinExpression = joinModeMap.get(Constants.ANY_REF_PROPERTY).getExpression();
+						String joinPredicateExpression;
+						if(joinMap.containsKey(prop)) {
+							joinExpression = joinMap.get(prop).getJoinMode().getExpression();
+							joinPredicateExpression = joinMap.get(prop).getPredicateExpression();
+						} else if(joinMap.containsKey(Constants.ANY_REF_PROPERTY)) {
+							joinExpression = joinMap.get(Constants.ANY_REF_PROPERTY).getJoinMode().getExpression();
+							joinPredicateExpression = null;
 						} else {
 							joinExpression = Segment.INNER_JOIN_B;
+							joinPredicateExpression = null;
 						}
 						
 						if(reference instanceof ManyToManyReference) {
@@ -148,6 +152,19 @@ public class SqlBuildingHelper {
 								}).collect(Collectors.joining(Segment.AND_B));
 								
 								joinExpressBuilder.append(joinCond);
+								
+								if(StringUtils.isNotBlank(joinPredicateExpression)) { // 其它指定联结条件
+									joinExpressBuilder.append(Segment.AND_B);
+									boolean hasOr = joinPredicateExpression.contains(Segment.OR_B); // 根据是否有OR条件决定是否需要括起"其它指定联结条件"
+									if(hasOr) {
+										joinExpressBuilder.append(Segment.LEFT_BRACKET);
+									}
+									joinExpressBuilder.append(joinPredicateExpression);
+									if(hasOr) {
+										joinExpressBuilder.append(Segment.RIGHT_BRACKET);
+									}
+								}
+								
 								joinExpressBuilder.append(Segment.RIGHT_BRACKET);
 								return joinExpressBuilder.toString();
 							});
@@ -171,6 +188,19 @@ public class SqlBuildingHelper {
 								}).collect(Collectors.joining(Segment.AND_B));
 								
 								joinExpressBuilder.append(joinCond);
+								
+								if(StringUtils.isNotBlank(joinPredicateExpression)) { // 其它指定联结条件
+									joinExpressBuilder.append(Segment.AND_B);
+									boolean hasOr = joinPredicateExpression.contains(Segment.OR_B); // 根据是否有OR条件决定是否需要括起"其它指定联结条件"
+									if(hasOr) {
+										joinExpressBuilder.append(Segment.LEFT_BRACKET);
+									}
+									joinExpressBuilder.append(joinPredicateExpression);
+									if(hasOr) {
+										joinExpressBuilder.append(Segment.RIGHT_BRACKET);
+									}
+								}
+								
 								joinExpressBuilder.append(Segment.RIGHT_BRACKET);
 								return joinExpressBuilder.toString();
 							});

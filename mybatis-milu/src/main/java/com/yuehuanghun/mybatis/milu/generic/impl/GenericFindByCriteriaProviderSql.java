@@ -24,6 +24,7 @@ import org.apache.ibatis.javassist.scopedpool.SoftValueHashMap;
 
 import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.mybatis.milu.criteria.Expression;
+import com.yuehuanghun.mybatis.milu.criteria.Join;
 import com.yuehuanghun.mybatis.milu.criteria.Predicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
@@ -59,7 +60,13 @@ public class GenericFindByCriteriaProviderSql implements GenericProviderSql {
 		}
 		
 		Map<String, Object> queryParams = new HashMap<>();
-		predicate.renderParams(context, queryParams, 0);
+		int paramIndex = predicate.renderParams(context, queryParams, 0);
+		
+		for(Join join : ((QueryPredicateImpl)predicate).getJoinModeMap().values()) {
+			if(join.getJoinPredicate() != null) {
+				paramIndex = join.getJoinPredicate().renderParams(context, queryParams, paramIndex);
+			}
+		}
 		
 		 // 处理主动使用PageHelper发起分页设置的，转换排序中的属性为列名
 		SqlBuildingHelper.convertLocalPageOrder(context.getEntity(), context.getConfiguration());

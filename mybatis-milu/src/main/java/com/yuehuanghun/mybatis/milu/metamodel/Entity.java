@@ -81,6 +81,8 @@ public class Entity {
 	
 	private final Map<String, FetchRef> exampleQueryFetchRefs = new HashMap<>();
 	
+	private boolean filterLogicDeletedData = true;
+	
 	public void addAttribute(Attribute attribute) {
 		attributeMap.put(attribute.getName(), attribute);
 		if(IdAttribute.class.isInstance(attribute)) {
@@ -124,6 +126,10 @@ public class Entity {
 	
 	public FetchRef getFetchRefs(String group) {
 		return exampleQueryFetchRefs.get(group);
+	}
+	
+	public boolean isFilterLogicDeletedData() {
+		return filterLogicDeletedData && !logicDeleteAttributes.isEmpty();
 	}
 	
 	@Data

@@ -32,7 +32,7 @@ import org.apache.ibatis.mapping.ResultFlag;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
 
-import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
+import com.yuehuanghun.mybatis.milu.criteria.Join;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
@@ -62,7 +62,7 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 	public BuildResult build() {
 		Set<String> selectAttrs = Collections.emptySet();
 		Set<String> exselectAttrs = Collections.emptySet();
-		Map<String, JoinMode> joinModeMap = Collections.emptyMap();
+		Map<String, Join> joinModeMap = Collections.emptyMap();
 		if (QueryPredicateImpl.class.isInstance(predicate)) {
 			selectAttrs = ((QueryPredicateImpl) predicate).getSelectAttrs();
 			exselectAttrs = ((QueryPredicateImpl) predicate).getExselectAttrs();
@@ -77,7 +77,15 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 
 		StringBuilder expressionBuilder = new StringBuilder(256);
 		Set<String> properties = new HashSet<>();
-		predicate.renderSqlTemplate(context, expressionBuilder, properties, 0);
+		int paramIndex = predicate.renderSqlTemplate(context, expressionBuilder, properties, 0);
+		
+		for(Join join : joinModeMap.values()) {
+			if(join.getJoinPredicate() != null) {
+				StringBuilder joinCondition = new StringBuilder();
+				paramIndex = join.getJoinPredicate().renderSqlTemplate(context, joinCondition, properties, paramIndex);
+				join.setPredicateExpression(joinCondition.toString());
+			}
+		}
 		
 		if(!selectEntityAttrMap.isEmpty()) {
 			selectEntityAttrMap.forEach((attrName, attributes) -> {
@@ -138,8 +146,6 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 
 		String sqlTemplateTmp = expressionBuilder.toString();
 		if (StringUtils.isNotBlank(sqlTemplateTmp)) {
-			sqlTemplateTmp = renderConditionSql(sqlTemplateTmp, properties);
-
 			if (!ORDER_BY_PT.matcher(sqlTemplateTmp).matches()) { // 如果没有查询条件时，则不用加WHERE
 				sqlBuilder.append(Segment.WHERE_B);
 			}
@@ -189,8 +195,13 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 				}
 			});
 		}
+		
+		String sql = sqlBuilder.toString();
+		if(StringUtils.isNotBlank(sqlTemplateTmp) || !joinExpressMap.isEmpty()) {
+			sql = renderConditionSql(sql, properties);
+		}
 
-		return new BuildResult(sqlBuilder.toString(), resultMappings);
+		return new BuildResult(sql, resultMappings);
 	}
 
 	private Map<String, List<Attribute>> analyseAttrs(Set<String> attrs) {

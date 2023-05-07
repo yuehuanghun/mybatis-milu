@@ -440,4 +440,13 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	 * @return 当前对象
 	 */
 	LambdaQueryPredicate<T> joinMode(SerializableFunction<T, ?> refGetterFn, JoinMode joinMode);
+	
+	/**
+	 * 设置关联属性的实体联结模式
+	 * @param refGetterFn 实体类关联实体（或实体集合）的属性名，实体类属性的getter函数式
+	 * @param joinMode 联结模式
+	 * @param joinPredicate 联结附加条件
+	 * @return 当前对象
+	 */
+	LambdaQueryPredicate<T> joinMode(SerializableFunction<T, ?> refGetterFn, JoinMode joinMode, Consumer<Predicate> joinPredicate);
 }
