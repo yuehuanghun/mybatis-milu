@@ -4,6 +4,11 @@ import java.util.function.Consumer;
 
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 
+/**
+ * 
+ * @see Predicates
+ *
+ */
 public interface UpdatePredicate extends Predicate {
 	/**
 	 * 设置默认的条件生效模式，默认为Mode.NOT_NULL

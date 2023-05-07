@@ -26,6 +26,10 @@ import com.yuehuanghun.mybatis.milu.tool.Segment;
 
 import lombok.Getter;
 
+/**
+ * @see Conditions
+ *
+ */
 public class ConditionImpl implements Condition {
 
 	@Getter
@@ -37,98 +41,10 @@ public class ConditionImpl implements Condition {
 	@Getter
 	private String attributeName;
 
-	private ConditionImpl(Type type, String attributeName, Object... params) {
+	protected ConditionImpl(Type type, String attributeName, Object... params) {
 		this.type = type;
 		this.attributeName = attributeName;
 		this.params = params;
-	}
-
-	public static ConditionImpl between(String attrName, Object startValue, Object endValue) {
-		return new ConditionImpl(Type.BETWEEN, attrName, new Object[] { startValue, endValue });
-	}
-
-	public static ConditionImpl isNotNull(String attrName) {
-		return new ConditionImpl(Type.IS_NOT_NULL, attrName);
-	}
-
-	public static ConditionImpl isNull(String attrName) {
-		return new ConditionImpl(Type.IS_NULL, attrName);
-	}
-
-	public static ConditionImpl lessThan(String attrName, Object value) {
-		return new ConditionImpl(Type.LESS_THAN, attrName, new Object[] { value });
-	}
-
-	public static ConditionImpl lessThanEqual(String attrName, Object value) {
-		return new ConditionImpl(Type.LESS_THAN_EQUAL, attrName, new Object[] { value });
-	}
-
-	public static ConditionImpl greaterThan(String attrName, Object value) {
-		return new ConditionImpl(Type.GREATER_THAN, attrName, new Object[] { value });
-	}
-
-	public static ConditionImpl greaterThanEqual(String attrName, Object value) {
-		return new ConditionImpl(Type.GREATER_THAN_EQUAL, attrName, new Object[] { value });
-	}
-
-	public static ConditionImpl before(String attrName, Object value) {
-		return new ConditionImpl(Type.LESS_THAN, attrName, new Object[] { value });
-	}
-
-	public static ConditionImpl after(String attrName, Object value) {
-		return new ConditionImpl(Type.GREATER_THAN, attrName, new Object[] { value });
-	}
-
-	public static ConditionImpl notLike(String attrName, Object value) {
-		return new ConditionImpl(Type.NOT_LIKE, attrName, new Object[] { value });
-	}
-
-	public static ConditionImpl like(String attrName, Object value) {
-		return new ConditionImpl(Type.LIKE, attrName, new Object[] { value });
-	}
-
-	public static ConditionImpl startWith(String attrName, Object value) {
-		return new ConditionImpl(Type.STARTING_WITH, attrName, new Object[] { value });
-	}
-
-	public static ConditionImpl endWith(String attrName, Object value) {
-		return new ConditionImpl(Type.ENDING_WITH, attrName, new Object[] { value });
-	}
-
-	public static ConditionImpl notContaining(String attrName, Object value) {
-		return new ConditionImpl(Type.NOT_CONTAINING, attrName, new Object[] { value });
-	}
-
-	public static ConditionImpl containing(String attrName, Object value) {
-		return new ConditionImpl(Type.CONTAINING, attrName, new Object[] { value });
-	}
-
-	public static ConditionImpl notIn(String attrName, Object value) {
-		return new ConditionImpl(Type.NOT_IN, attrName, new Object[] { value });
-	}
-
-	public static ConditionImpl in(String attrName, Object value) {
-		return new ConditionImpl(Type.IN, attrName, new Object[] { value });
-	}
-
-	public static ConditionImpl regex(String attrName, Object value) {
-		return new ConditionImpl(Type.REGEX, attrName, new Object[] { value });
-	}
-
-	public static ConditionImpl isTrue(String attrName) {
-		return new ConditionImpl(Type.TRUE, attrName);
-	}
-
-	public static ConditionImpl isFalse(String attrName) {
-		return new ConditionImpl(Type.FALSE, attrName);
-	}
-
-	public static ConditionImpl notEqual(String attrName, Object value) {
-		return new ConditionImpl(Type.NEGATING_SIMPLE_PROPERTY, attrName, new Object[] { value });
-	}
-
-	public static ConditionImpl equal(String attrName, Object value) {
-		return new ConditionImpl(Type.SIMPLE_PROPERTY, attrName, new Object[] { value });
 	}
 
 	@Override

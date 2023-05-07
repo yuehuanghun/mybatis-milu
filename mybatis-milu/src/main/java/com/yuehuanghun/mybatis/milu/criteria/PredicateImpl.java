@@ -211,42 +211,42 @@ public class PredicateImpl implements Predicate {
 
 	@Override
 	public Predicate between(String attrName, Object startValue, Object endValue) {
-		and(ConditionImpl.between(attrName, startValue, endValue));
+		and(Conditions.between(attrName, startValue, endValue));
 		return this;
 	}
 	
 	@Override
 	public Predicate between(boolean accept, String attrName, Object startValue, Object endValue) {
 		if(accept) {
-			and(ConditionImpl.between(attrName, startValue, endValue));
+			and(Conditions.between(attrName, startValue, endValue));
 		}
 		return this;
 	}
 
 	@Override
 	public Predicate isNull(String attrName) {
-		and(ConditionImpl.isNull(attrName));
+		and(Conditions.isNull(attrName));
 		return this;
 	}
 
 	@Override
 	public Predicate isNull(boolean accept, String attrName) {
 		if(accept) {
-			and(ConditionImpl.isNull(attrName));
+			and(Conditions.isNull(attrName));
 		}
 		return this;
 	}
 
 	@Override
 	public Predicate notNull(String attrName) {
-		and(ConditionImpl.isNotNull(attrName));
+		and(Conditions.isNotNull(attrName));
 		return this;
 	}
 
 	@Override
 	public Predicate notNull(boolean accept, String attrName) {
 		if(accept) {
-			and(ConditionImpl.isNotNull(attrName));
+			and(Conditions.isNotNull(attrName));
 		}
 		return this;
 	}
@@ -266,7 +266,7 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate eq(boolean accept, String attrName, Object value) {
 		if(accept) {
-			and(ConditionImpl.equal(attrName, value));
+			and(Conditions.equal(attrName, value));
 		}
 		return this;
 	}
@@ -274,7 +274,7 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate neq(boolean accept, String attrName, Object value) {
 		if(accept) {
-			and(ConditionImpl.notEqual(attrName, value));
+			and(Conditions.notEqual(attrName, value));
 		}
 		return this;
 	}
@@ -282,7 +282,7 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate lt(boolean accept, String attrName, Object value) {
 		if(accept) {
-			and(ConditionImpl.lessThan(attrName, value));
+			and(Conditions.lessThan(attrName, value));
 		}
 		return this;
 	}
@@ -290,7 +290,7 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate lte(boolean accept, String attrName, Object value) {
 		if(accept) {
-			and(ConditionImpl.lessThanEqual(attrName, value));
+			and(Conditions.lessThanEqual(attrName, value));
 		}
 		return this;
 	}
@@ -298,7 +298,7 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate gt(boolean accept, String attrName, Object value) {
 		if(accept) {
-			and(ConditionImpl.greaterThan(attrName, value));
+			and(Conditions.greaterThan(attrName, value));
 		}
 		return this;
 	}
@@ -306,7 +306,7 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate gte(boolean accept, String attrName, Object value) {
 		if(accept) {
-			and(ConditionImpl.greaterThanEqual(attrName, value));
+			and(Conditions.greaterThanEqual(attrName, value));
 		}
 		return this;
 	}
@@ -314,7 +314,7 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate like(boolean accept, String attrName, Object value) {
 		if(accept) {
-			and(ConditionImpl.like(attrName, value));
+			and(Conditions.like(attrName, value));
 		}
 		return this;
 	}
@@ -322,7 +322,7 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate notLike(boolean accept, String attrName, Object value) {
 		if(accept) {
-			and(ConditionImpl.notLike(attrName, value));
+			and(Conditions.notLike(attrName, value));
 		}
 		return this;
 	}
@@ -330,7 +330,7 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate contain(boolean accept, String attrName, Object value) {
 		if(accept) {
-			and(ConditionImpl.containing(attrName, value));
+			and(Conditions.containing(attrName, value));
 		}
 		return this;
 	}
@@ -338,7 +338,7 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate notContain(boolean accept, String attrName, Object value) {
 		if(accept) {
-			and(ConditionImpl.notContaining(attrName, value));
+			and(Conditions.notContaining(attrName, value));
 		}
 		return this;
 	}
@@ -346,7 +346,7 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate startWith(boolean accept, String attrName, Object value) {
 		if(accept) {
-			and(ConditionImpl.startWith(attrName, value));
+			and(Conditions.startWith(attrName, value));
 		}
 		return this;
 	}
@@ -354,7 +354,7 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate endWith(boolean accept, String attrName, Object value) {
 		if(accept) {
-			and(ConditionImpl.endWith(attrName, value));
+			and(Conditions.endWith(attrName, value));
 		}
 		return this;
 	}
@@ -363,7 +363,7 @@ public class PredicateImpl implements Predicate {
 	public Predicate in(boolean accept, String attrName, Object value) {
 		if(accept) {
 			assertCollection(value);
-			and(ConditionImpl.in(attrName, value));
+			and(Conditions.in(attrName, value));
 		}
 		return this;
 	}
@@ -372,7 +372,7 @@ public class PredicateImpl implements Predicate {
 	public Predicate notIn(boolean accept, String attrName, Object value) {
 		if(accept) {
 			assertCollection(value);
-			and(ConditionImpl.notIn(attrName, value));
+			and(Conditions.notIn(attrName, value));
 		}
 		return this;
 	}
@@ -386,7 +386,7 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate regex(boolean accept, String attrName, Object value) {
 		if(accept) {
-			and(ConditionImpl.regex(attrName, value));
+			and(Conditions.regex(attrName, value));
 		}
 		return this;
 	}

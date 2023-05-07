@@ -16,11 +16,25 @@
 package com.yuehuanghun.mybatis.milu.criteria;
 
 /**
- * 查询条件
- * @see Conditions
+ * 创建Predicate的工具类
  * @author yuehuanghun
  *
  */
-public interface Condition extends Expression {
+public class Predicates {
 
+	public static Predicate predicate() {
+		return new PredicateImpl();
+	}
+	
+	public static QueryPredicate queryPredicate() {
+		return new QueryPredicateImpl();
+	}
+	
+	public static StatisticPredicate statisticPredicate() {
+		return new StatisticPredicateImpl();
+	}
+	
+	public static UpdatePredicate updatePredicate() {
+		return new UpdatePredicateImpl();
+	}
 }

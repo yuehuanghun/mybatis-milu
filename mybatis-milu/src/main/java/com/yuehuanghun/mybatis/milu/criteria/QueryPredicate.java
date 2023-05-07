@@ -23,6 +23,11 @@ import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 
+/**
+ * 
+ * @see Predicates
+ *
+ */
 public interface QueryPredicate extends Predicate {
 	
 	/**

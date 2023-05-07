@@ -22,6 +22,7 @@ import com.yuehuanghun.mybatis.milu.annotation.Mode;
 
 /**
  * 查询逻辑条件
+ * @see Predicates
  * @author yuehuanghun
  *
  */

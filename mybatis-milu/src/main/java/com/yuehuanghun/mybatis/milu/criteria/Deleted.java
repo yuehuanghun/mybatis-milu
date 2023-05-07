@@ -55,7 +55,11 @@ public class Deleted implements Condition {
 
 	@Override
 	public boolean equals(Object obj) {
-		return obj instanceof Deleted;
+		return obj instanceof Deleted && this.deleted == ((Deleted)obj).deleted;
 	}
 	
+	@Override
+	public int hashCode() {
+		return Boolean.valueOf(deleted).hashCode();
+	}
 }

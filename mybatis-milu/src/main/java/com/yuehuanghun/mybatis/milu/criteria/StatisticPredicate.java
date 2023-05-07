@@ -18,6 +18,11 @@ package com.yuehuanghun.mybatis.milu.criteria;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 
+/**
+ * 
+ * @see Predicates
+ *
+ */
 public interface StatisticPredicate extends Predicate {
 	
 	/**
