@@ -20,11 +20,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.mybatis.spring.annotation.MapperScan;
+import org.mybatis.spring.annotation.MapperScans;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -105,9 +107,26 @@ public class MapperScanPackages {
 		private Set<String> getPackagesToScan(AnnotationMetadata metadata) {
 			AnnotationAttributes attributes = AnnotationAttributes
 					.fromMap(metadata.getAnnotationAttributes(MapperScan.class.getName()));
-			if(attributes == null) {
-				return Collections.emptySet();
+			if(attributes != null) {
+				return getBasePackages(attributes, metadata);
 			}
+			
+			attributes = AnnotationAttributes
+					.fromMap(metadata.getAnnotationAttributes(MapperScans.class.getName()));
+			
+			if(attributes != null) {
+				AnnotationAttributes[] annotationArray = attributes.getAnnotationArray("value");
+				Set<String> basePackages = new HashSet<>();
+				for(AnnotationAttributes annotationAttributes : annotationArray) {
+					basePackages.addAll(getBasePackages(annotationAttributes, metadata));
+				}
+				return basePackages;
+			}
+
+			return Collections.emptySet();
+		}
+
+		private Set<String> getBasePackages(AnnotationAttributes attributes, AnnotationMetadata metadata) {
 			String[] basePackages = attributes.getStringArray("basePackages");
 			Class<?>[] basePackageClasses = attributes.getClassArray("basePackageClasses");
 			Set<String> packagesToScan = new LinkedHashSet<>(Arrays.asList(basePackages));
@@ -121,6 +140,5 @@ public class MapperScanPackages {
 			}
 			return packagesToScan;
 		}
-
 	}
 }
