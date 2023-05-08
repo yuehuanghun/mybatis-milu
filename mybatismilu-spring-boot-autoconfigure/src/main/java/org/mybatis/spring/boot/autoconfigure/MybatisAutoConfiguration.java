@@ -153,7 +153,7 @@ public class MybatisAutoConfiguration implements InitializingBean, ApplicationCo
 	  MapperScanner scanner = new MapperScanner(applicationContext);
 	  
 	  try {
-			Set<Class<?>> mapperClassSet = scanner.scan(Mapper.class);
+			Set<Class<?>> mapperClassSet = scanner.scan();
 			
 			MiluConfiguration configuration = this.properties.getConfiguration();
 			

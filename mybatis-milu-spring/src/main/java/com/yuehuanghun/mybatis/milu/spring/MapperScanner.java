@@ -16,7 +16,6 @@
 
 package com.yuehuanghun.mybatis.milu.spring;
 
-import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -26,10 +25,12 @@ import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
+
+import com.yuehuanghun.mybatis.milu.BaseMapper;
 
 public class MapperScanner {
 	private final ApplicationContext context;
@@ -39,8 +40,7 @@ public class MapperScanner {
 		this.context = context;
 	}
 	
-	@SafeVarargs
-	public final Set<Class<?>> scan(Class<? extends Annotation>... annotationTypes) throws ClassNotFoundException {
+	public final Set<Class<?>> scan() throws ClassNotFoundException {
 		List<String> packages = getPackages();
 		if (packages.isEmpty()) {
 			return Collections.emptySet();
@@ -53,9 +53,7 @@ public class MapperScanner {
 		};
 		scanner.setEnvironment(this.context.getEnvironment());
 		scanner.setResourceLoader(this.context);
-		for (Class<? extends Annotation> annotationType : annotationTypes) {
-			scanner.addIncludeFilter(new AnnotationTypeFilter(annotationType));
-		}
+		scanner.addIncludeFilter(new AssignableTypeFilter(BaseMapper.class));
 		Set<Class<?>> entitySet = new HashSet<>();
 		for (String basePackage : packages) {
 			if (StringUtils.hasText(basePackage)) {
