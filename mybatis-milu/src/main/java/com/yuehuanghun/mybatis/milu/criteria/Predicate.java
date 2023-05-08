@@ -41,7 +41,7 @@ public interface Predicate extends Condition {
 	
 	/**
 	 * 与一组查询条件：AND (condition1 AND condition2 [AND conditionN])
-	 * @param conditions 条件
+	 * @param conditions 条件，可通过{@link Conditions} 构建新条件
 	 * @return 当前对象
 	 */
 	Predicate and(Condition... conditions);
@@ -55,7 +55,7 @@ public interface Predicate extends Condition {
 
 	/**
 	 * 或一组查询：OR (condition1 AND condition2 [AND conditionN])
-	 * @param conditions 条件
+	 * @param conditions 条件，可通过{@link Conditions} 构建新条件
 	 * @return 当前对象
 	 */
 	Predicate or(Condition... conditions);
@@ -69,7 +69,7 @@ public interface Predicate extends Condition {
 	
 	/**
 	 * 否一组查询：NOT (condition1 AND condition2 [AND conditionN])
-	 * @param conditions 条件
+	 * @param conditions 条件，可通过{@link Conditions} 构建新条件
 	 * @return 当前对象
 	 */
 	Predicate not(Condition... conditions);

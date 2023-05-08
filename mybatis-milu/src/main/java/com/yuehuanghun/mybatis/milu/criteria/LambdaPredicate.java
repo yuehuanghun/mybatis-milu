@@ -48,7 +48,7 @@ public interface LambdaPredicate<T> extends Condition {
 	
 	/**
 	 * 与一组查询条件：AND (condition1 AND condition2 [AND conditionN])
-	 * @param conditions 条件
+	 * @param conditions 条件，可通过{@link Conditions} 构建新条件
 	 * @return 当前对象
 	 */
 	LambdaPredicate<T> and(Condition... conditions);
@@ -69,7 +69,7 @@ public interface LambdaPredicate<T> extends Condition {
 	
 	/**
 	 * 或一组查询：OR (condition1 AND condition2 [AND conditionN])
-	 * @param conditions 条件
+	 * @param conditions 条件，可通过{@link Conditions} 构建新条件
 	 * @return 当前对象
 	 */
 	LambdaPredicate<T> or(Condition... conditions);
@@ -90,7 +90,7 @@ public interface LambdaPredicate<T> extends Condition {
 	
 	/**
 	 * 或一组查询：NOT (condition1 AND condition2 [AND conditionN])
-	 * @param conditions 条件
+	 * @param conditions 条件，可通过{@link Conditions} 构建新条件
 	 * @return 当前对象
 	 */
 	LambdaPredicate<T> not(Condition... conditions);
