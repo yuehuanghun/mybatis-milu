@@ -171,6 +171,13 @@ public class EntityBuilder {
 			entity.addFetchRef(fetchRef.group(), fetchRef.refAttrs(), fetchRef.joinMode());
 		}
 		
+		if(!entity.getLogicDeleteAttributes().isEmpty()) {
+			long mainCount = entity.getLogicDeleteAttributes().stream().filter(LogicDeleteAttribute::isMain).count();
+			if(mainCount > 1) {
+				throw new OrmBuildingException("实体类最多只能有一个主删除属性：" + entityClass.getName());
+			}
+		}
+		
 		return entity;
 	}
 	
