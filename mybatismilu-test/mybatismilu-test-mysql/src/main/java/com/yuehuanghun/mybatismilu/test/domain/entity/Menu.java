@@ -54,6 +54,6 @@ public class Menu {
 	@LogicDelete
 	private Integer isDeleted;
 	
-	@LogicDelete(value = "#{now}", resumeValue = "")
+	@LogicDelete(value = "#{now}", resumeValue = "", main = false)
 	private LocalDateTime deleteTime;
 }

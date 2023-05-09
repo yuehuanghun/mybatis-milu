@@ -34,6 +34,7 @@ import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.AppTest;
 import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaUpdatePredicate;
+import com.yuehuanghun.mybatis.milu.criteria.PredicateImpl;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
@@ -108,12 +109,12 @@ public class StudentMapperTest {
 		example.setParams(params);
 		
 		result = studentMapper.findByExample(example);
-		assertTrue(result.size() == 4);
+		assertTrue(result.size() == 3);
 		
 		params.put("addTimeBegin", "2017-06-08");
 		params.put("addTimeEnd", "");
 		result = studentMapper.findByExample(example);
-		assertTrue(result.size() == 4);
+		assertTrue(result.size() == 3);
 		
 		params.clear();;
 		params.put("nameIn", new String[] {"张三", "李四"});
@@ -150,12 +151,12 @@ public class StudentMapperTest {
 		example.setParams(params);
 		
 		result = studentMapper.findByExample(example, sort);
-		assertTrue(result.size() == 4);
+		assertTrue(result.size() == 3);
 		
 		params.put("addTimeBegin", "2017-06-08");
 		params.put("addTimeEnd", "");
 		result = studentMapper.findByExample(example, sort);
-		assertTrue(result.size() == 4);	
+		assertTrue(result.size() == 3);	
 
 		result = studentMapper.findByExample(example, sort, new PageRequest(1), "class");
 		assertTrue(result.size() == 1);
@@ -195,12 +196,12 @@ public class StudentMapperTest {
 		example.setParams(params);
 		
 		result = studentMapper.findByExampleAndSort(example, sort);
-		assertTrue(result.size() == 4);
+		assertTrue(result.size() == 3);
 		
 		params.put("addTimeBegin", "2017-06-08");
 		params.put("addTimeEnd", "");
 		result = studentMapper.findByExampleAndSort(example, sort);
-		assertTrue(result.size() == 4);
+		assertTrue(result.size() == 3);
 	};
 	
 	@Test
@@ -210,7 +211,7 @@ public class StudentMapperTest {
 		
 		Student student = studentMapper.findUniqueByExampleAndSort(example, sort, new PageRequest(1));
 		
-		assertEquals(student.getId().longValue(), 5L);
+		assertEquals(student.getId().longValue(), 4L);
 	}
 
 	@Test
@@ -477,7 +478,7 @@ public class StudentMapperTest {
 		example.setName("王");
 		studentList = studentMapper.findByExample(example, new PageRequest(3));
 		
-		assertTrue(studentList.size() == 2);
+		assertTrue(studentList.size() == 1);
 		assertTrue(studentList.get(0).getName().startsWith("王"));
 	}
 
@@ -486,7 +487,7 @@ public class StudentMapperTest {
 		Student example = new Student();
 		List<Student> studentList = studentMapper.findByExample(example);
 		
-		assertTrue(studentList.size() == 5);
+		assertTrue(studentList.size() == 4);
 		assertTrue(!Page.class.isInstance(studentList));
 		
 		example.setPageNum(1);
@@ -500,7 +501,7 @@ public class StudentMapperTest {
 		studentList = studentMapper.findByExample(example);
 		
 		assertTrue(Page.class.isInstance(studentList));		
-		assertTrue(studentList.size() == 2);
+		assertTrue(studentList.size() == 1);
 		assertTrue(studentList.get(0).getName().startsWith("王"));
 	}
 	
@@ -577,6 +578,16 @@ public class StudentMapperTest {
 		assertEquals(1, list.size());
 		assertNull(list.get(0).getId());
 		assertNotNull(list.get(0).getClasss());
+	}
+	
+	@Test
+	public void testFindByCateria_ref6_joinMode_predicate() {
+		List<Student> list = studentMapper.findByCriteria(p -> p.joinMode("classs", JoinMode.LEFT_JOIN, new PredicateImpl().eq("classsIsDeleted", "N")).selects("*,classs*").undeleted().orderAsc("id"));
+		System.out.println(JSON.toJSONString(list));
+		assertEquals(4, list.size());
+		assertNotNull(list.get(0).getId());
+		assertNotNull(list.get(0).getClasss());
+		assertNull(list.get(1).getClasss());
 	}
 	
 	@Test
@@ -829,5 +840,24 @@ public class StudentMapperTest {
 		Pair<Student, Consumer<LambdaUpdatePredicate<Student>>> pair2 = Pair.of(updateParam2, p -> p.gte(Student::getId, 3L));
 		
 		studentService.batchUpdateByLambdaCriteria(Arrays.asList(pair1, pair2));
+	}
+	
+	@Test
+	public void testFindByExampleLogicDeleted() {
+		Student example = new Student();
+		List<Student> students = studentMapper.findByExample(example);
+		
+		assertEquals(students.size(), 4);
+		
+		example.setIsDeleted(Boolean.TRUE);
+		students = studentMapper.findByExample(example);
+		
+		assertEquals(students.size(), 1);
+		
+		students = studentMapper.findByExample(new Student(), Sort.asc("id"), null, "class");
+		
+		assertEquals(students.size(), 4);
+		assertNotNull(students.get(0).getClasss());
+		assertNull(students.get(1).getClasss());
 	}
 }

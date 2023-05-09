@@ -83,7 +83,7 @@ public class MenuMapperTest {
 		example.setName("一级");
 		
 		List<Menu> list = menuMapper.findByExample(example);
-		assertEquals(list.size(), 2);
+		assertEquals(list.size(), 1);
 	}
 	
 	@Test
@@ -91,24 +91,21 @@ public class MenuMapperTest {
 		Menu example = new Menu();
 		example.setName("二级");
 		List<Menu> list = menuMapper.findByExample(example, null, null, "parent");
-		assertEquals(list.size(), 3);
+		assertEquals(list.size(), 2);
 		assertNotNull(list.get(0).getParent());
 		assertNull(list.get(0).getChildrens());
 		
 		list = menuMapper.findByExample(example);
-		assertEquals(list.size(), 3);
+		assertEquals(list.size(), 2);
 		assertNotNull(list.get(0).getParent());
-		assertEquals(list.stream().filter(item -> item.getId().longValue() == 5).findAny().get().getChildrens().size(), 1);
+//		assertEquals(list.stream().filter(item -> item.getId().longValue() == 5).findAny().get().getChildrens().size(), 1);
 		
 		example = new Menu();
 		example.setName("一级");
 		list = menuMapper.findByExample(example, null, null, "children");
-		assertEquals(list.size(), 2);
+		assertEquals(list.size(), 1);
 		assertNull(list.get(0).getParent());
 		assertNotNull(list.get(0).getChildrens());
 		assertEquals(list.get(0).getChildrens().size(), 2);
-		assertNull(list.get(1).getParent());
-		assertNotNull(list.get(1).getChildrens());
-		assertEquals(list.get(1).getChildrens().size(), 1);
 	}
 }
