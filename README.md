@@ -2,7 +2,7 @@
 [详细文档](http://mybatis-milu.yuehuanghun.com/)  
 [示范项目yadmin](https://gitee.com/yuehh/yadmin4j)
 ### 介绍
-mybatis-milu是基于mybatis的功能增强框架，遵循JPA规范的ORM，提供通用Mapper接口，提供类似Spring Data JPA的查询创建器，通过方法名解析查询语句，极大提高开发效率。
+mybatis-milu是基于mybatis的功能增强框架，遵循JPA规范的超轻量ORM拓展，提供通用Mapper接口，提供类似Spring Data JPA的查询创建器，通过方法名解析查询语句，极大提高开发效率。
 本框架仅做功能增强，拓展statement的创建方式，不覆盖mybatis中的任何实现。
 
 支持JPA的注解规范，但没有根据实体类注解声明生成表、索引等的功能，所以部分注解或注解属性用来生成表及索引的，使用后并无效果。
@@ -27,7 +27,7 @@ jdk >= 1.8
 <dependency>
    <groupId>com.yuehuanghun</groupId>
    <artifactId>mybatismilu-spring-boot-starter</artifactId>
-   <version>1.11.0</version> <!-- 获取最新版本 -->
+   <version>1.12.0</version> <!-- 获取最新版本 -->
 </dependency>
 ```
 
@@ -210,6 +210,8 @@ Mapper接口通过继承BaseMapper接口类，获得通用的数据访问能力�
 同样适用
 
 默认只查询主体的字段，如果你希望返回引用属性（关联表）的数据，可以在实体类上使用@FetchRef或@EntityOptions(fetchRefs={@FetchRef})进行声明
+
+从1.12.0版本开始，example查询默认自动查询未删除数据的条件，并联表同理，如需关闭，需在实体类上添加@EntityOptions(filterLogicDeletedData = false)
 
 ###### example中的范围查询
 
