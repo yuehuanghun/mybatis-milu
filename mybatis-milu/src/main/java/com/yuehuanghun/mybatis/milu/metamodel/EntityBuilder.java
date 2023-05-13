@@ -613,7 +613,7 @@ public class EntityBuilder {
 		 List<ResultMapping> resultMappings = new ArrayList<>();
 		for(Attribute attr : attributes) {
 			if(!attr.isAssociation() && !attr.isCollection()) {
-				ResultMapping resultMapping = assistant.buildResultMapping(entityClass, attr.getName(), attr.getColumnName(), attr.getJavaType(), null, null, null, null, null, null, null);
+				ResultMapping resultMapping = assistant.buildResultMapping(entityClass, attr.getName(), attr.getColumnName(), attr.getJavaType(), attr.getJdbcType(), null, null, null, null, attr.getTypeHandler(), null);
 				resultMappings.add(resultMapping);
 			}
 		}
