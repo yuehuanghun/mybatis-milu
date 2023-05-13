@@ -590,7 +590,7 @@ public class MapperNamingQueryBuilder {
 		GenericProviderSql genericProviderSql = this.configuration.getGenericProviderSql(methodName);
 		
 		SqlCommandType sqlCommandType = SqlCommandType.UNKNOWN;
-		if(methodName.startsWith("find") || methodName.startsWith("count") || methodName.startsWith("statistic")) {
+		if(methodName.startsWith("find") || methodName.startsWith("count") || methodName.startsWith("statistic") || methodName.startsWith("max") || methodName.startsWith("min") || methodName.startsWith("sum")) {
 			sqlCommandType = SqlCommandType.SELECT;
 		} else if(methodName.startsWith("delete")) {
 			sqlCommandType = SqlCommandType.DELETE;
