@@ -24,11 +24,13 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import com.yuehuanghun.mybatis.milu.BaseMapper;
+import com.yuehuanghun.mybatis.milu.annotation.EntityOptions;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaQueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaStatisticPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaUpdatePredicate;
 import com.yuehuanghun.mybatis.milu.criteria.Predicate;
+import com.yuehuanghun.mybatis.milu.criteria.Predicates;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.StatisticPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.UpdatePredicate;
@@ -95,7 +97,8 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 
 	/**
 	 * 使用实体类作为查询参数，非null值才会参与查询<br>
-	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * 查询关联表（引用属性）使用{@link EntityOptions}注解对实体类声明<br>
+	 * 当有实体逻辑删除属性时，将自动添加查询未删除数据的条件，可通用{@link EntityOptions#filterLogicDeletedData()}设置关闭
 	 * @param example 条件
 	 * @return 列表
 	 */
@@ -105,7 +108,8 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 
 	/**
 	 * 使用实体类作为查询参数，非null值才会参与查询<br>
-	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * 查询关联表（引用属性）使用{@link EntityOptions}注解对实体类声明<br>
+	 * 当有实体逻辑删除属性时，将自动添加查询未删除数据的条件，可通用{@link EntityOptions#filterLogicDeletedData()}设置关闭
 	 * @param example 条件
 	 * @param pageable 分页参数，可null
 	 * @return 列表
@@ -116,7 +120,8 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 
 	/**
 	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询<br>
-	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * 查询关联表（引用属性）使用{@link EntityOptions}注解对实体类声明<br>
+	 * 当有实体逻辑删除属性时，将自动添加查询未删除数据的条件，可通用{@link EntityOptions#filterLogicDeletedData()}设置关闭
 	 * @param example 条件
 	 * @param sort 排序，可null
 	 * @return 列表
@@ -127,7 +132,8 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	
 	/**
 	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询<br>
-	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * 查询关联表（引用属性）使用{@link EntityOptions}注解对实体类声明<br>
+	 * 当有实体逻辑删除属性时，将自动添加查询未删除数据的条件，可通用{@link EntityOptions#filterLogicDeletedData()}设置关闭
 	 * @param example 条件
 	 * @param sort 排序，可null
 	 * @param pageable 分页参数，可null
@@ -139,7 +145,8 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	
 	/**
 	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询<br>
-	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * 查询关联表（引用属性）使用{@link EntityOptions}注解对实体类声明<br>
+	 * 当有实体逻辑删除属性时，将自动添加查询未删除数据的条件，可通用{@link EntityOptions#filterLogicDeletedData()}设置关闭
 	 * @param example 条件
 	 * @param sort 排序，可null
 	 * @param pageable 分页参数，可null
@@ -152,7 +159,8 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 
 	/**
 	 * 使用实体类作为查询参数，非null值才会参与查询<br>
-	 * 查询关联表（引用属性）使用@EntityOptions注解对实体类声明<br>
+	 * 查询关联表（引用属性）使用{@link EntityOptions}注解对实体类声明<br>
+	 * 当有实体逻辑删除属性时，将自动添加查询未删除数据的条件，可通用{@link EntityOptions#filterLogicDeletedData()}设置关闭
 	 * 结果集必须是0或1条数据，否则会报错。
 	 * @param example 条件
 	 * @param pageable 分页参数，可null
@@ -163,8 +171,11 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	}
 	
 	/**
-	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效<br>
-	 * 结果集必须是0或1条数据，否则会报错。
+	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询<br>
+	 * 查询关联表（引用属性）使用{@link EntityOptions}注解对实体类声明<br>
+	 * 结果集必须是0或1条数据，否则会报错。<br>
+	 * 查询关联表（引用属性）使用{@link EntityOptions}注解对实体类声明<br>
+	 * 当有实体逻辑删除属性时，将自动添加查询未删除数据的条件，可通用{@link EntityOptions#filterLogicDeletedData()}设置关闭
 	 * @param example 条件
 	 * @param sort 排序，可null
 	 * @param pageable 分页参数，可null
@@ -175,8 +186,11 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	}
 	
 	/**
-	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效<br>
-	 * 结果集必须是0或1条数据，否则会报错。
+	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询<br>
+	 * 查询关联表（引用属性）使用{@link EntityOptions}注解对实体类声明<br>
+	 * 结果集必须是0或1条数据，否则会报错。<br>
+	 * 查询关联表（引用属性）使用{@link EntityOptions}注解对实体类声明<br>
+	 * 当有实体逻辑删除属性时，将自动添加查询未删除数据的条件，可通用{@link EntityOptions#filterLogicDeletedData()}设置关闭
 	 * @param example 条件
 	 * @param sort 排序，可null
 	 * @param pageable 分页参数，可null
@@ -318,7 +332,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 
 	/**
 	 * 动态条件查询<br>
-	 * @param predicate 条件
+	 * @param predicate 条件，可通过{@link Predicates#queryPredicate()}创建
 	 * @return 列表
 	 */
 	default List<T> getByCriteria(QueryPredicate predicate) {
@@ -328,7 +342,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	/**
 	 * 动态条件查询唯一数据<br>
 	 * 结果集必须是0或1条数据，否则会报错。建议使用.limit(1)进行结果集行数限制。
-	 * @param predicate 条件
+	 * @param predicate 条件，可通过{@link Predicates#queryPredicate()}创建
 	 * @return 列表
 	 */
 	default T getUniqueByCriteria(QueryPredicate predicate) {
@@ -399,7 +413,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * 动态条件更新<br>
 	 * 支持关联表条件，但需要确定数据库是否支持关联条件查询进行更新<br>
 	 * @param entity 默认非null值被更新，可以通过@AttributeOptions注解的updateMode设定更新的模式
-	 * @param predicate Where条件
+	 * @param predicate 动态条件，可通过{@link Predicates#updatePredicate()}创建
 	 * @return 影响行数
 	 */
 	default int updateByCriteria(T entity, UpdatePredicate predicate) {
@@ -429,7 +443,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	
 	/**
 	 * 动态条件删除<br>
-	 * @param predicate 条件
+	 * @param predicate 条件，可通过{@link Predicates#predicate()}创建
 	 * @return 影响行数
 	 */
 	default int deleteByCriteria(Predicate predicate) {
@@ -531,7 +545,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * 
 	 * @param attrName  实体类属性名。
 	 * @param value     更新值，可以为null值
-	 * @param predicate 条件
+	 * @param predicate 条件，可通过{@link Predicates#updatePredicate()}创建
 	 * @return 影响行数
 	 */
 	default int updateAttrByCriteria(String attrName, Object value, UpdatePredicate predicate) {
@@ -645,5 +659,38 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 */
 	default int resumeLogicDeletedByLambdaCriteria(Consumer<LambdaUpdatePredicate<T>> predicate) {
 		return resumeLogicDeletedByLambdaCriteria(predicate);
+	}
+	
+	/**
+	 * 动态条件查询字段最大值，如果匹配行数为0，则返回值为null
+	 * @param <R> 返回值类型
+	 * @param attrNameGetter 被统计的实体属性getter函数式，例如User::getAge
+	 * @param predicate 动态查询条件
+	 * @return 最大值
+	 */
+	default <R> R maxByLambdaCriteria(SerializableFunction<T, R> attrNameGetter, Consumer<LambdaPredicate<T>> predicate) {
+		return getDomainMapper().maxByLambdaCriteria(attrNameGetter, predicate);
+	}
+	
+	/**
+	 * 动态条件查询字段最小值，如果匹配行数为0，则返回值为null
+	 * @param <R> 返回值类型
+	 * @param attrNameGetter 被统计的实体属性getter函数式，例如User::getAge
+	 * @param predicate 动态查询条件
+	 * @return 最小值
+	 */
+	default <R> R minByLambdaCriteria(SerializableFunction<T, R> attrNameGetter, Consumer<LambdaPredicate<T>> predicate) {
+		return getDomainMapper().minByLambdaCriteria(attrNameGetter, predicate);
+	}
+	
+	/**
+	 * 动态条件查询字段值总和，如果匹配行数为0，则返回值为null
+	 * @param <R> 返回值类型
+	 * @param attrNameGetter 被统计的实体属性getter函数式，例如User::getAge
+	 * @param predicate 动态查询条件
+	 * @return 值总和
+	 */
+	default <R> R sumByLambdaCriteria(SerializableFunction<T, R> attrNameGetter, Consumer<LambdaPredicate<T>> predicate) {
+		return getDomainMapper().sumByLambdaCriteria(attrNameGetter, predicate);
 	}
 }

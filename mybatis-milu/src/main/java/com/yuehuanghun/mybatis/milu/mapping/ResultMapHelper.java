@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.persistence.Entity;
+
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.session.Configuration;
@@ -47,7 +49,7 @@ public class ResultMapHelper {
 		}
 		
 		Class<?> returnType = DYNAMIC_RETURN_TYPE.get();
-		if(returnType == null || resultMap.getType().isAssignableFrom(returnType)) {
+		if(returnType == null || (resultMap.getType().isAnnotationPresent(Entity.class) && resultMap.getType().isAssignableFrom(returnType)) || resultMap.getType() == returnType) {
 			return resultMap;
 		}
 		

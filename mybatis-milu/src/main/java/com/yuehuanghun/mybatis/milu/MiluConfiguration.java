@@ -58,12 +58,15 @@ import com.yuehuanghun.mybatis.milu.generic.impl.GenericLogicDeleteByCriteriaPro
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericLogicDeleteByIdProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericLogicDeleteByIdsProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericLogicDeleteByLambdaCriteriaProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericMaxByLambdaCriteriaProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericMinByLambdaCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericResumeLogicDeleteByCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericResumeLogicDeleteByIdProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericResumeLogicDeleteByIdsProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericResumeLogicDeleteByLambdaCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericStatisticByCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericStatisticByLambdaCriteriaProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericSumByLambdaCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdateAttrByCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdateAttrByIdProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdateAttrByLambdaCriteriaProviderSql;
@@ -167,6 +170,9 @@ public class MiluConfiguration extends Configuration {
 		this.addGenericProviderSql(new GenericResumeLogicDeleteByCriteriaProviderSql());
 		this.addGenericProviderSql(new GenericResumeLogicDeleteByLambdaCriteriaProviderSql());
 		this.addGenericProviderSql(new GenericLogicDeleteByLambdaCriteriaProviderSql());
+		this.addGenericProviderSql(new GenericMaxByLambdaCriteriaProviderSql());
+		this.addGenericProviderSql(new GenericMinByLambdaCriteriaProviderSql());
+		this.addGenericProviderSql(new GenericSumByLambdaCriteriaProviderSql());
 	}
 	
 	private void registerDefaultIdentifierGenerator() {

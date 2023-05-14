@@ -550,4 +550,31 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @return 影响行数
 	 */
 	int resumeLogicDeletedByLambdaCriteria(@Param(Constants.CRITERIA) Consumer<LambdaUpdatePredicate<T>> predicate);
+	
+	/**
+	 * 动态条件查询字段最大值，如果匹配行数为0，则返回值为null
+	 * @param <R> 返回值类型
+	 * @param attrNameGetter 被统计的实体属性getter函数式，例如User::getAge
+	 * @param predicate 动态查询条件
+	 * @return 最大值
+	 */
+	<R> R maxByLambdaCriteria(@Param(Constants.ATTR_NAME) SerializableFunction<T, R> attrNameGetter, @Param(Constants.CRITERIA) Consumer<LambdaPredicate<T>> predicate);
+	
+	/**
+	 * 动态条件查询字段最小值，如果匹配行数为0，则返回值为null
+	 * @param <R> 返回值类型
+	 * @param attrNameGetter 被统计的实体属性getter函数式，例如User::getAge
+	 * @param predicate 动态查询条件
+	 * @return 最小值
+	 */
+	<R> R minByLambdaCriteria(@Param(Constants.ATTR_NAME) SerializableFunction<T, R> attrNameGetter, @Param(Constants.CRITERIA) Consumer<LambdaPredicate<T>> predicate);
+	
+	/**
+	 * 动态条件查询字段值总和，如果匹配行数为0，则返回值为null
+	 * @param <R> 返回值类型
+	 * @param attrNameGetter 被统计的实体属性getter函数式，例如User::getAge
+	 * @param predicate 动态查询条件
+	 * @return 值总和
+	 */
+	<R> R sumByLambdaCriteria(@Param(Constants.ATTR_NAME) SerializableFunction<T, R> attrNameGetter, @Param(Constants.CRITERIA) Consumer<LambdaPredicate<T>> predicate);
 }

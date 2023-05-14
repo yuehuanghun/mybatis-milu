@@ -18,6 +18,7 @@ package com.yuehuanghun.mybatis.milu.criteria.lambda;
 import java.beans.Introspector;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 public class LambdaReflections {
 
@@ -40,6 +41,22 @@ public class LambdaReflections {
 				fieldName = getter;
 			}
 			return Introspector.decapitalize(fieldName);
+		} catch (ReflectiveOperationException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	// 未能返回泛型值
+	public static <T, R> Type getReturnType(SerializableFunction<T, R> function) {
+		try {
+			Method method = function.getClass().getDeclaredMethod("writeReplace");
+			method.setAccessible(Boolean.TRUE);
+			SerializedLambda serializedLambda = (SerializedLambda) method.invoke(function);
+			
+			String methodSignature = serializedLambda.getImplMethodSignature();
+			String className = methodSignature.substring(methodSignature.indexOf(")") + 2, methodSignature.length() - 1).replace("/", ".");
+			
+			return Class.forName(className);
 		} catch (ReflectiveOperationException e) {
 			throw new RuntimeException(e);
 		}

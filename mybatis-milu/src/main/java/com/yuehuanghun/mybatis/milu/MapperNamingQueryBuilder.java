@@ -573,7 +573,7 @@ public class MapperNamingQueryBuilder {
 		} else if(method.getName().startsWith("statistic")) {
 			returnType = Map.class;
 		} else {
-			returnType = int.class;
+			returnType = method.getReturnType();
 		}
 		String resultMapId = generateResultMapName(method);
 
