@@ -25,7 +25,6 @@ import java.util.function.Consumer;
 import org.apache.ibatis.javassist.scopedpool.SoftValueHashMap;
 import org.apache.ibatis.reflection.MetaClass;
 
-import com.yuehuanghun.mybatis.milu.criteria.Expression;
 import com.yuehuanghun.mybatis.milu.criteria.UpdatePredicate;
 import com.yuehuanghun.mybatis.milu.criteria.UpdatePredicateImpl;
 import com.yuehuanghun.mybatis.milu.criteria.builder.UpdateSqlTemplateBuilder;
@@ -39,7 +38,7 @@ import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
 public class GenericUpdateAttrByCriteriaProviderSql implements GenericProviderSql {
 
-	private final Map<Class<?>, Map<Expression, String>> cache = new ConcurrentHashMap<>();
+	private final Map<Class<?>, Map<Object, String>> cache = new ConcurrentHashMap<>();
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
@@ -83,10 +82,14 @@ public class GenericUpdateAttrByCriteriaProviderSql implements GenericProviderSq
 		Map<String, Object> queryParams = new HashMap<>();
 		predicate.renderParams(context, queryParams, 0);
 		((Map)params).putAll(queryParams);
+		
+		Map<String, Object> valueKey = new HashMap<>();
+		valueKey.put(Constants.CRITERIA, predicate);
+		valueKey.put(Constants.ATTR_NAME, attrName);
 
 		String sqlExpression = cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
 			return new SoftValueHashMap<>();
-		}).computeIfAbsent(predicate, (key) -> {
+		}).computeIfAbsent(valueKey, (key) -> {
 			return new UpdateSqlTemplateBuilder(context, predicate).setNullableUpdateAttrNames(Arrays.asList(attrName)).build();
 		});
 		
