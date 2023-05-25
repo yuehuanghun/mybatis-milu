@@ -38,6 +38,8 @@ public class ClassMapperTest {
 	public void testFindByTeacherListName() {
 		List<Classs> result = classMapper.findByTeacherListName("黄老师");
 		assertTrue(result.size() > 0);
+		
+		System.out.println(JSON.toJSONString(result));
 	}
 	@Test
 	public void testFindByStudentListName() {
@@ -317,6 +319,9 @@ public class ClassMapperTest {
 		
 		Optional<Classs> classs = classMapper.findById(1L);
 		assertNull(classs.get().getData());
+		
+		effect = classMapper.updateAttrByCriteria("isDeleted", "Y", p -> p.eq("id", 1L));
+		assertEquals(effect, 1);
 	}
 	
 	@Test

@@ -5,7 +5,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.AppTest;
+import com.yuehuanghun.mybatismilu.test.domain.entity.Student;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Teacher;
 import com.yuehuanghun.mybatismilu.test.dto.TeacherDTO;
 
@@ -213,5 +216,43 @@ public class TeacherMapperTest {
 		teacherMapper.batchInsert(teachers);
 		System.out.println(JSON.toJSONString(teachers));
 		teachers.forEach(teacher -> assertNotNull(teacher.getId()));
+	}
+	
+	@Test
+	public void testMaxByLambdaCriteria() {
+		Integer maxAge = teacherMapper.maxByLambdaCriteria(Teacher::getAge, p -> {});
+		assertEquals(maxAge.intValue(), 31);
+		maxAge = teacherMapper.maxByLambdaCriteria(Teacher::getAge, p -> p.undeleted());
+		assertEquals(maxAge.intValue(), 31);
+		Date addTime = teacherMapper.minByLambdaCriteria(Teacher::getAddTime, p -> {});
+		assertNotNull(addTime);
+
+		maxAge = teacherMapper.maxByLambdaCriteria(Teacher::getAge, p -> p.gt(Teacher::getId, 100));
+		assertNull(maxAge);
+	}
+	
+	@Test
+	public void testMinByLambdaCriteria() {
+		Integer maxAge = teacherMapper.minByLambdaCriteria(Teacher::getAge, p -> {});
+		assertEquals(maxAge.intValue(), 28);
+		maxAge = teacherMapper.minByLambdaCriteria(Teacher::getAge, p -> p.undeleted());
+		assertEquals(maxAge.intValue(), 31);
+		Date addTime = teacherMapper.minByLambdaCriteria(Teacher::getAddTime, p -> {});
+		assertNotNull(addTime);
+
+		maxAge = teacherMapper.minByLambdaCriteria(Teacher::getAge, p -> p.gt(Teacher::getId, 100));
+		assertNull(maxAge);
+	}
+	
+	@Test
+	public void testSumByLambdaCriteria() {
+		Integer maxAge = teacherMapper.sumByLambdaCriteria(Teacher::getAge, p -> {});
+		assertEquals(maxAge.intValue(), 59);
+		maxAge = teacherMapper.sumByLambdaCriteria(Teacher::getAge, p -> p.undeleted());
+		assertEquals(maxAge.intValue(), 31);
+		
+
+		maxAge = teacherMapper.sumByLambdaCriteria(Teacher::getAge, p -> p.gt(Teacher::getId, 100));
+		assertNull(maxAge);
 	}
 }

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -296,12 +297,12 @@ public class StudentMapperTest {
 		example.setParams(params);
 		
 		result = studentMapper.countByExample(example);
-		assertTrue(result == 4);
+		assertTrue(result == 3);
 		
 		params.put("addTimeBegin", "2017-06-08");
 		params.put("addTimeEnd", "");
 		result = studentMapper.countByExample(example);
-		assertTrue(result == 4);
+		assertTrue(result == 3);
 	};
 
 	@Test
@@ -859,5 +860,43 @@ public class StudentMapperTest {
 		assertEquals(students.size(), 4);
 		assertNotNull(students.get(0).getClasss());
 		assertNull(students.get(1).getClasss());
+	}
+	
+	@Test
+	public void testMaxByLambdaCriteria() {
+		Integer maxAge = studentMapper.maxByLambdaCriteria(Student::getAge, p -> {});
+		assertEquals(maxAge.intValue(), 9);
+		maxAge = studentMapper.maxByLambdaCriteria(Student::getAge, p -> p.gt(Student::getId, 2).undeleted());
+		assertEquals(maxAge.intValue(), 8);
+		LocalDateTime addTime = studentMapper.maxByLambdaCriteria(Student::getAddTime, p -> {});
+		assertNotNull(addTime);
+
+		maxAge = studentMapper.maxByLambdaCriteria(Student::getAge, p -> p.gt(Student::getId, 100));
+		assertNull(maxAge);
+	}
+	
+	@Test
+	public void testMinByLambdaCriteria() {
+		Integer maxAge = studentMapper.minByLambdaCriteria(Student::getAge, p -> {});
+		assertEquals(maxAge.intValue(), 7);
+		maxAge = studentMapper.minByLambdaCriteria(Student::getAge, p -> p.gt(Student::getId, 2).undeleted());
+		assertEquals(maxAge.intValue(), 8);
+		LocalDateTime addTime = studentMapper.minByLambdaCriteria(Student::getAddTime, p -> {});
+		assertNotNull(addTime);
+
+		maxAge = studentMapper.minByLambdaCriteria(Student::getAge, p -> p.gt(Student::getId, 100));
+		assertNull(maxAge);
+	}
+	
+	@Test
+	public void testSumByLambdaCriteria() {
+		Integer maxAge = studentMapper.sumByLambdaCriteria(Student::getAge, p -> {});
+		assertEquals(maxAge.intValue(), 41);
+		maxAge = studentMapper.sumByLambdaCriteria(Student::getAge, p -> p.undeleted());
+		assertEquals(maxAge.intValue(), 32);
+		
+
+		maxAge = studentMapper.sumByLambdaCriteria(Student::getAge, p -> p.gt(Student::getId, 100));
+		assertNull(maxAge);
 	}
 }

@@ -3,8 +3,8 @@ package com.yuehuanghun.mybatismilu.test.domain.mapper;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,7 +76,7 @@ public class StudentProfileMapperTest {
 	@Transactional
 	public void testInsert() {
 		Student student = new Student();
-		student.setAddTime(new Date());
+		student.setAddTime(LocalDateTime.now());
 		student.setClassId(2L);
 		student.setName("张建国");
 		student.setAge(9);
@@ -101,13 +101,13 @@ public class StudentProfileMapperTest {
 	@Transactional
 	public void testBatchInsert() {
 		Student student = new Student();
-		student.setAddTime(new Date());
+		student.setAddTime(LocalDateTime.now());
 		student.setClassId(2L);
 		student.setName("张建国");
 		student.setAge(9);
 		
 		Student student2 = new Student();
-		student2.setAddTime(new Date());
+		student2.setAddTime(LocalDateTime.now());
 		student2.setClassId(2L);
 		student2.setName("刘兰之");
 		student2.setAge(9);
@@ -139,7 +139,7 @@ public class StudentProfileMapperTest {
 	@Transactional
 	public void testUpdateById() {
 		Student student = new Student();
-		student.setAddTime(new Date());
+		student.setAddTime(LocalDateTime.now());
 		student.setClassId(2L);
 		student.setName("张建国");
 		student.setAge(9);
@@ -168,7 +168,7 @@ public class StudentProfileMapperTest {
 	@Transactional
 	public void testDeleteById() {
 		Student student = new Student();
-		student.setAddTime(new Date());
+		student.setAddTime(LocalDateTime.now());
 		student.setClassId(2L);
 		student.setName("张建国");
 		student.setAge(9);
@@ -186,13 +186,13 @@ public class StudentProfileMapperTest {
 	@Transactional
 	public void testDeleteByIds() {
 		Student student = new Student();
-		student.setAddTime(new Date());
+		student.setAddTime(LocalDateTime.now());
 		student.setClassId(2L);
 		student.setName("张建国");
 		student.setAge(9);
 		
 		Student student2 = new Student();
-		student2.setAddTime(new Date());
+		student2.setAddTime(LocalDateTime.now());
 		student2.setClassId(2L);
 		student2.setName("刘兰之");
 		student2.setAge(9);
@@ -263,7 +263,7 @@ public class StudentProfileMapperTest {
 	@Transactional
 	public void testUpdateByCriteria() {
 		Student student = new Student();
-		student.setAddTime(new Date());
+		student.setAddTime(LocalDateTime.now());
 		student.setClassId(2L);
 		student.setName("张建国");
 		student.setAge(9);
@@ -303,7 +303,7 @@ public class StudentProfileMapperTest {
 	@Transactional
 	public void testUpdateByLambdaCriteria() {
 		Student student = new Student();
-		student.setAddTime(new Date());
+		student.setAddTime(LocalDateTime.now());
 		student.setClassId(2L);
 		student.setName("张建国");
 		student.setAge(9);
@@ -336,7 +336,7 @@ public class StudentProfileMapperTest {
 	@Transactional
 	public void testDeleteByCriteria() {
 		Student student = new Student();
-		student.setAddTime(new Date());
+		student.setAddTime(LocalDateTime.now());
 		student.setClassId(2L);
 		student.setName("张建国");
 		student.setAge(9);
@@ -366,7 +366,7 @@ public class StudentProfileMapperTest {
 	@Transactional
 	public void testDeleteByLambdaCriteria() {
 		Student student = new Student();
-		student.setAddTime(new Date());
+		student.setAddTime(LocalDateTime.now());
 		student.setClassId(2L);
 		student.setName("张建国");
 		student.setAge(9);

@@ -1,5 +1,6 @@
 package com.yuehuanghun.mybatismilu.test.domain.entity;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +39,7 @@ public class Student extends PageRequest {
 	private Long id; //使用数据表模拟数字序列
 	
 	@AttributeOptions(filler = @Filler(fillOnInsert = true), exampleQuery = @ExampleQuery(startKeyName = "params.addTimeBegin", endKeyName = "params.addTimeEnd")) //当在插入数据时，如果该属性为null则自动填充值
-	private Date addTime;
+	private LocalDateTime addTime;
 	
 	@AttributeOptions(filler = @Filler(fillOnInsert = true, fillOnUpdate = true, fillMode = FillMode.ANY)) //当在插入或更新数据时，如果该属性为null则自动填充值
 	private Date updateTime;
