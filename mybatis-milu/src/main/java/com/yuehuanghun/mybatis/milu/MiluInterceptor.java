@@ -1,5 +1,7 @@
 package com.yuehuanghun.mybatis.milu;
 
+import java.util.HashMap;
+
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
@@ -32,6 +34,9 @@ public class MiluInterceptor implements Interceptor {
 	public Object intercept(Invocation invocation) throws Throwable {
 		String statementId = null;
 		try {
+			if(invocation.getArgs()[1] == null) {
+				invocation.getArgs()[1] = new HashMap<>();
+			}
 			MappedStatement statement = (MappedStatement) invocation.getArgs()[0];
 			statementId = statement.getId();
 			return invocation.proceed();

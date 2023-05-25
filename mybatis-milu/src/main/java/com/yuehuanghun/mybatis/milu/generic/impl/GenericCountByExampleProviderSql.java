@@ -31,6 +31,11 @@ public class GenericCountByExampleProviderSql extends GenericCountByCriteriaProv
 		Object example = paramMap.remove(Constants.EXAMPLE);
 		QueryPredicate queryPredicate = SqlBuildingHelper.exampleToQueryPredicate(context.getEntity(), example);
 		paramMap.put(Constants.CRITERIA, queryPredicate);
+		
+		if(context.getEntity().isFilterLogicDeletedData()) {
+			queryPredicate.undeleted(); // 自动过滤已逻辑删除的数据
+		}
+		
 		return super.provideSql(context, params);
 	}
 

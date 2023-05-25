@@ -15,24 +15,46 @@
  */
 package com.yuehuanghun.mybatis.milu;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
 import org.apache.ibatis.binding.MapperRegistry;
-import org.apache.ibatis.session.Configuration;
+
+import com.yuehuanghun.mybatis.milu.metamodel.EntityBuilder;
 
 public class MiluMapperRegistry extends MapperRegistry {
-	private final Configuration config;
+	private final MiluConfiguration config;
 
-	public MiluMapperRegistry(Configuration config) {
+	public MiluMapperRegistry(MiluConfiguration config) {
 		super(config);
 		this.config = config;
 	}
 
 	@Override
 	public <T> void addMapper(Class<T> type) {
-		super.addMapper(type);
 		if(BaseMapper.class.isAssignableFrom(type)) {
+			if(config.isCreateEntityResultMap()) {
+				Class<?> entityClass = getGenericEntity(type);
+	    		EntityBuilder.instance(entityClass, config).buildEntityDefaultResultMap(type);
+			}
 			MapperNamingQueryBuilder parser = new MapperNamingQueryBuilder(config, type);
 			parser.parse();
 		}
+		super.addMapper(type);
 	}
 
+	private Class<?> getGenericEntity(Class<?> mapperClass) {
+		Type[] interfaces = mapperClass.getGenericInterfaces();
+		for (Type type : interfaces) {
+			if (!(type instanceof ParameterizedType)) {
+				continue;
+			}
+			ParameterizedType parameterizedType = (ParameterizedType) type;
+			Type rawType = parameterizedType.getRawType();
+			if (rawType.equals(BaseMapper.class)) {
+				return (Class<?>) parameterizedType.getActualTypeArguments()[0];
+			}
+		}
+		return null;
+	}
 }

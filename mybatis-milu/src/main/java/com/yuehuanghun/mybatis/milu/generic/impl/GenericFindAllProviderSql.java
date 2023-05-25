@@ -46,6 +46,13 @@ public class GenericFindAllProviderSql extends GenericFindByCriteriaProviderSql 
 			}
 		}
 		
+		if(context.getEntity().isFilterLogicDeletedData()) {
+			if(predicate == EMPTY) {
+				predicate = new QueryPredicateImpl();
+			}
+			predicate.undeleted(); // 自动过滤已逻辑删除的数据
+		}
+		
 		((Map<String, Object>)params).put(Constants.CRITERIA, predicate);
 		
 		return super.provideSql(context, params);
