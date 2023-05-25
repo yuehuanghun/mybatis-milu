@@ -91,6 +91,7 @@ public class MybatisMiluConfiguration {
 			@Qualifier("example1MybatisProperties") MybatisProperties properties,
 			ObjectProvider<List<IdentifierGenerator>> identifierGeneratorsProvider) throws Exception {
 		parseConfiguration(properties);
+		properties.getConfiguration().setCreateEntityResultMap(true);
 		SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
 		factory.setDataSource(dataSource);
 		factory.setVfs(SpringBootVFS.class);
