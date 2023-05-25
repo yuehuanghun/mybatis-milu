@@ -97,6 +97,8 @@ public class MybatisProperties {
   private MiluConfiguration configuration;
   
   private boolean identifierWrapQuote = true;
+  
+  private boolean createEntityResultMap;
 
   /**
    * @since 1.1.0
@@ -222,4 +224,12 @@ public class MybatisProperties {
   public void setIdentifierWrapQuote(boolean identifierWrapQuote) {
 	this.identifierWrapQuote = identifierWrapQuote;
   }
+
+public boolean isCreateEntityResultMap() {
+	return createEntityResultMap;
+}
+
+public void setCreateEntityResultMap(boolean createEntityResultMap) {
+	this.createEntityResultMap = createEntityResultMap;
+}
 }
