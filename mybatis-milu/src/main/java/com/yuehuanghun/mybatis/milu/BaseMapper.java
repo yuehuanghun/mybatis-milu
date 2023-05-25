@@ -63,13 +63,15 @@ public interface BaseMapper<T, ID extends Serializable> {
 	List<T> findByIds(@Param(Constants.IDS) Collection<ID> ids);
 	
 	/**
-	 * 查询表所有数据
+	 * 查询表所有数据<br>
+	 * 从1.13.0开始，自动过滤逻辑删除数据
 	 * @return 列表
 	 */
 	List<T> findAll();
 	
 	/**
-	 * 查询表所有数据，并指定排序方式
+	 * 查询表所有数据，并指定排序方式<br>
+	 * 从1.13.0开始，自动过滤逻辑删除数据
 	 * @param sort 排序，可null
 	 * @return 列表
 	 */
@@ -243,7 +245,8 @@ public interface BaseMapper<T, ID extends Serializable> {
 	int deleteByIds(@Param(Constants.IDS) Collection<ID> ids);
 
 	/**
-	 * 以实体类为参数进行统计行数
+	 * 以实体类为参数进行统计行数<br>
+	 * 从1.13.0开始，自动过滤逻辑删除数据
 	 * @param example 条件
 	 * @return 影响行数
 	 */

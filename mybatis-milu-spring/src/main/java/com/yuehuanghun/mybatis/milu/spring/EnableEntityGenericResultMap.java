@@ -25,7 +25,8 @@ import java.lang.annotation.Target;
 import org.springframework.context.annotation.Import;
 
 /**
- * 必须在@MapperScan之后添加该注解
+ * 必须在@MapperScan之后添加该注解<br>
+ * 仅自动化配置时有效，如果自定义配置，则可通过配置参数mybatis.createEntityResultMap=true开启自动创建实体类的resultMap
  * @author yuehuanghun
  *
  */

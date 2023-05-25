@@ -22,9 +22,12 @@ import java.sql.SQLException;
 import java.util.Map;
 
 import org.apache.ibatis.binding.MapperRegistry;
+import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.transaction.Transaction;
 
 import com.yuehuanghun.mybatis.milu.db.DbEnum;
 import com.yuehuanghun.mybatis.milu.db.DbMeta;
@@ -101,6 +104,9 @@ public class MiluConfiguration extends Configuration {
 	@Getter
 	@Setter
 	private boolean identifierWrapQuote = true; //标识符（表名、字段名）是否使用引号
+	@Getter
+	@Setter
+	private boolean createEntityResultMap = false; // 自动创建实体对应的ResultMap，设置参数mybatis.createEntityResultMap
 	
 	//自动化配置 mybatis.configurationProperties.idGenerator
 	@Getter
@@ -122,7 +128,7 @@ public class MiluConfiguration extends Configuration {
 		super();
 		registerGenericProviderSql();
 		registerDefaultIdentifierGenerator();
-		this.addInterceptor(new MiluInterceptor());
+//		this.addInterceptor(new MiluInterceptor());
 	}
 	
 	public MiluConfiguration(Environment environment) {
@@ -214,6 +220,13 @@ public class MiluConfiguration extends Configuration {
 	public void setEnvironment(Environment environment) {
 		super.setEnvironment(environment);
 		buildDbMeta();
+	}
+
+	@Override
+	public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
+		Executor executor = super.newExecutor(transaction, executorType);
+		executor = (Executor) new MiluInterceptor().plugin(executor); // 保证第一个执行
+		return executor;
 	}
 	
 	private void addGenericProviderSql(GenericProviderSql genericProviderSql) {

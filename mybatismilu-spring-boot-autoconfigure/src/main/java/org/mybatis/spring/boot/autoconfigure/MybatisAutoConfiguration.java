@@ -283,6 +283,7 @@ public class MybatisAutoConfiguration implements InitializingBean, ApplicationCo
 			}
 		}
 		configuration.setIdentifierWrapQuote(properties.isIdentifierWrapQuote());
+		configuration.setCreateEntityResultMap(properties.isCreateEntityResultMap());
 		factory.setConfiguration(configuration);
 	}
 
