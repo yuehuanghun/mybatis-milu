@@ -577,7 +577,11 @@ public interface LambdaPredicate<T> extends Condition {
 	/**
 	 * 增加一个IN查询条件，column IN (value[0],value[1]...)，当value != null并且非空集合时，条件生效
 	 * @param getterFn 实体类的get方法函数式
-	 * @param value 值，允许值为数组或集合，非null并且元素个数大于0时生效
+	 * @param value 条件值，非null生效。当为数组或集合时，元素个数大于0时条件生效；非数组或集合时，如为字符串，则以半角逗号分割为字符串集合，其它则转为单元素集合<br>
+	 * ["1","2"] -> ["1","2"]<br>
+	 * "1,2" -> ["1","2"]<br>
+	 * 1 -> [1]<br>
+	 * "1" -> ["1"]
 	 * @return 当前对象
 	 */
 	LambdaPredicate<T> in(SerializableFunction<T, ?> getterFn, Object value);
@@ -586,7 +590,11 @@ public interface LambdaPredicate<T> extends Condition {
 	 * 增加一个IN查询条件，column IN (value[0],value[1]...)
 	 * @param accept 当值为true时，条件生效
 	 * @param getterFn 实体类的get方法函数式
-	 * @param value 值，允许值为数组或集合
+	 * @param value 条件值。值一般为数组或集合。非数组或集合时，如为字符串，则以半角逗号分割为字符串集合，其它则转为单元素集合<br>
+	 * ["1","2"] -> ["1","2"]<br>
+	 * "1,2" -> ["1","2"]<br>
+	 * 1 -> [1]<br>
+	 * "1" -> ["1"]
 	 * @return 当前对象
 	 */
 	LambdaPredicate<T> in(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
@@ -594,7 +602,11 @@ public interface LambdaPredicate<T> extends Condition {
 	/**
 	 * 增加一个NOT IN查询条件，column NOT IN (value[0],value[1]...)
 	 * @param getterFn 实体类的get方法函数式
-	 * @param value 值，允许值为数组或集合，非null并且元素个数大于0时生效
+	 * @param value 条件值，非null生效。当为数组或集合时，元素个数大于0时条件生效；非数组或集合时，如为字符串，则以半角逗号分割为字符串集合，其它则转为单元素集合<br>
+	 * ["1","2"] -> ["1","2"]<br>
+	 * "1,2" -> ["1","2"]<br>
+	 * 1 -> [1]<br>
+	 * "1" -> ["1"]
 	 * @return 当前对象
 	 */
 	LambdaPredicate<T> notIn(SerializableFunction<T, ?> getterFn, Object value);
@@ -603,7 +615,11 @@ public interface LambdaPredicate<T> extends Condition {
 	 * 增加一个NOT IN查询条件，column NOT IN (value[0],value[1]...)
 	 * @param accept 当值为true时，条件生效
 	 * @param getterFn 实体类的get方法函数式
-	 * @param value 值，允许值为数组或集合
+	 * @param value 条件值。值一般为数组或集合。非数组或集合时，如为字符串，则以半角逗号分割为字符串集合，其它则转为单元素集合<br>
+	 * ["1","2"] -> ["1","2"]<br>
+	 * "1,2" -> ["1","2"]<br>
+	 * 1 -> [1]<br>
+	 * "1" -> ["1"]
 	 * @return 当前对象
 	 */
 	LambdaPredicate<T> notIn(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
