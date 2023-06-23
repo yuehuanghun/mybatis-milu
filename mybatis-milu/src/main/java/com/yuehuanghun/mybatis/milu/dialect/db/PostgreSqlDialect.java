@@ -17,6 +17,7 @@ package com.yuehuanghun.mybatis.milu.dialect.db;
 
 import javax.persistence.LockModeType;
 
+import com.yuehuanghun.mybatis.milu.data.Part.Type;
 import com.yuehuanghun.mybatis.milu.dialect.AbstractDialect;
 
 /**
@@ -38,5 +39,11 @@ public class PostgreSqlDialect extends AbstractDialect {
 			return sql + " FOR SHARE";
 		}
 		return super.getLockSql(sql, lockModeType);
+	}
+
+	@Override
+	protected void initPartTypeExpression() {
+		super.initPartTypeExpression();
+		partTypeExpressionMap.put(Type.REGEX, " ~ %s");
 	}
 }
