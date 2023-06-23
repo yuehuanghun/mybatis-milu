@@ -29,6 +29,7 @@ import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.tool.Assert;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
+import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -362,6 +363,7 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate in(boolean accept, String attrName, Object value) {
 		if(accept) {
+			value = StringUtils.toCollection(value);
 			assertCollection(value);
 			and(Conditions.in(attrName, value));
 		}
@@ -371,6 +373,7 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate notIn(boolean accept, String attrName, Object value) {
 		if(accept) {
+			value = StringUtils.toCollection(value);
 			assertCollection(value);
 			and(Conditions.notIn(attrName, value));
 		}
@@ -430,9 +433,21 @@ public class PredicateImpl implements Predicate {
 			throw new SqlExpressionBuildingException("IN/NOT_IN查询值不能为空");
 		}
 		
-		if(!Collection.class.isInstance(value) && !value.getClass().isArray()) { //数组或集合
-			throw new SqlExpressionBuildingException("IN/NOT_IN查询值应该数组或集合");
+		if(Collection.class.isInstance(value)) {
+			if(((Collection<?>)value).isEmpty()) {
+				throw new SqlExpressionBuildingException("IN/NOT_IN查询值集合元素个数不可为0");
+			}
+			return;
 		}
+		
+		if(value.getClass().isArray()) {
+			if(Array.getLength(value) == 0) {
+				throw new SqlExpressionBuildingException("IN/NOT_IN查询值集合数组长度不可为0");
+			}
+			return;
+		}
+		
+		throw new SqlExpressionBuildingException("IN/NOT_IN查询值应该数组或集合");
 	}
 
 	@Override
