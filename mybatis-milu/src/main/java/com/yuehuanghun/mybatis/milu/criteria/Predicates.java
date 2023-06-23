@@ -15,6 +15,11 @@
  */
 package com.yuehuanghun.mybatis.milu.criteria;
 
+import com.yuehuanghun.mybatis.milu.MiluConfiguration;
+import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
+import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
+import com.yuehuanghun.mybatis.milu.metamodel.Entity;
+
 /**
  * 创建Predicate的工具类
  * @author yuehuanghun
@@ -27,6 +32,31 @@ public class Predicates {
 	}
 	
 	public static QueryPredicate queryPredicate() {
+		return new QueryPredicateImpl();
+	}
+	
+	/**
+	 * 通过样例创建动态查询条件
+	 * @param example 实体类的实例
+	 * @return 查询条件
+	 */
+	public static QueryPredicate queryPredicate(Object example) {
+		if(example != null) {
+			Entity entity = null;
+			
+			for(MiluConfiguration configuration : MiluConfiguration.getInstances()) {
+				entity = configuration.getMetaModel().getEntity(example.getClass());
+				if(entity != null) {
+					break;
+				}
+			}
+			
+			if(entity == null) {
+				throw new SqlExpressionBuildingException(String.format("类%s找不到实体类信息", example.getClass().getName()));
+			}
+			
+			return SqlBuildingHelper.exampleToQueryPredicate(entity, example);
+		}
 		return new QueryPredicateImpl();
 	}
 	

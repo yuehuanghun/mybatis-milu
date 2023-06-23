@@ -656,4 +656,10 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 		getDelegate().joinMode(LambdaReflections.fnToFieldName(refGetterFn), joinMode, predicate);
 		return this;
 	}
+
+	@Override
+	public LambdaQueryPredicate<T> byExample(T example) {
+		getDelegate().byExample(example);
+		return this;
+	}
 }

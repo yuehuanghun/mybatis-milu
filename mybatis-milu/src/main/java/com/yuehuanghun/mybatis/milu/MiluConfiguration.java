@@ -19,6 +19,9 @@ import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.binding.MapperRegistry;
@@ -93,6 +96,7 @@ public class MiluConfiguration extends Configuration {
 	private final MiluMapperRegistry miluMapperRegistry = new MiluMapperRegistry(this);
 	private final Map<String, GenericProviderSql> genericProviderSqlMaps = new StrictMap<>("GenericProviderSql collection");
 	private final Map<String, IdentifierGenerator> identifierGeneratorMaps = new StrictMap<>("AssignKeyGenerator collection");
+	private static List<MiluConfiguration> instances = new ArrayList<>();
 
 	@Getter
 	private DbMeta dbMeta;
@@ -128,7 +132,7 @@ public class MiluConfiguration extends Configuration {
 		super();
 		registerGenericProviderSql();
 		registerDefaultIdentifierGenerator();
-//		this.addInterceptor(new MiluInterceptor());
+		instances.add(this);
 	}
 	
 	public MiluConfiguration(Environment environment) {
@@ -345,5 +349,9 @@ public class MiluConfiguration extends Configuration {
 				throw new OrmBuildingException("找不到ExampleQueryConverter实现类", e);
 			}
 		}
+	}
+	
+	public static List<MiluConfiguration> getInstances() {
+		return Collections.synchronizedList(instances);
 	}
 }

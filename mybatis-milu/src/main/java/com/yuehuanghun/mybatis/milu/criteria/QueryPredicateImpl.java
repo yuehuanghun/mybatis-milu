@@ -533,4 +533,10 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		this.joinModeMap.put(propertyName, new Join(joinMode, joinPredicate));
 		return this;
 	}
+
+	@Override
+	public QueryPredicate byExample(Object example) {
+		super.byExample(example);
+		return this;
+	}
 }

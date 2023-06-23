@@ -80,7 +80,7 @@ public class StringUtils {
 				return Arrays.asList(((String)obj).split(Segment.COMMA)).stream().filter(StringUtils::isNotBlank).map(String::trim).collect(Collectors.toList());
 			}
 		}
-		return new String[] {obj.toString()};
+		return new Object[] { obj };
 	}
 
 	/**

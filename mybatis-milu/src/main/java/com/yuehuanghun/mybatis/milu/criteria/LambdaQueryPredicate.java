@@ -449,4 +449,12 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	 * @return 当前对象
 	 */
 	LambdaQueryPredicate<T> joinMode(SerializableFunction<T, ?> refGetterFn, JoinMode joinMode, Consumer<Predicate> joinPredicate);
+	
+	/**
+	 * 将Example样例条件将为Predicate动态条件<br>
+	 * 继承example的匹配模式与范围查询条件
+	 * @param example 实体类的实例
+	 * @return 当前对象
+	 */
+	LambdaQueryPredicate<T> byExample(T example);
 }

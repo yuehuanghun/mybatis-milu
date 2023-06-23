@@ -24,9 +24,12 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
+import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
+import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.tool.Assert;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
@@ -508,6 +511,28 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public boolean isEmpty() {
 		return conditionList.isEmpty();
+	}
+
+	@Override
+	public Predicate byExample(Object example) {
+		if(example == null) {
+			return this;
+		}
+		
+		Entity entity = null;
+		
+		for(MiluConfiguration configuration : MiluConfiguration.getInstances()) {
+			entity = configuration.getMetaModel().getEntity(example.getClass());
+			if(entity != null) {
+				break;
+			}
+		}
+		
+		if(entity == null) {
+			throw new SqlExpressionBuildingException(String.format("类%s找不到实体类信息", example.getClass().getName()));
+		}
+		
+		return this.and(SqlBuildingHelper.exampleToPredicate(entity, example));
 	}
 	
 }

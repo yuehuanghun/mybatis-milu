@@ -307,4 +307,12 @@ public interface QueryPredicate extends Predicate {
 	 * @return 当前对象
 	 */
 	QueryPredicate joinMode(String propertyName, JoinMode joinMode, Predicate joinPredicate);
+	
+	/**
+	 * 将Example样例条件将为Predicate动态条件<br>
+	 * 继承example的匹配模式与范围查询条件
+	 * @param example example必须为实体类的实例
+	 * @return 当前对象
+	 */
+	QueryPredicate byExample(Object example);
 }
