@@ -34,8 +34,9 @@ import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery.MatchType;
 import com.yuehuanghun.mybatis.milu.criteria.Join;
+import com.yuehuanghun.mybatis.milu.criteria.Predicate;
+import com.yuehuanghun.mybatis.milu.criteria.Predicates;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
-import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.Part.Type;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 import com.yuehuanghun.mybatis.milu.filler.Filler;
@@ -502,7 +503,17 @@ public class SqlBuildingHelper {
 	 * @return 动态查询条件
 	 */
 	public static QueryPredicate exampleToQueryPredicate(Entity entity, Object example) {
-		QueryPredicateImpl predicate = new QueryPredicateImpl();
+		return Predicates.queryPredicate().and(exampleToPredicate(entity, example));
+	}
+	
+	/**
+	 * example条件转为criteria条件
+	 * @param entity 实体类对象
+	 * @param example 查询样例条件
+	 * @return 动态查询条件
+	 */
+	public static Predicate exampleToPredicate(Entity entity, Object example) {
+		Predicate predicate = Predicates.predicate();
 		
 		for(Attribute attr : entity.getAttributes()) {
 			String attrName = attr.getName();
