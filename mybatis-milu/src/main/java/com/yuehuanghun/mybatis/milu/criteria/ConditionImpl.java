@@ -20,7 +20,9 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.yuehuanghun.mybatis.milu.data.Part.Type;
+import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
+import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
@@ -49,7 +51,9 @@ public class ConditionImpl implements Condition {
 
 	@Override
 	public int renderSqlTemplate(GenericProviderContext context, StringBuilder expressionBuilder, Set<String> columns, int paramIndex) {
-		String express = context.getConfiguration().getDialect().getPartTypeExpression(getType());
+		Attribute attribute = SqlBuildingHelper.getAttribute(context.getConfiguration(), context.getEntity(), getAttributeName(), true);
+		
+		String expression = context.getConfiguration().getDialect().getPartTypeExpression(getType());
 
 		Object[] keys = new Object[getParams().length];
 		if(getType().getNumberOfArguments() > 0) {
@@ -57,15 +61,16 @@ public class ConditionImpl implements Condition {
 				String key = attributeName + "_" + paramIndex;
 				if(getType() == Type.IN || getType() == Type.NOT_IN) { //collection
 					keys[i] = key;
+					expression = attribute.formatParameterExpression(expression);
 				} else {
-					keys[i] = Segment.HASH_LEFT_BRACE +  key + Segment.RIGHT_BRACE;
+					keys[i] = Segment.HASH_LEFT_BRACE +  attribute.toParameter(key) + Segment.RIGHT_BRACE;
 				}
 				
 				paramIndex ++;
 			}
 		}
 		
-		String partTypeExpression = String.format(express, keys);
+		String partTypeExpression = String.format(expression, keys);
 		if(partTypeExpression.contains(Constants.COLUMN_HOLDER)) {
 			expressionBuilder.append(partTypeExpression.replace(Constants.COLUMN_HOLDER, Segment.DOLLAR + attributeName + Segment.DOLLAR));
 		} else {
@@ -78,16 +83,9 @@ public class ConditionImpl implements Condition {
 
 	@Override
 	public int renderParams(GenericProviderContext context, Map<String, Object> params, int paramIndex) {
-		Object[] keys = new Object[getParams().length];
 		if(getType().getNumberOfArguments() > 0) {
 			for(int i = 0; i < getParams().length; i++) {
 				String key = attributeName + "_" + paramIndex;
-				if(getType() == Type.IN || getType() == Type.NOT_IN) { //collection
-					keys[i] = key;
-				} else {
-					keys[i] = Segment.HASH_LEFT_BRACE +  key + Segment.RIGHT_BRACE;
-				}
-				
 				params.put(key, getParams()[i]);
 				paramIndex ++;
 			}

@@ -32,7 +32,7 @@ public class Deleted implements Condition {
 		
 		String partTypeExpression = mainLogicDeleteAttrs.stream().map(attr -> {
 			columns.add(attr.getName());
-			String key = Segment.HASH_LEFT_BRACE +  attr.getName() + Segment.UNDER_LINE + deleted + Segment.RIGHT_BRACE;
+			String key = Segment.HASH_LEFT_BRACE + attr.toParameter(attr.getName() + Segment.UNDER_LINE + deleted) + Segment.RIGHT_BRACE;
 			return Segment.DOLLAR + attr.getName() + Segment.DOLLAR + String.format(express, key);
 		}).collect(Collectors.joining(Segment.AND_B));
 		

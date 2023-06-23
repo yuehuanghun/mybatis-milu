@@ -96,31 +96,6 @@ public class GenericFindByExampleProviderSql extends GenericFindByCriteriaProvid
 			}
 		}
 		
-//		if(fetchRefAttrs != null) {
-//			for(String refAttr : fetchRefAttrs) {
-//				Class<?> refEntityClass = context.getEntity().getAttribute(refAttr).getEntityClass();
-//				Entity refEntity = context.getConfiguration().getMetaModel().getEntity(refEntityClass);
-//				
-//				if(!refEntity.isFilterLogicDeletedData()) {
-//					continue;
-//				}
-//				
-//				List<LogicDeleteAttribute> refEntitylogicDeleteAttributes = refEntity.getLogicDeleteAttributes();
-//				
-//				LogicDeleteAttribute logicDeleteAttribute;
-//				if(refEntitylogicDeleteAttributes.size() == 1) {
-//					logicDeleteAttribute = refEntitylogicDeleteAttributes.get(0);
-//				} else {
-//					logicDeleteAttribute = refEntitylogicDeleteAttributes.stream().filter(item -> item.isMain()).findAny().orElse(null);
-//				}
-//				
-//				if(logicDeleteAttribute != null) {
-//					String attr = refAttr + StringUtils.capitalize(logicDeleteAttribute.getName());
-//					queryPredicate.and(ap -> ap.eq(attr, logicDeleteAttribute.getProvider().resumeValue(new Context(refEntityClass, refEntity.getJavaType(), refEntity.getName()))).or(op -> op.isNull(attr)));
-//				}
-//			}
-//		}
-		
 		paramMap.put(Constants.CRITERIA, queryPredicate);
 		
 		return super.provideSql(context, paramMap);

@@ -92,7 +92,7 @@ public class SqlBuildingHelper {
 						Entity refEntity = configuration.getMetaModel().getEntity(refClass);
 						
 						if(!refEntity.hasAttribute(possiblePropertyMap.get(prop))) {
-							throw new SqlExpressionBuildingException(String.format("未知的查询属性：%s", property));
+							continue;
 						}
 						
 						Reference reference = entity.getReference(prop);
@@ -240,6 +240,51 @@ public class SqlBuildingHelper {
 		}
 		
 		return possibleProperty;
+	}
+	
+	public static Attribute getAttribute(MiluConfiguration configuration, Entity entity, String attrName, boolean assertNotNull) {
+		Attribute attribute = entity.getAttribute(attrName);
+		if(attribute != null) {
+			return attribute;
+		}
+		
+		Map<String, String> possiblePropertyMap = possibleProperty(attrName);
+		Iterator<String> propIt = possiblePropertyMap.keySet().iterator();
+		while(propIt.hasNext()) {
+			String prop = propIt.next();
+			if(!entity.hasAttribute(prop)){
+				continue;
+			}
+			
+			Attribute refAttr = entity.getAttribute(prop);
+			
+			if(refAttr.isAssociation() || refAttr.isCollection()) {
+				Class<?> refClass;
+				if(refAttr.isReference()) {
+					refClass = refAttr.getEntityClass();
+				} else {
+					if(PluralAttribute.class.isInstance(refAttr)) {
+						refClass = ((PluralAttribute) refAttr).getElementClass();
+					} else {
+						refClass = refAttr.getJavaType();
+					}
+				}
+				
+				Entity refEntity = configuration.getMetaModel().getEntity(refClass);
+				
+				if(!refEntity.hasAttribute(possiblePropertyMap.get(prop))) {
+					continue;
+				}
+				
+				return refEntity.getAttribute(possiblePropertyMap.get(prop));
+			}
+		}
+		
+		if(assertNotNull) {
+			throw new SqlExpressionBuildingException(String.format("未知的查询属性：%s", attrName));
+		}
+		
+		return null;
 	}
 	
 	public static void appendIdentifier(StringBuilder stringBuilder , String identifier, MiluConfiguration configuration) {
