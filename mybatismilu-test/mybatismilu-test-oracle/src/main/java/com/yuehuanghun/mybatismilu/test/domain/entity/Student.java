@@ -1,5 +1,6 @@
 package com.yuehuanghun.mybatismilu.test.domain.entity;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,16 +15,26 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
+import org.apache.ibatis.type.JdbcType;
+
 import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
+import com.yuehuanghun.mybatis.milu.annotation.EntityOptions.FetchRef;
 import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery;
 import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery.MatchType;
 import com.yuehuanghun.mybatis.milu.annotation.Filler;
+import com.yuehuanghun.mybatis.milu.annotation.Filler.FillMode;
+import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
+import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
+import com.yuehuanghun.mybatismilu.test.config.Boolean2IntTypeHandler;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 @Entity
-public class Student {
+@FetchRef(group = "class", refAttrs = "classs")
+public class Student extends PageRequest {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ignore")
@@ -31,17 +42,20 @@ public class Student {
 	private Long id; //使用数据表模拟数字序列
 	
 	@AttributeOptions(filler = @Filler(fillOnInsert = true), exampleQuery = @ExampleQuery(startKeyName = "params.addTimeBegin", endKeyName = "params.addTimeEnd")) //当在插入数据时，如果该属性为null则自动填充值
-	private Date addTime;
+	private LocalDateTime addTime;
 	
-	@AttributeOptions(filler = @Filler(fillOnInsert = true, fillOnUpdate = true)) //当在插入或更新数据时，如果该属性为null则自动填充值
+	@AttributeOptions(filler = @Filler(fillOnInsert = true, fillOnUpdate = true, fillMode = FillMode.ANY)) //当在插入或更新数据时，如果该属性为null则自动填充值
 	private Date updateTime;
 	
-	@AttributeOptions(exampleQuery = @ExampleQuery(matchType = MatchType.CONTAIN, inKeyName = "params.nameIn")) //使用findByExample方法时name不为空时，即执行name LIKE %nameValue%
+	@AttributeOptions(exampleQuery = @ExampleQuery(matchType = MatchType.CONTAIN, inKeyName = "params.nameIn"), jdbcType = JdbcType.VARCHAR) //使用findByExample方法时name不为空时，即执行name LIKE %nameValue%
 	private String name;
 	
 	private Integer age;
 	
 	private Long classId;
+	
+	@AttributeOptions(logicDelete = @LogicDelete, jdbcType = JdbcType.SMALLINT, typeHandler = Boolean2IntTypeHandler.class)
+	private Boolean isDeleted;
 	
 	@ManyToOne
 	@JoinColumn(name = "class_id", referencedColumnName = "id")

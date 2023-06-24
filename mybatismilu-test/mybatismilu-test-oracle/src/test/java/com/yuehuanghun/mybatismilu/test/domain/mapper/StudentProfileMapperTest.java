@@ -1,9 +1,10 @@
 package com.yuehuanghun.mybatismilu.test.domain.mapper;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,17 +16,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.yuehuanghun.AppTest;
+import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Student;
 import com.yuehuanghun.mybatismilu.test.domain.entity.StudentProfile;
 
-import lombok.extern.slf4j.Slf4j;
-
 @SpringBootTest(classes = AppTest.class)
 @RunWith(SpringRunner.class)
-@Slf4j
 public class StudentProfileMapperTest {
 	@Autowired
 	private StudentMapper studentMapper;
@@ -77,7 +76,7 @@ public class StudentProfileMapperTest {
 	@Transactional
 	public void testInsert() {
 		Student student = new Student();
-		student.setAddTime(new Date());
+		student.setAddTime(LocalDateTime.now());
 		student.setClassId(2L);
 		student.setName("张建国");
 		student.setAge(9);
@@ -98,51 +97,49 @@ public class StudentProfileMapperTest {
 		assertTrue(result == 1);
 	}
 	
-//	@Test
-//	@Transactional
-//	public void testBatchInsert() {
-//		Student student = new Student();
-//		student.setAddTime(new Date());
-//		student.setClassId(2L);
-//		student.setName("张建国");
-//		student.setAge(9);
-//		
-//		Student student2 = new Student();
-//		student2.setAddTime(new Date());
-//		student2.setClassId(2L);
-//		student2.setName("刘兰之");
-//		student2.setAge(9);
-//		
-//		int result = studentMapper.batchInsert(Arrays.asList(student, student2));
-//		
-//		assertTrue(result == 2);
-//		
-//		StudentProfile profile = new StudentProfile();
-//		profile.setFatherName("张爱民");
-//		profile.setFatherAge(43);
-//		profile.setMotherName("何兰芳");
-//		profile.setMotherAge(33);
-//		profile.setStudentId(student.getId());
-//		
-//		StudentProfile profile2 = new StudentProfile();
-//		profile2.setFatherName("刘胡");
-//		profile2.setFatherAge(42);
-//		profile2.setMotherName("毛芬");
-//		profile2.setMotherAge(32);
-//		profile2.setStudentId(student2.getId());
-//		
-//		result = studentProfileMapper.batchInsert(Arrays.asList(profile, profile2));
-//		
-//		assertTrue(result == 2);
-//	}
+	@Test
+	@Transactional
+	public void testBatchInsert() {
+		Student student = new Student();
+		student.setAddTime(LocalDateTime.now());
+		student.setClassId(2L);
+		student.setName("张建国");
+		student.setAge(9);
+		
+		Student student2 = new Student();
+		student2.setAddTime(LocalDateTime.now());
+		student2.setClassId(2L);
+		student2.setName("刘兰之");
+		student2.setAge(9);
+		
+		int result = studentMapper.batchInsert(Arrays.asList(student, student2));
+		
+		assertTrue(result == 2);
+		
+		StudentProfile profile = new StudentProfile();
+		profile.setFatherName("张爱民");
+		profile.setFatherAge(43);
+		profile.setMotherName("何兰芳");
+		profile.setMotherAge(33);
+		profile.setStudentId(student.getId());
+		
+		StudentProfile profile2 = new StudentProfile();
+		profile2.setFatherName("刘胡");
+		profile2.setFatherAge(42);
+		profile2.setMotherName("毛芬");
+		profile2.setMotherAge(32);
+		profile2.setStudentId(student2.getId());
+		
+		result = studentProfileMapper.batchInsert(Arrays.asList(profile, profile2));
+		
+		assertTrue(result == 2);
+	}
 	
 	@Test
 	@Transactional
 	public void testUpdateById() {
-		log.debug("studentProfile-testUpdateById");
-		System.out.println("studentProfile-testUpdateById");
 		Student student = new Student();
-		student.setAddTime(new Date());
+		student.setAddTime(LocalDateTime.now());
 		student.setClassId(2L);
 		student.setName("张建国");
 		student.setAge(9);
@@ -171,7 +168,7 @@ public class StudentProfileMapperTest {
 	@Transactional
 	public void testDeleteById() {
 		Student student = new Student();
-		student.setAddTime(new Date());
+		student.setAddTime(LocalDateTime.now());
 		student.setClassId(2L);
 		student.setName("张建国");
 		student.setAge(9);
@@ -189,21 +186,20 @@ public class StudentProfileMapperTest {
 	@Transactional
 	public void testDeleteByIds() {
 		Student student = new Student();
-		student.setAddTime(new Date());
+		student.setAddTime(LocalDateTime.now());
 		student.setClassId(2L);
 		student.setName("张建国");
 		student.setAge(9);
 		
 		Student student2 = new Student();
-		student2.setAddTime(new Date());
+		student2.setAddTime(LocalDateTime.now());
 		student2.setClassId(2L);
 		student2.setName("刘兰之");
 		student2.setAge(9);
 		
-		int result = studentMapper.insert(student);
-		assertTrue(result == 1);
-		result = studentMapper.insert(student2);
-		assertTrue(result == 1);
+		int result = studentMapper.batchInsert(Arrays.asList(student, student2));
+		
+		assertTrue(result == 2);
 		
 		StudentProfile profile = new StudentProfile();
 		profile.setFatherName("张爱民");
@@ -219,10 +215,8 @@ public class StudentProfileMapperTest {
 		profile2.setMotherAge(32);
 		profile2.setStudentId(student2.getId());
 		
-		result = studentProfileMapper.insert(profile);
-		assertTrue(result == 1);
-		result = studentProfileMapper.insert(profile2);
-		assertTrue(result == 1);
+		result = studentProfileMapper.batchInsert(Arrays.asList(profile, profile2));
+		assertTrue(result == 2);
 		
 		result = studentProfileMapper.deleteByIds(Arrays.asList(profile.getId(), profile2.getId()));
 		
@@ -268,10 +262,8 @@ public class StudentProfileMapperTest {
 	@Test
 	@Transactional
 	public void testUpdateByCriteria() {
-		log.debug("studentProfile-testUpdateByCriteria");
-		System.out.println("studentProfile-testUpdateByCriteria");
 		Student student = new Student();
-		student.setAddTime(new Date());
+		student.setAddTime(LocalDateTime.now());
 		student.setClassId(2L);
 		student.setName("张建国");
 		student.setAge(9);
@@ -297,13 +289,21 @@ public class StudentProfileMapperTest {
 		result = studentProfileMapper.updateByCriteria(profile, p -> p.eq("fatherName", "张爱民"));
 		
 		assertTrue(result == 1);
+		
+		assertTrue(profile.getMotherName() != null);
+		
+		profile.setMotherName(null); //通过Mode.ALL将为null的字段也更新到数据库
+		int effect = studentProfileMapper.updateByCriteria(profile, p -> p.eq("id", profile.getId()).updateMode(Mode.ALL));
+		assertEquals(effect, 1);
+		Optional<StudentProfile> updated = studentProfileMapper.findById(profile.getId());
+		assertTrue(updated.get().getMotherName() == null);
 	}
 	
 	@Test
 	@Transactional
 	public void testUpdateByLambdaCriteria() {
 		Student student = new Student();
-		student.setAddTime(new Date());
+		student.setAddTime(LocalDateTime.now());
 		student.setClassId(2L);
 		student.setName("张建国");
 		student.setAge(9);
@@ -336,7 +336,7 @@ public class StudentProfileMapperTest {
 	@Transactional
 	public void testDeleteByCriteria() {
 		Student student = new Student();
-		student.setAddTime(new Date());
+		student.setAddTime(LocalDateTime.now());
 		student.setClassId(2L);
 		student.setName("张建国");
 		student.setAge(9);
@@ -366,7 +366,7 @@ public class StudentProfileMapperTest {
 	@Transactional
 	public void testDeleteByLambdaCriteria() {
 		Student student = new Student();
-		student.setAddTime(new Date());
+		student.setAddTime(LocalDateTime.now());
 		student.setClassId(2L);
 		student.setName("张建国");
 		student.setAge(9);

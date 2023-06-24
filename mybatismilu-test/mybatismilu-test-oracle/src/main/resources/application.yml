@@ -4,8 +4,8 @@ mybatis:
     mapperLocations: /mapper/**/*.xml
     
 spring.datasource:
-    driverClassName: oracle.jdbc.driver.OracleDriver
-    url: jdbc:oracle:thin:@//192.168.1.7:1521/orcl
+    driverClassName: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@//127.0.0.1:1521/orcl
     username: mybatis
     password: 123456
     poolName: SpringBootHikariCP
@@ -23,3 +23,6 @@ spring.datasource:
 logging:
     level.com.yuehuanghun: debug
     file: ./logs/milutest-orc.log
+    
+
+db2: DEMO2

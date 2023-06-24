@@ -3,13 +3,18 @@ package com.yuehuanghun.mybatismilu.test.domain.entity;
 
 import java.util.Date;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+
+import org.apache.ibatis.type.JdbcType;
+
+import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
+import com.yuehuanghun.mybatis.milu.annotation.alias.attr.CreateTime;
+import com.yuehuanghun.mybatis.milu.annotation.alias.attr.UpdateTime;
 
 import lombok.Data;
 
@@ -23,6 +28,7 @@ public class StudentProfile {
 
 	private String fatherName;
 
+	@AttributeOptions(jdbcType = JdbcType.VARCHAR)
 	private String motherName;
 
 	private Integer fatherAge;
@@ -31,9 +37,9 @@ public class StudentProfile {
 	
 	private Long studentId;
 
-	@Column(insertable = false, updatable = false) //对于表一列的创建时间、更新时间，可以使用数据库字段默认值， 设为不可插入，不可更新
+	@CreateTime
 	private Date addTime;
-	@Column(insertable = false, updatable = false)
+	@UpdateTime
 	private Date updateTime;
 	
 	@OneToOne
