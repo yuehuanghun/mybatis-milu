@@ -899,4 +899,20 @@ public class StudentMapperTest {
 		maxAge = studentMapper.sumByLambdaCriteria(Student::getAge, p -> p.gt(Student::getId, 100));
 		assertNull(maxAge);
 	}
+	
+	@Test
+	public void testFindByCateria_byExample() {
+		Student example = new Student();
+		example.setName("王");
+		
+		List<Student> list = studentMapper.findByCriteria(p -> p.byExample(example));
+		
+		assertEquals(list.size(), 2);
+
+		list = studentMapper.findByCriteria(p -> {
+			p.byExample(example).eq("classsName", "二年级");
+		});
+		
+		assertEquals(list.size(), 2);
+	}
 }
