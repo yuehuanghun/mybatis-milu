@@ -22,3 +22,5 @@ spring.datasource:
     
 logging:
     level.com.yuehuanghun: debug
+    
+db2: demo2
