@@ -15,7 +15,9 @@
  */
 package com.yuehuanghun.mybatis.milu.dialect.db;
 
+import com.yuehuanghun.mybatis.milu.data.Part.Type;
 import com.yuehuanghun.mybatis.milu.dialect.AbstractDialect;
+import com.yuehuanghun.mybatis.milu.exception.OrmRuntimeException;
 
 /**
  * sqlserver 任意版本
@@ -28,5 +30,13 @@ public class SqlServerDialect extends AbstractDialect {
 	@Override
 	public String getTopLimitSql(String sql, int topRows) {
 		return sql.replaceFirst("^(?i)\\s*SELECT", "SELECT TOP " + topRows);
+	}
+
+	@Override
+	public String getPartTypeExpression(Type partType) {
+		if(partType == Type.REGEX) {
+			throw new OrmRuntimeException("SQLSERVER 未支持正则表达式查询");
+		}
+		return super.getPartTypeExpression(partType);
 	}
 }
