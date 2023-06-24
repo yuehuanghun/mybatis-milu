@@ -57,6 +57,8 @@ public class Entity {
 	
 	private String tableName;
 	
+	private String catalog;
+	
 	private String schema;
 	
 	private final Map<String, Attribute> attributeMap = new LinkedHashMap<>();

@@ -33,7 +33,7 @@ public abstract class SqlTemplateBuilder {
 	}
 	
 	protected void buildTableSegment(StringBuilder sqlBuilder) {	
-		SqlBuildingHelper.appendSchema(sqlBuilder, entity.getSchema(), configuration);
+		SqlBuildingHelper.appendSchema(sqlBuilder, entity.getCatalog(), entity.getSchema(), configuration);
 		SqlBuildingHelper.appendIdentifier(sqlBuilder, entity.getTableName(), configuration); //表名
 		if(!joinExpressMap.isEmpty()) { //没有关联查询时，不需要使用表别名
 			sqlBuilder.append(Segment.SPACE).append(mainTableAlias);

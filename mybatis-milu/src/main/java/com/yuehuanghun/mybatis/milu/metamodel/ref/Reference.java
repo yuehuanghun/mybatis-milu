@@ -28,6 +28,8 @@ public interface Reference {
 	
 	String getInverseTableName();
 	
+	String getInverseCatalog();
+	
 	String getInverseSchema();
 	
 	@Data

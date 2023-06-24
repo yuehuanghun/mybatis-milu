@@ -38,7 +38,7 @@ public class SequenceSqlSource implements SqlSource {
 		
 		StringBuilder sqlBuilder = new StringBuilder("SELECT ");
 		sqlBuilder.append(sequenceGenerator.sequenceName()).append(".nextval FROM ");
-		SqlBuildingHelper.appendSchema(sqlBuilder, sequenceGenerator.schema(), configuration);
+		SqlBuildingHelper.appendSchema(sqlBuilder, sequenceGenerator.catalog(), sequenceGenerator.schema(), configuration);
 		sqlBuilder.append("dual");
 		
 		return configuration.getLanguageDriver(XMLLanguageDriver.class).createSqlSource(configuration, sqlBuilder.toString(), Object.class).getBoundSql(parameterObject);

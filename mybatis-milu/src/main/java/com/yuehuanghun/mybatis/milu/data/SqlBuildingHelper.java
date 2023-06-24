@@ -138,7 +138,7 @@ public class SqlBuildingHelper {
 								joinExpressBuilder.append(Segment.RIGHT_BRACKET);
 								
 								joinExpressBuilder.append(joinExpression);
-								appendSchema(joinExpressBuilder, reference.getInverseSchema(), configuration);
+								appendSchema(joinExpressBuilder, reference.getInverseCatalog(), reference.getInverseSchema(), configuration);
 								appendIdentifier(joinExpressBuilder, reference.getInverseTableName(), configuration);
 								joinExpressBuilder.append(Segment.SPACE).append(inverseTableAlias)
 							        .append(Segment.ON_BRACKET);
@@ -174,7 +174,7 @@ public class SqlBuildingHelper {
 								MappedReference ref = (MappedReference) reference;
 								StringBuilder joinExpressBuilder = new StringBuilder();
 								joinExpressBuilder.append(joinExpression);
-								appendSchema(joinExpressBuilder, reference.getInverseSchema(), configuration);
+								appendSchema(joinExpressBuilder, reference.getInverseCatalog(), reference.getInverseSchema(), configuration);
 								appendIdentifier(joinExpressBuilder, reference.getInverseTableName(), configuration);
 								joinExpressBuilder.append(Segment.SPACE).append(inverseTableAlias)
 								    .append(Segment.ON_BRACKET);
@@ -301,13 +301,31 @@ public class SqlBuildingHelper {
 		}
 	}
 	
-	public static void appendSchema(StringBuilder stringBuilder , String schema, MiluConfiguration configuration) {
-		if(StringUtils.isNotBlank(schema)) {
+	public static void appendSchema(StringBuilder stringBuilder, String catalog, String schema, MiluConfiguration configuration) {
+		if(StringUtils.isBlank(catalog) && StringUtils.isBlank(schema)) {
+			return;
+		}
+		
+		if(StringUtils.isBlank(catalog)) {
 			if(configuration.getPlaceholderResolver() != null) {
 				schema = configuration.getPlaceholderResolver().resolvePlaceholder(schema);
 			}
 			appendIdentifier(stringBuilder, schema, configuration);
 			stringBuilder.append(Segment.DOT);
+		} else {
+			if(configuration.getPlaceholderResolver() != null) {
+				catalog = configuration.getPlaceholderResolver().resolvePlaceholder(catalog);
+			}
+			appendIdentifier(stringBuilder, catalog, configuration);
+			stringBuilder.append(Segment.DOT);
+			
+			if(StringUtils.isNotBlank(schema)) {
+				if(configuration.getPlaceholderResolver() != null) {
+					schema = configuration.getPlaceholderResolver().resolvePlaceholder(schema);
+				}
+				appendIdentifier(stringBuilder, schema, configuration);
+			}
+			stringBuilder.append(Segment.DOT); // 不管schema有没有都加一个点“.”
 		}
 	}
 	
@@ -324,16 +342,13 @@ public class SqlBuildingHelper {
 	}
 	
 	public static String wrapTableName(Entity entity, MiluConfiguration configuration) {
-		String schema = entity.getSchema();
-		if(StringUtils.isBlank(schema)) {
+		if(StringUtils.isBlank(entity.getCatalog()) && StringUtils.isBlank(entity.getSchema())) {
 			return wrapIdentifier(entity.getTableName(), configuration);
 		}
+		StringBuilder sBuilder = new StringBuilder();
+		appendSchema(sBuilder, entity.getCatalog(), entity.getSchema(), configuration);
 		
-		if(configuration.getPlaceholderResolver() != null) {
-			schema = configuration.getPlaceholderResolver().resolvePlaceholder(schema);
-		}
-		
-		return wrapIdentifier(schema, configuration) + Segment.DOT + wrapIdentifier(entity.getTableName(), configuration);
+		return sBuilder.append(wrapIdentifier(entity.getTableName(), configuration)).toString();
 	}
 	
 	public static class TableAliasDispacher {
