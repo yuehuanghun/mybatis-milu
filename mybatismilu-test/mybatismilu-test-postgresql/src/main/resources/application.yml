@@ -6,8 +6,8 @@ mybatis:
 spring.datasource:
     driverClassName: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/mybatis
-    username: postgres
-    password: jie123456
+    username: mybatis
+    password: mybatis
     poolName: SpringBootHikariCP
     maximumPoolSize: 20
     minimumIdle: 3
@@ -22,3 +22,6 @@ spring.datasource:
     
 logging:
     level.com.yuehuanghun: debug
+    file: ./logs/milutest.log
+    
+db2: demo2
