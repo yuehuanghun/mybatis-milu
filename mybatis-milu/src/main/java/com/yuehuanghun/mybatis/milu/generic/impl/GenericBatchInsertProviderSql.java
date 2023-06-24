@@ -109,7 +109,7 @@ public class GenericBatchInsertProviderSql extends GenericCachingProviderSql {
 		StringBuilder values = new StringBuilder(" <foreach collection=\"entityList\" item=\"item\" separator=\"UNION ALL\">");
 		values.append("SELECT <trim suffixOverrides=\",\">");
 		for(Attribute attr : attributes) {
-			if(attr.isAssociation() || attr.isCollection() || !attr.isInsertable()) {
+			if(!attr.isInsertable()) {
 				continue;
 			}
 	 
@@ -117,7 +117,7 @@ public class GenericBatchInsertProviderSql extends GenericCachingProviderSql {
 				continue;
 			}
 			sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context)).append(", ");
-			values.append("#{item.").append(attr.getName()).append("}, ");
+			values.append("#{item.").append(attr.toParameter()).append("}, ");
 		}
 		sqlBuilder.append(" </trim>) ");
 		values.append("</trim> FROM dual</foreach> ");
@@ -138,7 +138,7 @@ public class GenericBatchInsertProviderSql extends GenericCachingProviderSql {
 		StringBuilder values = new StringBuilder(" <foreach collection=\"entityList\" item=\"item\" separator=\"UNION ALL\">");
 		values.append("SELECT <trim suffixOverrides=\",\">");
 		for(Attribute attr : attributes) {
-			if(attr.isAssociation() || attr.isCollection() || !attr.isInsertable()) {
+			if(!attr.isInsertable()) {
 				continue;
 			}
 	 
@@ -146,7 +146,7 @@ public class GenericBatchInsertProviderSql extends GenericCachingProviderSql {
 				continue;
 			}
 			sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context)).append(", ");
-			values.append("#{item.").append(attr.getName()).append("}, ");
+			values.append("#{item.").append(attr.toParameter()).append("}, ");
 		}
 		sqlBuilder.append(" </trim>) ");
 		values.append("</trim></foreach> ");
