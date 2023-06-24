@@ -284,6 +284,22 @@ List<Map<String, Object>> result = studentMapper.statisticByCriteria(p -> p.sum(
 List<StudentStatistic> result = studentMapper.statisticByCriteria(p -> p.sum("age").avg("age").count("id").groupBy("classId").orderAsc("classId"), StudentStatistic.class);
 ```
 
+最大值统计  
+maxByLambdaCriteria  
+```
+Integer maxAge = studentMapper.maxByLambdaCriteria(Student::getAge, p ->{});
+```
+最小值统计  
+minByLambdaCriteria  
+```
+Integer minAge = studentMapper.minByLambdaCriteria(Student::getAge, p ->{});
+```
+和统计  
+sumByLambdaCriteria  
+```
+Integer totalAge = studentMapper.sumByLambdaCriteria(Student::getAge, p ->{});
+```
+
 ##### 5、criteria动态条件指定查询逻辑删除状态数据
 ```java
 classMapper.findByCriteria(p -> p.undeleted());
@@ -292,6 +308,28 @@ classMapper.findByCriteria(p -> p.undeleted());
 classMapper.findByCriteria(p -> p.deleted());
 // 示意 -> SELECT * FROM classs WHERE is_deleted ='Y';
 ```
+
+##### 6、example转criteria动态条件
+在实际操作在，可以使用实体类来接收前端的参数，这时候使用Example查询非常方便：findByExample(Object example)  
+但由于Example查询功能有局限性，而Criteria查询比Example查询强，因然将example条件转为criteria条件，再补充设置就非常方便了。
+
+```java
+User example = new User();
+example.setUserName("zhangsan");
+
+QueryPredicate predicate = Predicates.queryPredicate(Object example);
+// 更多操作
+userMapper.findByCriteria(predicate);
+
+// 或
+userMapper.findByCriteria(p -> {
+    p.byExample(example);
+    // 更多操作
+})
+
+
+```
+
 #### 三、 查询创建器
 与Spring Data JPA的查询创建器一致，并进行了拓展
 
@@ -523,6 +561,8 @@ PageHelper.startPage(1, 10, "addTime DESC");
 //SELECT .... LIMIT 10 ORDER BY add_time DESC
 ```
 #### 六、自动创建实体类的resultMap
+##### 1. 使用注解
+仅可用于自动配置时，如果自定义配置则不生效
 ```java
 @EnableEntityGenericResultMap
 public class App 
@@ -534,9 +574,24 @@ public class App
 }
 
 ```
+##### 2. 使用配置参数
+使用配置参数开启  
+
+property文件
+```property
+mybatis.createEntityResultMap=true
+
+```
+yaml文件
+```yaml
+mybatis.createEntityResultMap: true
+
+```
+
 启动类添加注解声明@EnableEntityGenericResultMap，在mapper.xml中可以直接使用resultMap  
 规则为对应Mapper.java的全路径 + 实体类名 + Map  
 例如：com.yuehuanghun.mybatismilu.test.domain.mapper.TeacherMapper.TeacherMap
+
 
 #### 七、自动填充
 在新增或更新实体时，有些字段希望能够自动填充的，常见的如创建日期、更新日期，可通过以下注解设置  
