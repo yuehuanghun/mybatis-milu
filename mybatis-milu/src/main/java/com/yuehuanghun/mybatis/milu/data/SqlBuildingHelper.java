@@ -531,6 +531,9 @@ public class SqlBuildingHelper {
 		Predicate predicate = Predicates.predicate();
 		
 		for(Attribute attr : entity.getAttributes()) {
+			if(attr.isReference()) {
+				continue;
+			}
 			String attrName = attr.getName();
 			
 			if(attr.getExampleMatchType() == MatchType.EQUAL) {
