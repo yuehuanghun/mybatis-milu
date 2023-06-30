@@ -15,8 +15,14 @@
  */
 package com.yuehuanghun.mybatis.milu.dialect.db;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import javax.sql.DataSource;
+
 import com.yuehuanghun.mybatis.milu.data.Part.Type;
 import com.yuehuanghun.mybatis.milu.dialect.AbstractDialect;
+import com.yuehuanghun.mybatis.milu.exception.OrmBuildingException;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
 
 /**
@@ -49,5 +55,14 @@ public class OracleDialect extends AbstractDialect {
 		partTypeExpressionMap.put(Type.NOT_CONTAINING, " NOT LIKE '%%' || %s || '%%' ");
 		partTypeExpressionMap.put(Type.CONTAINING, " LIKE '%%' || %s || '%%' ");
 		partTypeExpressionMap.put(Type.REGEX, " REGEXP_LIKE(" + Constants.COLUMN_HOLDER + ", %s )");
+	}
+
+	@Override
+	protected String getSchema(DataSource dataSource) {
+		try (Connection conn = dataSource.getConnection()) {
+			return queryForString("SELECT USER FROM DUAL", conn);
+		} catch (SQLException e) {
+			throw new OrmBuildingException(e);
+		}
 	}
 }

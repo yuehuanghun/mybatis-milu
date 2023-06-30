@@ -82,6 +82,7 @@ import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdateByLambdaCriteriaPr
 import com.yuehuanghun.mybatis.milu.id.IdentifierGenerator;
 import com.yuehuanghun.mybatis.milu.id.impl.UUIDIdentifierGenerator;
 import com.yuehuanghun.mybatis.milu.id.impl.snowflake.SnowflakeIdentifierGenerator;
+import com.yuehuanghun.mybatis.milu.metamodel.EntityBuilder;
 import com.yuehuanghun.mybatis.milu.metamodel.MetaModel;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 import com.yuehuanghun.mybatis.milu.tool.converter.DefaultExampleQueryConverter;
@@ -107,10 +108,13 @@ public class MiluConfiguration extends Configuration {
 	private final MetaModel metaModel = new MetaModel();
 	@Getter
 	@Setter
-	private boolean identifierWrapQuote = true; //标识符（表名、字段名）是否使用引号
+	private boolean identifierWrapQuote = true; //标识符（表名、字段名）是否使用引号，自动配置参数：mybatis.identifierWrapQuote
 	@Getter
 	@Setter
-	private boolean createEntityResultMap = false; // 自动创建实体对应的ResultMap，设置参数mybatis.createEntityResultMap
+	private boolean createEntityResultMap = false; // 自动创建实体对应的ResultMap，自动设置参数：mybatis.createEntityResultMap
+	@Getter
+	@Setter
+	private boolean autoSetupColumnJdbcType = true; // 自动设置字段的jdbcType，自动配置参数：mybatis.autoSetupColumnJdbcType
 	
 	//自动化配置 mybatis.configurationProperties.idGenerator
 	@Getter
@@ -295,6 +299,10 @@ public class MiluConfiguration extends Configuration {
 		if(this.dialect == null) {
 			throw new RuntimeException(String.format("未知的数据库：%s", dbMeta.getDbName()));
 		}
+		
+		this.getMetaModel().getEntities().forEach(entity -> {
+			EntityBuilder.setDefaultJdbcType(entity, this);
+		});
 	}
 
 	//IdGenerator的getName的值

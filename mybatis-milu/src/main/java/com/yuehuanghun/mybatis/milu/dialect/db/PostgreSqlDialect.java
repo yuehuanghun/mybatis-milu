@@ -15,10 +15,15 @@
  */
 package com.yuehuanghun.mybatis.milu.dialect.db;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import javax.persistence.LockModeType;
+import javax.sql.DataSource;
 
 import com.yuehuanghun.mybatis.milu.data.Part.Type;
 import com.yuehuanghun.mybatis.milu.dialect.AbstractDialect;
+import com.yuehuanghun.mybatis.milu.exception.OrmBuildingException;
 
 /**
  * PostgreSql
@@ -45,5 +50,14 @@ public class PostgreSqlDialect extends AbstractDialect {
 	protected void initPartTypeExpression() {
 		super.initPartTypeExpression();
 		partTypeExpressionMap.put(Type.REGEX, " ~ %s");
+	}
+
+	@Override
+	protected String getCatalog(DataSource dataSource) {
+		try (Connection conn = dataSource.getConnection()) {
+			return queryForString("SELECT current_database()", conn);
+		} catch (SQLException e) {
+			throw new OrmBuildingException(e);
+		}
 	}
 }

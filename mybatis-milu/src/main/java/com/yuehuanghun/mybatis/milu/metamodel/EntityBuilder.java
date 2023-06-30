@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -50,6 +51,7 @@ import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaClass;
 import org.apache.ibatis.reflection.ReflectorFactory;
+import org.apache.ibatis.type.JdbcType;
 
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
@@ -121,7 +123,9 @@ public class EntityBuilder {
 		
 		for(Class<?> referenceEntityClass : referenceEntityClassSet) {
 			EntityBuilder.instance(referenceEntityClass, configuration).build();
-		}	
+		}
+		
+		setDefaultJdbcType(entity, configuration);
 	}
 	
 	private Entity forClass(Class<?> entityClass) {
@@ -444,12 +448,6 @@ public class EntityBuilder {
 				if(!joinColumns.isEmpty()) {
 					return buildMappedReference(attr, inverseEntity, joinColumns, inverseAttr);
 				}
-//				if(inverseAttr.getField().isAnnotationPresent(JoinColumn.class)) {
-//					JoinColumn joinColumn = inverseAttr.getField().getAnnotation(JoinColumn.class);
-//					String name = StringUtils.isNotBlank(joinColumn.name()) ? joinColumn.name() : inverseAttr.getColumnName(); //处理默认值，下同
-//					String referencedColumnName = StringUtils.isNotBlank(joinColumn.referencedColumnName()) ? joinColumn.referencedColumnName() : idAttr != null ? idAttr.getColumnName() : name;
-//					return new MappedReference(referencedColumnName, field.getName(), inverseEntity.getTableName(), name); //对方的join与本方join字段方向相反
-//				}
 			} 
 			
 			//通过mappedBy无法获得关联时，即单向关联
@@ -619,5 +617,41 @@ public class EntityBuilder {
 			}
 		}
 		assistant.addResultMap(resultMapId, entityClass, null, null, resultMappings, null);
+	}
+	
+	public static void setDefaultJdbcType(Entity entity, MiluConfiguration configuration) {
+		if(!configuration.isAutoSetupColumnJdbcType() || configuration.getDialect() == null) {
+			return;
+		}
+		Map<String, Integer> columnTypeMap = configuration.getDialect().getTableColumnJdbcType(entity.getCatalog(), entity.getSchema(), entity.getTableName(), configuration.getEnvironment().getDataSource());
+		if(!columnTypeMap.isEmpty()) { // 如果为空则可能是当前数据库连接用户没有相应权限
+			for(Attribute attr : entity.getAttributes()) {
+				if(attr.isAssociation() || attr.isCollection()) {
+					continue;
+				}
+				if(attr.getJdbcType() != null) {
+					continue;
+				}
+				Integer dataType = columnTypeMap.get(attr.getColumnName().toString());
+				if(dataType != null) {
+					attr.setJdbcType(JdbcType.forCode(dataType));
+				}
+			}
+		} else {
+			Map<Class<?>, Integer> javaTypeToJdbcTypeMap = configuration.getDialect().getJavaTypeToJdbcTypeMap();
+			for(Attribute attr : entity.getAttributes()) {
+				if(attr.isAssociation() || attr.isCollection()) {
+					continue;
+				}
+				if(attr.getJdbcType() != null) {
+					continue;
+				}
+				Integer dataType = javaTypeToJdbcTypeMap.get(attr.getJavaType());
+				if(dataType != null) {
+					attr.setJdbcType(JdbcType.forCode(dataType));
+				}
+			}
+		}
+		
 	}
 }

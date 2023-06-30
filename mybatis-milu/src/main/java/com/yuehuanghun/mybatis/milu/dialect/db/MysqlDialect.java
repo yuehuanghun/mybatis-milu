@@ -15,9 +15,14 @@
  */
 package com.yuehuanghun.mybatis.milu.dialect.db;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import javax.persistence.LockModeType;
+import javax.sql.DataSource;
 
 import com.yuehuanghun.mybatis.milu.dialect.AbstractDialect;
+import com.yuehuanghun.mybatis.milu.exception.OrmBuildingException;
 
 /**
  * MYSQL 数据库
@@ -38,6 +43,15 @@ public class MysqlDialect extends AbstractDialect {
 			return sql + " LOCK IN SHARE MODE";
 		}
 		return super.getLockSql(sql, lockModeType);
+	}
+
+	@Override
+	protected String getCatalog(DataSource dataSource) {
+		try (Connection conn = dataSource.getConnection()) {
+			return queryForString("SELECT database()", conn);
+		} catch (SQLException e) {
+			throw new OrmBuildingException(e);
+		}
 	}
 
 }

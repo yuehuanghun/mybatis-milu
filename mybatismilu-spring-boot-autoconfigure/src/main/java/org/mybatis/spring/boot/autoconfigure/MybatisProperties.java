@@ -96,9 +96,20 @@ public class MybatisProperties {
   @NestedConfigurationProperty
   private MiluConfiguration configuration;
   
+  /**
+   * 标识符使用引号包装
+   */
   private boolean identifierWrapQuote = true;
-  
+
+  /**
+   * 自动创建实体类的ResultMap
+   */
   private boolean createEntityResultMap;
+
+  /**
+   * 自动设置字段的jdbcType
+   */
+  private boolean autoSetupColumnJdbcType;
 
   /**
    * @since 1.1.0
@@ -224,12 +235,19 @@ public class MybatisProperties {
   public void setIdentifierWrapQuote(boolean identifierWrapQuote) {
 	this.identifierWrapQuote = identifierWrapQuote;
   }
+  public boolean isCreateEntityResultMap() {
+    return createEntityResultMap;
+  }
 
-public boolean isCreateEntityResultMap() {
-	return createEntityResultMap;
-}
-
-public void setCreateEntityResultMap(boolean createEntityResultMap) {
+  public void setCreateEntityResultMap(boolean createEntityResultMap) {
 	this.createEntityResultMap = createEntityResultMap;
-}
+  }
+
+  public boolean isAutoSetupColumnJdbcType() {
+	return autoSetupColumnJdbcType;
+  }
+
+  public void setAutoSetupColumnJdbcType(boolean autoSetupColumnJdbcType) {
+	this.autoSetupColumnJdbcType = autoSetupColumnJdbcType;
+  }
 }

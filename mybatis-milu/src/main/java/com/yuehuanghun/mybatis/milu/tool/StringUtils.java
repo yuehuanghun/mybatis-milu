@@ -18,6 +18,7 @@ package com.yuehuanghun.mybatis.milu.tool;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -56,6 +57,13 @@ public class StringUtils {
 	public static String defaultIfBlank(String str, String defaultValue) {
 		if(isBlank(str)) {
 			return defaultValue;
+		}
+		return str;
+	}
+	
+	public static String defaultIfBlank(String str, Supplier<String> defaultValue) {
+		if(isBlank(str)) {
+			return defaultValue.get();
 		}
 		return str;
 	}

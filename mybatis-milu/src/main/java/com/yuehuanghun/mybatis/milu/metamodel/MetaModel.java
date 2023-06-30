@@ -15,6 +15,8 @@
  */
 package com.yuehuanghun.mybatis.milu.metamodel;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,5 +33,9 @@ public class MetaModel {
 	
 	public void addEntity(Entity entity) {
 		entityMap.put(entity.getJavaType(), entity);
+	}
+	
+	public Collection<Entity> getEntities(){
+		return Collections.unmodifiableCollection(entityMap.values());
 	}
 }

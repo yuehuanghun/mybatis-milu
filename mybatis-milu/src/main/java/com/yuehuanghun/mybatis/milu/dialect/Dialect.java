@@ -15,7 +15,10 @@
  */
 package com.yuehuanghun.mybatis.milu.dialect;
 
+import java.util.Map;
+
 import javax.persistence.LockModeType;
+import javax.sql.DataSource;
 
 import com.yuehuanghun.mybatis.milu.data.Part.Type;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
@@ -61,5 +64,28 @@ public interface Dialect {
 		return sql;
 	}
 	
+	/**
+	 * 函数查询表达式
+	 * @param function 函数名
+	 * @return 表达式
+	 */
 	String getFunctionExpression(String function);
+	
+	/**
+	 * 获取表的字段的jdbc类型
+	 * @param catalog catalog
+	 * @param schema schema
+	 * @param tableName 表名
+	 * @param dataSource 数据源
+	 * @return 映射
+	 */
+	Map<String, Integer> getTableColumnJdbcType(String catalog, String schema, String tableName, DataSource dataSource);
+
+	/**
+	 * java类到jdbc类型的缺省映射，如果通过DatabaseMetaData获取实体类属性的列的jdbc type失败，则缺省使用这里的配置数据
+	 * 
+	 * #getTableColumnDataType(String, String, String, DataSource)
+	 * @return 映射
+	 */
+	Map<Class<?>, Integer> getJavaTypeToJdbcTypeMap();
 }

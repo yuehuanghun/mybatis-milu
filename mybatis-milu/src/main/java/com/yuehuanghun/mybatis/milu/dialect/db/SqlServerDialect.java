@@ -15,8 +15,14 @@
  */
 package com.yuehuanghun.mybatis.milu.dialect.db;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import javax.sql.DataSource;
+
 import com.yuehuanghun.mybatis.milu.data.Part.Type;
 import com.yuehuanghun.mybatis.milu.dialect.AbstractDialect;
+import com.yuehuanghun.mybatis.milu.exception.OrmBuildingException;
 import com.yuehuanghun.mybatis.milu.exception.OrmRuntimeException;
 
 /**
@@ -38,5 +44,14 @@ public class SqlServerDialect extends AbstractDialect {
 			throw new OrmRuntimeException("SQLSERVER 未支持正则表达式查询");
 		}
 		return super.getPartTypeExpression(partType);
+	}
+
+	@Override
+	protected String getCatalog(DataSource dataSource) {
+		try (Connection conn = dataSource.getConnection()) {
+			return queryForString("SELECT Name FROM Master..SysDataBases WHERE DbId=(SELECT Dbid FROM Master..SysProcesses WHERE Spid = @@spid)", conn);
+		} catch (SQLException e) {
+			throw new OrmBuildingException(e);
+		}
 	}
 }
