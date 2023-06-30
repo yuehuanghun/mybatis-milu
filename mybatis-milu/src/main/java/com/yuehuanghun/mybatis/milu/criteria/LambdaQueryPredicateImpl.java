@@ -650,10 +650,10 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 
 	@Override
 	public LambdaQueryPredicate<T> joinMode(SerializableFunction<T, ?> refGetterFn, JoinMode joinMode,
-			Consumer<Predicate> joinPredicate) {
-		Predicate predicate = Predicates.predicate();
-		joinPredicate.accept(predicate);
-		getDelegate().joinMode(LambdaReflections.fnToFieldName(refGetterFn), joinMode, predicate);
+			Consumer<LambdaPredicate<T>> joinPredicate) {
+		LambdaPredicateImpl<T> lambdaPredicate = new LambdaPredicateImpl<>();
+		joinPredicate.accept(lambdaPredicate);
+		getDelegate().joinMode(LambdaReflections.fnToFieldName(refGetterFn), joinMode, lambdaPredicate.getDelegate());
 		return this;
 	}
 

@@ -15,6 +15,8 @@
  */
 package com.yuehuanghun.mybatis.milu.criteria;
 
+import java.util.function.Consumer;
+
 import javax.persistence.LockModeType;
 import javax.persistence.Version;
 
@@ -307,6 +309,15 @@ public interface QueryPredicate extends Predicate {
 	 * @return 当前对象
 	 */
 	QueryPredicate joinMode(String propertyName, JoinMode joinMode, Predicate joinPredicate);
+	
+	/**
+	 * 设置关联属性的实体联结模式
+	 * @param propertyName 实体类关联实体（或实体集合）的属性名
+	 * @param joinMode 联结模式
+	 * @param joinPredicate 联结附加条件。
+	 * @return 当前对象
+	 */
+	QueryPredicate joinMode(String propertyName, JoinMode joinMode, Consumer<Predicate> joinPredicate);
 	
 	/**
 	 * 将Example样例条件将为Predicate动态条件<br>

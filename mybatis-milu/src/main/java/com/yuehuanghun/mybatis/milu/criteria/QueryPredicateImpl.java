@@ -522,8 +522,15 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 
 	@Override
 	public QueryPredicate joinMode(String propertyName, JoinMode joinMode) {
-		this.joinMode(propertyName, joinMode, null);
+		this.joinMode(propertyName, joinMode, (Predicate)null);
 		return this;
+	}
+
+	@Override
+	public QueryPredicate joinMode(String propertyName, JoinMode joinMode, Consumer<Predicate> joinPredicate) {
+		Predicate predicate = Predicates.predicate();
+		joinPredicate.accept(predicate);
+		return joinMode(propertyName, joinMode, predicate);
 	}
 
 	@Override
