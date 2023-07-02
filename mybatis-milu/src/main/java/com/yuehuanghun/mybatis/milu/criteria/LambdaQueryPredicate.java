@@ -23,9 +23,9 @@ import javax.persistence.Version;
 import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.SerializableFunction;
+import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
-import com.yuehuanghun.mybatis.milu.data.Sort;
 
 /**
  * 使用实体类的getter函数式作为查询条件，如实体类属性（的get方法）有变更能通过IDE直接感知<br>
@@ -170,6 +170,23 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	 * @return 当前对象
 	 */
 	LambdaQueryPredicate<T> limit(Pageable page);
+	
+	/**
+	 * 使用偏移量分页
+	 * @param offset 起始位置，偏移量。首条数据从0开始计数。
+	 * @param size 查询行数
+	 * @param count 是否查询符合的总行数
+	 * @return 当前对象
+	 */
+	LambdaQueryPredicate<T> limitOffset(int offset, int size, boolean count);
+
+	/**
+	 * 使用偏移量分页，默认查询总行数
+	 * @param offset 起始位置，偏移量。首条数据从0开始计数。
+	 * @param size 查询行数
+	 * @return 当前对象
+	 */
+	LambdaQueryPredicate<T> limitOffset(int offset, int size);
 
 	@Override
 	LambdaQueryPredicate<T> apply(T entity);

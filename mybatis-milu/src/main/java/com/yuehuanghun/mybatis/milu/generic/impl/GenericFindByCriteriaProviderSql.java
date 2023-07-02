@@ -25,6 +25,8 @@ import org.apache.ibatis.javassist.scopedpool.SoftValueHashMap;
 import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.mybatis.milu.criteria.Expression;
 import com.yuehuanghun.mybatis.milu.criteria.Join;
+import com.yuehuanghun.mybatis.milu.criteria.Limit;
+import com.yuehuanghun.mybatis.milu.criteria.LimitOffset;
 import com.yuehuanghun.mybatis.milu.criteria.Predicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
@@ -72,8 +74,14 @@ public class GenericFindByCriteriaProviderSql implements GenericProviderSql {
 		SqlBuildingHelper.convertLocalPageOrder(context.getEntity(), context.getConfiguration());
 		
 		if(queryParams.containsKey(Constants.PAGE_KEY)) {
-			Pageable page = (Pageable)queryParams.remove(Constants.PAGE_KEY);
-			PageHelper.startPage(page.getPageNum(), page.getPageSize(), page.isCount());
+			Limit limit = (Limit)queryParams.remove(Constants.PAGE_KEY);
+			if(limit instanceof Pageable) {
+				Pageable page = (Pageable)limit;
+				PageHelper.startPage(page.getPageNum(), page.getPageSize(), page.isCount());
+			} else if(limit instanceof LimitOffset) {
+				LimitOffset limitOffset = (LimitOffset)limit;
+				PageHelper.offsetPage(limitOffset.getOffset(), limitOffset.getSize(), limitOffset.isCount());
+			}
 		}
 		
 		paramMap.putAll(queryParams);

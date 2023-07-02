@@ -156,6 +156,18 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 	}
 
 	@Override
+	public LambdaQueryPredicate<T> limitOffset(int offset, int size, boolean count) {
+		getDelegate().limitOffset(offset, size, count);
+		return this;
+	}
+
+	@Override
+	public LambdaQueryPredicate<T> limitOffset(int offset, int size) {
+		getDelegate().limitOffset(offset, size);
+		return this;
+	}
+
+	@Override
 	public LambdaQueryPredicate<T> apply(T entity) {
 		super.apply(entity);
 		return this;

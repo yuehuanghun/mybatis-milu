@@ -24,6 +24,8 @@ import org.apache.ibatis.javassist.scopedpool.SoftValueHashMap;
 
 import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.mybatis.milu.criteria.Expression;
+import com.yuehuanghun.mybatis.milu.criteria.Limit;
+import com.yuehuanghun.mybatis.milu.criteria.LimitOffset;
 import com.yuehuanghun.mybatis.milu.criteria.Predicate;
 import com.yuehuanghun.mybatis.milu.criteria.StatisticPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.StatisticPredicateImpl;
@@ -61,9 +63,15 @@ public class GenericStatisticByCriteriaProviderSql implements GenericProviderSql
 		predicate.renderParams(context, queryParams, 0);		
 		((Map)params).putAll(queryParams);
 		
-		if(((Map)params).containsKey(Constants.PAGE_KEY)) {
-			Pageable page = (Pageable)((Map)params).get(Constants.PAGE_KEY);
-			PageHelper.startPage(page.getPageNum(), page.getPageSize(), page.isCount());
+		if(queryParams.containsKey(Constants.PAGE_KEY)) {
+			Limit limit = (Limit)queryParams.remove(Constants.PAGE_KEY);
+			if(limit instanceof Pageable) {
+				Pageable page = (Pageable)limit;
+				PageHelper.startPage(page.getPageNum(), page.getPageSize(), page.isCount());
+			} else if(limit instanceof LimitOffset) {
+				LimitOffset limitOffset = (LimitOffset)limit;
+				PageHelper.offsetPage(limitOffset.getOffset(), limitOffset.getSize(), limitOffset.isCount());
+			}
 		}
 
 		String sqlExpression = cache.computeIfAbsent(context.getMapperType(), (clazz) -> {

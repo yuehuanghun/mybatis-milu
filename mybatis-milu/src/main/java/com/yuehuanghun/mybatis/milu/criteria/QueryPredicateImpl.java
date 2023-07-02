@@ -152,6 +152,18 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		this.limit = page == null ? null : new LimitImpl(page);
 		return this;
 	}
+	
+	@Override
+	public QueryPredicate limitOffset(int offset, int size, boolean count) {
+		this.limit = new LimitOffset(offset, size, count);
+		return this;
+	}
+
+	@Override
+	public QueryPredicate limitOffset(int offset, int size) {
+		this.limit = new LimitOffset(offset, size);
+		return this;
+	}
 
 	@Override
 	public QueryPredicate conditionMode(Mode conditionMode) {

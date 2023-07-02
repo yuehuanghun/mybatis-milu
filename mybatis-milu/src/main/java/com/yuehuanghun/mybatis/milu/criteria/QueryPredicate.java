@@ -138,6 +138,23 @@ public interface QueryPredicate extends Predicate {
 	 */
 	QueryPredicate limit(Pageable page);
 	
+	/**
+	 * 使用偏移量分页
+	 * @param offset 起始位置，偏移量。首条数据从0开始计数。
+	 * @param size 查询行数
+	 * @param count 是否查询符合的总行数
+	 * @return 当前对象
+	 */
+	QueryPredicate limitOffset(int offset, int size, boolean count);
+
+	/**
+	 * 使用偏移量分页，默认查询总行数
+	 * @param offset 起始位置，偏移量。首条数据从0开始计数。
+	 * @param size 查询行数
+	 * @return 当前对象
+	 */
+	QueryPredicate limitOffset(int offset, int size);
+	
 	@Override
 	QueryPredicate conditionMode(Mode conditionMode);
 
