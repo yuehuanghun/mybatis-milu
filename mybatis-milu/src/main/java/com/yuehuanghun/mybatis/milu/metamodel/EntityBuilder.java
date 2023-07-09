@@ -135,8 +135,8 @@ public class EntityBuilder {
 		if(entityClass.isAnnotationPresent(Table.class)) {
 			Table table = entityClass.getAnnotation(Table.class);
 			entity.setTableName(table.name());
-			entity.setSchema(table.schema());
-			entity.setCatalog(table.catalog());
+			entity.setSchema(configuration.getPlaceholderResolver().resolvePlaceholder(table.schema()));
+			entity.setCatalog(configuration.getPlaceholderResolver().resolvePlaceholder(table.catalog()));
 		}
 		if(StringUtils.isBlank(entity.getTableName())) {
 			entity.setTableName(StringUtils.camel2Underline(entityClass.getSimpleName(), true));

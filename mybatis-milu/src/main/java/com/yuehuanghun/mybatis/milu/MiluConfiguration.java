@@ -132,8 +132,7 @@ public class MiluConfiguration extends Configuration {
 	private Class<? extends LogicDeleteProvider> defaultLogicDeleteProvider;
 	
 	@Getter
-	@Setter
-	private PlaceholderResolver placeholderResolver;
+	private PlaceholderResolver placeholderResolver = PlaceholderResolver.DONOTHING;
 
 	public MiluConfiguration() {
 		super();
@@ -197,6 +196,12 @@ public class MiluConfiguration extends Configuration {
 	private void registerDefaultIdentifierGenerator() {
 		this.addIdentifierGenerator(new UUIDIdentifierGenerator());
 		this.addIdentifierGenerator(new SnowflakeIdentifierGenerator());
+	}
+
+	public void setPlaceholderResolver(PlaceholderResolver placeholderResolver) {
+		if(placeholderResolver != null) {
+			this.placeholderResolver = placeholderResolver;
+		}
 	}
 
 	@Override

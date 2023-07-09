@@ -7,4 +7,12 @@ package com.yuehuanghun.mybatis.milu;
  */
 public interface PlaceholderResolver {
 	String resolvePlaceholder(String placeholderName);
+	
+	public static final PlaceholderResolver DONOTHING = new PlaceholderResolver() {
+		
+		@Override
+		public String resolvePlaceholder(String placeholderName) {
+			return placeholderName;
+		}
+	};
 }

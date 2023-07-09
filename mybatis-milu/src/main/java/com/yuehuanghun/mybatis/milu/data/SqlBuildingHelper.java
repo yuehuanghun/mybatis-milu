@@ -307,22 +307,13 @@ public class SqlBuildingHelper {
 		}
 		
 		if(StringUtils.isBlank(catalog)) {
-			if(configuration.getPlaceholderResolver() != null) {
-				schema = configuration.getPlaceholderResolver().resolvePlaceholder(schema);
-			}
 			appendIdentifier(stringBuilder, schema, configuration);
 			stringBuilder.append(Segment.DOT);
 		} else {
-			if(configuration.getPlaceholderResolver() != null) {
-				catalog = configuration.getPlaceholderResolver().resolvePlaceholder(catalog);
-			}
 			appendIdentifier(stringBuilder, catalog, configuration);
 			stringBuilder.append(Segment.DOT);
 			
 			if(StringUtils.isNotBlank(schema)) {
-				if(configuration.getPlaceholderResolver() != null) {
-					schema = configuration.getPlaceholderResolver().resolvePlaceholder(schema);
-				}
 				appendIdentifier(stringBuilder, schema, configuration);
 			}
 			stringBuilder.append(Segment.DOT); // 不管schema有没有都加一个点“.”
