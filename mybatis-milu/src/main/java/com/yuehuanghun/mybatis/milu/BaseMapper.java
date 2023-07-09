@@ -311,6 +311,50 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @return 列表
 	 */
 	<E> List<E> findByCriteria(@Param(Constants.CRITERIA) Consumer<QueryPredicate> predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType);
+		
+	/**
+	 * 动态条件查询，多组条件查询结果联合<br>
+	 * 如果指定查询列，则各组条件中的查询列需一致并对齐<br>
+	 * 可用于OR查询转UNION (ALL)<br>
+	 * 不适宜用于分页查询
+	 * @param predicates 条件组，组数>=2才有意义
+	 * @return 列表
+	 */
+	List<T> findByCriteriaUnion(@Param(Constants.CRITERIA) Predicate... predicates);
+
+	/**
+	 * 动态条件查询，多组条件查询结果联合<br>
+	 * 如果指定查询列，则各组条件中的查询列需一致并对齐<br>
+	 * 可用于OR查询转UNION (ALL)<br>
+	 * 不适宜用于分页查询
+	 * @param predicates 条件组，组数>=2才有意义
+	 * @return 列表
+	 */
+	@SuppressWarnings("unchecked")
+	List<T> findByCriteriaUnion(@Param(Constants.CRITERIA) Consumer<Predicate>... predicates);
+
+	/**
+	 * 动态条件查询，多组条件查询结果联合<br>
+	 * 如果指定查询列，则各组条件中的查询列需一致并对齐<br>
+	 * 可用于OR查询转UNION (ALL)<br>
+	 * 不适宜用于分页查询
+	 * @param selectAttrNames 指定查询的属性
+	 * @param predicates 条件组，组数>=2才有意义
+	 * @return 列表
+	 */
+	List<T> findByCriteriaUnion(@Param(Constants.SELECTS) String[] selectAttrNames, @Param(Constants.CRITERIA) Predicate... predicates);
+
+	/**
+	 * 动态条件查询，多组条件查询结果联合<br>
+	 * 如果指定查询列，则各组条件中的查询列需一致并对齐<br>
+	 * 可用于OR查询转UNION (ALL)<br>
+	 * 不适宜用于分页查询
+	 * @param selectAttrNames 指定查询的属性
+	 * @param predicates 条件组，组数>=2才有意义
+	 * @return 列表
+	 */
+	@SuppressWarnings("unchecked")
+	List<T> findByCriteriaUnion(@Param(Constants.SELECTS) String[] selectAttrNames, @Param(Constants.CRITERIA) Consumer<Predicate>... predicates);
 	
 	/**
 	 * lambda表达式动态条件查询
@@ -335,6 +379,29 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @return 列表
 	 */
 	<E> List<E> findByLambdaCriteria(@Param(Constants.CRITERIA) Consumer<LambdaQueryPredicate<T>> predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType);
+
+	/**
+	 * 动态条件查询，多组条件查询结果联合<br>
+	 * 如果指定查询列，则各组条件中的查询列需一致并对齐<br>
+	 * 可用于OR查询转UNION (ALL)<br>
+	 * 不适宜用于分页查询
+	 * @param predicates 条件组，组数>=2才有意义
+	 * @return 列表
+	 */
+	@SuppressWarnings("unchecked")
+	List<T> findByLambdaCriteriaUnion(@Param(Constants.CRITERIA) Consumer<LambdaPredicate<T>>... predicates);
+
+	/**
+	 * 动态条件查询，多组条件查询结果联合<br>
+	 * 如果指定查询列，则各组条件中的查询列需一致并对齐<br>
+	 * 可用于OR查询转UNION (ALL)<br>
+	 * 不适宜用于分页查询
+	 * @param selectAttrNames 指定查询的属性
+	 * @param predicates 条件组，组数>=2才有意义
+	 * @return 列表
+	 */
+	@SuppressWarnings("unchecked")
+	List<T> findByLambdaCriteriaUnion(@Param(Constants.SELECTS) String[] selectAttrNames, @Param(Constants.CRITERIA) Consumer<LambdaPredicate<T>>... predicates);
 	
 	/**
 	 * 动态条件更新<br>

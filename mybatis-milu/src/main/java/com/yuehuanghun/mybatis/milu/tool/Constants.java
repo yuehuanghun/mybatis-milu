@@ -69,4 +69,6 @@ public interface Constants {
 	String VALUE = "value";
 
 	String GROUP = "group";
+	
+	String SELECTS = "selects";
 }

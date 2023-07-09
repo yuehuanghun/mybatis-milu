@@ -362,6 +362,59 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	}
 
 	/**
+	 * 动态条件查询，多组条件查询结果联合<br>
+	 * 如果指定查询列，则各组条件中的查询列需一致并对齐<br>
+	 * 可用于OR查询转UNION (ALL)<br>
+	 * 不适宜用于分页查询
+	 * @param predicates 条件组，组数>=2才有意义
+	 * @return 列表
+	 */
+	default List<T> getByCriteriaUnion(Predicate... predicates) {
+		return getDomainMapper().findByCriteriaUnion(predicates);
+	}
+
+	/**
+	 * 动态条件查询，多组条件查询结果联合<br>
+	 * 如果指定查询列，则各组条件中的查询列需一致并对齐<br>
+	 * 可用于OR查询转UNION (ALL)<br>
+	 * 不适宜用于分页查询
+	 * @param predicates 条件组，组数>=2才有意义
+	 * @return 列表
+	 */
+	@SuppressWarnings("unchecked")
+	default List<T> getByCriteriaUnion(Consumer<Predicate>... predicates) {
+		return getDomainMapper().findByCriteriaUnion(predicates);
+	}
+
+	/**
+	 * 动态条件查询，多组条件查询结果联合<br>
+	 * 如果指定查询列，则各组条件中的查询列需一致并对齐<br>
+	 * 可用于OR查询转UNION (ALL)<br>
+	 * 不适宜用于分页查询
+	 * @param selectAttrNames 指定查询的属性
+	 * @param predicates 条件组，组数>=2才有意义
+	 * @return 列表
+	 */
+	default List<T> getByCriteriaUnion(String[] selectAttrNames, Predicate... predicates) {
+		return getDomainMapper().findByCriteriaUnion(selectAttrNames, predicates);
+	}
+
+	/**
+	 * 动态条件查询，多组条件查询结果联合<br>
+	 * 如果指定查询列，则各组条件中的查询列需一致并对齐<br>
+	 * 可用于OR查询转UNION (ALL)<br>
+	 * 不适宜用于分页查询
+	 * @param selectAttrNames 指定查询的属性
+	 * @param predicates 条件组，组数>=2才有意义
+	 * @return 列表
+	 */
+	@SuppressWarnings("unchecked")
+	default List<T> getByCriteriaUnion(String[] selectAttrNames, Consumer<Predicate>... predicates) {
+		return getDomainMapper().findByCriteriaUnion(selectAttrNames, predicates);
+	}
+	
+
+	/**
 	 * 动态条件查询唯一数据<br>
 	 * 结果集必须是0或1条数据，否则会报错。建议使用.limit(1)进行结果集行数限制。
 	 * @param predicate 条件
@@ -390,6 +443,34 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	default List<T> getByLambdaCriteria(Consumer<LambdaQueryPredicate<T>> predicate) {
 		return getDomainMapper().findByLambdaCriteria(predicate);
 	}
+
+	/**
+	 * 动态条件查询，多组条件查询结果联合<br>
+	 * 如果指定查询列，则各组条件中的查询列需一致并对齐<br>
+	 * 可用于OR查询转UNION (ALL)<br>
+	 * 不适宜用于分页查询
+	 * @param predicates 条件组，组数>=2才有意义
+	 * @return 列表
+	 */
+	@SuppressWarnings("unchecked")
+	default List<T> getByLambdaCriteriaUnion(Consumer<LambdaPredicate<T>>... predicates) {
+		return getDomainMapper().findByLambdaCriteriaUnion(predicates);
+	}
+
+	/**
+	 * 动态条件查询，多组条件查询结果联合<br>
+	 * 如果指定查询列，则各组条件中的查询列需一致并对齐<br>
+	 * 可用于OR查询转UNION (ALL)<br>
+	 * 不适宜用于分页查询
+	 * @param selectAttrNames 指定查询的属性
+	 * @param predicates 条件组，组数>=2才有意义
+	 * @return 列表
+	 */
+	@SuppressWarnings("unchecked")
+	default List<T> getByLambdaCriteriaUnion(String[] selectAttrNames, Consumer<LambdaPredicate<T>>... predicates) {
+		return getDomainMapper().findByLambdaCriteriaUnion(selectAttrNames, predicates);
+	}
+	
 
 	/**
 	 * lambda表达式动态条件查询唯一数据<br>

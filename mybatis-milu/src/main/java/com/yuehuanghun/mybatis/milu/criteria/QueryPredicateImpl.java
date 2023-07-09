@@ -17,6 +17,7 @@ package com.yuehuanghun.mybatis.milu.criteria;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -43,7 +44,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	private Lock lock;
 	private Boolean distinct = Boolean.FALSE;
 	@Getter
-	private final Set<String> selectAttrs = new HashSet<>();
+	private final Set<String> selectAttrs = new LinkedHashSet<>();
 	@Getter
 	private final Set<String> exselectAttrs = new HashSet<>();
 	@Getter

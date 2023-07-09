@@ -50,13 +50,15 @@ import lombok.Data;
 
 public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 	private final QueryPredicate predicate;
+	private final int paramStartIndex;
 
 	private final static Pattern ORDER_BY_PT = Pattern.compile("^\\s*ORDER BY.*$");
 	private final static List<ResultFlag> ID_FLAG_LIST = Arrays.asList(ResultFlag.ID);
 
-	public QuerySqlTemplateBuilder(GenericProviderContext context, QueryPredicate queryPredicate) {
+	public QuerySqlTemplateBuilder(GenericProviderContext context, QueryPredicate queryPredicate, int paramIndex) {
 		super(context);
 		this.predicate = queryPredicate;
+		this.paramStartIndex = paramIndex;
 	}
 
 	public BuildResult build() {
@@ -77,7 +79,7 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 
 		StringBuilder expressionBuilder = new StringBuilder(256);
 		Set<String> properties = new HashSet<>();
-		int paramIndex = predicate.renderSqlTemplate(context, expressionBuilder, properties, 0);
+		int paramIndex = predicate.renderSqlTemplate(context, expressionBuilder, properties, this.paramStartIndex);
 		
 		for(Join join : joinModeMap.values()) {
 			if(join.getJoinPredicate() != null) {

@@ -37,6 +37,7 @@ import com.yuehuanghun.mybatis.milu.db.DbMeta;
 import com.yuehuanghun.mybatis.milu.dialect.Dialect;
 import com.yuehuanghun.mybatis.milu.dialect.PageDialectManager;
 import com.yuehuanghun.mybatis.milu.exception.OrmBuildingException;
+import com.yuehuanghun.mybatis.milu.exception.OrmRuntimeException;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericBatchInsertProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericCountByCriteriaProviderSql;
@@ -49,11 +50,13 @@ import com.yuehuanghun.mybatis.milu.generic.impl.GenericDeleteByLambdaCriteriaPr
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindAllAndSortProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindAllProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindByCriteriaProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindByCriteriaUnionProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindByExampleAndSortProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindByExampleProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindByIdProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindByIdsProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindByLambdaCriteriaProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindByLambdaCriteriaUnionProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindUniqueByCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindUniqueByExampleAndSortProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindUniqueByExampleProviderSql;
@@ -187,6 +190,8 @@ public class MiluConfiguration extends Configuration {
 		this.addGenericProviderSql(new GenericMaxByLambdaCriteriaProviderSql());
 		this.addGenericProviderSql(new GenericMinByLambdaCriteriaProviderSql());
 		this.addGenericProviderSql(new GenericSumByLambdaCriteriaProviderSql());
+		this.addGenericProviderSql(new GenericFindByCriteriaUnionProviderSql());
+		this.addGenericProviderSql(new GenericFindByLambdaCriteriaUnionProviderSql());
 	}
 	
 	private void registerDefaultIdentifierGenerator() {
@@ -284,7 +289,7 @@ public class MiluConfiguration extends Configuration {
 			}
 			dbMeta.setDbEnum(cur);
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new OrmRuntimeException(e);
 		} finally {
 			if(conn != null) {
 				try {
@@ -297,7 +302,7 @@ public class MiluConfiguration extends Configuration {
 		
 		this.dialect = PageDialectManager.getDialect(dbMeta.getDbEnum().getDbName());
 		if(this.dialect == null) {
-			throw new RuntimeException(String.format("未知的数据库：%s", dbMeta.getDbName()));
+			throw new OrmRuntimeException(String.format("未知的数据库：%s", dbMeta.getDbName()));
 		}
 		
 		this.getMetaModel().getEntities().forEach(entity -> {
