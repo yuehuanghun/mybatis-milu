@@ -216,7 +216,8 @@ public interface BaseMapper<T, ID extends Serializable> {
 	
 	/**
 	 * 批量插入，使用单SQL插入方式，支持批量插入的数据库才能使用此方法<br>
-	 * 目前支持数据库：MySql、MariaDB、PostgreDB、Oracle、SqlServer，或兼容前所列数据库语法的数据库
+	 * 目前支持数据库：MySql、MariaDB、PostgreDB、Oracle、SqlServer、Dm（达梦），或兼容前所列数据库语法的数据库<br>
+	 * 另使用jdbc批插入，请查看BaseService的baseSave方法
 	 * @param entityList 新增实体对象列表
 	 * @return 影响行数
 	 */

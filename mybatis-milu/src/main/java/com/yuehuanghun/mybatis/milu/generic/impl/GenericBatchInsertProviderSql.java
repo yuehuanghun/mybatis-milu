@@ -192,7 +192,7 @@ public class GenericBatchInsertProviderSql extends GenericCachingProviderSql {
 		}
 	};
 	
-	private static final List<DbEnum> COMMON_BATCH_INSERT_DBS = Arrays.asList(DbEnum.MYSQL, DbEnum.MARIADB, DbEnum.POSTGRES, DbEnum.SQLITE, DbEnum.OSCAR, DbEnum.CLICKHOUSE);
-	private static final List<DbEnum> ORACLE_LIKE_BATCH_INSERT_DBS =  Arrays.asList(DbEnum.ORCLE, DbEnum.DM, DbEnum.EDB);
+	private static final List<DbEnum> COMMON_BATCH_INSERT_DBS = Arrays.asList(DbEnum.MYSQL, DbEnum.MARIADB, DbEnum.POSTGRES, DbEnum.SQLITE, DbEnum.OSCAR, DbEnum.CLICKHOUSE, DbEnum.DM);
+	private static final List<DbEnum> ORACLE_LIKE_BATCH_INSERT_DBS =  Arrays.asList(DbEnum.ORCLE, DbEnum.EDB);
 	private static final List<DbEnum> SQLSERVER_LIKE_BATCH_INSERT_DBS =  Arrays.asList(DbEnum.SQLSERVER);
 }
