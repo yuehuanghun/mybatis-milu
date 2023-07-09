@@ -366,7 +366,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * 如果指定查询列，则各组条件中的查询列需一致并对齐<br>
 	 * 可用于OR查询转UNION (ALL)<br>
 	 * 不适宜用于分页查询
-	 * @param predicates 条件组，组数>=2才有意义
+	 * @param predicates 条件组，组数&gt;=2才有意义
 	 * @return 列表
 	 */
 	default List<T> getByCriteriaUnion(Predicate... predicates) {
@@ -378,7 +378,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * 如果指定查询列，则各组条件中的查询列需一致并对齐<br>
 	 * 可用于OR查询转UNION (ALL)<br>
 	 * 不适宜用于分页查询
-	 * @param predicates 条件组，组数>=2才有意义
+	 * @param predicates 条件组，组数&gt;=2才有意义
 	 * @return 列表
 	 */
 	@SuppressWarnings("unchecked")
@@ -392,7 +392,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * 可用于OR查询转UNION (ALL)<br>
 	 * 不适宜用于分页查询
 	 * @param selectAttrNames 指定查询的属性
-	 * @param predicates 条件组，组数>=2才有意义
+	 * @param predicates 条件组，组数&gt;=2才有意义
 	 * @return 列表
 	 */
 	default List<T> getByCriteriaUnion(String[] selectAttrNames, Predicate... predicates) {
@@ -405,7 +405,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * 可用于OR查询转UNION (ALL)<br>
 	 * 不适宜用于分页查询
 	 * @param selectAttrNames 指定查询的属性
-	 * @param predicates 条件组，组数>=2才有意义
+	 * @param predicates 条件组，组数&gt;=2才有意义
 	 * @return 列表
 	 */
 	@SuppressWarnings("unchecked")
@@ -449,7 +449,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * 如果指定查询列，则各组条件中的查询列需一致并对齐<br>
 	 * 可用于OR查询转UNION (ALL)<br>
 	 * 不适宜用于分页查询
-	 * @param predicates 条件组，组数>=2才有意义
+	 * @param predicates 条件组，组数&gt;=2才有意义
 	 * @return 列表
 	 */
 	@SuppressWarnings("unchecked")
@@ -463,7 +463,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * 可用于OR查询转UNION (ALL)<br>
 	 * 不适宜用于分页查询
 	 * @param selectAttrNames 指定查询的属性
-	 * @param predicates 条件组，组数>=2才有意义
+	 * @param predicates 条件组，组数&gt;=2才有意义
 	 * @return 列表
 	 */
 	@SuppressWarnings("unchecked")
