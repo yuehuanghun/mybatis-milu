@@ -35,7 +35,10 @@ import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.AppTest;
 import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaUpdatePredicate;
+import com.yuehuanghun.mybatis.milu.criteria.Predicate;
 import com.yuehuanghun.mybatis.milu.criteria.PredicateImpl;
+import com.yuehuanghun.mybatis.milu.criteria.Predicates;
+import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
@@ -914,5 +917,73 @@ public class StudentMapperTest {
 		});
 		
 		assertEquals(list.size(), 2);
+	}
+	
+	@Test
+	public void testFindByCateria_in_string() {
+		List<Student> list = studentMapper.findByCriteria(p -> p.in("age", "8,9"));
+		assertEquals(list.size(), 4);
+	}
+	
+	@Test
+	public void testFindByCateria_limitOffset() {
+		List<Student> list = studentMapper.findByCriteria(p -> p.orderAsc("id").limitOffset(2, 1, false));
+		
+		assertEquals(list.size(), 1);
+		
+		assertEquals(list.get(0).getId().longValue(), 3);
+		
+		list = studentMapper.findByCriteria(p -> p.orderAsc("id").limitOffset(1, 6));
+		assertEquals(list.size(), 4);
+		assertEquals(list.get(0).getId().longValue(), 2);
+		assertEquals(((Page<?>)list).getTotal(), 5);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testFindByCriteriaUnion() {
+		Predicate predicate1 = Predicates.predicate();
+		predicate1.eq("id", 1);
+		Predicate predicate2 = Predicates.predicate();
+		predicate2.eq("id", 2);
+		
+		List<Student> list = studentMapper.findByCriteriaUnion(predicate1, predicate2);
+		
+		assertEquals(list.size(), 2);
+		
+		list = studentMapper.findByCriteriaUnion(new String[] {"id", "name"}, predicate1, predicate2);
+		assertEquals(list.size(), 2);
+		assertNull(list.get(0).getAge());
+		
+		predicate1 = Predicates.predicate();
+		predicate1.between("addTime", "2016-01-01 00:00:00", "2018-01-01").undeleted();
+		predicate2 = Predicates.predicate();
+		predicate2.between("addTime", "2018-01-01", "2022-01-01").undeleted();
+		
+		list = studentMapper.findByCriteriaUnion(predicate1, predicate2);
+		assertEquals(list.size(), 4);
+		
+		list = studentMapper.findByCriteriaUnion(p -> p.eq("id", 1), p -> p.eq("id", 2));
+		
+		assertEquals(list.size(), 2);
+		
+		list = studentMapper.findByCriteriaUnion(new String[] {"id", "name"}, p -> p.eq("id", 1), p -> p.eq("id", 2));
+		assertEquals(list.size(), 2);
+		assertNull(list.get(0).getAge());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testFindLambdaByCriteriaUnion() {
+		List<Student> list = studentMapper.findByLambdaCriteriaUnion(p -> p.eq(Student::getId, 1), p -> p.eq(Student::getId, 2));
+		
+		assertEquals(list.size(), 2);
+		
+		list = studentMapper.findByLambdaCriteriaUnion(new String[] {"id", "name"}, p -> p.eq(Student::getId, 1), p -> p.eq(Student::getId, 2));
+		assertEquals(list.size(), 2);
+		assertNull(list.get(0).getAge());
+		
+		list = studentMapper.findByLambdaCriteriaUnion(p -> p.between(Student::getAddTime, "2016-01-01 00:00:00", "2018-01-01").undeleted(), p -> p.between(Student::getAddTime, "2018-01-01", "2022-01-01").undeleted());
+		assertEquals(list.size(), 4);
 	}
 }

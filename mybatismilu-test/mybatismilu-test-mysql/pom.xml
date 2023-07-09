@@ -56,5 +56,10 @@
             <version>1.18.12</version>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-core</artifactId>
+            <version>5.8.16</version>
+        </dependency>
     </dependencies>
 </project>

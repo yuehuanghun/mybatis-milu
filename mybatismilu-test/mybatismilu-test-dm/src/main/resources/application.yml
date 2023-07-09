@@ -1,0 +1,28 @@
+
+
+mybatis: 
+    mapperLocations: /mapper/**/*.xml
+    
+spring.datasource:
+    driverClassName: dm.jdbc.driver.DmDriver
+    url: jdbc:dm://localhost:5236/mybatis
+    username: mybatis
+    password: mybatis123456
+    poolName: SpringBootHikariCP
+    maximumPoolSize: 20
+    minimumIdle: 3
+    maxLifetime: 2000000
+    connectionTimeout: 30000
+    idleTimeout: 30000
+    pool-prepared-statements: true
+    max-open-prepared-statements: 250
+    validationQuery: select 1
+    testWhileIdle: true
+    testOnBorrow: true
+    
+logging:
+    level.com.yuehuanghun: debug
+    file: ./logs/milutest-dm.log
+    
+
+db2: DEMO2
