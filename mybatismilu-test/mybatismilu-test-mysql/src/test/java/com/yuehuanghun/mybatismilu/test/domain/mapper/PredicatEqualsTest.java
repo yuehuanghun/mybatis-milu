@@ -91,34 +91,4 @@ public class PredicatEqualsTest {
 		System.out.println(map);
 		assertEquals(map.size(), 2);
 	}
-	
-	@Test
-	public void test1() {
-		String command = "cmd.exe /c D:\\work\\program\\apache-maven-3.9.3\\bin\\mvn dependency:list";
-		String output = System.getProperty("java.io.tmpdir") + "/" + UUID.randomUUID().toString(true) + ".txt";
-		System.out.println(output);
-		command += " -DappendOutput=true -DoutputFile=" + output;
-
-		try{
-		    Process p = Runtime.getRuntime().exec(command, null, new File("D:\\work\\git_workspace\\mybatis-milu\\mybatis-milu\\mybatis-milu"));
-
-		    InputStream is = p.getInputStream();
-		    BufferedReader reader = new BufferedReader(new InputStreamReader(is, "GBK"));
-		    String outInfo;
-		    while ((outInfo = reader.readLine()) != null) {
-		        System.out.println(outInfo);
-		    }
-
-		    p.waitFor(); // 等待process子进程终止
-		    System.out.print("执行成功：");
-		    System.out.println(p.exitValue() == 0);
-
-		}catch (Exception e){
-		    e.printStackTrace();
-		}
-	}
-	public static void main(String[] args) {
-		String str = RuntimeUtil.execForStr("cmd.exe /c dir");
-		System.out.println(str);
-	}
 }

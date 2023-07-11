@@ -57,6 +57,6 @@ public class Menu {
 	private Integer isDeleted;
 	
 	@LogicDelete(value = "#{now}", resumeValue = "", main = false)
-	@AttributeOptions(jdbcType = JdbcType.TIMESTAMP_WITH_TIMEZONE)
+//	@AttributeOptions(jdbcType = JdbcType.TIMESTAMP_WITH_TIMEZONE)
 	private LocalDateTime deleteTime;
 }

@@ -45,6 +45,7 @@ import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.ext.Pair;
 import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Student;
+import com.yuehuanghun.mybatismilu.test.domain.entity.StudentProfile;
 import com.yuehuanghun.mybatismilu.test.dto.StudentDTO;
 import com.yuehuanghun.mybatismilu.test.dto.StudentStatistic;
 import com.yuehuanghun.mybatismilu.test.service.StudentService;
@@ -101,6 +102,7 @@ public class StudentMapperTest {
 		example = new Student();
 		example.setName("");
 		example.setAge(7);
+		example.setStudentProfile(new StudentProfile());
 		result = studentMapper.findByExample(example);
 		assertTrue(result.size() == 1);
 		
