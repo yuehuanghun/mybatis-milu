@@ -19,6 +19,7 @@ package com.yuehuanghun.mybatis.milu.criteria;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.yuehuanghun.mybatis.milu.data.Sort.NullHandling;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
@@ -37,10 +38,22 @@ public class SortImpl extends LinkedHashSet<com.yuehuanghun.mybatis.milu.criteri
 		
 		this.forEach(order -> {
 			columns.add(order.getAttributeName());
-			expressionBuilder.append(columnHolder(order.getAttributeName()));
-			if(order.getDirection() != null) {
-				expressionBuilder.append(Segment.SPACE).append(order.getDirection().name());
+			
+			if(order.getNullHandling() == NullHandling.NATIVE) {
+				expressionBuilder.append(columnHolder(order.getAttributeName()));
+				if(order.getDirection() != null) {
+					expressionBuilder.append(Segment.SPACE).append(order.getDirection().name());
+				}
+			} else {
+				String column = columnHolder(order.getAttributeName());
+				String orderExpression = column;
+				if(order.getDirection() != null) {
+					orderExpression += Segment.SPACE + order.getDirection().name();
+				}
+				orderExpression = context.getConfiguration().getDialect().nullValueSort(orderExpression, column, order.getNullHandling());
+				expressionBuilder.append(orderExpression);
 			}
+			
 			expressionBuilder.append(Segment.COMMA_B);
 		});
 		

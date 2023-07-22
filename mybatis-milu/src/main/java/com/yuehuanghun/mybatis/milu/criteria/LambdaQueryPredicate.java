@@ -25,6 +25,7 @@ import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.SerializableFunction;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
+import com.yuehuanghun.mybatis.milu.data.Sort.NullHandling;
 import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 
 /**
@@ -69,6 +70,7 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	 * @return 当前对象
 	 */
 	LambdaQueryPredicate<T> exselects(String attrNameChain);
+	
 	/**
 	 * 添加排序，不指定排序方向，以数据库默认排序为准
 	 * @param getterFns 实体类的getter函数式
@@ -76,6 +78,15 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	LambdaQueryPredicate<T> order(SerializableFunction<T, ?>... getterFns);
+	
+	/**
+	 * 添加排序，不指定排序方向，以数据库默认排序为准
+	 * @param nullHandling 空值排序方式
+	 * @param getterFns 实体类的getter函数式
+	 * @return 当前对象
+	 */
+	@SuppressWarnings("unchecked")
+	LambdaQueryPredicate<T> order(NullHandling nullHandling, SerializableFunction<T, ?>... getterFns);
 	
 	/**
 	 * 添加排序，指定排序方向
@@ -88,11 +99,30 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	/**
 	 * 添加排序，指定排序方向
 	 * @param direction 排序方向枚举
+	 * @param nullHandling 空值排序方式
+	 * @param getterFn 实体类的getter函数式
+	 * @return 当前对象
+	 */
+	LambdaQueryPredicate<T> order(Direction direction, NullHandling nullHandling, SerializableFunction<T, ?> getterFn);
+	
+	/**
+	 * 添加排序，指定排序方向
+	 * @param direction 排序方向枚举
 	 * @param getterFns 实体类的getter函数式
 	 * @return 当前对象
 	 */
 	@SuppressWarnings("unchecked")
 	LambdaQueryPredicate<T> order(Direction direction, SerializableFunction<T, ?>... getterFns);
+	
+	/**
+	 * 添加排序，指定排序方向
+	 * @param direction 排序方向枚举
+	 * @param nullHandling 空值排序方式
+	 * @param getterFns 实体类的getter函数式
+	 * @return 当前对象
+	 */
+	@SuppressWarnings("unchecked")
+	LambdaQueryPredicate<T> order(Direction direction, NullHandling nullHandling, SerializableFunction<T, ?>... getterFns);
 	
 	/**
 	 * 指定排序
@@ -110,11 +140,28 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 
 	/**
 	 * 添加升序排序
+	 * @param nullHandling 空值排序方式
+	 * @param getterFn 实体类的getter函数式
+	 * @return 当前对象
+	 */
+	LambdaQueryPredicate<T> orderAsc(NullHandling nullHandling, SerializableFunction<T, ?> getterFn);
+
+	/**
+	 * 添加升序排序
 	 * @param getterFns 实体类的getter函数式
 	 * @return 当前对象
 	 */
 	@SuppressWarnings("unchecked")
 	LambdaQueryPredicate<T> orderAsc(SerializableFunction<T, ?>... getterFns);
+
+	/**
+	 * 添加升序排序
+	 * @param nullHandling 空值排序方式
+	 * @param getterFns 实体类的getter函数式
+	 * @return 当前对象
+	 */
+	@SuppressWarnings("unchecked")
+	LambdaQueryPredicate<T> orderAsc(NullHandling nullHandling, SerializableFunction<T, ?>... getterFns);
 	
 	/**
 	 * 添加降序排序
@@ -125,11 +172,28 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	
 	/**
 	 * 添加降序排序
+	 * @param nullHandling 空值排序方式
+	 * @param getterFn 实体类的getter函数式
+	 * @return 当前对象
+	 */
+	LambdaQueryPredicate<T> orderDesc(NullHandling nullHandling, SerializableFunction<T, ?> getterFn);
+	
+	/**
+	 * 添加降序排序
 	 * @param getterFns 实体类的getter函数式
 	 * @return 当前对象
 	 */
 	@SuppressWarnings("unchecked")
 	LambdaQueryPredicate<T> orderDesc(SerializableFunction<T, ?>... getterFns);
+	
+	/**
+	 * 添加降序排序
+	 * @param nullHandling 空值排序方式
+	 * @param getterFns 实体类的getter函数式
+	 * @return 当前对象
+	 */
+	@SuppressWarnings("unchecked")
+	LambdaQueryPredicate<T> orderDesc(NullHandling nullHandling, SerializableFunction<T, ?>... getterFns);
 
 	/**
 	 * 获取第1页的pageSize条数据

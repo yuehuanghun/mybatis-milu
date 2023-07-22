@@ -24,6 +24,7 @@ import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.LambdaReflections;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.SerializableFunction;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
+import com.yuehuanghun.mybatis.milu.data.Sort.NullHandling;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 
@@ -71,13 +72,26 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 	@SuppressWarnings("unchecked")
 	@Override
 	public LambdaQueryPredicate<T> order(SerializableFunction<T, ?>... getterFns) {
-		this.order(null, getterFns);
+		this.order((Direction)null, getterFns);
+		return this;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public LambdaQueryPredicate<T> order(NullHandling nullHandling, SerializableFunction<T, ?>... getterFns) {
+		this.order((Direction)null, nullHandling, getterFns);
 		return this;
 	}
 
 	@Override
 	public LambdaQueryPredicate<T> order(Direction direction, SerializableFunction<T, ?> getterFn) {
 		getDelegate().order(direction, LambdaReflections.fnToFieldName(getterFn));
+		return this;
+	}
+
+	@Override
+	public LambdaQueryPredicate<T> order(Direction direction, NullHandling nullHandling, SerializableFunction<T, ?> getterFn) {
+		getDelegate().order(direction, nullHandling, LambdaReflections.fnToFieldName(getterFn));
 		return this;
 	}
 
@@ -93,6 +107,18 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 		return this;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public LambdaQueryPredicate<T> order(Direction direction, NullHandling nullHandling, SerializableFunction<T, ?>... getterFns) {
+		String[] attrNames = new String[getterFns.length];
+		for (int i = 0; i < getterFns.length; i++) {
+			SerializableFunction<T, ?> getterFn = getterFns[i];
+			attrNames[i] = LambdaReflections.fnToFieldName(getterFn);
+		}
+		getDelegate().order(direction, nullHandling, attrNames);
+		return this;
+	}
+
 	@Override
 	public LambdaQueryPredicate<T> order(Sort sort) {
 		getDelegate().order(sort);
@@ -105,10 +131,23 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 		return this;
 	}
 
+	@Override
+	public LambdaQueryPredicate<T> orderAsc(NullHandling nullHandling, SerializableFunction<T, ?> getterFn) {
+		this.order(Direction.ASC, nullHandling, getterFn);
+		return this;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public LambdaQueryPredicate<T> orderAsc(SerializableFunction<T, ?>... getterFns) {
 		this.order(Direction.ASC, getterFns);
+		return this;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public LambdaQueryPredicate<T> orderAsc(NullHandling nullHandling, SerializableFunction<T, ?>... getterFns) {
+		this.order(Direction.ASC, nullHandling, getterFns);
 		return this;
 	}
 
@@ -118,10 +157,23 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 		return this;
 	}
 
+	@Override
+	public LambdaQueryPredicate<T> orderDesc(NullHandling nullHandling, SerializableFunction<T, ?> getterFn) {
+		this.order(Direction.DESC, nullHandling, getterFn);
+		return this;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public LambdaQueryPredicate<T> orderDesc(SerializableFunction<T, ?>... getterFns) {
 		this.order(Direction.DESC, getterFns);
+		return this;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public LambdaQueryPredicate<T> orderDesc(NullHandling nullHandling, SerializableFunction<T, ?>... getterFns) {
+		this.order(Direction.DESC, nullHandling, getterFns);
 		return this;
 	}
 

@@ -15,6 +15,7 @@
  */
 package com.yuehuanghun.mybatis.milu.dialect.db;
 
+import com.yuehuanghun.mybatis.milu.data.Sort.NullHandling;
 import com.yuehuanghun.mybatis.milu.dialect.AbstractDialect;
 
 /**
@@ -31,4 +32,10 @@ public class Db2Dialect extends AbstractDialect {
 	}
 
 	private final String TEMPLATE = "SELECT _TMP_TABLE.*,ROWNUMBER() OVER() AS _ROW_ID FROM (%s) AS _TMP_TABLE WHERE _ROW_ID &lt;= %s";
+
+	@Override
+	public String nullValueSort(String sortExpression, String columnName, NullHandling nullHandling) {
+		return super.standardNullValueSort(sortExpression, columnName, nullHandling);
+	}
+		
 }

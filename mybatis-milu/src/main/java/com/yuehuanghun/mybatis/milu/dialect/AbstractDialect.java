@@ -37,6 +37,7 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
 import com.yuehuanghun.mybatis.milu.data.Part.Type;
+import com.yuehuanghun.mybatis.milu.data.Sort.NullHandling;
 import com.yuehuanghun.mybatis.milu.exception.OrmBuildingException;
 import com.yuehuanghun.mybatis.milu.tool.Assert;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
@@ -189,5 +190,27 @@ public abstract class AbstractDialect implements Dialect {
 			e.printStackTrace();
 		}
 		return map;
+	}
+
+	@Override
+	public String nullValueSort(String sortExpression, String columnName, NullHandling nullHandling) {
+		if(nullHandling != NullHandling.NATIVE) {
+			log.warn("当前数据库未实现支持空值排序");
+		}
+		return sortExpression;
+	}
+	
+	// 标准空值排序
+	protected String standardNullValueSort(String sortExpression, String columnName, NullHandling nullHandling) {
+		if(nullHandling == NullHandling.NATIVE) {
+			return sortExpression;
+		}
+		if(nullHandling == NullHandling.NULLS_FIRST) {
+			return sortExpression + " NULLS FIRST";
+		}
+		if(nullHandling == NullHandling.NULLS_LAST) {
+			return sortExpression + " NULLS LAST";
+		}
+		return sortExpression;
 	}
 }

@@ -28,6 +28,7 @@ import javax.persistence.LockModeType;
 import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
+import com.yuehuanghun.mybatis.milu.data.Sort.NullHandling;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 import com.yuehuanghun.mybatis.milu.tool.Assert;
@@ -97,9 +98,25 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	}
 
 	@Override
+	public QueryPredicate order(NullHandling nullHandling, String... attrNames) {
+		for (String attrName : attrNames) {
+			sort.add(attrName, nullHandling);
+		}
+		return this;
+	}
+
+	@Override
 	public QueryPredicate order(Direction direction, String... attrNames) {
 		for (String attrName : attrNames) {
 			sort.add(attrName, direction);
+		}
+		return this;
+	}
+
+	@Override
+	public QueryPredicate order(Direction direction, NullHandling nullHandling, String... attrNames) {
+		for (String attrName : attrNames) {
+			sort.add(attrName, direction, nullHandling);
 		}
 		return this;
 	}
@@ -107,7 +124,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	@Override
 	public QueryPredicate order(com.yuehuanghun.mybatis.milu.data.Sort sort) {
 		if(sort != null) {
-			sort.forEach(order -> this.sort.add(order.getProperty(), order.getDirection()));
+			sort.forEach(order -> this.sort.add(order.getProperty(), order.getDirection(), order.getNullHandling()));
 		}
 		return this;
 	}
@@ -119,8 +136,20 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	}
 
 	@Override
+	public QueryPredicate orderAsc(NullHandling nullHandling, String... attrNames) {
+		this.order(Direction.ASC, nullHandling, attrNames);
+		return this;
+	}
+
+	@Override
 	public QueryPredicate orderDesc(String... attrNames) {
 		this.order(Direction.DESC, attrNames);
+		return this;
+	}
+
+	@Override
+	public QueryPredicate orderDesc(NullHandling nullHandling, String... attrNames) {
+		this.order(Direction.DESC, nullHandling, attrNames);
 		return this;
 	}
 

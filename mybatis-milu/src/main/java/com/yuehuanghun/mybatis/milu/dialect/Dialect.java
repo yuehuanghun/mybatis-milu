@@ -21,6 +21,7 @@ import javax.persistence.LockModeType;
 import javax.sql.DataSource;
 
 import com.yuehuanghun.mybatis.milu.data.Part.Type;
+import com.yuehuanghun.mybatis.milu.data.Sort.NullHandling;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
 /**
@@ -88,4 +89,13 @@ public interface Dialect {
 	 * @return 映射
 	 */
 	Map<Class<?>, Integer> getJavaTypeToJdbcTypeMap();
+	
+	/**
+	 * 空值排序
+	 * @param sortExpression 未加空值排序前的排序表达式
+	 * @param columnName 列名
+	 * @param nullHandling 空值排序枚举
+	 * @return 添加空值排序后的排序
+	 */
+	String nullValueSort(String sortExpression, String columnName, NullHandling nullHandling);
 }

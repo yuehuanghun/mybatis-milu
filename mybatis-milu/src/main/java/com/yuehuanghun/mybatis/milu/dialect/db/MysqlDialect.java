@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import javax.persistence.LockModeType;
 import javax.sql.DataSource;
 
+import com.yuehuanghun.mybatis.milu.data.Sort.NullHandling;
 import com.yuehuanghun.mybatis.milu.dialect.AbstractDialect;
 import com.yuehuanghun.mybatis.milu.exception.OrmBuildingException;
 
@@ -54,4 +55,19 @@ public class MysqlDialect extends AbstractDialect {
 		}
 	}
 
+	@Override
+	public String nullValueSort(String sortExpression, String columnName, NullHandling nullHandling) {
+		if(nullHandling == NullHandling.NATIVE) {
+			return sortExpression;
+		}
+
+		if(nullHandling == NullHandling.NULLS_FIRST) {
+			return " IF(ISNULL(" + columnName + "), 0, 1) ASC, " + sortExpression;
+		}
+
+		if(nullHandling == NullHandling.NULLS_LAST) {
+			return " IF(ISNULL(" + columnName + "), 1, 0) ASC, " + sortExpression;
+		}
+		return sortExpression;
+	}
 }

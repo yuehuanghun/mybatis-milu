@@ -23,6 +23,7 @@ import javax.persistence.Version;
 import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
+import com.yuehuanghun.mybatis.milu.data.Sort.NullHandling;
 import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 
 /**
@@ -68,6 +69,14 @@ public interface QueryPredicate extends Predicate {
 	 * @return 当前对象
 	 */
 	QueryPredicate order(String... attrNames);
+
+	/**
+	 * 添加排序，不指定排序方向，以数据库默认排序为准
+	 * @param nullHandling 空值排序方式
+	 * @param attrNames 属性名
+	 * @return 当前对象
+	 */
+	QueryPredicate order(NullHandling nullHandling, String... attrNames);
 	
 	/**
 	 * 添加排序，指定排序方向
@@ -76,6 +85,15 @@ public interface QueryPredicate extends Predicate {
 	 * @return 当前对象
 	 */
 	QueryPredicate order(Direction direction, String... attrNames);
+	
+	/**
+	 * 添加排序，指定排序方向
+	 * @param direction 排序方向枚举
+	 * @param nullHandling 空值排序方式
+	 * @param attrNames 属性名
+	 * @return 当前对象
+	 */
+	QueryPredicate order(Direction direction, NullHandling nullHandling, String... attrNames);
 	
 	/**
 	 * 指定排序
@@ -92,11 +110,27 @@ public interface QueryPredicate extends Predicate {
 	QueryPredicate orderAsc(String... attrNames);
 	
 	/**
+	 * 添加升序排序
+	 * @param nullHandling 空值排序方式
+	 * @param attrNames 属性名
+	 * @return 当前对象
+	 */
+	QueryPredicate orderAsc(NullHandling nullHandling, String... attrNames);
+	
+	/**
 	 * 添加降序排序
 	 * @param attrNames 属性名
 	 * @return 当前对象
 	 */
 	QueryPredicate orderDesc(String... attrNames);
+	
+	/**
+	 * 添加降序排序
+	 * @param nullHandling 空值排序方式
+	 * @param attrNames 属性名
+	 * @return 当前对象
+	 */
+	QueryPredicate orderDesc(NullHandling nullHandling, String... attrNames);
 
 	/**
 	 * 获取第1页的pageSize条数据

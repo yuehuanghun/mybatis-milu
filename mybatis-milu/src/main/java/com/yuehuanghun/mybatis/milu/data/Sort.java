@@ -58,14 +58,14 @@ public class Sort implements Streamable<com.yuehuanghun.mybatis.milu.data.Sort.O
 	}
 
 	private Sort(String... properties) {
-		this(DEFAULT_DIRECTION, properties);
+		this(DEFAULT_DIRECTION, NullHandling.NATIVE, properties);
 	}
 
-	public Sort(Direction direction, String... properties) {
-		this(direction, properties == null ? new ArrayList<>() : Arrays.asList(properties));
+	private Sort(Direction direction, NullHandling nullHandling, String... properties) {
+		this(direction, NullHandling.NATIVE, properties == null ? new ArrayList<>() : Arrays.asList(properties));
 	}
 
-	public Sort(Direction direction, List<String> properties) {
+	private Sort(Direction direction, NullHandling nullHandling, List<String> properties) {
 
 		if (properties == null || properties.isEmpty()) {
 			throw new IllegalArgumentException("排序属性至少要有一个值!");
@@ -74,7 +74,7 @@ public class Sort implements Streamable<com.yuehuanghun.mybatis.milu.data.Sort.O
 		this.orders = new ArrayList<>(properties.size());
 
 		for (String property : properties) {
-			this.orders.add(new Order(direction, property));
+			this.orders.add(new Order(direction, property, nullHandling));
 		}
 	}
 
@@ -97,7 +97,6 @@ public class Sort implements Streamable<com.yuehuanghun.mybatis.milu.data.Sort.O
 	}
 
 	public static Sort by(List<Order> orders) {
-
 		Assert.notNull(orders, "Orders不可为 null!");
 
 		return orders.isEmpty() ? Sort.unsorted() : new Sort(orders);
@@ -126,9 +125,27 @@ public class Sort implements Streamable<com.yuehuanghun.mybatis.milu.data.Sort.O
 		Assert.notNull(properties, "排序属性不能为null!");
 		Assert.isTrue(properties.length > 0, "排序属性至少有一个值!");
 
-		return Sort.by(Arrays.stream(properties)//
-				.map(it -> new Order(direction, it))//
+		return Sort.by(Arrays.stream(properties)
+				.map(it -> new Order(direction, it))
 				.collect(Collectors.toList()));
+	}
+
+	public static Sort by(Direction direction, NullHandling nullHandling, String... properties) {
+
+		Assert.notNull(direction, "排序方向不能为null!");
+		Assert.notNull(properties, "排序属性不能为null!");
+		Assert.isTrue(properties.length > 0, "排序属性至少有一个值!");
+
+		return Sort.by(Arrays.stream(properties)
+				.map(it -> new Order(direction, it, nullHandling))
+				.collect(Collectors.toList()));
+	}
+	
+	public static <T, M> Sort by(Direction direction, SerializableFunction<T, M> propertyGetterFn) {
+		Assert.notNull(direction, "排序方向不能为null!");
+		Assert.notNull(propertyGetterFn, "排序属性不能为null!");
+
+		return by(direction, LambdaReflections.fnToFieldName(propertyGetterFn));
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -144,6 +161,26 @@ public class Sort implements Streamable<com.yuehuanghun.mybatis.milu.data.Sort.O
 		return by(direction, properties);
 	}
 	
+	public static <T, M> Sort by(Direction direction, NullHandling nullHandling, SerializableFunction<T, M> propertyGetterFn) {
+		Assert.notNull(direction, "排序方向不能为null!");
+		Assert.notNull(propertyGetterFn, "排序属性不能为null!");
+
+		return by(direction, nullHandling, LambdaReflections.fnToFieldName(propertyGetterFn));
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T, M> Sort by(Direction direction, NullHandling nullHandling, SerializableFunction<T, M>... propertyGetterFns) {
+		Assert.notNull(direction, "排序方向不能为null!");
+		Assert.notNull(propertyGetterFns, "排序属性不能为null!");
+		Assert.isTrue(propertyGetterFns.length > 0, "排序属性至少有一个值!");
+		
+		String[] properties = new String[propertyGetterFns.length];
+		for(int i = 0; i < properties.length; i++) {
+			properties[i] = LambdaReflections.fnToFieldName(propertyGetterFns[i]);
+		}
+		return by(direction, nullHandling, properties);
+	}
+	
 	/**
 	 * 增加排序
 	 * @param direction 排序方向，DESC/ASC
@@ -154,10 +191,26 @@ public class Sort implements Streamable<com.yuehuanghun.mybatis.milu.data.Sort.O
 		return and(Direction.fromString(direction), properties);
 	}
 	
+	public Sort and(String direction, NullHandling nullHandling, String... properties) {
+		return and(Direction.fromString(direction), nullHandling, properties);
+	}
+	
 	public Sort and(Direction direction, String... properties) {
 		for(String prop : properties) {
 			orders.add(new Order(direction, prop));
 		}
+		return this;
+	}
+	
+	public Sort and(Direction direction, NullHandling nullHandling, String... properties) {
+		for(String prop : properties) {
+			orders.add(new Order(direction, prop, nullHandling));
+		}
+		return this;
+	}
+	
+	public <T, M> Sort and(Direction direction, SerializableFunction<T, M> propertyGetterFn) {
+		orders.add(new Order(direction, LambdaReflections.fnToFieldName(propertyGetterFn)));
 		return this;
 	}
 	
@@ -169,9 +222,39 @@ public class Sort implements Streamable<com.yuehuanghun.mybatis.milu.data.Sort.O
 		return this;
 	}
 	
+	public <T, M> Sort and(Direction direction, NullHandling nullHandling, SerializableFunction<T, M> propertyGetterFn) {
+		orders.add(new Order(direction, LambdaReflections.fnToFieldName(propertyGetterFn), nullHandling));
+		return this;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T, M> Sort and(Direction direction, NullHandling nullHandling, SerializableFunction<T, M>... propertyGetterFns) {
+		for(SerializableFunction<T, M> fn : propertyGetterFns) {
+			orders.add(new Order(direction, LambdaReflections.fnToFieldName(fn), nullHandling));
+		}
+		return this;
+	}
+	
+	public static <T, M> Sort desc(SerializableFunction<T, M> propertyGetterFn) {
+		return by(Direction.DESC, propertyGetterFn);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static <T, M> Sort desc(SerializableFunction<T, M>... propertyGetterFns) {
 		return by(Direction.DESC, propertyGetterFns);
+	}
+	
+	public static <T, M> Sort desc(NullHandling nullHandling, SerializableFunction<T, M> propertyGetterFn) {
+		return by(Direction.DESC, nullHandling, propertyGetterFn);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T, M> Sort desc(NullHandling nullHandling, SerializableFunction<T, M>... propertyGetterFns) {
+		return by(Direction.DESC, nullHandling, propertyGetterFns);
+	}
+	
+	public <T, M> Sort andDesc(SerializableFunction<T, M> propertyGetterFn) {
+		return and(Direction.DESC, propertyGetterFn);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -179,9 +262,35 @@ public class Sort implements Streamable<com.yuehuanghun.mybatis.milu.data.Sort.O
 		return and(Direction.DESC, propertyGetterFns);
 	}
 	
+	public <T, M> Sort andDesc(NullHandling nullHandling, SerializableFunction<T, M> propertyGetterFn) {
+		return and(Direction.DESC, nullHandling, propertyGetterFn);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T, M> Sort andDesc(NullHandling nullHandling, SerializableFunction<T, M>... propertyGetterFns) {
+		return and(Direction.DESC, nullHandling, propertyGetterFns);
+	}
+	
+	public static <T, M> Sort asc(SerializableFunction<T, M> propertyGetterFn) {
+		return by(Direction.ASC, propertyGetterFn);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static <T, M> Sort asc(SerializableFunction<T, M>... propertyGetterFns) {
 		return by(Direction.ASC, propertyGetterFns);
+	}
+	
+	public static <T, M> Sort asc(NullHandling nullHandling, SerializableFunction<T, M> propertyGetterFn) {
+		return by(Direction.ASC, nullHandling, propertyGetterFn);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T, M> Sort asc(NullHandling nullHandling, SerializableFunction<T, M>... propertyGetterFns) {
+		return by(Direction.ASC, nullHandling, propertyGetterFns);
+	}
+	
+	public <T, M> Sort andAsc(SerializableFunction<T, M> propertyGetterFn) {
+		return and(Direction.ASC, propertyGetterFn);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -189,20 +298,45 @@ public class Sort implements Streamable<com.yuehuanghun.mybatis.milu.data.Sort.O
 		return and(Direction.ASC, propertyGetterFns);
 	}
 	
+	public <T, M> Sort andAsc(NullHandling nullHandling, SerializableFunction<T, M> propertyGetterFn) {
+		return and(Direction.ASC, nullHandling, propertyGetterFn);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T, M> Sort andAsc(NullHandling nullHandling, SerializableFunction<T, M>... propertyGetterFns) {
+		return and(Direction.ASC, nullHandling, propertyGetterFns);
+	}
+	
 	public static Sort desc(String... properties) {
 		return by(Direction.DESC, properties);
+	}
+	
+	public static Sort desc(NullHandling nullHandling, String... properties) {
+		return by(Direction.DESC, nullHandling, properties);
 	}
 	
 	public Sort andDesc(String... properties) {
 		return and(Direction.DESC, properties);
 	}
 	
+	public Sort andDesc(NullHandling nullHandling, String... properties) {
+		return and(Direction.DESC, nullHandling, properties);
+	}
+	
 	public static Sort asc(String... properties) {
 		return by(Direction.ASC, properties);
 	}
 	
+	public static Sort asc(NullHandling nullHandling, String... properties) {
+		return by(Direction.ASC, nullHandling, properties);
+	}
+	
 	public Sort andAsc(String... properties) {
 		return and(Direction.ASC, properties);
+	}
+	
+	public Sort andAsc(NullHandling nullHandling, String... properties) {
+		return and(Direction.ASC, nullHandling, properties);
 	}
 
 	public static Sort unsorted() {
@@ -391,7 +525,7 @@ public class Sort implements Streamable<com.yuehuanghun.mybatis.milu.data.Sort.O
 			this.direction = direction == null ? DEFAULT_DIRECTION : direction;
 			this.property = property;
 			this.ignoreCase = ignoreCase;
-			this.nullHandling = nullHandling;
+			this.nullHandling = nullHandling == null ? DEFAULT_NULL_HANDLING : nullHandling;
 		}
 
 		public Direction getDirection() {

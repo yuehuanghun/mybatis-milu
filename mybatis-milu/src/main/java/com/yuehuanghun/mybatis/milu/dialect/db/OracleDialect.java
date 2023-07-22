@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 import com.yuehuanghun.mybatis.milu.data.Part.Type;
+import com.yuehuanghun.mybatis.milu.data.Sort.NullHandling;
 import com.yuehuanghun.mybatis.milu.dialect.AbstractDialect;
 import com.yuehuanghun.mybatis.milu.exception.OrmBuildingException;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
@@ -65,4 +66,10 @@ public class OracleDialect extends AbstractDialect {
 			throw new OrmBuildingException(e);
 		}
 	}
+	
+	@Override
+	public String nullValueSort(String sortExpression, String columnName, NullHandling nullHandling) {
+		return super.standardNullValueSort(sortExpression, columnName, nullHandling);
+	}
+
 }
