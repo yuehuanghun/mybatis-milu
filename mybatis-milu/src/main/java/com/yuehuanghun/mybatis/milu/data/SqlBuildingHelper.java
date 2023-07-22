@@ -481,7 +481,7 @@ public class SqlBuildingHelper {
 		
 		String[] orderArray = orders.split(",");
 		if(orderArray.length == 1) {
-			String[] orderEl = orderArray[0].trim().split("\\s");
+			String[] orderEl = orderArray[0].trim().split("\\s+");
 			Attribute attr = entity.getAttribute(orderEl[0]);
 			if(attr != null) {
 				page.setOrderBy(wrapIdentifier(attr.getColumnName(), configuration) + (orderEl.length == 1 ? StringUtils.EMPTY : Segment.SPACE + orderEl[1]));
@@ -489,7 +489,7 @@ public class SqlBuildingHelper {
 		} else {
 			Map<String, String> orderMap = new LinkedHashMap<>();
 			for(String order : orderArray) {
-				String[] orderEl = order.trim().split("\\s");
+				String[] orderEl = order.trim().split("\\s+");
 				Attribute attr = entity.getAttribute(orderEl[0]);
 				if(attr != null) {
 					orderMap.put(wrapIdentifier(attr.getColumnName(), configuration), orderEl.length == 1 ? StringUtils.EMPTY : orderEl[1]);
