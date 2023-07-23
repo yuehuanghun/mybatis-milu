@@ -22,6 +22,7 @@ import org.apache.ibatis.reflection.MetaClass;
 import org.apache.ibatis.reflection.invoker.Invoker;
 
 import com.yuehuanghun.mybatis.milu.annotation.Filler.FillMode;
+import com.yuehuanghun.mybatis.milu.exception.OrmRuntimeException;
 
 import lombok.Getter;
 
@@ -35,8 +36,10 @@ public class Filler {
 	private final AttributeValueSupplier<?> attributeValueSupplier;
 	
 	private final Class<?> fieldClass;
-	
+	@Getter
 	private final FillMode fillMode;
+	@Getter
+	private final String attrName;
 	
 	public Filler(MetaClass metaClass, Field field, AttributeValueSupplier<?> attributeValueSupplier, FillMode fillMode) {
 		String fieldName = field.getName();
@@ -49,6 +52,7 @@ public class Filler {
 		this.attributeValueSupplier = attributeValueSupplier;
 		this.fieldClass = field.getType();
 		this.fillMode = fillMode;
+		this.attrName = fieldName;
 	}
 	
 	private boolean shouldFill(Object target) {
@@ -84,7 +88,11 @@ public class Filler {
 		try {
 			setter.invoke(target, new Object[] { value });
 		} catch (IllegalAccessException | InvocationTargetException e) {
-			throw new RuntimeException(e);
+			throw new OrmRuntimeException(e);
 		}
+	}
+	
+	public Object getUpdateValue() {
+		return attributeValueSupplier.getValueOnUpdate(fieldClass);
 	}
 }

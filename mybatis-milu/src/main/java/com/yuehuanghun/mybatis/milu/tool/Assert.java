@@ -15,6 +15,8 @@
  */
 package com.yuehuanghun.mybatis.milu.tool;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
@@ -39,6 +41,33 @@ public abstract class Assert {
 	public static void notBlank(CharSequence sequence, String error) {
 		if(sequence == null || sequence.length() == 0) {
 			throw new SqlExpressionBuildingException(error);
+		}
+	}
+	
+	public static void notEmpty(Object target, String error) {
+		if(target == null) {
+			throw new SqlExpressionBuildingException(error);
+		}
+		
+		if(target instanceof CharSequence) {
+			if(((CharSequence)target).length() == 0) {
+				throw new SqlExpressionBuildingException(error);
+			}
+			return;
+		}
+		
+		if(target instanceof Collection) {
+			if(((Collection<?>)target).isEmpty()) {
+				throw new SqlExpressionBuildingException(error);
+			}
+			return;
+		}
+		
+		if(target instanceof Map) {
+			if(((Map<?, ?>)target).isEmpty()) {
+				throw new SqlExpressionBuildingException(error);
+			}
+			return;
 		}
 	}
 }

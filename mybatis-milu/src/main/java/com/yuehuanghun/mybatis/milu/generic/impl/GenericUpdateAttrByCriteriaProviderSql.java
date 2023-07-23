@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.javassist.scopedpool.SoftValueHashMap;
 import org.apache.ibatis.reflection.MetaClass;
 
@@ -82,14 +83,10 @@ public class GenericUpdateAttrByCriteriaProviderSql implements GenericProviderSq
 		Map<String, Object> queryParams = new HashMap<>();
 		predicate.renderParams(context, queryParams, 0);
 		((Map)params).putAll(queryParams);
-		
-		Map<String, Object> valueKey = new HashMap<>();
-		valueKey.put(Constants.CRITERIA, predicate);
-		valueKey.put(Constants.ATTR_NAME, attrName);
 
 		String sqlExpression = cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
 			return new SoftValueHashMap<>();
-		}).computeIfAbsent(valueKey, (key) -> {
+		}).computeIfAbsent(new CacheKey(new Object[] { predicate, attrName }), (key) -> {
 			return new UpdateSqlTemplateBuilder(context, predicate).setNullableUpdateAttrNames(Arrays.asList(attrName)).build();
 		});
 		

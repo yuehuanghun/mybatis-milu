@@ -29,6 +29,7 @@ import com.yuehuanghun.mybatis.milu.criteria.LambdaPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaQueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaStatisticPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaUpdatePredicate;
+import com.yuehuanghun.mybatis.milu.criteria.Patch;
 import com.yuehuanghun.mybatis.milu.criteria.Predicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.StatisticPredicate;
@@ -648,4 +649,44 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @return 值总和
 	 */
 	<R> R sumByLambdaCriteria(@Param(Constants.ATTR_NAME) SerializableFunction<T, R> attrNameGetter, @Param(Constants.CRITERIA) Consumer<LambdaPredicate<T>> predicate);
+	
+	/**
+	 * 补丁式更新，以id为条件
+	 * @param patch 需要被更新的属性及其值，所有指定属性都会被更新，不管值是否为null。
+	 * @param id 主键值，值不能为空
+	 * @return 影响行数
+	 */
+	int updatePatchById(@Param(Constants.PATCH) Patch patch, @Param(Constants.ID) ID id);
+
+	/**
+	 * 补丁式更新，以id为条件
+	 * @param patch 需要被更新的属性及其值，所有指定属性都会被更新，不管值是否为null。
+	 * @param ids 主键值集合，值不能为空
+	 * @return 影响行数
+	 */
+	int updatePatchByIds(@Param(Constants.PATCH) Patch patch, @Param(Constants.IDS) Collection<ID> ids);
+	
+	/**
+	 * 补丁式更新，使用动态条件
+	 * @param patch 需要被更新的属性及其值，所有指定属性都会被更新，不管值是否为null。
+	 * @param predicate 动态条件
+	 * @return
+	 */
+	int updatePatchByCriteria(@Param(Constants.PATCH) Patch patch, @Param(Constants.CRITERIA) Predicate predicate);
+
+	/**
+	 * 补丁式更新，使用动态条件
+	 * @param patch 需要被更新的属性及其值，所有指定属性都会被更新，不管值是否为null。
+	 * @param predicate 动态条件
+	 * @return
+	 */
+	int updatePatchByCriteria(@Param(Constants.PATCH) Patch patch, @Param(Constants.CRITERIA) Consumer<Predicate> predicate);
+
+	/**
+	 * 补丁式更新，使用动态条件
+	 * @param patch 需要被更新的属性及其值，所有指定属性都会被更新，不管值是否为null。
+	 * @param predicate 动态条件
+	 * @return
+	 */
+	int updatePatchByLambdaCriteria(@Param(Constants.PATCH) Patch patch, @Param(Constants.CRITERIA) Consumer<LambdaPredicate<T>> predicate);
 }

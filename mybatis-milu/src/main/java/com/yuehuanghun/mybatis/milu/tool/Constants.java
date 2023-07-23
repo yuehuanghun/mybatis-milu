@@ -64,6 +64,8 @@ public interface Constants {
 	
 	String PAGE = "page";
 	
+	String PATCH = "patch";
+	
 	String ATTR_NAME = "attrName";
 	
 	String VALUE = "value";

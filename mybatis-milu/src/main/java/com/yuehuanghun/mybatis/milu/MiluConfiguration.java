@@ -82,6 +82,10 @@ import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdateAttrByLambdaCriter
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdateByCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdateByIdProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdateByLambdaCriteriaProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdatePatchByCriteriaProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdatePatchByIdProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdatePatchByIdsProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdatePatchByLambdaCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.id.IdentifierGenerator;
 import com.yuehuanghun.mybatis.milu.id.impl.UUIDIdentifierGenerator;
 import com.yuehuanghun.mybatis.milu.id.impl.snowflake.SnowflakeIdentifierGenerator;
@@ -191,6 +195,10 @@ public class MiluConfiguration extends Configuration {
 		this.addGenericProviderSql(new GenericSumByLambdaCriteriaProviderSql());
 		this.addGenericProviderSql(new GenericFindByCriteriaUnionProviderSql());
 		this.addGenericProviderSql(new GenericFindByLambdaCriteriaUnionProviderSql());
+		this.addGenericProviderSql(new GenericUpdatePatchByIdProviderSql());
+		this.addGenericProviderSql(new GenericUpdatePatchByIdsProviderSql());
+		this.addGenericProviderSql(new GenericUpdatePatchByCriteriaProviderSql());
+		this.addGenericProviderSql(new GenericUpdatePatchByLambdaCriteriaProviderSql());
 	}
 	
 	private void registerDefaultIdentifierGenerator() {

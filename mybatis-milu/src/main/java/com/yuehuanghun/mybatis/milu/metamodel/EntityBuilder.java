@@ -94,7 +94,7 @@ public class EntityBuilder {
 	private final Class<?> entityClass;
 	
 	private Set<Class<?>> referenceEntityClassSet = new HashSet<>();
-	private static final ReflectorFactory REFLECTOR_FACTORY = new DefaultReflectorFactory();
+	public static final ReflectorFactory REFLECTOR_FACTORY = new DefaultReflectorFactory();
 	
 	private EntityBuilder(Class<?> entityClass, MiluConfiguration configuration) {
 		this.entityClass = entityClass;
