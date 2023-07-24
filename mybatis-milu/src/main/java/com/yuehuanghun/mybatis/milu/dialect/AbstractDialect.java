@@ -36,9 +36,11 @@ import javax.sql.DataSource;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
+import com.yuehuanghun.mybatis.milu.criteria.FulltextMode;
 import com.yuehuanghun.mybatis.milu.data.Part.Type;
 import com.yuehuanghun.mybatis.milu.data.Sort.NullHandling;
 import com.yuehuanghun.mybatis.milu.exception.OrmBuildingException;
+import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 import com.yuehuanghun.mybatis.milu.tool.Assert;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
@@ -212,5 +214,15 @@ public abstract class AbstractDialect implements Dialect {
 			return sortExpression + " NULLS LAST";
 		}
 		return sortExpression;
+	}
+
+	@Override
+	public String getFulltextExpression(FulltextMode fulltextMode) {
+		throw new SqlExpressionBuildingException("当前数据库未支持全文搜索");
+	}
+
+	@Override
+	public String getFullTextModeExpression(FulltextMode fulltextMode) {
+		return StringUtils.EMPTY;
 	}
 }

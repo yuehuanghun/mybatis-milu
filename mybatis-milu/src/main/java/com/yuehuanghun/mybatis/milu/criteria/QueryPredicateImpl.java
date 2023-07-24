@@ -15,6 +15,7 @@
  */
 package com.yuehuanghun.mybatis.milu.criteria;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -588,4 +589,17 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		super.byExample(example);
 		return this;
 	}
+
+	@Override
+	public QueryPredicate fulltext(Collection<String> attrNames, String keywordExpression) {
+		super.fulltext(attrNames, keywordExpression);
+		return this;
+	}
+
+	@Override
+	public QueryPredicate fulltext(Collection<String> attrNames, String keywordExpression, FulltextMode fulltextMode) {
+		super.fulltext(attrNames, keywordExpression, fulltextMode);
+		return this;
+	}
+	
 }

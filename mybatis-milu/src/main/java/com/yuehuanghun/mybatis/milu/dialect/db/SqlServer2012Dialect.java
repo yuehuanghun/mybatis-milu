@@ -20,6 +20,7 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import com.yuehuanghun.mybatis.milu.criteria.FulltextMode;
 import com.yuehuanghun.mybatis.milu.data.Part.Type;
 import com.yuehuanghun.mybatis.milu.data.Sort.NullHandling;
 import com.yuehuanghun.mybatis.milu.dialect.AbstractDialect;
@@ -61,4 +62,11 @@ public class SqlServer2012Dialect extends AbstractDialect {
 		return super.standardNullValueSort(sortExpression, columnName, nullHandling);
 	}
 
+	@Override
+	public String getFulltextExpression(FulltextMode fulltextMode) {
+		if(fulltextMode == FulltextMode.SQLSERVER_FREETEXT) {
+			return "FREETEXT ((${columns}), ${keyword})";
+		}
+		return "CONTAINS ((${columns}), ${keyword})";
+	}
 }

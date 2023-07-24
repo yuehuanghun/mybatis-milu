@@ -15,6 +15,7 @@
  */
 package com.yuehuanghun.mybatis.milu.criteria;
 
+import java.util.Collection;
 import java.util.function.Consumer;
 
 import javax.persistence.LockModeType;
@@ -23,9 +24,9 @@ import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.LambdaReflections;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.SerializableFunction;
+import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.data.Sort.NullHandling;
-import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 
 import lombok.Getter;
@@ -724,6 +725,20 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 	@Override
 	public LambdaQueryPredicate<T> byExample(T example) {
 		getDelegate().byExample(example);
+		return this;
+	}
+
+	@Override
+	public LambdaQueryPredicate<T> fulltext(Collection<SerializableFunction<T, ?>> attrNameGetterFn,
+			String keywordExpression) {
+		super.fulltext(attrNameGetterFn, keywordExpression);
+		return this;
+	}
+
+	@Override
+	public LambdaQueryPredicate<T> fulltext(Collection<SerializableFunction<T, ?>> attrNameGetterFn,
+			String keywordExpression, FulltextMode fulltextMode) {
+		super.fulltext(attrNameGetterFn, keywordExpression, fulltextMode);
 		return this;
 	}
 }

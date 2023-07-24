@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import javax.persistence.LockModeType;
 import javax.sql.DataSource;
 
+import com.yuehuanghun.mybatis.milu.criteria.FulltextMode;
 import com.yuehuanghun.mybatis.milu.data.Part.Type;
 import com.yuehuanghun.mybatis.milu.data.Sort.NullHandling;
 import com.yuehuanghun.mybatis.milu.dialect.AbstractDialect;
@@ -65,6 +66,11 @@ public class PostgreSqlDialect extends AbstractDialect {
 	@Override
 	public String nullValueSort(String sortExpression, String columnName, NullHandling nullHandling) {
 		return super.standardNullValueSort(sortExpression, columnName, nullHandling);
+	}
+
+	@Override
+	public String getFulltextExpression(FulltextMode fulltextMode) {
+		return "${columns} @@ to_tsquery(${keyword})";
 	}
 
 }

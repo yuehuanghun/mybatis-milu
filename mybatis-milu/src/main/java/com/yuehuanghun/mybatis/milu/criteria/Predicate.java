@@ -15,6 +15,7 @@
  */
 package com.yuehuanghun.mybatis.milu.criteria;
 
+import java.util.Collection;
 import java.util.function.Consumer;
 
 import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
@@ -430,4 +431,28 @@ public interface Predicate extends Condition {
 	 * @return 当前对象
 	 */
 	Predicate byExample(Object example);
+	
+	/**
+	 * 全文搜索<br>
+	 * 对应数据库可能需要安装相应插件、启用插件、建立全文索引才可用<br>
+	 * 由于不同的数据库全文搜索的表达方式差别大，所以如果切换到其它类型数据库，可能要调整查询参数
+	 * 
+	 * @param attrNames 全文索引属性（列）
+	 * @param keywordExpression 关键字表达式，不同的数据库的表达式不尽相同，请注意区分
+	 * @return 当前对象
+	 */
+	Predicate fulltext(Collection<String> attrNames, String keywordExpression);
+	
+	/**
+	 * 全文搜索<br>
+	 * 对应数据库可能需要安装相应插件、启用插件、建立全文索引才可用<br>
+	 * 由于不同的数据库全文搜索的表达方式差别大，所以如果切换到其它类型数据库，可能要调整查询参数
+	 * 
+	 * @param attrNames 全文索引属性（列）
+	 * @param keywordExpression 关键字表达式，不同的数据库的表达式不尽相同，请注意区分
+	 * @param fulltextMode 全文索引模式
+	 * @return 当前对象
+	 */
+	Predicate fulltext(Collection<String> attrNames, String keywordExpression, FulltextMode fulltextMode);
+
 }

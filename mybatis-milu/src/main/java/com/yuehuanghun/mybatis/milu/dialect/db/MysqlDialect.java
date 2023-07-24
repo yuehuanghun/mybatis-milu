@@ -21,9 +21,11 @@ import java.sql.SQLException;
 import javax.persistence.LockModeType;
 import javax.sql.DataSource;
 
+import com.yuehuanghun.mybatis.milu.criteria.FulltextMode;
 import com.yuehuanghun.mybatis.milu.data.Sort.NullHandling;
 import com.yuehuanghun.mybatis.milu.dialect.AbstractDialect;
 import com.yuehuanghun.mybatis.milu.exception.OrmBuildingException;
+import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
 /**
  * MYSQL 数据库
@@ -69,5 +71,21 @@ public class MysqlDialect extends AbstractDialect {
 			return " IF(ISNULL(" + columnName + "), 1, 0) ASC, " + sortExpression;
 		}
 		return sortExpression;
+	}
+
+	@Override
+	public String getFulltextExpression(FulltextMode fulltextMode) {
+		return "MATCH(${columns}) AGAINST(${keyword}) ${mode}";
+	}
+
+	@Override
+	public String getFullTextModeExpression(FulltextMode fulltextMode) {
+		if(fulltextMode == FulltextMode.MYSQL_BOOLEAN) {
+			return " IN BOOLEAN MODE";
+		}
+		if(fulltextMode == FulltextMode.MYSQL_NATURAL_LANG) {
+			return " IN NATURAL LANGUAGE MODE";
+		}
+		return StringUtils.EMPTY;
 	}
 }

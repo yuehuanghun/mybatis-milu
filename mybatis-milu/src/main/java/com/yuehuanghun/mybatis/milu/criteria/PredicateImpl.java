@@ -534,5 +534,15 @@ public class PredicateImpl implements Predicate {
 		
 		return this.and(SqlBuildingHelper.exampleToPredicate(entity, example));
 	}
+
+	@Override
+	public Predicate fulltext(Collection<String> attrNames, String keywordExpression) {
+		return this.and(new FullText(attrNames, keywordExpression));
+	}
+
+	@Override
+	public Predicate fulltext(Collection<String> attrNames, String keywordExpression, FulltextMode fulltextMode) {
+		return this.and(new FullText(attrNames, keywordExpression, fulltextMode));
+	}
 	
 }

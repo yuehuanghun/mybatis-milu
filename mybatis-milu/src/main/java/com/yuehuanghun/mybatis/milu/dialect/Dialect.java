@@ -20,6 +20,7 @@ import java.util.Map;
 import javax.persistence.LockModeType;
 import javax.sql.DataSource;
 
+import com.yuehuanghun.mybatis.milu.criteria.FulltextMode;
 import com.yuehuanghun.mybatis.milu.data.Part.Type;
 import com.yuehuanghun.mybatis.milu.data.Sort.NullHandling;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
@@ -98,4 +99,8 @@ public interface Dialect {
 	 * @return 添加空值排序后的排序
 	 */
 	String nullValueSort(String sortExpression, String columnName, NullHandling nullHandling);
+	
+	String getFulltextExpression(FulltextMode fulltextMode);
+	
+	String getFullTextModeExpression(FulltextMode fulltextMode);
 }

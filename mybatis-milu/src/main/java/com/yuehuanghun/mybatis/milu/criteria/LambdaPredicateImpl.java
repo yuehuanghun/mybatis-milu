@@ -15,10 +15,13 @@
  */
 package com.yuehuanghun.mybatis.milu.criteria;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.LambdaReflections;
@@ -597,5 +600,21 @@ public class LambdaPredicateImpl<T> implements LambdaPredicate<T> {
 	@Override
 	public boolean isEmpty() {
 		return getDelegate().isEmpty();
+	}
+
+	@Override
+	public LambdaPredicate<T> fulltext(Collection<SerializableFunction<T, ?>> attrNameGetterFn,
+			String keywordExpression) {
+		List<String> attrNames = attrNameGetterFn.stream().map(fn -> LambdaReflections.fnToFieldName(fn)).collect(Collectors.toList());
+		getDelegate().fulltext(attrNames, keywordExpression);
+		return this;
+	}
+
+	@Override
+	public LambdaPredicate<T> fulltext(Collection<SerializableFunction<T, ?>> attrNameGetterFn,
+			String keywordExpression, FulltextMode fulltextMode) {
+		List<String> attrNames = attrNameGetterFn.stream().map(fn -> LambdaReflections.fnToFieldName(fn)).collect(Collectors.toList());
+		getDelegate().fulltext(attrNames, keywordExpression, fulltextMode);
+		return this;
 	}
 }
