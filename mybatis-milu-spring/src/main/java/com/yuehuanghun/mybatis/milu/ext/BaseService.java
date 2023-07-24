@@ -29,6 +29,7 @@ import com.yuehuanghun.mybatis.milu.criteria.LambdaPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaQueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaStatisticPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaUpdatePredicate;
+import com.yuehuanghun.mybatis.milu.criteria.Patch;
 import com.yuehuanghun.mybatis.milu.criteria.Predicate;
 import com.yuehuanghun.mybatis.milu.criteria.Predicates;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
@@ -776,5 +777,55 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 */
 	default <R> R sumByLambdaCriteria(SerializableFunction<T, R> attrNameGetter, Consumer<LambdaPredicate<T>> predicate) {
 		return getDomainMapper().sumByLambdaCriteria(attrNameGetter, predicate);
+	}
+
+	/**
+	 * 补丁式更新，以id为条件
+	 * @param patch 需要被更新的属性及其值，所有指定属性都会被更新，不管值是否为null。
+	 * @param id 主键值，值不能为空
+	 * @return 影响行数
+	 */
+	default int updatePatchById(Patch patch, ID id) {
+		return getDomainMapper().updatePatchById(patch, id);
+	}
+
+	/**
+	 * 补丁式更新，以id为条件
+	 * @param patch 需要被更新的属性及其值，所有指定属性都会被更新，不管值是否为null。
+	 * @param ids 主键值集合，值不能为空
+	 * @return 影响行数
+	 */
+	default int updatePatchByIds(Patch patch, Collection<ID> ids) {
+		return getDomainMapper().updatePatchByIds(patch, ids);
+	}
+	
+	/**
+	 * 补丁式更新，使用动态条件
+	 * @param patch 需要被更新的属性及其值，所有指定属性都会被更新，不管值是否为null。
+	 * @param predicate 动态条件
+	 * @return
+	 */
+	default int updatePatchByCriteria(Patch patch, Predicate predicate) {
+		return getDomainMapper().updatePatchByCriteria(patch, predicate);
+	}
+
+	/**
+	 * 补丁式更新，使用动态条件
+	 * @param patch 需要被更新的属性及其值，所有指定属性都会被更新，不管值是否为null。
+	 * @param predicate 动态条件
+	 * @return
+	 */
+	default int updatePatchByCriteria(Patch patch, Consumer<Predicate> predicate) {
+		return getDomainMapper().updatePatchByCriteria(patch, predicate);
+	}
+
+	/**
+	 * 补丁式更新，使用动态条件
+	 * @param patch 需要被更新的属性及其值，所有指定属性都会被更新，不管值是否为null。
+	 * @param predicate 动态条件
+	 * @return
+	 */
+	default int updatePatchByLambdaCriteria(Patch patch, Consumer<LambdaPredicate<T>> predicate) {
+		return getDomainMapper().updatePatchByLambdaCriteria(patch, predicate);
 	}
 }
