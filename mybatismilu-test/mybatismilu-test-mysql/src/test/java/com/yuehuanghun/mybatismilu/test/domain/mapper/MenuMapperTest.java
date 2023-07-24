@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +18,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.yuehuanghun.AppTest;
+import com.yuehuanghun.mybatis.milu.criteria.Patch;
+import com.yuehuanghun.mybatis.milu.data.Sort;
+import com.yuehuanghun.mybatis.milu.data.Sort.NullHandling;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Menu;
 
 @SpringBootTest(classes = AppTest.class)
@@ -107,5 +111,101 @@ public class MenuMapperTest {
 		assertNull(list.get(0).getParent());
 		assertNotNull(list.get(0).getChildrens());
 		assertEquals(list.get(0).getChildrens().size(), 2);
+	}
+	
+	@Test
+	public void testNullValueSort() {
+		List<Menu> list = menuMapper.findByCriteria(p -> p.orderAsc(NullHandling.NULLS_FIRST, "deleteTime"));
+		
+		assertEquals(list.size(), 6);
+		assertNull(list.get(0).getDeleteTime());
+		
+		list = menuMapper.findByCriteria(p -> p.orderDesc(NullHandling.NULLS_FIRST, "deleteTime").orderAsc("id"));
+		
+		assertEquals(list.size(), 6);
+		assertNull(list.get(0).getDeleteTime());
+		
+		list = menuMapper.findByCriteria(p -> p.orderAsc(NullHandling.NULLS_LAST, "deleteTime"));
+		
+		assertEquals(list.size(), 6);
+		assertNotNull(list.get(0).getDeleteTime());
+		assertNull(list.get(4).getDeleteTime());
+		
+		list = menuMapper.findByLambdaCriteria(p -> p.orderAsc(NullHandling.NULLS_FIRST, Menu::getDeleteTime));
+		assertEquals(list.size(), 6);
+		assertNull(list.get(0).getDeleteTime());
+		
+		list = menuMapper.findByLambdaCriteria(p -> p.orderDesc(NullHandling.NULLS_FIRST, Menu::getDeleteTime).orderAsc(Menu::getId));
+		assertEquals(list.size(), 6);
+		assertNull(list.get(0).getDeleteTime());
+		
+		list = menuMapper.findByLambdaCriteria(p -> p.orderAsc(NullHandling.NULLS_LAST, Menu::getDeleteTime));
+		assertEquals(list.size(), 6);
+		assertNotNull(list.get(0).getDeleteTime());
+		assertNull(list.get(4).getDeleteTime());
+		
+		list = menuMapper.findByCriteria(p -> p.order(Sort.desc(NullHandling.NULLS_FIRST, "deleteTime").andAsc("id")));
+		
+		assertEquals(list.size(), 6);
+		assertNull(list.get(0).getDeleteTime());
+		
+		list = menuMapper.findByCriteria(p -> p.order(Sort.desc(NullHandling.NULLS_LAST, "deleteTime")));
+		assertEquals(list.size(), 6);
+		assertNotNull(list.get(0).getDeleteTime());
+		assertNull(list.get(4).getDeleteTime());
+	}
+	
+	@Test
+	@Transactional
+	public void testPatchUpdateById() {
+		Patch patch = new Patch().add("name", "一级11");
+		menuMapper.updatePatchById(patch, 1L);
+		
+		Optional<Menu> menuOpt = menuMapper.findById(1L);
+		assertTrue(menuOpt.isPresent());
+		assertEquals("一级11", menuOpt.get().getName());
+	}
+	
+	@Test
+	@Transactional
+	public void testPatchUpdateByIds() {
+		Patch patch = new Patch().add("name", "一级11");
+		menuMapper.updatePatchByIds(patch, Arrays.asList(1L, 2L));
+		
+		Optional<Menu> menuOpt = menuMapper.findById(1L);
+		assertTrue(menuOpt.isPresent());
+		assertEquals("一级11", menuOpt.get().getName());
+		
+		menuOpt = menuMapper.findById(2L);
+		assertTrue(menuOpt.isPresent());
+		assertEquals("一级11", menuOpt.get().getName());
+	}
+	
+	@Test
+	@Transactional
+	public void testPatchUpdateByCriteria() {
+		Patch patch = new Patch().add("name", "一级11");
+		menuMapper.updatePatchByCriteria(patch, p -> p.eq("id", 1L));
+		
+		Optional<Menu> menuOpt = menuMapper.findById(1L);
+		assertTrue(menuOpt.isPresent());
+		assertEquals("一级11", menuOpt.get().getName());		
+
+		menuMapper.updatePatchByCriteria(patch, p -> p.startWith("name", "二级"));
+		
+		menuOpt = menuMapper.findById(3L);
+		assertTrue(menuOpt.isPresent());
+		assertEquals("一级11", menuOpt.get().getName());
+	}
+	
+	@Test
+	@Transactional
+	public void testPatchUpdateByLambdaCriteria() {
+		Patch patch = new Patch().add(Menu::getName, "一级11");
+		menuMapper.updatePatchByLambdaCriteria(patch, p -> p.eq(Menu::getId, 1L));
+		
+		Optional<Menu> menuOpt = menuMapper.findById(1L);
+		assertTrue(menuOpt.isPresent());
+		assertEquals("一级11", menuOpt.get().getName());
 	}
 }

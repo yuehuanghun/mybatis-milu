@@ -88,7 +88,7 @@ public class StudentMapperTest {
 
 	@Test
 	public void testFindAllAndSort() {
-		List<Student> result = studentMapper.findAllAndSort(new Sort(Direction.DESC, "addTime"));
+		List<Student> result = studentMapper.findAllAndSort(Sort.by(Direction.DESC, "addTime"));
 		assertTrue(result.size() > 0);
 	};
 
@@ -137,7 +137,7 @@ public class StudentMapperTest {
 		Student example = new Student();
 		example.setName("张");
 		
-		Sort sort = new Sort(Direction.DESC, "addTime");
+		Sort sort = Sort.by(Direction.DESC, "addTime");
 		
 		List<Student> result = studentMapper.findByExample(example, sort);
 		assertTrue(result.size() > 0);
@@ -182,7 +182,7 @@ public class StudentMapperTest {
 		Student example = new Student();
 		example.setName("张");
 		
-		Sort sort = new Sort(Direction.DESC, "addTime");
+		Sort sort = Sort.by(Direction.DESC, "addTime");
 		
 		List<Student> result = studentMapper.findByExampleAndSort(example, sort);
 		assertTrue(result.size() > 0);
@@ -212,7 +212,7 @@ public class StudentMapperTest {
 	@Test
 	public void testFindUniqueByExampleAndSort() {
 		Student example = new Student();
-		Sort sort = new Sort(Direction.DESC, "id");
+		Sort sort = Sort.by(Direction.DESC, "id");
 		
 		Student student = studentMapper.findUniqueByExampleAndSort(example, sort, new PageRequest(1));
 		

@@ -42,4 +42,6 @@ public class Teacher {
 	
 	@LogicDelete(provider = MyLogicDeleteProvider.class)
 	private String isDeleted;
+	
+	private String cv;
 }

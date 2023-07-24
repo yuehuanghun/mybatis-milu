@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -255,4 +256,19 @@ public class TeacherMapperTest {
 		maxAge = teacherMapper.sumByLambdaCriteria(Teacher::getAge, p -> p.gt(Teacher::getId, 100));
 		assertNull(maxAge);
 	}
+	
+//	@Test
+//	public void testFindByCriteria_Fulltext() {
+//		List<Teacher> list = teacherMapper.findByCriteria(p -> p.fulltext(Arrays.asList("cv"), "教学"));
+//		assertEquals(list.size(), 1);
+//		
+//		list = teacherMapper.findByCriteria(p -> p.fulltext(Arrays.asList("cv"), "教学 稳重"));
+//		assertEquals(list.size(), 2);
+//		
+//		list = teacherMapper.findByCriteria(p -> p.fulltext(Arrays.asList("cv"), "教学 稳重").eq("id", 1L));
+//		assertEquals(list.size(), 1);
+//		
+//		list = teacherMapper.findByLambdaCriteria(p -> p.fulltext(Arrays.asList(Teacher::getCv), "教学 稳重"));
+//		assertEquals(list.size(), 2);
+//	}
 }
