@@ -101,7 +101,7 @@ public class PredicateImpl implements Predicate {
 			if(((PredicateImpl)conditions[0]).isEmpty()) {
 				return this;
 			}
-			conditionList.add(((PredicateImpl)conditions[0]).setDepth(getDepth() + 1));
+			conditionList.add(new PredicateImpl(Logic.OR, conditions).setDepth(getDepth() + 1));
 		} else if(conditions.length > 0) {
 			conditionList.add(new PredicateImpl(Logic.OR, conditions).setDepth(getDepth() + 1));	
 		}
