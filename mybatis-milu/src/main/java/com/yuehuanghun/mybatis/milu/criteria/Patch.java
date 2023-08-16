@@ -49,12 +49,25 @@ public class Patch {
 	
 	/**
 	 * 从实体类实例中提取的属性及其值
-	 * @param entity 实体类实例
+	 * @param entity 实体类实例或Map实例
 	 * @param includeAttrs 需提取的属性
 	 * @return 当前对象
 	 */
+	@SuppressWarnings("rawtypes")
 	public Patch from(Object entity, String... includeAttrs) {
-		if(entity != null && includeAttrs.length > 0) {
+		if(entity == null) {
+			return this;
+		}
+		
+		if(entity instanceof Map) {
+			for(String attr : includeAttrs) {
+				if(((Map) entity).containsKey(attr)) {
+					container.put(attr, ((Map) entity).get(attr));
+				}
+			}
+		}
+		
+		if(includeAttrs.length > 0) {
 			MetaClass metaClass = MetaClass.forClass(entity.getClass(), EntityBuilder.REFLECTOR_FACTORY);
 			for(String attr : includeAttrs) {
 				Invoker invoker = metaClass.getGetInvoker(attr);
@@ -65,6 +78,16 @@ public class Patch {
 				}
 			}
 		}
+		return this;
+	}
+	
+	public Patch from(Map<String, Object> params) {
+		if(params == null) {
+			return this;
+		}
+		
+		container.putAll(params);
+		
 		return this;
 	}
 	
