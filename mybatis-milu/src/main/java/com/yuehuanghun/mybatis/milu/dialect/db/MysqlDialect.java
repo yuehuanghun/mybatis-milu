@@ -49,12 +49,23 @@ public class MysqlDialect extends AbstractDialect {
 	}
 
 	@Override
-	protected String getCatalog(DataSource dataSource) {
+	protected String getCatalog(DataSource dataSource, String catalog, String schema) {
+		if(StringUtils.isNotBlank(catalog)) {
+			return catalog;
+		}
+		if(StringUtils.isNotBlank(schema)) {
+			return schema;
+		}
 		try (Connection conn = dataSource.getConnection()) {
 			return queryForString("SELECT database()", conn);
 		} catch (SQLException e) {
 			throw new OrmBuildingException(e);
 		}
+	}
+
+	@Override
+	protected String getSchema(DataSource dataSource, String catalog, String schema) {
+		return this.getCatalog(dataSource, catalog, schema);
 	}
 
 	@Override

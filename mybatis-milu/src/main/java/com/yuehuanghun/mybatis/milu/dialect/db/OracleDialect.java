@@ -26,6 +26,7 @@ import com.yuehuanghun.mybatis.milu.data.Sort.NullHandling;
 import com.yuehuanghun.mybatis.milu.dialect.AbstractDialect;
 import com.yuehuanghun.mybatis.milu.exception.OrmBuildingException;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
+import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
 /**
  * ORACLE
@@ -60,7 +61,10 @@ public class OracleDialect extends AbstractDialect {
 	}
 
 	@Override
-	protected String getSchema(DataSource dataSource) {
+	protected String getSchema(DataSource dataSource, String catalog, String schema) {
+		if(StringUtils.isNotBlank(schema)) {
+			return schema;
+		}
 		try (Connection conn = dataSource.getConnection()) {
 			return queryForString("SELECT USER FROM DUAL", conn);
 		} catch (SQLException e) {

@@ -26,6 +26,7 @@ import com.yuehuanghun.mybatis.milu.data.Part.Type;
 import com.yuehuanghun.mybatis.milu.data.Sort.NullHandling;
 import com.yuehuanghun.mybatis.milu.dialect.AbstractDialect;
 import com.yuehuanghun.mybatis.milu.exception.OrmBuildingException;
+import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
 /**
  * PostgreSql
@@ -55,7 +56,10 @@ public class PostgreSqlDialect extends AbstractDialect {
 	}
 
 	@Override
-	protected String getCatalog(DataSource dataSource) {
+	protected String getCatalog(DataSource dataSource, String catalog, String schema) {
+		if(StringUtils.isNotBlank(catalog)) {
+			return catalog;
+		}
 		try (Connection conn = dataSource.getConnection()) {
 			return queryForString("SELECT current_database()", conn);
 		} catch (SQLException e) {

@@ -135,12 +135,12 @@ public abstract class AbstractDialect implements Dialect {
 		return functionMap.get(function);
 	}
 	
-	protected String getCatalog(DataSource dataSource) {
-		return null;
+	protected String getCatalog(DataSource dataSource, String catalog, String schema) {
+		return catalog;
 	}
 	
-	protected String getSchema(DataSource dataSource) {
-		return null;
+	protected String getSchema(DataSource dataSource, String catalog, String schema) {
+		return schema;
 	}
 	
 	protected String queryForString(String sql, Connection conn) {
@@ -179,7 +179,7 @@ public abstract class AbstractDialect implements Dialect {
 		Map<String, Integer> map = new HashMap<>();
 		try (Connection conn = dataSource.getConnection()) {
 			DatabaseMetaData dbMetaData = conn.getMetaData();
-			ResultSet columnRs = dbMetaData.getColumns(StringUtils.defaultIfBlank(catalog, () -> getCatalog(dataSource)), StringUtils.defaultIfBlank(schema, () -> getSchema(dataSource)), tableName, null);
+			ResultSet columnRs = dbMetaData.getColumns(getCatalog(dataSource, catalog, schema), getSchema(dataSource, catalog, schema), tableName, null);
             
 			while(columnRs.next()) {
 				String columnName = columnRs.getString("COLUMN_NAME");
