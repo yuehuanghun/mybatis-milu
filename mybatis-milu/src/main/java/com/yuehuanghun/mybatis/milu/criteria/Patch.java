@@ -37,6 +37,10 @@ public class Patch {
 	private final Map<String, Object> container = new LinkedHashMap<>();
 	private final static Object[] EMPTY_OBJECT_ARRAY = new Object[0];
 	
+	public static Patch newInstance() {
+		return new Patch();
+	}
+	
 	public Patch add(String attrName, Object attrValue) {
 		container.put(attrName, attrValue);
 		return this;
@@ -65,6 +69,7 @@ public class Patch {
 					container.put(attr, ((Map) entity).get(attr));
 				}
 			}
+			return this;
 		}
 		
 		if(includeAttrs.length > 0) {
@@ -102,7 +107,7 @@ public class Patch {
 	 * @return 新实例
 	 */
 	public static Patch of(Object entity, String... includeAttrs) {
-		return new Patch().from(entity, includeAttrs);
+		return newInstance().from(entity, includeAttrs);
 	}
 	
 	public void forEach(BiConsumer<String, Object> action) {
