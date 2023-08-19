@@ -228,6 +228,7 @@ public class StudentMapperTest {
 		int result = studentMapper.insert(student);
 		assertTrue(result == 1);
 		assertNotNull(student.getAddTime());
+		assertEquals(student.getIsDeleted(), Boolean.FALSE);
 	};
 
 	@Test
@@ -252,6 +253,7 @@ public class StudentMapperTest {
 		assertTrue(result == 2);
 		assertNotNull(student.getId());
 		assertNotNull(student.getAddTime());
+		assertEquals(student.getIsDeleted(), Boolean.FALSE);
 	};
 
 	@Test

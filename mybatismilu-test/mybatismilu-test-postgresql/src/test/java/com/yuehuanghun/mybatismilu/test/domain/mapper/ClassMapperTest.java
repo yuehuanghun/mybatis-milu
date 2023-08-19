@@ -242,6 +242,7 @@ public class ClassMapperTest {
 		clazz.setData(Arrays.asList(3L, 4L, 5L, 6L));
 		
 		classMapper.insert(clazz);
+		assertEquals(clazz.getIsDeleted(), "N");
 		
 		Optional<Classs> clazzOpt = classMapper.findById(clazz.getId());
 		assertTrue(clazzOpt.isPresent());
@@ -269,6 +270,7 @@ public class ClassMapperTest {
 		
 		int effect = classMapper.batchInsert(classList);
 		assertEquals(effect, 2);
+		assertEquals(clazz.getIsDeleted(), "N");
 		
 		Optional<Classs> clazzOpt = classMapper.findById(clazz.getId());
 		assertTrue(clazzOpt.isPresent());

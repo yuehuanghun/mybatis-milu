@@ -382,6 +382,9 @@ public class ClassMapperTest {
 		
 		classList = classMapper.findByCriteria(p -> p.eq("name", "一年级").deleted().or(op -> op.eq("name", "二年级").undeleted()));
 		assertEquals(classList.size(), 1);
+		
+		classList = classMapper.findByLambdaCriteria(p -> p.eq(Classs::getName, "一年级").orP(op -> op.eq("name", "二年级")));
+		assertEquals(classList.size(), 2);
 	}
 	
 	@Test
@@ -393,5 +396,26 @@ public class ClassMapperTest {
 		
 		Optional<Classs> clazz = classMapper.findById(1L);
 		assertEquals(clazz.get().getIsDeleted(), "N");
+	}
+	
+	@Test
+	@Transactional
+	public void testInsertAutoSetDeleteField() {
+		Classs clazz = new Classs();
+		clazz.setName("六年级");
+		
+		classMapper.insert(clazz);
+		
+		assertEquals("N", clazz.getIsDeleted());
+		
+		clazz = new Classs();
+		clazz.setName("六年级");
+		
+		Classs clazz2 = new Classs();
+		clazz2.setName("五年级");
+		
+		classMapper.batchInsert(Arrays.asList(clazz, clazz2));
+		assertEquals("N", clazz.getIsDeleted());
+		assertEquals("N", clazz2.getIsDeleted());
 	}
 }
