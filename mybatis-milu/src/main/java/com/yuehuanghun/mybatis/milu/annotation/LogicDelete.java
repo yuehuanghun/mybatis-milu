@@ -11,7 +11,8 @@ import com.yuehuanghun.mybatis.milu.tool.logicdel.LogicDeleteProvider;
 /**
  * 逻辑删除声明<br>
  * 作为AttributeOptions的属性注解在实体类属性上或者直接注解在实体类属性上<br>
- * 允许声明在实体类的多个属性上
+ * 允许声明在实体类的多个属性上<br>
+ * 插入数据时自动填充声明属性值为resumeValue的值（当属性值为null时），从1.6.1开始。
  * 
  * @see com.yuehuanghun.mybatis.milu.annotation.AttributeOptions
  * @see com.yuehuanghun.mybatis.milu.BaseMapper#logicDeleteById
@@ -50,4 +51,11 @@ public @interface LogicDelete {
 	 * @return true/false
 	 */
 	boolean main() default true;
+	
+	/**
+	 * 是否自动填充，默认true。<br>
+	 * 当为true时，在插入数据时如果声明属性值为null，则自动填充属性值为resumeValue的值
+	 * @return true/false
+	 */
+	boolean autoFill() default true;
 }

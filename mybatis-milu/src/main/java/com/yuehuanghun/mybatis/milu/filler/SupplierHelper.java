@@ -15,24 +15,40 @@
  */
 package com.yuehuanghun.mybatis.milu.filler;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 
+@SuppressWarnings("rawtypes")
 public class SupplierHelper {
-	private static final Map<Class<?>, AttributeValueSupplier<?>> cache = new ConcurrentHashMap<>();
+	private static final Map<Class<?>, AttributeValueSupplier<?>> classSupplierCache = new HashMap<>();
+	private static final Map<Object, AttributeValueSupplier> valueSupplierCache = new HashMap<>();
 	private SupplierHelper() {
 		
 	}
 	
 	public final static AttributeValueSupplier<?> getSupplier(Class<? extends AttributeValueSupplier<?>> supplierClass){
-		return cache.computeIfAbsent(supplierClass, (key) -> {
+		return classSupplierCache.computeIfAbsent(supplierClass, (key) -> {
 			try {
 				return supplierClass.newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {
 				throw new SqlExpressionBuildingException("实例化AttributeValueSupplier失败", e);
 			}
 		});
+	}
+	
+	@SuppressWarnings("unchecked")
+	public final static <T> AttributeValueSupplier<T> getSupplier(T value, Function<T, AttributeValueSupplier<T>> supplierLoader){
+		return valueSupplierCache.computeIfAbsent(value, (key) -> {
+			return supplierLoader.apply(value);
+		});
+	}
+	
+	// 目前无合适触发时间，未使用
+	public static void release() {
+		classSupplierCache.clear();
+		valueSupplierCache.clear();
 	}
 }

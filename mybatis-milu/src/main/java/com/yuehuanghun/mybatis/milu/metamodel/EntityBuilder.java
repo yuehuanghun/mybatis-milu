@@ -57,12 +57,14 @@ import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
 import com.yuehuanghun.mybatis.milu.annotation.EntityOptions;
 import com.yuehuanghun.mybatis.milu.annotation.EntityOptions.FetchRef;
+import com.yuehuanghun.mybatis.milu.annotation.Filler.FillMode;
 import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery;
 import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Part.Type;
 import com.yuehuanghun.mybatis.milu.exception.OrmBuildingException;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
+import com.yuehuanghun.mybatis.milu.filler.AttributeValueSupplier;
 import com.yuehuanghun.mybatis.milu.filler.Filler;
 import com.yuehuanghun.mybatis.milu.filler.SupplierHelper;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.AssociationAttribute;
@@ -78,6 +80,8 @@ import com.yuehuanghun.mybatis.milu.metamodel.ref.Reference;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.Reference.JoinCondition;
 import com.yuehuanghun.mybatis.milu.tool.InstanceUtils;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
+import com.yuehuanghun.mybatis.milu.tool.converter.Converter;
+import com.yuehuanghun.mybatis.milu.tool.converter.ConverterUtils;
 import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter;
 import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter.AutoConverter;
 import com.yuehuanghun.mybatis.milu.tool.logicdel.LogicDeleteProvider;
@@ -200,6 +204,8 @@ public class EntityBuilder {
 			if(Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers())) {
 				continue;
 			}
+
+			boolean hashFiller = false;
 			
 			Attribute attr = forField(field);
 			attr.setOwner(entity);
@@ -240,6 +246,7 @@ public class EntityBuilder {
 					if(fillers[0].fillOnUpdate()) {
 						entity.getOnUpdateFillers().add(filler);
 					}
+					hashFiller = true;
 				}
 				
 				if(options.conditionMode() != Mode.AUTO) {
@@ -276,6 +283,40 @@ public class EntityBuilder {
 				}
 				
 				logicDeleteAttribute.setMain(logicDelete.main());
+				
+				// 自动填充正常值
+				if(!hashFiller && logicDelete.autoFill()) {
+					Optional<Converter<?>> converterOpt = ConverterUtils.getConverter(field.getType());
+					Object value;
+					if(converterOpt.isPresent()) {
+						value = converterOpt.get().convert(logicDelete.resumeValue());
+					} else {
+						value = logicDelete.resumeValue();
+					}
+					
+					AttributeValueSupplier<Object> valueSupplier = SupplierHelper.getSupplier(value, (val) -> {
+						return new AttributeValueSupplier<Object>() {
+
+							@Override
+							public Object getValueOnInsert(Class<?> clazz) {
+								return value;
+							}
+
+							@Override
+							public Object getValueOnUpdate(Class<?> clazz) {
+								return null;
+							}
+
+							@Override
+							public boolean support(Class<?> clazz) {
+								return true;
+							}
+						};
+					});
+					
+					Filler filler = new Filler(metaClass, field, valueSupplier, FillMode.NOT_NULL);
+					entity.getOnInsertFillers().add(filler);
+				}
 			}
 
 			attr.setRangeList(rangeList == null ? Collections.emptyList() : rangeList);
