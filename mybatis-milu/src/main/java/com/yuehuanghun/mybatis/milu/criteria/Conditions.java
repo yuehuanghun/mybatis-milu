@@ -40,7 +40,7 @@ public class Conditions {
 	 * 范围条件
 	 * 
 	 */
-	public static Condition between(SerializableFunction<?, ?> attrGetter, Object startValue, Object endValue) {
+	public static <T> Condition between(SerializableFunction<T, ?> attrGetter, Object startValue, Object endValue) {
 		return between(LambdaReflections.fnToFieldName(attrGetter), startValue, endValue);
 	}
 	/**
@@ -56,7 +56,7 @@ public class Conditions {
 	 * 不为null值条件
 	 * 
 	 */
-	public static Condition isNotNull(SerializableFunction<?, ?> attrGetter) {
+	public static <T> Condition isNotNull(SerializableFunction<T, ?> attrGetter) {
 		return isNotNull(LambdaReflections.fnToFieldName(attrGetter));
 	}
 	/**
@@ -72,7 +72,7 @@ public class Conditions {
 	 * 为null值条件
 	 * 
 	 */
-	public static Condition isNull(SerializableFunction<?, ?> attrGetter) {
+	public static <T> Condition isNull(SerializableFunction<T, ?> attrGetter) {
 		return isNull(LambdaReflections.fnToFieldName(attrGetter));
 	}
 	/**
@@ -88,7 +88,7 @@ public class Conditions {
 	 * 小于条件
 	 * 
 	 */
-	public static Condition lessThan(SerializableFunction<?, ?> attrGetter, Object value) {
+	public static <T> Condition lessThan(SerializableFunction<T, ?> attrGetter, Object value) {
 		return lessThan(LambdaReflections.fnToFieldName(attrGetter), value);
 	}
 	/**
@@ -104,7 +104,7 @@ public class Conditions {
 	 * 小于或等于条件
 	 * 
 	 */
-	public static Condition lessThanEqual(SerializableFunction<?, ?> attrGetter, Object value) {
+	public static <T> Condition lessThanEqual(SerializableFunction<T, ?> attrGetter, Object value) {
 		return lessThanEqual(LambdaReflections.fnToFieldName(attrGetter), value);
 	}
 	/**
@@ -120,7 +120,7 @@ public class Conditions {
 	 * 大于条件
 	 * 
 	 */
-	public static Condition greaterThan(SerializableFunction<?, ?> attrGetter, Object value) {
+	public static <T> Condition greaterThan(SerializableFunction<T, ?> attrGetter, Object value) {
 		return greaterThan(LambdaReflections.fnToFieldName(attrGetter), value);
 	}
 	/**
@@ -136,7 +136,7 @@ public class Conditions {
 	 * 大于或等于条件
 	 * 
 	 */
-	public static Condition greaterThanEqual(SerializableFunction<?, ?> attrGetter, Object value) {
+	public static <T> Condition greaterThanEqual(SerializableFunction<T, ?> attrGetter, Object value) {
 		return greaterThanEqual(LambdaReflections.fnToFieldName(attrGetter), value);
 	}
 	/**
@@ -152,7 +152,7 @@ public class Conditions {
 	 * 同lessThan
 	 * 
 	 */
-	public static Condition before(SerializableFunction<?, ?> attrGetter, Object value) {
+	public static <T> Condition before(SerializableFunction<T, ?> attrGetter, Object value) {
 		return before(LambdaReflections.fnToFieldName(attrGetter), value);
 	}
 	/**
@@ -168,7 +168,7 @@ public class Conditions {
 	 * 同greaterThan
 	 * 
 	 */
-	public static Condition after(SerializableFunction<?, ?> attrGetter, Object value) {
+	public static <T> Condition after(SerializableFunction<T, ?> attrGetter, Object value) {
 		return after(LambdaReflections.fnToFieldName(attrGetter), value);
 	}
 	/**
@@ -200,7 +200,7 @@ public class Conditions {
 	 * 以值开始，针对字符类型，前导匹配模式：LIKE {value}%
 	 * 
 	 */
-	public static Condition startWith(SerializableFunction<?, ?> attrGetter, Object value) {
+	public static<T>  Condition startWith(SerializableFunction<T, ?> attrGetter, Object value) {
 		return startWith(LambdaReflections.fnToFieldName(attrGetter), value);
 	}
 	/**
@@ -216,7 +216,7 @@ public class Conditions {
 	 * 以值结束，针对字符类型，后置匹配模式：LIKE %{value}
 	 * 
 	 */
-	public static Condition endWith(SerializableFunction<?, ?> attrGetter, Object value) {
+	public static <T> Condition endWith(SerializableFunction<T, ?> attrGetter, Object value) {
 		return endWith(LambdaReflections.fnToFieldName(attrGetter), value);
 	}
 
@@ -229,7 +229,7 @@ public class Conditions {
 	/**
 	 * 不包含：NOT LIKE %{value}%
 	 */
-	public static Condition notContaining(SerializableFunction<?, ?> attrGetter, Object value) {
+	public static <T> Condition notContaining(SerializableFunction<T, ?> attrGetter, Object value) {
 		return notContaining(LambdaReflections.fnToFieldName(attrGetter), value);
 	}
 	/**
@@ -241,7 +241,7 @@ public class Conditions {
 	/**
 	 * 包含：LIKE %{value}%
 	 */
-	public static Condition containing(SerializableFunction<?, ?> attrGetter, Object value) {
+	public static <T> Condition containing(SerializableFunction<T, ?> attrGetter, Object value) {
 		return containing(LambdaReflections.fnToFieldName(attrGetter), value);
 	}
 	/**
@@ -253,7 +253,7 @@ public class Conditions {
 	/**
 	 * 不在：NOT IN {value}，value可为数组、集合或字符串（以半角逗号隔开）
 	 */
-	public static Condition notIn(SerializableFunction<?, ?> attrGetter, Object value) {
+	public static <T> Condition notIn(SerializableFunction<T, ?> attrGetter, Object value) {
 		return notIn(LambdaReflections.fnToFieldName(attrGetter), value);
 	}
 	/**
@@ -265,7 +265,7 @@ public class Conditions {
 	/**
 	 * 在：IN {value}，value可为数组、集合或字符串（以半角逗号隔开）
 	 */
-	public static Condition in(SerializableFunction<?, ?> attrGetter, Object value) {
+	public static <T> Condition in(SerializableFunction<T, ?> attrGetter, Object value) {
 		return in(LambdaReflections.fnToFieldName(attrGetter), value);
 	}
 	/**
@@ -277,7 +277,7 @@ public class Conditions {
 	/**
 	 * 正则匹配，部分数据库支持
 	 */
-	public static Condition regex(SerializableFunction<?, ?> attrGetter, Object value) {
+	public static <T> Condition regex(SerializableFunction<T, ?> attrGetter, Object value) {
 		return regex(LambdaReflections.fnToFieldName(attrGetter), value);
 	}
 	/**
@@ -289,7 +289,7 @@ public class Conditions {
 	/**
 	 * 值为true
 	 */
-	public static Condition isTrue(SerializableFunction<?, ?> attrGetter) {
+	public static <T> Condition isTrue(SerializableFunction<T, ?> attrGetter) {
 		return isTrue(LambdaReflections.fnToFieldName(attrGetter));
 	}
 	/**
@@ -301,7 +301,7 @@ public class Conditions {
 	/**
 	 * 值为false
 	 */
-	public static Condition isFalse(SerializableFunction<?, ?> attrGetter) {
+	public static <T> Condition isFalse(SerializableFunction<T, ?> attrGetter) {
 		return isFalse(LambdaReflections.fnToFieldName(attrGetter));
 	}
 	/**
@@ -313,7 +313,7 @@ public class Conditions {
 	/**
 	 * 不等于
 	 */
-	public static Condition notEqual(SerializableFunction<?, ?> attrGetter, Object value) {
+	public static <T> Condition notEqual(SerializableFunction<T, ?> attrGetter, Object value) {
 		return notEqual(LambdaReflections.fnToFieldName(attrGetter), value);
 	}
 	/**
@@ -325,7 +325,7 @@ public class Conditions {
 	/**
 	 * 等于
 	 */
-	public static Condition equal(SerializableFunction<?, ?> attrGetter, Object value) {
+	public static <T> Condition equal(SerializableFunction<T, ?> attrGetter, Object value) {
 		return equal(LambdaReflections.fnToFieldName(attrGetter), value);
 	}
 	
@@ -335,7 +335,7 @@ public class Conditions {
 	 * @param refEntityAttGetter 关联属性对应实体的属性名
 	 * @return 组合属性名
 	 */
-	public static String composeRefEntityAttr(SerializableFunction<?, ?> refAttrGetter, SerializableFunction<?, ?> refEntityAttrGetter) {
+	public static <T> String composeRefEntityAttr(SerializableFunction<T, ?> refAttrGetter, SerializableFunction<T, ?> refEntityAttrGetter) {
 		return LambdaReflections.fnToFieldName(refAttrGetter) + StringUtils.capitalize(LambdaReflections.fnToFieldName(refEntityAttrGetter));
 	}
 }
