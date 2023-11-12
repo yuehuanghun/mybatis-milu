@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.yuehuanghun.AppTest;
+import com.yuehuanghun.mybatis.milu.criteria.Conditions;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Company;
 
@@ -51,6 +52,11 @@ public class CompanyMapperTest {
 	public void testFindByLambdaCriteria() {
 		List<Company> companyList = companyMapper.findByLambdaCriteria(p -> p.eq(Company::getCName, "罗文"));
 		
+		assertEquals(companyList.size(), 1);
+		
+		companyList = companyMapper.findByLambdaCriteria(p -> {
+			p.and(Conditions.equal(Company::getCName, "罗文"), Conditions.greaterThan(Company::getId, 0L));
+		});
 		assertEquals(companyList.size(), 1);
 	}
 	
