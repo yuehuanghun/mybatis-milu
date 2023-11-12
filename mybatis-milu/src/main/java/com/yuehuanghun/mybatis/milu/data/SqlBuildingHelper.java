@@ -301,6 +301,15 @@ public class SqlBuildingHelper {
 		}
 	}
 	
+	public static void appendAlias(StringBuilder stringBuilder , String alias, MiluConfiguration configuration) {
+		String identifierQuoteString = configuration.getDbMeta().getIdentifierQuoteString();
+		if(StringUtils.isBlank(identifierQuoteString)) {
+			stringBuilder.append(alias);
+		} else {
+			stringBuilder.append(identifierQuoteString).append(alias).append(identifierQuoteString);
+		}
+	}
+	
 	public static void appendSchema(StringBuilder stringBuilder, String catalog, String schema, MiluConfiguration configuration) {
 		if(StringUtils.isBlank(catalog) && StringUtils.isBlank(schema)) {
 			return;

@@ -136,9 +136,8 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 				
 				if(StringUtils.isNotBlank(mainEntityAttrName)) { //处理关联表字段别名
 					String tableAlias = tableAliasDispacher.dispach(Segment.ATTR_ + mainEntityAttrName);
-					String columnAlias = Segment.UNDER_LINE + tableAlias + Segment.UNDER_LINE + attr.getName();
 					sqlBuilder.append(Segment.SPACE);
-					SqlBuildingHelper.appendIdentifier(sqlBuilder, columnAlias, configuration);
+					SqlBuildingHelper.appendAlias(sqlBuilder, buildColumnAlias(tableAlias, attr.getName()), configuration);
 				}
 			}
 		}
@@ -172,8 +171,7 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 					
 					List<ResultMapping> refResultMappings = new ArrayList<>();
 					attributes.forEach(attribute -> {
-						String columnAlias = Segment.UNDER_LINE + tableAlias + Segment.UNDER_LINE + attribute.getName();
-						ResultMapping resultMapping = assistant.buildResultMapping(attribute.getOwner().getJavaType(), attribute.getName(), columnAlias, attribute.getJavaType(), attribute.getJdbcType(), null, null, null, null, attribute.getTypeHandler(), attribute.isId() ? ID_FLAG_LIST : null);
+						ResultMapping resultMapping = assistant.buildResultMapping(attribute.getOwner().getJavaType(), attribute.getName(), buildColumnAlias(tableAlias, attribute.getName()), attribute.getJavaType(), attribute.getJdbcType(), null, null, null, null, attribute.getTypeHandler(), attribute.isId() ? ID_FLAG_LIST : null);
 						refResultMappings.add(resultMapping);
 					});
 					
@@ -204,6 +202,10 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 		}
 
 		return new BuildResult(sql, resultMappings);
+	}
+	
+	private String buildColumnAlias(String tableAlias, String columnName) {
+		return Segment.UNDER_LINE + tableAlias + Segment.UNDER_LINE + columnName;
 	}
 
 	private Map<String, List<Attribute>> analyseAttrs(Set<String> attrs) {
