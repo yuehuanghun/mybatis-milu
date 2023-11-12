@@ -584,7 +584,7 @@ public class MapperNamingQueryBuilder {
 	void parseGenericStatement(Method method, Class<?> entityClass) {
 		String methodName = method.getName();
 		final String mappedStatementId = type.getName() + "." + methodName;
-		if(configuration.hasStatement(mappedStatementId)) { //允许同名statement，Lambda模式与非Lambda模式
+		if(configuration.hasStatement(mappedStatementId, false)) { //允许同名statement，Lambda模式与非Lambda模式
 			return;
 		}
 		GenericProviderSql genericProviderSql = this.configuration.getGenericProviderSql(methodName);
