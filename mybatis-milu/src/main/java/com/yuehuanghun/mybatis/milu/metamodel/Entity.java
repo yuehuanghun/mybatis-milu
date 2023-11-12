@@ -40,6 +40,7 @@ import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Part;
 import com.yuehuanghun.mybatis.milu.filler.Filler;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.Reference;
+import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter;
 import com.yuehuanghun.mybatis.milu.tool.logicdel.LogicDeleteProvider;
 
@@ -103,11 +104,15 @@ public class Entity {
 	}
 	
 	public boolean hasAttribute(String name) {
-		return attributeMap.containsKey(name);
+		return getAttribute(name) != null;
 	}
 	
 	public Attribute getAttribute(String name) {
-		return attributeMap.get(name);
+		Attribute attr = attributeMap.get(name);
+		if(attr == null && Character.isUpperCase(name.charAt(0))) {
+			attr = attributeMap.get(StringUtils.uncapitalize(name));
+		}
+		return attr;
 	}
 	
 	public Collection<Attribute> getAttributes(){
