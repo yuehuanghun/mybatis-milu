@@ -80,6 +80,11 @@ public class PredicateImpl implements Predicate {
 			}
 			conditionList.add(((PredicateImpl)conditions[0]).setDepth(getDepth() + 1));
 		} else if(conditions.length > 0) {
+			for(int i = 0; i < conditions.length; i++) {
+				if(conditions[i] instanceof ConditionImpl) {
+					conditions[i] = new PredicateImpl(Logic.AND, conditions[i]);
+				}
+			}
 			conditionList.add(new PredicateImpl(Logic.AND, conditions).setDepth(getDepth() + 1));	
 		}
 		return this;
@@ -103,6 +108,11 @@ public class PredicateImpl implements Predicate {
 			}
 			conditionList.add(new PredicateImpl(Logic.OR, conditions).setDepth(getDepth() + 1));
 		} else if(conditions.length > 0) {
+			for(int i = 0; i < conditions.length; i++) {
+				if(conditions[i] instanceof ConditionImpl) {
+					conditions[i] = new PredicateImpl(Logic.AND, conditions[i]);
+				}
+			}
 			conditionList.add(new PredicateImpl(Logic.OR, conditions).setDepth(getDepth() + 1));	
 		}
 		return this;
@@ -126,6 +136,11 @@ public class PredicateImpl implements Predicate {
 			}
 			conditionList.add(((PredicateImpl)conditions[0]).setDepth(getDepth() + 1));
 		} else if(conditions.length > 0) {
+			for(int i = 0; i < conditions.length; i++) {
+				if(conditions[i] instanceof ConditionImpl) {
+					conditions[i] = new PredicateImpl(Logic.AND, conditions[i]);
+				}
+			}
 			conditionList.add(new PredicateImpl(Logic.NOT, conditions).setDepth(getDepth() + 1));	
 		}
 		return this;
