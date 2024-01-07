@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import javax.persistence.LockModeType;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeanUtils;
@@ -270,5 +271,18 @@ public class TeacherMapperTest {
 		
 		list = teacherMapper.findByLambdaCriteria(p -> p.fulltext(Arrays.asList(Teacher::getCv), "教学 稳重"));
 		assertEquals(list.size(), 2);
+	}
+
+	@Test
+	@Transactional
+	public void testUpdateById() {
+		Optional<Teacher> teacher = teacherMapper.findById(1L);
+		assertTrue(teacher.isPresent());
+		teacher.ifPresent(t -> {
+			t.setName(null);
+			teacherMapper.updateById(t);
+		});
+		
+		assertNull(teacherMapper.findById(1L).get().getName());
 	}
 }

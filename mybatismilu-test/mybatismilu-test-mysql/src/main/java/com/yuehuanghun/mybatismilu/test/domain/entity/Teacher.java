@@ -13,6 +13,7 @@ import javax.persistence.Version;
 import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
 import com.yuehuanghun.mybatis.milu.annotation.Filler;
 import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
+import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatismilu.test.config.MyLogicDeleteProvider;
 
 import lombok.Data;
@@ -26,6 +27,7 @@ public class Teacher {
 	
 	private Date addTime;
 	
+	@AttributeOptions(updateMode = Mode.ALL)
 	private String name;
 	
 	private Integer age;
