@@ -52,7 +52,7 @@ public class GenericUpdateByIdProviderSql extends GenericCachingProviderSql {
 				sqlBuilder.append(colName).append(" = ").append(colName).append(" + 1, ");
 			} else {
 				if(attr.getUpdateMode() == Mode.ALL) {
-					sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context)).append(" = #{entity.").append(attr.toParameter()).append(Segment.RIGHT_BRACE);
+					sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context)).append(" = #{entity.").append(attr.toParameter()).append("}, ");
 				} else if(attr.getUpdateMode() == Mode.NOT_EMPTY && CharSequence.class.isAssignableFrom(attr.getJavaType())) {
 					sqlBuilder.append(" <if test=\"entity.").append(attr.getName()).append(" != null and entity.").append(attr.getName()).append("!=''\">").append(wrapIdentifier(attr.getColumnName(), context)).append(" = #{entity.").append(attr.toParameter()).append("}, </if> ");
 				} else {
