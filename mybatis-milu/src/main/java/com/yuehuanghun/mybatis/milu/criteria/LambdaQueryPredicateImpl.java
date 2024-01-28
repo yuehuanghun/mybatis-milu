@@ -741,4 +741,16 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 		super.fulltext(attrNameGetterFn, keywordExpression, fulltextMode);
 		return this;
 	}
+	
+	@Override
+	public LambdaQueryPredicate<T> exists(Exists<?> exists) {
+		super.exists(exists);
+		return this;
+	}
+	
+	@Override
+	public LambdaQueryPredicate<T> notExists(Exists<?> exists) {
+		super.notExists(exists);
+		return this;
+	}
 }

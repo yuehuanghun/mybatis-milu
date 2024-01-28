@@ -51,7 +51,7 @@ public class SingleStatisticSqlTemplateBuilder extends SqlTemplateBuilder {
 		Set<String> properties = new HashSet<>();
 		predicate.renderSqlTemplate(context, expressionBuilder, properties, 0);
 
-		SqlBuildingHelper.analyseDomain(entity, properties, tableAliasDispacher, configuration, joinExpressMap, joinQueryColumnNap);
+		SqlBuildingHelper.analyseDomain(entity, properties, getTableAliasDispacher(), configuration, joinExpressMap, joinQueryColumnNap);
 
 		StringBuilder sqlBuilder = new StringBuilder(1024).append(Segment.SCRIPT_LABEL);
 		sqlBuilder.append(Segment.SELECT).append(String.format(functionExpressionTemplate, SqlBuildingHelper.wrapIdentifier(attribute.getColumnName(), configuration))).append(Segment.SPACE).append(SqlBuildingHelper.wrapIdentifier("result", configuration)).append(Segment.FROM_B);

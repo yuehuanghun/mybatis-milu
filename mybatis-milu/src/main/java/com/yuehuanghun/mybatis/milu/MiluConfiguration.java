@@ -21,6 +21,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -89,6 +90,7 @@ import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdatePatchByLambdaCrite
 import com.yuehuanghun.mybatis.milu.id.IdentifierGenerator;
 import com.yuehuanghun.mybatis.milu.id.impl.UUIDIdentifierGenerator;
 import com.yuehuanghun.mybatis.milu.id.impl.snowflake.SnowflakeIdentifierGenerator;
+import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.EntityBuilder;
 import com.yuehuanghun.mybatis.milu.metamodel.MetaModel;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
@@ -105,6 +107,9 @@ public class MiluConfiguration extends Configuration {
 	private final Map<String, GenericProviderSql> genericProviderSqlMaps = new StrictMap<>("GenericProviderSql collection");
 	private final Map<String, IdentifierGenerator> identifierGeneratorMaps = new StrictMap<>("AssignKeyGenerator collection");
 	private static List<MiluConfiguration> instances = new ArrayList<>();
+	@SuppressWarnings("rawtypes")
+	private final Map<Class<? extends BaseMapper>, Entity> mapperEntityMap = new HashMap<>();
+	private final Map<Object, SqlSession> mapperSqlSessionMap = new HashMap<>();
 
 	@Getter
 	private DbMeta dbMeta;
@@ -234,7 +239,9 @@ public class MiluConfiguration extends Configuration {
 
 	@Override
 	public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
-		return miluMapperRegistry.getMapper(type, sqlSession);
+		T mapper = miluMapperRegistry.getMapper(type, sqlSession);
+		mapperSqlSessionMap.put(mapper, sqlSession);
+		return mapper;
 	}
 
 	@Override
@@ -377,7 +384,21 @@ public class MiluConfiguration extends Configuration {
 		}
 	}
 	
+	@SuppressWarnings("rawtypes")
+	public void addMapperEntityMapping(Class<? extends BaseMapper> mapperClass, Entity entity) {
+		mapperEntityMap.put(mapperClass, entity);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public Entity getMapperEntity(Class<? extends BaseMapper> mapperClass) {
+		return mapperEntityMap.get(mapperClass);
+	}
+	
 	public static List<MiluConfiguration> getInstances() {
 		return Collections.synchronizedList(instances);
+	}
+	
+	public SqlSession getMapperSqlSession(Object mapper) {
+		return mapperSqlSessionMap.get(mapper);
 	}
 }

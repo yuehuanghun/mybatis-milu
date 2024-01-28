@@ -25,6 +25,7 @@ public interface Segment {
 	String AMPERSAND = "&";
     String AND = "AND";
     String AND_B = " AND ";
+    String AT = "@";
     String ATTR_ = "attr_";
     String CLOSING_ANGLE_BRACKET = ">";
     String COMMA = ",";

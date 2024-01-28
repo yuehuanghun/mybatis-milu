@@ -28,6 +28,7 @@ import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
 import com.github.pagehelper.PageHelper;
+import com.yuehuanghun.mybatis.milu.criteria.builder.SqlTemplateBuilder;
 import com.yuehuanghun.mybatis.milu.mapping.ResultMapHelper;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 
@@ -61,7 +62,7 @@ public class GenericProviderSqlSource implements SqlSource {
 		ResultMapHelper.clear(); //清除动态的resultType
 		try {
 			String sql = providerSql.provideSql(providerContext, parameterObject);
-
+			SqlTemplateBuilder.clearTableAliasDispacherLocal(); // 释放ThreadLocal数据
 			return sqlSourceCache.computeIfAbsent(sql, (key) -> {
 				Class<?> parameterType = parameterObject == null ? Object.class : parameterObject.getClass();
 				return languageDriver.createSqlSource(configuration, sql, parameterType);

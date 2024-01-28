@@ -448,4 +448,9 @@ public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	@Override
 	LambdaStatisticPredicate<T> deleted();
 
+	@Override
+	LambdaStatisticPredicate<T> exists(Exists<?> exists);
+
+	@Override
+	LambdaStatisticPredicate<T> notExists(Exists<?> exists);
 }

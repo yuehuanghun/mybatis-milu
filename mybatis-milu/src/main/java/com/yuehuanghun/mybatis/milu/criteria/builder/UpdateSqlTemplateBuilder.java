@@ -43,7 +43,7 @@ public class UpdateSqlTemplateBuilder extends SqlTemplateBuilder {
 		Set<String> properties = new HashSet<>();
 		predicate.renderSqlTemplate(context, expressionBuilder, properties, 0);
 
-		SqlBuildingHelper.analyseDomain(entity, properties, tableAliasDispacher, configuration, joinExpressMap, joinQueryColumnNap);
+		SqlBuildingHelper.analyseDomain(entity, properties, getTableAliasDispacher(), configuration, joinExpressMap, joinQueryColumnNap);
 
 		StringBuilder sqlBuilder = new StringBuilder(512).append(Segment.SCRIPT_LABEL);
 		sqlBuilder.append(Segment.UPDATE);

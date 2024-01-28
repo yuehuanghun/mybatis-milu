@@ -476,14 +476,25 @@ public class LambdaUpdatePredicateImpl<T> extends LambdaPredicateImpl<T> impleme
 
 	@Override
 	public LambdaUpdatePredicate<T> undeleted() {
-		getDelegate().undeleted();
+		super.undeleted();
 		return this;
 	}
 
 	@Override
 	public LambdaUpdatePredicate<T> deleted() {
-		getDelegate().deleted();
+		super.deleted();
 		return this;
 	}
 
+	@Override
+	public LambdaUpdatePredicate<T> exists(Exists<?> exists) {
+		super.exists(exists);
+		return this;
+	}
+
+	@Override
+	public LambdaUpdatePredicate<T> notExists(Exists<?> exists) {
+		super.notExists(exists);
+		return this;
+	}
 }

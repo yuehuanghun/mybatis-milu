@@ -355,9 +355,17 @@ public class SqlBuildingHelper {
 		private int curIndex = 0;
 		private static String[] ALIAS = new String[] {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"};
 	
-		private Map<String, Integer> tableAliasIndexMap = new HashMap<>();
+		private Map<Object, Map<String, Integer>> tableAliasIndexMap = new HashMap<>();
+		
+		private Object aliasSpace = this;
+		
+		public void setAliasSpace(Object space) {
+			this.aliasSpace = space;
+		}
 		public String dispach(String tableName) {
-			Integer index = tableAliasIndexMap.computeIfAbsent(tableName, key -> {
+			Integer index = tableAliasIndexMap.computeIfAbsent(this.aliasSpace, space -> {
+				return new HashMap<>();
+			}).computeIfAbsent(tableName, key -> {
 				return curIndex++;
 			});
 			return ALIAS[index];

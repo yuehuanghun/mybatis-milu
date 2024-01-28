@@ -52,6 +52,8 @@ public class PredicateImpl implements Predicate {
 	@Accessors(chain = true)
 	private int depth;
 	
+	private boolean hasExists;
+	
 	public PredicateImpl() {
 		logic = Logic.AND;
 	}
@@ -480,7 +482,7 @@ public class PredicateImpl implements Predicate {
 			expressionBuilder.append(Segment.LEFT_BRACKET);
 		}
 
-		StringBuilder subBuilder = new StringBuilder();
+//		StringBuilder subBuilder = new StringBuilder();
 		for(int i = 0; i < conditionList.size(); i++) {
 			Condition condition = conditionList.get(i);
 			if(i > 0 && condition instanceof PredicateImpl) {
@@ -490,7 +492,7 @@ public class PredicateImpl implements Predicate {
 			paramIndex = condition.renderSqlTemplate(context, expressionBuilder, columns, paramIndex);
 		}
 		
-		expressionBuilder.append(subBuilder);
+//		expressionBuilder.append(subBuilder);
 		
 		if(group) {
 			expressionBuilder.append(Segment.RIGHT_BRACKET);
@@ -560,4 +562,28 @@ public class PredicateImpl implements Predicate {
 		return this.and(new FullText(attrNames, keywordExpression, fulltextMode));
 	}
 	
+	protected Predicate existsJoin(String attrName, String refAttrName) {
+		this.and(new ExistsJoin(attrName, refAttrName));
+		return this;
+	}
+
+	@Override
+	public Predicate exists(Exists<?> exists) {
+		this.and(exists);
+		this.hasExists = true;
+		return this;
+	}
+
+	@Override
+	public Predicate notExists(Exists<?> exists) {
+		exists.setNot(true);
+		this.and(exists);
+		this.hasExists = true;
+		return this;
+	}
+
+	@Override
+	public boolean hasExistsCondition() {
+		return this.hasExists;
+	}
 }

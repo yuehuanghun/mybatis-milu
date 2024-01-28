@@ -57,7 +57,7 @@ public class UpdatePatchSqlTemplateBuilder extends SqlTemplateBuilder {
 		Set<String> properties = new HashSet<>();
 		predicate.renderSqlTemplate(context, expressionBuilder, properties, 0);
 
-		SqlBuildingHelper.analyseDomain(entity, properties, tableAliasDispacher, configuration, joinExpressMap, joinQueryColumnNap);
+		SqlBuildingHelper.analyseDomain(entity, properties, getTableAliasDispacher(), configuration, joinExpressMap, joinQueryColumnNap);
 		
 		
 		Collection<Attribute> attributes = entity.getAttributes();

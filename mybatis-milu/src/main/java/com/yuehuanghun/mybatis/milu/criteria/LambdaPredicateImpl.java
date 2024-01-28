@@ -617,4 +617,16 @@ public class LambdaPredicateImpl<T> implements LambdaPredicate<T> {
 		getDelegate().fulltext(attrNames, keywordExpression, fulltextMode);
 		return this;
 	}
+
+	@Override
+	public LambdaPredicate<T> exists(Exists<?> exists) {
+		getDelegate().exists(exists);
+		return this;
+	}
+
+	@Override
+	public LambdaPredicate<T> notExists(Exists<?> exists) {
+		getDelegate().notExists(exists);
+		return this;
+	}
 }

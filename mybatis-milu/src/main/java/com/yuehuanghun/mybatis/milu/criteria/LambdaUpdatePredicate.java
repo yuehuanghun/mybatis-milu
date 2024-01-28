@@ -250,4 +250,10 @@ public interface LambdaUpdatePredicate<T> extends LambdaPredicate<T> {
 	
 	@Override
 	LambdaUpdatePredicate<T> deleted();
+
+	@Override
+	LambdaUpdatePredicate<T> exists(Exists<?> exists);
+
+	@Override
+	LambdaUpdatePredicate<T> notExists(Exists<?> exists);
 }

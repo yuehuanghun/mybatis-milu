@@ -401,4 +401,18 @@ public interface QueryPredicate extends Predicate {
 	 * @return 当前对象
 	 */
 	QueryPredicate fulltext(Collection<String> attrNames, String keywordExpression, FulltextMode fulltextMode);
+	
+	/**
+	 * 增加exist子查询条件
+	 * @param exists exists子查询
+	 * @return 当前对象
+	 */
+	QueryPredicate exists(Exists<?> exists);
+	
+	/**
+	 * 增加not exist子查询条件
+	 * @param exists exists子查询
+	 * @return 当前对象
+	 */
+	QueryPredicate notExists(Exists<?> exists);
 }

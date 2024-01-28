@@ -646,14 +646,25 @@ public class LambdaStatisticPredicateImpl<T> extends LambdaPredicateImpl<T> impl
 
 	@Override
 	public LambdaStatisticPredicate<T> undeleted() {
-		getDelegate().undeleted();
+		super.undeleted();
 		return this;
 	}
 
 	@Override
 	public LambdaStatisticPredicate<T> deleted() {
-		getDelegate().deleted();
+		super.deleted();
 		return this;
 	}
 
+	@Override
+	public LambdaStatisticPredicate<T> exists(Exists<?> exists) {
+		super.exists(exists);
+		return this;
+	}
+
+	@Override
+	public LambdaStatisticPredicate<T> notExists(Exists<?> exists) {
+		super.notExists(exists);
+		return this;
+	}
 }

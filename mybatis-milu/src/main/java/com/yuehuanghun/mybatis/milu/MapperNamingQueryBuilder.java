@@ -105,11 +105,18 @@ public class MapperNamingQueryBuilder {
 		this.type = type;
 	}
 
-	public void parse() {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void parse() {		
+		if(!BaseMapper.class.isAssignableFrom(type)) {
+			return;
+		}
+		
 		this.assistant.setCurrentNamespace(type.getName());
 		
 		Class<?> entityClass = getGenericEntity(type);
 		EntityBuilder.instance(entityClass, configuration).build();
+		
+		configuration.addMapperEntityMapping((Class<? extends BaseMapper>) type, configuration.getMetaModel().getEntity(entityClass));
 		
 		for (Method method : type.getDeclaredMethods()) {
 			if (!method.isAnnotationPresent(NamingQuery.class)) {
@@ -120,10 +127,6 @@ public class MapperNamingQueryBuilder {
 				parseResultMap(method);
 			}
 			parseStatement(method);
-		}
-		
-		if(!BaseMapper.class.isAssignableFrom(type)) {
-			return;
 		}
 		
 		for (Method method : BaseMapper.class.getDeclaredMethods()) {

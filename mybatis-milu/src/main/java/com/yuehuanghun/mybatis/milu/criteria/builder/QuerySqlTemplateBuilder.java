@@ -36,6 +36,7 @@ import com.yuehuanghun.mybatis.milu.criteria.Join;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
+import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper.TableAliasDispacher;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.mapping.MiluMapperBuilderAssistant;
@@ -98,9 +99,13 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 				}
 			});
 		}
+		
+		TableAliasDispacher tableAliasDispacher = getTableAliasDispacher();
 
 		SqlBuildingHelper.analyseDomain(entity, properties, tableAliasDispacher, configuration, joinExpressMap,
 				joinQueryColumnNap, joinModeMap);
+		
+		super.needAlias = predicate.hasExistsCondition() || !joinExpressMap.isEmpty();
 
 		StringBuilder sqlBuilder = new StringBuilder(1024).append(Segment.SCRIPT_LABEL);
 
@@ -126,7 +131,7 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 					sqlBuilder.append(Segment.COMMA_B);
 				}
 				if (StringUtils.isBlank(mainEntityAttrName)) { // 没有关联查询时，不需要使用表别名
-					if(!joinExpressMap.isEmpty()) {
+					if(needAlias) {
 						sqlBuilder.append(mainTableAlias).append(Segment.DOT);
 					}
 				} else {
@@ -201,7 +206,7 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 			sql = renderConditionSql(sql, properties);
 		}
 
-		return new BuildResult(sql, resultMappings);
+		return new BuildResult(sql, resultMappings, paramIndex);
 	}
 	
 	private String buildColumnAlias(String tableAlias, String columnName) {
@@ -300,5 +305,7 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 		private String sqlTemplate;
 		
 		private List<ResultMapping> resultMappings;
+		
+		private int paramIndex;
 	}
 }

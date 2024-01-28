@@ -108,7 +108,7 @@ public class GenericFindByCriteriaUnionProviderSql implements GenericProviderSql
 			
 			sqlTemplate = Segment.SCRIPT_LABEL + sqlTemplate.replace(Segment.SCRIPT_LABEL, StringUtils.EMPTY).replace(Segment.SCRIPT_LABEL_END, StringUtils.EMPTY) + Segment.SCRIPT_LABEL_END;
 			
-			return new BuildResult(sqlTemplate, resultMappings);
+			return new BuildResult(sqlTemplate, resultMappings, paramIndex);
 		});
 		
 		paramMap.putAll(queryParams);

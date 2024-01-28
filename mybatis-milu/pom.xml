@@ -5,7 +5,7 @@
 
     <groupId>com.yuehuanghun</groupId>
     <artifactId>mybatis-milu</artifactId>
-    <version>1.16.3</version>
+    <version>1.17.0</version>
     <packaging>jar</packaging>
 
     <name>mybatis-milu</name>
@@ -29,7 +29,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.79</version>
+            <version>1.2.83</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -46,7 +46,7 @@
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
-            <version>3.5.13</version>
+            <version>3.5.15</version>
         </dependency>
         <dependency>
             <groupId>com.github.pagehelper</groupId>

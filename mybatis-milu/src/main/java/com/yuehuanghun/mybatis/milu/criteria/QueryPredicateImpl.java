@@ -601,5 +601,16 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		super.fulltext(attrNames, keywordExpression, fulltextMode);
 		return this;
 	}
-	
+
+	@Override
+	public QueryPredicate exists(Exists<?> exists) {
+		super.exists(exists);
+		return this;
+	}
+
+	@Override
+	public QueryPredicate notExists(Exists<?> exists) {
+		super.notExists(exists);
+		return this;
+	}
 }

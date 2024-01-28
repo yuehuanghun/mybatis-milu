@@ -455,4 +455,23 @@ public interface Predicate extends Condition {
 	 */
 	Predicate fulltext(Collection<String> attrNames, String keywordExpression, FulltextMode fulltextMode);
 
+	/**
+	 * 增加exist子查询条件
+	 * @param exists exists字查询
+	 * @return 当前对象
+	 */
+	Predicate exists(Exists<?> exists);
+
+	/**
+	 * 增加not exist子查询条件
+	 * @param exists exists子查询
+	 * @return 当前对象
+	 */
+	Predicate notExists(Exists<?> exists);
+	
+	/**
+	 * 是否存在exists查询条件
+	 * @return true/false
+	 */
+	boolean hasExistsCondition();
 }
