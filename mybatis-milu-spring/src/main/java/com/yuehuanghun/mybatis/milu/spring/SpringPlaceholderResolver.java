@@ -18,7 +18,6 @@ package com.yuehuanghun.mybatis.milu.spring;
 
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
 
 import com.yuehuanghun.mybatis.milu.PlaceholderResolver;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
@@ -28,7 +27,6 @@ import com.yuehuanghun.mybatis.milu.tool.StringUtils;
  * @author yuehuanghun
  *
  */
-@Component
 public class SpringPlaceholderResolver implements PlaceholderResolver, EnvironmentAware {
 	private Environment environment;
 

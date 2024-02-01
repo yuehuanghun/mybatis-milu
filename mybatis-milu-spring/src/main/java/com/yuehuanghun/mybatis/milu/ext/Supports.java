@@ -16,7 +16,6 @@
 
 package com.yuehuanghun.mybatis.milu.ext;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,6 +28,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 
 import com.yuehuanghun.mybatis.milu.BaseMapper;
+import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 
 class Supports {
 	private static final Map<BaseMapper<?,?>, SqlSessionFactory> BATCH_FACTORY_MAP = new ConcurrentHashMap<>();
@@ -46,16 +46,14 @@ class Supports {
 	}
 
 	private static SqlSession getSqlSession(BaseMapper<?,?> domainMapper) {
-		try {
-			Field h = domainMapper.getClass().getSuperclass().getDeclaredField("h");
-			h.setAccessible(true);
-			Object proxy = h.get(domainMapper);
-			Field sqlSessionField = proxy.getClass().getDeclaredField("sqlSession");
-			sqlSessionField.setAccessible(true);
-			return (SqlSession) sqlSessionField.get(proxy);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		for(MiluConfiguration configuration : MiluConfiguration.getInstances()) {
+			SqlSession sqlSession = configuration.getMapperSqlSession(domainMapper);
+			if(sqlSession != null) {
+				return sqlSession;
+			}
 		}
+		
+		return null;
 	}
 	
 	public static MapperMethod getMapperMethod(BaseMapper<?,?> domainMapper, String methodName) {
