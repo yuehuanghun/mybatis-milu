@@ -5,7 +5,7 @@
 
 	<groupId>com.yuehuanghun</groupId>
 	<artifactId>mybatismilu-spring-boot-starter</artifactId>
-	<version>1.16.3</version>
+	<version>1.17.0</version>
 	<packaging>jar</packaging>
 
 	<name>mybatismilu-spring-boot-starter</name>
@@ -13,15 +13,76 @@
     <description>MyBatis &amp; MyBatis-Milu Spring Boot Starter</description>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <mybatis.version>3.5.15</mybatis.version>
+        <mybatis-spring.version>2.0.7</mybatis-spring.version>
+        <mybatis-freemarker.version>1.2.2</mybatis-freemarker.version>
+        <mybatis-velocity.version>2.1.0</mybatis-velocity.version>
+        <mybatis-thymeleaf.version>1.0.2</mybatis-thymeleaf.version>
+        <spring-boot.version>2.3.4.RELEASE</spring-boot.version>
+        <mybatis-milu.version>1.17.0</mybatis-milu.version>
+        <mybatis-milu-spring.version>1.17.0</mybatis-milu-spring.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
-			<groupId>com.yuehuanghun</groupId>
-			<artifactId>mybatismilu-spring-boot-autoconfigure</artifactId>
-			<version>1.16.3</version>
-		</dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>${mybatis.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>${mybatis-spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis.scripting</groupId>
+            <artifactId>mybatis-freemarker</artifactId>
+            <version>${mybatis-freemarker.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis.scripting</groupId>
+            <artifactId>mybatis-velocity</artifactId>
+            <version>${mybatis-velocity.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis.scripting</groupId>
+            <artifactId>mybatis-thymeleaf</artifactId>
+            <version>${mybatis-thymeleaf.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-dependencies</artifactId>
+            <version>${spring-boot.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring-boot.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.yuehuanghun</groupId>
+            <artifactId>mybatis-milu</artifactId>
+            <version>${mybatis-milu.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.yuehuanghun</groupId>
+            <artifactId>mybatis-milu-spring</artifactId>
+            <version>${mybatis-milu-spring.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper-spring-boot-starter</artifactId>

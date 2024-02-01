@@ -1,0 +1,5 @@
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.yuehuanghun.mybatismilu.spring.boot.autoconfigure.MybatisLanguageDriverAutoConfiguration,\
+com.yuehuanghun.mybatismilu.spring.boot.autoconfigure.MybatisMiluAutoConfiguration,\
+com.yuehuanghun.mybatismilu.spring.boot.autoconfigure.MybatisMiluPageHelperAutoConfiguration
