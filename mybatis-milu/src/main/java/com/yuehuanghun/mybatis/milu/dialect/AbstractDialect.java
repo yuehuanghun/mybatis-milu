@@ -53,6 +53,7 @@ public abstract class AbstractDialect implements Dialect {
 	protected AbstractDialect() {
 		initPartTypeExpression();
 		initFunctionMap();
+		initJavaTypeToJdbcType();
 	}
 	
 	protected void initPartTypeExpression() {
