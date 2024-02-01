@@ -1,0 +1,3 @@
+com.yuehuanghun.mybatismilu.spring.boot.autoconfigure.MybatisLanguageDriverAutoConfiguration
+com.yuehuanghun.mybatismilu.spring.boot.autoconfigure.MybatisMiluAutoConfiguration
+com.yuehuanghun.mybatismilu.spring.boot.autoconfigure.MybatisMiluPageHelperAutoConfiguration

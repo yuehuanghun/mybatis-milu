@@ -1,0 +1,4 @@
+#
+# Depends On Database Initialization Detectors
+org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitializationDetector=\
+com.yuehuanghun.mybatismilu.spring.boot.autoconfigure.MybatisDependsOnDatabaseInitializationDetector
