@@ -2,6 +2,7 @@
 
 mybatis: 
     mapperLocations: /mapper/**/*.xml
+    autoSetupColumnJdbcType: true
     
 spring.datasource:
     driverClassName: oracle.jdbc.OracleDriver

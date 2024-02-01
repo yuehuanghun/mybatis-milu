@@ -21,11 +21,15 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.yuehuanghun.AppTest;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
+import com.yuehuanghun.mybatis.milu.criteria.Conditions;
+import com.yuehuanghun.mybatis.milu.criteria.Exists;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
+import com.yuehuanghun.mybatismilu.test.domain.entity.ClassTeacherRel;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Classs;
+import com.yuehuanghun.mybatismilu.test.domain.entity.Student;
 import com.yuehuanghun.mybatismilu.test.dto.ClassDTO;
 
 @SpringBootTest(classes = AppTest.class)
@@ -417,5 +421,56 @@ public class ClassMapperTest {
 		classMapper.batchInsert(Arrays.asList(clazz, clazz2));
 		assertEquals("N", clazz.getIsDeleted());
 		assertEquals("N", clazz2.getIsDeleted());
+	}
+	
+	@Test
+	public void testFindByCriteriaExists() {
+		List<Classs> list = classMapper.findByCriteria(p -> {
+			p.exists(Exists.of(StudentMapper.class).join("classId", "id").criteria(ep -> {
+				ep.select("id");
+				ep.eq("name", "张三");
+			}));
+		});
+		assertEquals(list.size(), 1);
+		
+		list = classMapper.findByLambdaCriteria(p -> {
+			p.exists(Exists.of(StudentMapper.class).join(Student::getClassId, Classs::getId).lambdaCriteria(ep -> {
+				ep.select(Student::getId);
+				ep.eq(Student::getName, "张三");
+			}));
+		});
+		assertEquals(list.size(), 1);
+	}
+	
+	@Test
+	public void testFindByCriteriaExists2() {
+		List<Classs> list = classMapper.findByCriteria(p -> {
+			p.exists(Exists.of(ClassTeacherRelMaper.class).join("classId", "id").criteria(ep -> {
+				ep.select("id");
+				ep.eq("teachersName", "黄老师");
+			}));
+			p.undeleted();
+		});
+		assertEquals(list.size(), 1);
+		
+		list = classMapper.findByCriteria(p -> {
+			p.exists(Exists.of(ClassTeacherRelMaper.class).join(Student::getClassId, Classs::getId).lambdaCriteria(ep -> {
+				ep.select(ClassTeacherRel::getId);
+				ep.and(Conditions.equal("teachersName", "黄老师"));
+			}));
+			p.undeleted();
+		});
+		assertEquals(list.size(), 1);
+	}
+	
+	@Test
+	public void testFindByCriteriaNotExists() {
+		List<Classs> list = classMapper.findByCriteria(p -> {
+			p.notExists(Exists.of(StudentMapper.class).join("classId", "id").criteria(ep -> {
+				ep.select("id");
+				ep.eq("name", "张三");
+			}));
+		});
+		assertEquals(list.size(), 1);
 	}
 }

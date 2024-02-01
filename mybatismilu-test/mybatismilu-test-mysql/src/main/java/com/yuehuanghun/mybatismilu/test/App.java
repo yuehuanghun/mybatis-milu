@@ -9,7 +9,7 @@ import com.yuehuanghun.mybatis.milu.spring.EnableEntityGenericResultMap;
 
 @SpringBootApplication
 @MapperScan(basePackages = "com.yuehuanghun.mybatismilu.test.domain.mapper")
-@ComponentScan(value = {"com.yuehuanghun"})
+@ComponentScan(value = {"com.yuehuanghun.mybatismilu.test"})
 @EnableEntityGenericResultMap
 public class App 
 {

@@ -31,7 +31,14 @@
         <dependency>
             <groupId>com.yuehuanghun</groupId>
             <artifactId>mybatismilu-spring-boot-starter</artifactId>
+            <version>1.17.0</version>
         </dependency>
+        
+<!--        <dependency>-->
+<!--            <groupId>com.yuehuanghun</groupId>-->
+<!--            <artifactId>mybatis-milu-spring</artifactId>-->
+<!--            <version>1.16.1</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -61,5 +68,10 @@
             <artifactId>hutool-core</artifactId>
             <version>5.8.16</version>
         </dependency>
+<!--        <dependency>-->
+<!--                <groupId>com.yuehuanghun</groupId>-->
+<!--                <artifactId>mybatismilu-spring-boot-starter</artifactId>-->
+<!--                <version>1.16.3</version>-->
+<!--            </dependency>-->
     </dependencies>
 </project>
