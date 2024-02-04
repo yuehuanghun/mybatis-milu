@@ -509,6 +509,13 @@ public class PredicateImpl implements Predicate {
 	}
 
 	@Override
+	public void end() {
+		for(Condition condition : conditionList) {
+			condition.end();
+		}
+	}
+
+	@Override
 	public int hashCode() {
 		return logic.hashCode() + conditionMode.hashCode() + conditionList.hashCode() + depth;
 	}
@@ -576,7 +583,7 @@ public class PredicateImpl implements Predicate {
 
 	@Override
 	public Predicate notExists(Exists<?> exists) {
-		exists.setNot(true);
+		exists.setNot(Boolean.TRUE);
 		this.and(exists);
 		this.hasExists = true;
 		return this;

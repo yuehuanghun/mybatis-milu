@@ -56,6 +56,7 @@ public class GenericFindByCriteriaProviderSql implements GenericProviderSql {
 		} else {
 			predicate = (QueryPredicate) criteria;
 		}
+		predicate.end();
 
 		if(paramMap.containsKey(Constants.RESULT_TYPE)) { //动态resultType
 			ResultMapHelper.setResultType((Class<?>) paramMap.remove(Constants.RESULT_TYPE));
@@ -85,7 +86,6 @@ public class GenericFindByCriteriaProviderSql implements GenericProviderSql {
 		}
 		
 		paramMap.putAll(queryParams);
-
 		BuildResult result = cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
 			return new SoftValueHashMap<>();
 		}).computeIfAbsent(predicate, (key) -> {

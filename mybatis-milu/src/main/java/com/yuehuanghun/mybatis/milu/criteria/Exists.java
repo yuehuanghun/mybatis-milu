@@ -17,6 +17,7 @@ package com.yuehuanghun.mybatis.milu.criteria;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -50,7 +51,7 @@ public class Exists<Entity> implements Condition {
 	private QueryPredicateImpl predicate;
 	
 	@Setter(value = AccessLevel.PROTECTED)
-	private boolean not = false;
+	private Boolean not = Boolean.FALSE;
 	
 	private Exists(Class<? extends BaseMapper<Entity, ?>> mapperClass) {
 		this.mapperClass = mapperClass;
@@ -118,15 +119,9 @@ public class Exists<Entity> implements Condition {
 		expressionBuilder.append("EXISTS ");
 		expressionBuilder.append(Segment.SPACE).append(Segment.LEFT_BRACKET);
 		GenericProviderContext existContext = new GenericProviderContext(mapperClass, null, context.getConfiguration(), NoKeyGenerator.INSTANCE, context.getConfiguration().getMapperEntity(mapperClass));
-		if(this.predicate == null) {
-			this.predicate = new QueryPredicateImpl();
-		}
-		if(!joins.isEmpty()) {
-			joins.forEach((key, value) -> {
-				predicate.existsJoin(key, value);
-				columns.add(value);
-			});
-		}
+		joins.forEach((key, value) -> {
+			columns.add(value);
+		});
 		BuildResult existBuildResult = new QuerySqlTemplateBuilder(existContext, predicate, paramIndex).build();
 		String existTemplate = existBuildResult.getSqlTemplate();
 		if(!joins.isEmpty()) {
@@ -148,5 +143,39 @@ public class Exists<Entity> implements Condition {
 			}
 		}
 		return paramIndex;
+	}
+
+	@Override
+	public void end() {
+		if(this.predicate == null) {
+			this.predicate = new QueryPredicateImpl();
+		}
+		joins.forEach((key, value) -> {
+			predicate.existsJoin(key, value);
+		});
+	}
+	
+	@Override
+	public boolean equals(Object that) {
+		if(!this.getClass().isInstance(that)) {
+			return false;
+		}
+		return Objects.equals(this.joins, ((Exists<?>)that).joins) 
+				&& Objects.equals(this.mapperClass, ((Exists<?>)that).mapperClass)
+				&& Objects.equals(this.predicate, ((Exists<?>)that).predicate)
+				&& Objects.equals(this.not, ((Exists<?>)that).not);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = 17;
+
+		result = 31 * result + joins.hashCode();
+		result = 31 * result + mapperClass.hashCode();
+		if(predicate != null) {
+			result = 31 * result + predicate.hashCode();
+		}
+		result = 31 * result + not.hashCode();
+		return result;
 	}
 }

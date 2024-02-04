@@ -55,6 +55,7 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 
 	private final static Pattern ORDER_BY_PT = Pattern.compile("^\\s*ORDER BY.*$");
 	private final static List<ResultFlag> ID_FLAG_LIST = Arrays.asList(ResultFlag.ID);
+	private final static Set<String> ALL_ATTRS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("*")));
 
 	public QuerySqlTemplateBuilder(GenericProviderContext context, QueryPredicate queryPredicate, int paramIndex) {
 		super(context);
@@ -63,18 +64,18 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 	}
 
 	public BuildResult build() {
-		Set<String> selectAttrs = Collections.emptySet();
+		Set<String> selectAttrs = ALL_ATTRS;
 		Set<String> exselectAttrs = Collections.emptySet();
 		Map<String, Join> joinModeMap = Collections.emptyMap();
 		if (QueryPredicateImpl.class.isInstance(predicate)) {
 			selectAttrs = ((QueryPredicateImpl) predicate).getSelectAttrs();
+			if(selectAttrs.isEmpty()) {
+				selectAttrs = ALL_ATTRS;
+			}
 			exselectAttrs = ((QueryPredicateImpl) predicate).getExselectAttrs();
 			joinModeMap = ((QueryPredicateImpl) predicate).getJoinModeMap();
 		}
 
-		if(selectAttrs.isEmpty()) {
-			selectAttrs.add("*");
-		}
 		Map<String, List<Attribute>> selectEntityAttrMap = analyseAttrs(selectAttrs);
 		Map<String, List<Attribute>> exselectEntityAttrMap = analyseAttrs(exselectAttrs);
 

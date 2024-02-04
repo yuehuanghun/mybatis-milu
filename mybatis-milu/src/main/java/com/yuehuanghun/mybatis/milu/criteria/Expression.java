@@ -34,4 +34,8 @@ public interface Expression {
 	default String columnHolder(String attrName) {
 		return SqlBuildingHelper.columnHolder(attrName);
 	}
+	
+	default void end() {
+		
+	}
 }
