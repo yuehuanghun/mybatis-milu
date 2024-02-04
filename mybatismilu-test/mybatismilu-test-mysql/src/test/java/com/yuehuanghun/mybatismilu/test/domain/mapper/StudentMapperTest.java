@@ -40,6 +40,7 @@ import com.yuehuanghun.mybatis.milu.criteria.PredicateImpl;
 import com.yuehuanghun.mybatis.milu.criteria.Predicates;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
+import com.yuehuanghun.mybatis.milu.criteria.StatisticPredicate;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.ext.Pair;
@@ -422,11 +423,15 @@ public class StudentMapperTest {
 		assertTrue(list.size() > 0);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testStatisticByCriteria() {
-		List<Map<String, Object>> result = studentMapper.statisticByCriteria(p -> p.sum("age").avg("age").count("id").groupBy("classId").orderAsc("classId"));
+		StatisticPredicate predicate = Predicates.statisticPredicate();
+		predicate.sum("age").avg("age").count("id").groupBy("classId").orderAsc("classId");
+		int hashCode1 = predicate.hashCode();
+		List<Map<String, Object>> result = studentMapper.statisticByCriteria(predicate);
+		int hashCode2 = predicate.hashCode();
 		assertTrue(result.size() > 0);
+		assertEquals(hashCode1, hashCode2);
 		System.out.println(JSON.toJSONString(result));
 		
 		result = studentMapper.statisticByCriteria(p -> p.sum("age").avg("age").count("id").groupByAs("classId", "class").orderAsc("classId"));
@@ -442,7 +447,6 @@ public class StudentMapperTest {
 		System.out.println(JSON.toJSONString(result));
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testStatisticByCriteriaDynamic() {
 		List<StudentStatistic> result = studentMapper.statisticByCriteria(p -> p.sum("age").avg("age").count("id").groupBy("classId").orderAsc("classId"), StudentStatistic.class);

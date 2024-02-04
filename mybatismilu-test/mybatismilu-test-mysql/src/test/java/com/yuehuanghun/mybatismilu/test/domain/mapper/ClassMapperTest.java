@@ -23,8 +23,10 @@ import com.yuehuanghun.AppTest;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.Conditions;
 import com.yuehuanghun.mybatis.milu.criteria.Exists;
+import com.yuehuanghun.mybatis.milu.criteria.Predicates;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
+import com.yuehuanghun.mybatis.milu.criteria.UpdatePredicate;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
 import com.yuehuanghun.mybatismilu.test.domain.entity.ClassTeacherRel;
@@ -308,8 +310,13 @@ public class ClassMapperTest {
 		clazz.setName("六年级");
 		clazz.setData(Arrays.asList(3L, 4L, 5L, 6L));
 		
-		int effect = classMapper.updateByCriteria(clazz, p -> p.eq("id", 1L));
+		UpdatePredicate predicate = Predicates.updatePredicate();
+		predicate.eq("id", 1L);
+		int hashCode1 = predicate.hashCode();
+		int effect = classMapper.updateByCriteria(clazz, predicate);
+		int hashCode2 = predicate.hashCode();
 		assertEquals(effect, 1);
+		assertEquals(hashCode1, hashCode2);
 	}
 	
 	@Test
@@ -425,12 +432,12 @@ public class ClassMapperTest {
 	
 	@Test
 	public void testFindByCriteriaExists() {
-		List<Classs> list = classMapper.findByCriteria(p -> {
-			p.exists(Exists.of(StudentMapper.class).join("classId", "id").criteria(ep -> {
-				ep.select("id");
-				ep.eq("name", "张三");
-			}));
-		});
+		QueryPredicate predicate1 = Predicates.queryPredicate();
+		predicate1.exists(Exists.of(StudentMapper.class).join("classId", "id").criteria(ep -> {
+			ep.select("id");
+			ep.eq("name", "张三");
+		}));
+		List<Classs> list = classMapper.findByCriteria(predicate1);
 		assertEquals(list.size(), 1);
 		
 		list = classMapper.findByLambdaCriteria(p -> {
@@ -472,5 +479,24 @@ public class ClassMapperTest {
 			}));
 		});
 		assertEquals(list.size(), 1);
+	}
+	
+	@Test
+	public void testFindByCriteriaHashCodeEquals() {
+		QueryPredicate predicate1 = Predicates.queryPredicate();
+		predicate1.eq("name", "二年级");
+		QueryPredicate predicate2 = Predicates.queryPredicate();
+		predicate2.eq("name", "一年级");
+		
+		int hashCode1 = predicate1.hashCode();
+		classMapper.findByCriteria(predicate1);
+		int hashCode2 = predicate1.hashCode();
+		assertEquals(hashCode1, hashCode2);
+		
+		hashCode1 = predicate2.hashCode();
+		classMapper.findByCriteria(predicate2);
+		hashCode2 = predicate2.hashCode();
+		
+		assertEquals(predicate1, predicate2);
 	}
 }
