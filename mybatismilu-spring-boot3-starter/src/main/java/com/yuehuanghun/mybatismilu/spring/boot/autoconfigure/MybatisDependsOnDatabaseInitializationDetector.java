@@ -7,11 +7,11 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.boot.sql.init.dependency.AbstractBeansOfTypeDependsOnDatabaseInitializationDetector;
 
 class MybatisDependsOnDatabaseInitializationDetector
-    extends AbstractBeansOfTypeDependsOnDatabaseInitializationDetector {
+		extends AbstractBeansOfTypeDependsOnDatabaseInitializationDetector {
 
-  @Override
-  protected Set<Class<?>> getDependsOnDatabaseInitializationBeanTypes() {
-    return Collections.singleton(SqlSessionTemplate.class);
-  }
+	@Override
+	protected Set<Class<?>> getDependsOnDatabaseInitializationBeanTypes() {
+		return Collections.singleton(SqlSessionTemplate.class);
+	}
 
 }

@@ -21,7 +21,7 @@ public class MybatisLanguageDriverAutoConfiguration {
 	private static final String CONFIGURATION_PROPERTY_PREFIX = "mybatis.scripting-language-driver";
 
 	/**
-	 * mybatis-freemarker <= 1.1.x 时的自动配置
+	 * mybatis-freemarker &lt;= 1.1.x 时的自动配置
 	 */
 	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnClass(FreeMarkerLanguageDriver.class)
@@ -35,7 +35,7 @@ public class MybatisLanguageDriverAutoConfiguration {
 	}
 
 	/**
-	 * mybatis-freemarker >= 1.2.x 时的自动配置
+	 * mybatis-freemarker &gt;= 1.2.x 时的自动配置
 	 */
 	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnClass({ FreeMarkerLanguageDriver.class, FreeMarkerLanguageDriverConfig.class })
@@ -55,7 +55,7 @@ public class MybatisLanguageDriverAutoConfiguration {
 	}
 
 	/**
-	 * mybatis-velocity <= 2.0 时的自动配置
+	 * mybatis-velocity &lt;= 2.0 时的自动配置
 	 */
 	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnClass(org.mybatis.scripting.velocity.Driver.class)
@@ -70,7 +70,7 @@ public class MybatisLanguageDriverAutoConfiguration {
 	}
 
 	/**
-	 * mybatis-velocity >= 2.1.x 时的自动配置
+	 * mybatis-velocity &gt;= 2.1.x 时的自动配置
 	 */
 	@Configuration(proxyBeanMethods = false)
 	@ConditionalOnClass({ VelocityLanguageDriver.class, VelocityLanguageDriverConfig.class })
