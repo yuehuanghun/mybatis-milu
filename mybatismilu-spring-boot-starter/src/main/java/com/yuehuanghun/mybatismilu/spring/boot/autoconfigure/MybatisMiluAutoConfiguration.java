@@ -203,9 +203,6 @@ public class MybatisMiluAutoConfiguration implements InitializingBean, Applicati
 		SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
 		factory.setDataSource(dataSource);
 		factory.setVfs(SpringBootVFS.class);
-		if (StringUtils.hasText(this.properties.getConfigLocation())) {
-			factory.setConfigLocation(this.resourceLoader.getResource(this.properties.getConfigLocation()));
-		}
 		MiluConfiguration configuration = applyConfiguration(factory);
 		List<IdentifierGenerator> identifierGeneratorList = identifierGeneratorsProvider.getIfAvailable();
 		if (identifierGeneratorList != null) {

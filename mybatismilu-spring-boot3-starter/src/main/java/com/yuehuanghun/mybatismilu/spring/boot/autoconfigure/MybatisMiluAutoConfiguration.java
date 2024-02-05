@@ -214,9 +214,6 @@ public class MybatisMiluAutoConfiguration implements InitializingBean, Applicati
 		if (properties.getConfiguration() == null || properties.getConfiguration().getVfsImpl() == null) {
 			factory.setVfs(SpringBootVFS.class);
 		}
-		if (StringUtils.hasText(this.properties.getConfigLocation())) {
-			factory.setConfigLocation(this.resourceLoader.getResource(this.properties.getConfigLocation()));
-		}
 		MiluConfiguration configuration = applyConfiguration(factory);
 		buildEntityResultMap(configuration);
 		List<IdentifierGenerator> identifierGeneratorList = identifierGeneratorsProvider.getIfAvailable();
