@@ -3,6 +3,8 @@
 mybatis: 
     mapperLocations: /mapper/**/*.xml
     identifierWrapQuote: true
+    # 加载全局的配置文件
+    configLocation: classpath:mybatis-config.xml
     configurationProperties: 
         idGenerator: snowflake
         exampleQueryConverter: com.yuehuanghun.mybatismilu.test.config.MyExampleQueryConverter
