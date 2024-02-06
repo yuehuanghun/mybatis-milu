@@ -52,6 +52,7 @@ public class GenericResumeLogicDeleteByCriteriaProviderSql implements GenericPro
 		} else {
 			predicate = (UpdatePredicate)criteria;
 		}
+		predicate.end();
 		
 		try {
 			Entity entity = context.getEntity();

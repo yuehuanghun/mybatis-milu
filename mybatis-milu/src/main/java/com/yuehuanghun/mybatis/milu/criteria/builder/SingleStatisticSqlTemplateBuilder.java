@@ -52,7 +52,8 @@ public class SingleStatisticSqlTemplateBuilder extends SqlTemplateBuilder {
 		predicate.renderSqlTemplate(context, expressionBuilder, properties, 0);
 
 		SqlBuildingHelper.analyseDomain(entity, properties, getTableAliasDispacher(), configuration, joinExpressMap, joinQueryColumnNap);
-
+		
+		super.needAlias = predicate.hasExistsCondition() || !joinExpressMap.isEmpty();
 		StringBuilder sqlBuilder = new StringBuilder(1024).append(Segment.SCRIPT_LABEL);
 		sqlBuilder.append(Segment.SELECT).append(String.format(functionExpressionTemplate, SqlBuildingHelper.wrapIdentifier(attribute.getColumnName(), configuration))).append(Segment.SPACE).append(SqlBuildingHelper.wrapIdentifier("result", configuration)).append(Segment.FROM_B);
 		buildTableSegment(sqlBuilder);

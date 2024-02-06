@@ -58,6 +58,7 @@ public class GenericStatisticByCriteriaProviderSql implements GenericProviderSql
 		} else {
 			predicate = (StatisticPredicate)criteria;
 		}
+		predicate.end();
 		
 		Map<String, Object> queryParams = new HashMap<>();
 		predicate.renderParams(context, queryParams, 0);		

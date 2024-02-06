@@ -40,6 +40,7 @@ public class CountSqlTemplateBuilder extends SqlTemplateBuilder {
 
 		SqlBuildingHelper.analyseDomain(entity, properties, getTableAliasDispacher(), configuration, joinExpressMap, joinQueryColumnNap);
 
+		super.needAlias = predicate.hasExistsCondition() || !joinExpressMap.isEmpty();
 		StringBuilder sqlBuilder = new StringBuilder(1024).append(Segment.SCRIPT_LABEL);
 		sqlBuilder.append(Segment.SELECT_COUNT).append(Segment.FROM_B);
 		buildTableSegment(sqlBuilder);

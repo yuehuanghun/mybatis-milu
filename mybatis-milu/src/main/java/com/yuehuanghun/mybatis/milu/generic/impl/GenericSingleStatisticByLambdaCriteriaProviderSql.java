@@ -51,7 +51,8 @@ public abstract class GenericSingleStatisticByLambdaCriteriaProviderSql implemen
 		
 		LambdaPredicateImpl<?> predicate = new LambdaPredicateImpl<>();
 		((Consumer<LambdaPredicate>)criteria).accept(predicate);
-		
+
+		predicate.end();
 		Map<String, Object> queryParams = new HashMap<>();
 		predicate.renderParams(context, queryParams, 0);
 		

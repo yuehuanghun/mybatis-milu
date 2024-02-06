@@ -59,7 +59,7 @@ public class UpdatePatchSqlTemplateBuilder extends SqlTemplateBuilder {
 
 		SqlBuildingHelper.analyseDomain(entity, properties, getTableAliasDispacher(), configuration, joinExpressMap, joinQueryColumnNap);
 		
-		
+		super.needAlias = predicate.hasExistsCondition() || !joinExpressMap.isEmpty();
 		Collection<Attribute> attributes = entity.getAttributes();
 		StringBuilder sqlBuilder = new StringBuilder(256).append(Segment.SCRIPT_LABEL);
 		

@@ -46,6 +46,7 @@ public class GenericDeleteByCriteriaProviderSql implements GenericProviderSql {
 		} else {
 			predicate = (Predicate)criteria;
 		}
+		predicate.end();
 
 		Map<String, Object> queryParams = new HashMap<>();
 		predicate.renderParams(context, queryParams, 0);

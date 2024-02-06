@@ -45,6 +45,7 @@ public class UpdateSqlTemplateBuilder extends SqlTemplateBuilder {
 
 		SqlBuildingHelper.analyseDomain(entity, properties, getTableAliasDispacher(), configuration, joinExpressMap, joinQueryColumnNap);
 
+		super.needAlias = predicate.hasExistsCondition() || !joinExpressMap.isEmpty();
 		StringBuilder sqlBuilder = new StringBuilder(512).append(Segment.SCRIPT_LABEL);
 		sqlBuilder.append(Segment.UPDATE);
 		buildTableSegment(sqlBuilder);

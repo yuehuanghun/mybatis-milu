@@ -40,6 +40,7 @@ public class DeleteSqlTemplateBuilder extends SqlTemplateBuilder {
 
 		SqlBuildingHelper.analyseDomain(entity, properties, getTableAliasDispacher(), configuration, joinExpressMap, joinQueryColumnNap);
 
+		super.needAlias = predicate.hasExistsCondition() || !joinExpressMap.isEmpty();
 		StringBuilder sqlBuilder = new StringBuilder(1024).append(Segment.SCRIPT_LABEL);
 		sqlBuilder.append(Segment.DELETE_FROM);
 		buildTableSegment(sqlBuilder);

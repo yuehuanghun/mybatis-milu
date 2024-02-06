@@ -53,6 +53,8 @@ public class GenericLogicDeleteByCriteriaProviderSql implements GenericProviderS
 			predicate = (UpdatePredicate)criteria;
 		}
 		
+		predicate.end();
+		
 		try {
 			Entity entity = context.getEntity();
 			Object entityObj = entity.getJavaType().newInstance();

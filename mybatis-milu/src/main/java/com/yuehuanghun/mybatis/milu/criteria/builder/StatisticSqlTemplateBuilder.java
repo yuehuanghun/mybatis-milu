@@ -40,6 +40,7 @@ public class StatisticSqlTemplateBuilder extends SqlTemplateBuilder {
 
 		SqlBuildingHelper.analyseDomain(entity, properties, getTableAliasDispacher(), configuration, joinExpressMap, joinQueryColumnNap);
 
+		super.needAlias = predicate.hasExistsCondition() || !joinExpressMap.isEmpty();
 		StringBuilder sqlBuilder = new StringBuilder(1024).append(Segment.SCRIPT_LABEL);
 		
 		String sqlTemplateTmp = renderConditionSql(expressionBuilder.toString(), properties);

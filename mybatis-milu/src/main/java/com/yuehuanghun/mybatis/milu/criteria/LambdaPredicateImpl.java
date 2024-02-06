@@ -629,4 +629,9 @@ public class LambdaPredicateImpl<T> implements LambdaPredicate<T> {
 		getDelegate().notExists(exists);
 		return this;
 	}
+
+	@Override
+	public void end() {
+		getDelegate().end();
+	}
 }

@@ -79,6 +79,7 @@ public class GenericUpdateAttrByCriteriaProviderSql implements GenericProviderSq
 		} else {
 			predicate = (UpdatePredicate)criteria;
 		}
+		predicate.end();
 		
 		Map<String, Object> queryParams = new HashMap<>();
 		predicate.renderParams(context, queryParams, 0);
