@@ -38,7 +38,7 @@
 			<dependency>
 				<groupId>com.yuehuanghun</groupId>
 				<artifactId>mybatismilu-spring-boot-starter</artifactId>
-				<version>1.17.0</version>
+				<version>1.17.1</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

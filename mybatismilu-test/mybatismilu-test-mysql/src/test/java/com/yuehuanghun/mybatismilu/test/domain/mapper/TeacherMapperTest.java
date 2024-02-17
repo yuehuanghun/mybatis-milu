@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.AppTest;
+import com.yuehuanghun.mybatis.milu.criteria.Exists;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Student;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Teacher;
 import com.yuehuanghun.mybatismilu.test.dto.TeacherDTO;
@@ -231,6 +232,12 @@ public class TeacherMapperTest {
 
 		maxAge = teacherMapper.maxByLambdaCriteria(Teacher::getAge, p -> p.gt(Teacher::getId, 100));
 		assertNull(maxAge);
+	}
+	
+	@Test
+	public void testMaxByLambdaCriteriaExists() {
+		Integer maxAge = teacherMapper.maxByLambdaCriteria(Teacher::getAge, p -> p.exists(Exists.of(ClassTeacherRelMaper.class).join("teacherId", "id").criteria(ep -> ep.eq("classesName", "一年级"))));
+		assertEquals(maxAge.intValue(), 31);
 	}
 	
 	@Test

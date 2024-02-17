@@ -26,4 +26,8 @@ public class ClassTeacherRel {
 	@OneToMany
 	@JoinColumn(name = "teacher_id", referencedColumnName = "id")
 	private List<Teacher> teachers;
+	
+	@OneToMany
+	@JoinColumn(name = "class_id", referencedColumnName = "id")
+	private List<Classs> classes;
 }

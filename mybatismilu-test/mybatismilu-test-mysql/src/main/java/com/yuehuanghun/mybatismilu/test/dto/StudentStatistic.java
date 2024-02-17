@@ -11,7 +11,7 @@ public class StudentStatistic {
 	
 	private BigDecimal ageAvg;
 	
-	private Integer countId;
+	private Integer idCount;
 	
 	private Long classId;
 }

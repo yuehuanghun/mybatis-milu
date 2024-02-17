@@ -29,7 +29,7 @@ public class Boolean2IntTypeHandler extends BaseTypeHandler<Boolean> {
 			return null;
 		}
 		int value = rs.getInt(columnName);
-		return value == 0 ? false : true;
+		return value == 0 ? Boolean.FALSE : Boolean.TRUE;
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class Boolean2IntTypeHandler extends BaseTypeHandler<Boolean> {
 			return null;
 		}
 		int value = rs.getInt(columnIndex);
-		return value == 0 ? false : true;
+		return value == 0 ? Boolean.FALSE : Boolean.TRUE;
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class Boolean2IntTypeHandler extends BaseTypeHandler<Boolean> {
 			return null;
 		}
 		int value = cs.getInt(columnIndex);
-		return value == 0 ? false : true;
+		return value == 0 ? Boolean.FALSE : Boolean.TRUE;
 	}
 
 }

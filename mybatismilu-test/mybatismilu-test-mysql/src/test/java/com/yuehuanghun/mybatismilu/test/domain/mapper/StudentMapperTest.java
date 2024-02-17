@@ -34,6 +34,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.AppTest;
 import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
+import com.yuehuanghun.mybatis.milu.criteria.Exists;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaUpdatePredicate;
 import com.yuehuanghun.mybatis.milu.criteria.Predicate;
 import com.yuehuanghun.mybatis.milu.criteria.PredicateImpl;
@@ -45,6 +46,7 @@ import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.ext.Pair;
 import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
+import com.yuehuanghun.mybatismilu.test.domain.entity.Classs;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Student;
 import com.yuehuanghun.mybatismilu.test.domain.entity.StudentProfile;
 import com.yuehuanghun.mybatismilu.test.dto.StudentDTO;
@@ -461,6 +463,13 @@ public class StudentMapperTest {
 	}
 	
 	@Test
+	public void testStatisticByCriteriaExists() {
+		List<StudentStatistic> result = studentMapper.statisticByCriteria(p -> p.sum("age").avg("age").count("id").exists(Exists.of(ClassMapper.class).join("id", "classId").criteria(ep -> ep.eq("name", "一年级"))), StudentStatistic.class);
+		assertTrue(result.size() == 1);
+		assertEquals(result.get(0).getIdCount().intValue(), 3);
+	}
+	
+	@Test
 	@Transactional
 	public void testUpdateAttrByIdProvider() {
 		int effect = studentMapper.updateAttrById("name", "李五", 1L);
@@ -712,6 +721,18 @@ public class StudentMapperTest {
 		
 		student = studentMapper.findById(2L);
 		assertTrue(student.get().getIsDeleted());
+	}
+	
+	@Test
+	@Transactional
+	public void testLogicDeleteByCriteriaExists() {
+		int effect = studentMapper.logicDeleteByCriteria(p -> p.exists(Exists.of(ClassMapper.class).join("id", "classId").criteria(ep -> ep.eq("name", "一年级"))));
+		
+		assertEquals(effect, 3);
+		
+		effect = studentMapper.logicDeleteByLambdaCriteria(p -> p.exists(Exists.of(ClassMapper.class).join("id", "classId").criteria(ep -> ep.eq("name", "一年级"))));
+		
+		assertEquals(effect, 3);
 	}
 	
 	@Test

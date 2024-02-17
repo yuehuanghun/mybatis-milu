@@ -141,6 +141,25 @@ public class ClassMapperTest {
 		
 	}
 	
+	@Test
+	@Transactional
+	public void testUpdateByCriteriaAndDeleteByCriteriaExists() {
+		Classs clazz = new Classs();
+		clazz.setName("四年级");
+		
+		int updateResult = classMapper.updateByCriteria(clazz, p -> p.exists(Exists.of(StudentMapper.class).join("classId", "id").criteria(ep -> ep.eq("name", "张三"))));
+		assertEquals(updateResult, 1);
+		
+		updateResult = classMapper.updateByLambdaCriteria(clazz, p -> p.exists(Exists.of(StudentMapper.class).join(Student::getClassId, Classs::getId).lambdaCriteria(ep -> ep.eq(Student::getName, "张三"))));
+		assertEquals(updateResult, 1);
+		
+		int deleteResult = classMapper.deleteByCriteria(p -> p.exists(Exists.of(StudentMapper.class).join("classId", "id").criteria(ep -> ep.eq("name", "张三"))));
+		assertEquals(deleteResult, 1);
+		
+		deleteResult = classMapper.deleteByLambdaCriteria(p -> p.exists(Exists.of(StudentMapper.class).join(Student::getClassId, Classs::getId).lambdaCriteria(ep -> ep.eq(Student::getName, "张三"))));
+		assertEquals(updateResult, 1);
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testFindByLambdaCriteria() {
