@@ -56,6 +56,21 @@ public interface StatisticPredicate extends Predicate {
 	StatisticPredicate count(String attrName, String columnAlias);
 
 	/**
+	 * 列去重后计数
+	 * @param attrName 属性名
+	 * @return 当前对象
+	 */
+	StatisticPredicate countDistinct(String attrName);
+	
+	/**
+	 * 列去重后计数
+	 * @param attrName 属性名
+	 * @param columnAlias 统计列别名
+	 * @return 当前对象
+	 */
+	StatisticPredicate countDistinct(String attrName, String columnAlias);
+
+	/**
 	 * 列平均值计算
 	 * @param attrName 属性名
 	 * @return 当前对象

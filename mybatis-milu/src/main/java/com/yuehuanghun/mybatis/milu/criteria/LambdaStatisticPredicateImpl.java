@@ -54,6 +54,18 @@ public class LambdaStatisticPredicateImpl<T> extends LambdaPredicateImpl<T> impl
 	}
 
 	@Override
+	public LambdaStatisticPredicate<T> countDistinct(SerializableFunction<T, ?> getterFn) {
+		getDelegate().countDistinct(LambdaReflections.fnToFieldName(getterFn));
+		return this;
+	}
+
+	@Override
+	public LambdaStatisticPredicate<T> countDistinct(SerializableFunction<T, ?> getterFn, String columnAlias) {
+		getDelegate().countDistinct(LambdaReflections.fnToFieldName(getterFn), columnAlias);
+		return this;
+	}
+
+	@Override
 	public LambdaStatisticPredicate<T> avg(SerializableFunction<T, ?> getterFn) {
 		getDelegate().avg(LambdaReflections.fnToFieldName(getterFn));
 		return this;

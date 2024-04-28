@@ -54,6 +54,21 @@ public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	LambdaStatisticPredicate<T> count(SerializableFunction<T, ?> getterFn, String columnAlias);
 
 	/**
+	 * 列去重后计数
+	 * @param getterFn 实体类的getter函数式
+	 * @return 当前对象
+	 */
+	LambdaStatisticPredicate<T> countDistinct(SerializableFunction<T, ?> getterFn);
+	
+	/**
+	 * 列去重后计数
+	 * @param getterFn 实体类的getter函数式
+	 * @param columnAlias 统计列别名
+	 * @return 当前对象
+	 */
+	LambdaStatisticPredicate<T> countDistinct(SerializableFunction<T, ?> getterFn, String columnAlias);
+
+	/**
 	 * 列平均值计算
 	 * @param getterFn 实体类的getter函数式
 	 * @return 当前对象

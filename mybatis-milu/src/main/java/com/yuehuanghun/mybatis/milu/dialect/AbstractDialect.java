@@ -84,6 +84,7 @@ public abstract class AbstractDialect implements Dialect {
 	protected void initFunctionMap() {
 		functionMap.put(SUM, "SUM(%s)");
 		functionMap.put(COUNT, "COUNT(%s)");
+		functionMap.put(COUNT_DISTINCT, "COUNT(DISTINCT %s)");
 		functionMap.put(MIN, "MIN(%s)");
 		functionMap.put(MAX, "MAX(%s)");
 		functionMap.put(AVG, "AVG(%s)");

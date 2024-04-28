@@ -34,6 +34,7 @@ import com.yuehuanghun.mybatis.milu.tool.Segment;
 public interface Dialect {
 	String SUM = "sum";
 	String COUNT = "count";
+	String COUNT_DISTINCT = "countDistinct";
 	String MIN = "min";
 	String MAX = "max";
 	String AVG = "avg";

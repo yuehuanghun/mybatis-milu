@@ -60,6 +60,18 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 	}
 
 	@Override
+	public StatisticPredicate countDistinct(String attrName) {
+		select.add(Dialect.COUNT_DISTINCT, attrName, null);
+		return this;
+	}
+
+	@Override
+	public StatisticPredicate countDistinct(String attrName, String columnAlias) {
+		select.add(Dialect.COUNT_DISTINCT, attrName, columnAlias);
+		return this;
+	}
+
+	@Override
 	public StatisticPredicate avg(String attrName) {
 		select.add(Dialect.AVG, attrName, null);
 		return this;
