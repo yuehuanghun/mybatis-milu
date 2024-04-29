@@ -418,6 +418,22 @@ public class StudentMapperTest {
 		assertTrue(list.size() > 0);
 	}
 	
+	@Test
+	public void testCountDistinct() {
+		Long count = studentMapper.countDistinctByLambdaCriteria(Student::getClassId, p -> {});
+		assertEquals(count, 2);
+		
+		List<Map<String, Object>> list = studentMapper.statisticByLambdaCriteria(p -> {
+			p.countDistinct(Student::getClassId);
+		});
+		assertEquals((Long)list.get(0).get("classIdCountDistinct"), 2);
+		
+		list = studentMapper.statisticByCriteria(p -> {
+			p.countDistinct("classId");
+		});
+		assertEquals((Long)list.get(0).get("classIdCountDistinct"), 2);
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testStatisticByCriteria() {

@@ -44,6 +44,7 @@ import com.yuehuanghun.mybatis.milu.generic.impl.GenericBatchInsertProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericCountByCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericCountByExampleProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericCountByLambdaCriteriaProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericCountDistinctByLambdaCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericDeleteByCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericDeleteByIdProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericDeleteByIdsProviderSql;
@@ -198,6 +199,7 @@ public class MiluConfiguration extends Configuration {
 		this.addGenericProviderSql(new GenericMaxByLambdaCriteriaProviderSql());
 		this.addGenericProviderSql(new GenericMinByLambdaCriteriaProviderSql());
 		this.addGenericProviderSql(new GenericSumByLambdaCriteriaProviderSql());
+		this.addGenericProviderSql(new GenericCountDistinctByLambdaCriteriaProviderSql());
 		this.addGenericProviderSql(new GenericFindByCriteriaUnionProviderSql());
 		this.addGenericProviderSql(new GenericFindByLambdaCriteriaUnionProviderSql());
 		this.addGenericProviderSql(new GenericUpdatePatchByIdProviderSql());
