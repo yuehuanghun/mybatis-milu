@@ -376,6 +376,9 @@ public class EntityBuilder {
 			ParameterizedType genericType = (ParameterizedType) field.getGenericType();
 			Class<?> elementClass = (Class<?>) genericType.getActualTypeArguments()[0];
 			((PluralAttribute)attribute).setElementClass(elementClass);
+			if(field.isAnnotationPresent(OneToOne.class) || field.isAnnotationPresent(ManyToOne.class)) {
+				throw new OrmBuildingException(String.format("集合属性上不允许使用@OneToOne或@ManyToOne注解：实体%s，属性%s", field.getDeclaringClass().getSimpleName(), field.getName()));
+			}
 			if(field.isAnnotationPresent(OneToMany.class) || field.isAnnotationPresent(ManyToMany.class)) {
 				attribute.setSelectable(false);
 				attribute.setInsertable(false);

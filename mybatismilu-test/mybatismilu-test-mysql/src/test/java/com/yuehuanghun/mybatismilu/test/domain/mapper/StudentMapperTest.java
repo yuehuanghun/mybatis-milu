@@ -1015,4 +1015,25 @@ public class StudentMapperTest {
 		list = studentMapper.findByLambdaCriteriaUnion(p -> p.between(Student::getAddTime, "2016-01-01 00:00:00", "2018-01-01").undeleted(), p -> p.between(Student::getAddTime, "2018-01-01", "2022-01-01").undeleted());
 		assertEquals(list.size(), 4);
 	}
+	
+	@Test
+	@Transactional
+	public void testSaveOrUpdate() {
+		Student student = studentMapper.findById(1L).get();
+		student.setAge(13);
+		int effect = studentService.saveOrUpdate(student);
+		assertEquals(effect, 1);
+		
+		student = new Student();
+		student.setAge(9);
+		student.setClassId(1L);
+		student.setName(randomName());
+		student.setId(6L);
+		
+		effect = studentService.saveOrUpdate(student, false);
+		assertEquals(effect, 0);
+		
+		effect = studentService.saveOrUpdate(student, true);
+		assertEquals(effect, 1);
+	}
 }

@@ -38,6 +38,7 @@ import com.yuehuanghun.mybatis.milu.criteria.UpdatePredicate;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.SerializableFunction;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
+import com.yuehuanghun.mybatis.milu.tool.EntityUtils;
 
 /**
  * 将BaseMaper的功能以Service的形式提供
@@ -827,5 +828,38 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 */
 	default int updatePatchByLambdaCriteria(Patch patch, Consumer<LambdaPredicate<T>> predicate) {
 		return getDomainMapper().updatePatchByLambdaCriteria(patch, predicate);
+	}
+	
+	/**
+	 * 新增或更新<br>
+	 * 主键为null时新增，非null时更新
+	 * @param entity 实体实例
+	 * @return 影响行数
+	 */
+	default int saveOrUpdate(T entity) {
+		return saveOrUpdate(entity, false);
+	}
+	
+	/**
+	 * 新增或更新<br>
+	 * 当主键值为null时，新增；主键值非null时，如果开启主键是否存在检查，则先查主键是否在表中，不存在则新增，存在更新，不开启检查则直接更新。
+	 * @param entity 实体实例
+	 * @param checkIdPresent 当主键有值时，是否检查主键是否在表中。如果主键值是业务代码中设置的则需要开启，使用主键生成器或数据库自动主键的都不需要开启。
+	 * @return 影响行数
+	 */
+	default int saveOrUpdate(T entity, boolean checkIdPresent) {
+		Object idValue = EntityUtils.getIdValue(entity);
+		if(idValue != null) {
+			if(checkIdPresent) {
+				int rowCount = getDomainMapper().countByCriteria(p -> p.eq(EntityUtils.getIdAttrName(entity.getClass()), idValue));
+				if(rowCount > 0) {
+					return getDomainMapper().updateById(entity);
+				}
+			} else {
+				return getDomainMapper().updateById(entity);
+			}
+		}
+		
+		return getDomainMapper().insert(entity);
 	}
 }
