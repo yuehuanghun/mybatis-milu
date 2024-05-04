@@ -24,9 +24,17 @@ jdk >= 1.8
 ### 安装教程
 
 ```
+<!-- springboot2.x -->
 <dependency>
    <groupId>com.yuehuanghun</groupId>
    <artifactId>mybatismilu-spring-boot-starter</artifactId>
+   <version>1.17.1</version> <!-- 获取最新版本 -->
+</dependency>
+
+<!-- springboot3.x -->
+<dependency>
+   <groupId>com.yuehuanghun</groupId>
+   <artifactId>mybatismilu-spring-boot3-starter</artifactId>
    <version>1.17.1</version> <!-- 获取最新版本 -->
 </dependency>
 ```

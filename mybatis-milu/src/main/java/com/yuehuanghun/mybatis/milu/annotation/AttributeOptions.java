@@ -75,4 +75,11 @@ public @interface AttributeOptions {
 	 * @return 逻辑删除设置
 	 */
 	LogicDelete[] logicDelete() default {};
+	
+	/**
+	 * 所属索引名，不需要跟数据库中的索引名一致，能区分即可<br>
+	 * 标识的属性必需对应唯一索引的字段
+	 * @return 索引
+	 */
+	String[] index() default {};
 }

@@ -90,6 +90,8 @@ import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.EntityBuilder;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.IdAttribute;
+import com.yuehuanghun.mybatis.milu.tool.Constants;
+import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
 public class MapperNamingQueryBuilder {
@@ -597,7 +599,7 @@ public class MapperNamingQueryBuilder {
 			sqlCommandType = SqlCommandType.SELECT;
 		} else if(methodName.startsWith("delete")) {
 			sqlCommandType = SqlCommandType.DELETE;
-		} else if(methodName.equals("insert") || methodName.equals("batchInsert")) {
+		} else if(methodName.equals("insert") || methodName.equals("batchInsert") || methodName.equals("batchMerge")) {
 			sqlCommandType = SqlCommandType.INSERT;
 		} else if(methodName.startsWith("update") || methodName.startsWith("logic") || methodName.startsWith("resume")) {
 			sqlCommandType = SqlCommandType.UPDATE;
@@ -668,6 +670,10 @@ public class MapperNamingQueryBuilder {
 		
 		if("batchInsert".equals(methodName) && Jdbc3KeyGenerator.INSTANCE != keyGenerator) { //特殊处理
 			keyGenerator = NoKeyGenerator.INSTANCE;
+		}
+		
+		if("batchInsert".equals(methodName) || "batchMerge".equals(methodName)) {
+			keyProperty = Constants.ENTITY_LIST + Segment.DOT + keyProperty;
 		}
 		
 		assistant.addMappedStatement(mappedStatementId, sqlSource, statementType, sqlCommandType, fetchSize,

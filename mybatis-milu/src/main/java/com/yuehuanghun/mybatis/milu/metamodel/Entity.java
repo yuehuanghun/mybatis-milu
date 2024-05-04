@@ -84,6 +84,8 @@ public class Entity {
 	
 	private final Map<String, FetchRef> exampleQueryFetchRefs = new HashMap<>();
 	
+	private final Map<String, Index> indexMap = new HashMap<>();
+	
 	private boolean filterLogicDeletedData = true;
 	
 	public void addAttribute(Attribute attribute) {
@@ -137,6 +139,18 @@ public class Entity {
 	
 	public boolean isFilterLogicDeletedData() {
 		return filterLogicDeletedData && !logicDeleteAttributes.isEmpty();
+	}
+	
+	// 用于merge操作
+	public void addIndex(String indexName, Attribute attr) {
+		Index index = indexMap.computeIfAbsent(indexName, key -> new Index(indexName, new ArrayList<>()));
+		if(!index.getAttrs().contains(attr)) {
+			index.getAttrs().add(attr);
+		}
+	}
+	
+	public Index getIndex(String indexName) {
+		return indexMap.get(indexName);
 	}
 	
 	@Data
@@ -328,5 +342,15 @@ public class Entity {
 		private Class<? extends ExampleQueryConverter> valueConverter;
 		
 		private KeyType keyType;
+	}
+	
+	@Data
+	@AllArgsConstructor
+	public static class Index {
+		// 索引名
+		private String name;
+		// 属性
+		private List<Attribute> attrs;
+		
 	}
 }

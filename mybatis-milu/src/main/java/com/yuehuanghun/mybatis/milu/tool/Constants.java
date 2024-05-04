@@ -73,4 +73,6 @@ public interface Constants {
 	String GROUP = "group";
 	
 	String SELECTS = "selects";
+	
+	String INDEX = "index";
 }

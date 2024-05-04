@@ -21,7 +21,7 @@ public enum DbEnum {
 
 	ORCLE("oracle"), MYSQL("mysql"), MARIADB("mariadb"), POSTGRES("postgresql"), SQLSERVER("sqlserver"), H2("h2"),
 	DB2("db2"), SQLITE("sqlite"), HERDDB("herddb"), INFORMIX("informix"), DERBY("derby"), DM("dm"), EDB("edb"),
-	OSCAR("oscar"), CLICKHOUSE("clickhouse"), OTHER("other");
+	OSCAR("oscar"), CLICKHOUSE("clickhouse"), OPENGAUSS("opengauss"), OTHER("other");
 
 	@Getter
 	private String dbName;

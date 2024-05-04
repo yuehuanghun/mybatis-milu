@@ -862,4 +862,21 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 		
 		return getDomainMapper().insert(entity);
 	}
+	
+	
+	/**
+	 * 批量合并<br>
+	 * 新增，如有冲突则转更新。插入数据时会对字段进行插入，如果转更新则只会更新可更新的字段，并且冲突索引字段不会被更新<br>
+	 * 目前支持Mysql、PostgreSQL、Oracle、DM（达梦）、OpenGauss。或兼容并使用以上数据库驱动的数据库。<br>
+	 * 已知问题：<br>
+	 * 1、在Mysql下，数据大于一条时，无法正确在保存的数据中获取自增主键值（即id属性），所以不要在保存的数据上直接再做更新操作。（PostgreSQL可以正常获取自增主键）<br>
+	 * 2、冲突转更新后，那些不能被更新的字段无法返回实体对象，所以不要直接使用保存后的数据做判断操作，可能会引起误判。<br>
+	 * 3、相同的执行场景在不同数据库反映的影响行数可能不一样
+	 * @param entities 需要合并的实体
+	 * @param conflictIndexName 可能引发冲突的（唯一/主键）索引。为空则默认为主键索引。索引由实体属性的AttributeOptions(index={})声明
+	 * @return 影响行数
+	 */
+	default int batchMerge(List<T> entityList, String conflictIndexName) {
+		return getDomainMapper().batchMerge(entityList, conflictIndexName);
+	}
 }

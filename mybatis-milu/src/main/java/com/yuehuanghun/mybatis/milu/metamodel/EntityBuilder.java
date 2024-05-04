@@ -264,6 +264,10 @@ public class EntityBuilder {
 				if(options.jdbcType().length > 0) {
 					attr.setJdbcType(options.jdbcType()[0]);
 				}
+				
+				for(String index : options.index()) {
+					entity.addIndex(index, attr);
+				}
 			}		
 
 			LogicDelete logicDelete = getLogicDelete(field);

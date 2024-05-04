@@ -8,7 +8,7 @@ spring.datasource:
     driverClassName: oracle.jdbc.OracleDriver
     url: jdbc:oracle:thin:@//127.0.0.1:1521/orcl
     username: mybatis
-    password: 123456
+    password: 1234567
     poolName: SpringBootHikariCP
     maximumPoolSize: 20
     minimumIdle: 3

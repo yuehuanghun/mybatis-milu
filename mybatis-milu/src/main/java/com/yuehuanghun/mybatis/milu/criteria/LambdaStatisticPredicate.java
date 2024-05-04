@@ -24,7 +24,8 @@ import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	
 	/**
-	 * 列汇总计算
+	 * 列汇总计算<br>
+	 * 查询字段名为被统计属性名+统计函数，例如：sum("amount") -> amountSum
 	 * @param getterFn 实体类的getter函数式
 	 * @return 当前对象
 	 */
@@ -39,7 +40,8 @@ public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	LambdaStatisticPredicate<T> sum(SerializableFunction<T, ?> getterFn, String columnAlias);
 
 	/**
-	 * 列计数
+	 * 列计数<br>
+	 * 查询字段名为被统计属性名+统计函数，例如：count("id") -> idCount
 	 * @param getterFn 实体类的getter函数式
 	 * @return 当前对象
 	 */
@@ -54,7 +56,8 @@ public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	LambdaStatisticPredicate<T> count(SerializableFunction<T, ?> getterFn, String columnAlias);
 
 	/**
-	 * 列去重后计数
+	 * 列去重后计数<br>
+	 * 查询字段名为被统计属性名+统计函数，例如：countDistinct("status") -> statusCountDistinct
 	 * @param getterFn 实体类的getter函数式
 	 * @return 当前对象
 	 */
@@ -69,7 +72,8 @@ public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	LambdaStatisticPredicate<T> countDistinct(SerializableFunction<T, ?> getterFn, String columnAlias);
 
 	/**
-	 * 列平均值计算
+	 * 列平均值计算<br>
+	 * 查询字段名为被统计属性名+统计函数，例如：avg("amount") -> amountAvg
 	 * @param getterFn 实体类的getter函数式
 	 * @return 当前对象
 	 */
@@ -84,7 +88,8 @@ public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	LambdaStatisticPredicate<T> avg(SerializableFunction<T, ?> getterFn, String columnAlias);
 
 	/**
-	 * 列最小值计算
+	 * 列最小值计算<br>
+	 * 查询字段名为被统计属性名+统计函数，例如：min("amount") -> amountMin
 	 * @param getterFn 实体类的getter函数式
 	 * @return 当前对象
 	 */
@@ -99,7 +104,8 @@ public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	LambdaStatisticPredicate<T> min(SerializableFunction<T, ?> getterFn, String columnAlias);
 
 	/**
-	 * 列最大值计算
+	 * 列最大值计算<br>
+	 * 查询字段名为被统计属性名+统计函数，例如：max("amount") -> amountMax
 	 * @param getterFn 实体类的getter函数式
 	 * @return 当前对象
 	 */

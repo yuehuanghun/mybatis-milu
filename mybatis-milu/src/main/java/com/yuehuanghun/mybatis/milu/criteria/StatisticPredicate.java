@@ -26,7 +26,8 @@ import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 public interface StatisticPredicate extends Predicate {
 	
 	/**
-	 * 列汇总计算
+	 * 列汇总计算<br>
+	 * 查询字段名为被统计属性名+统计函数，例如：sum("amount") -> amountSum
 	 * @param attrName 属性名
 	 * @return 当前对象
 	 */
@@ -41,7 +42,8 @@ public interface StatisticPredicate extends Predicate {
 	StatisticPredicate sum(String attrName, String columnAlias);
 
 	/**
-	 * 列计数
+	 * 列计数<br>
+	 * 查询字段名为被统计属性名+统计函数，例如：count("id") -> idCount
 	 * @param attrName 属性名
 	 * @return 当前对象
 	 */
@@ -56,7 +58,8 @@ public interface StatisticPredicate extends Predicate {
 	StatisticPredicate count(String attrName, String columnAlias);
 
 	/**
-	 * 列去重后计数
+	 * 列去重后计数<br>
+	 * 查询字段名为被统计属性名+统计函数，例如：countDistinct("status") -> statusCountDistinct
 	 * @param attrName 属性名
 	 * @return 当前对象
 	 */
@@ -71,7 +74,8 @@ public interface StatisticPredicate extends Predicate {
 	StatisticPredicate countDistinct(String attrName, String columnAlias);
 
 	/**
-	 * 列平均值计算
+	 * 列平均值计算<br>
+	 * 查询字段名为被统计属性名+统计函数，例如：avg("amount") -> amountAvg
 	 * @param attrName 属性名
 	 * @return 当前对象
 	 */
@@ -86,7 +90,8 @@ public interface StatisticPredicate extends Predicate {
 	StatisticPredicate avg(String attrName, String columnAlias);
 
 	/**
-	 * 列最小值计算
+	 * 列最小值计算<br>
+	 * 查询字段名为被统计属性名+统计函数，例如：min("amount") -> amountMin
 	 * @param attrName 属性名
 	 * @return 当前对象
 	 */
@@ -101,7 +106,8 @@ public interface StatisticPredicate extends Predicate {
 	StatisticPredicate min(String attrName, String columnAlias);
 
 	/**
-	 * 列最大值计算
+	 * 列最大值计算<br>
+	 * 查询字段名为被统计属性名+统计函数，例如：max("amount") -> amountMax
 	 * @param attrName 属性名
 	 * @return 当前对象
 	 */

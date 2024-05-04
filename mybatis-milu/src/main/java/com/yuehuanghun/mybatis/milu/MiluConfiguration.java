@@ -41,6 +41,7 @@ import com.yuehuanghun.mybatis.milu.exception.OrmBuildingException;
 import com.yuehuanghun.mybatis.milu.exception.OrmRuntimeException;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericBatchInsertProviderSql;
+import com.yuehuanghun.mybatis.milu.generic.impl.GenericBatchMergeProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericCountByCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericCountByExampleProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericCountByLambdaCriteriaProviderSql;
@@ -206,6 +207,7 @@ public class MiluConfiguration extends Configuration {
 		this.addGenericProviderSql(new GenericUpdatePatchByIdsProviderSql());
 		this.addGenericProviderSql(new GenericUpdatePatchByCriteriaProviderSql());
 		this.addGenericProviderSql(new GenericUpdatePatchByLambdaCriteriaProviderSql());
+		this.addGenericProviderSql(new GenericBatchMergeProviderSql());
 	}
 	
 	private void registerDefaultIdentifierGenerator() {
