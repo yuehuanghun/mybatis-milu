@@ -79,15 +79,6 @@ public interface BaseMapper<T, ID extends Serializable> {
 	List<T> findAll(@Param(Constants.SORT) Sort sort);
 	
 	/**
-	 * 查询表所有数据，并指定排序方式
-	 * @param sort 排序
-	 * @return 列表
-	 * @deprecated 使用 findAll(Sort sort) 方法进行替代
-	 */
-	@Deprecated
-	List<T> findAllAndSort(@Param(Constants.SORT) Sort sort);
-	
-	/**
 	 * 使用实体类作为查询参数，非null值才会参与查询<br>
 	 * 查询关联表（引用属性）使用{@link EntityOptions}注解对实体类声明<br>
 	 * 当有实体逻辑删除属性时，将自动添加查询未删除数据的条件，可通用{@link EntityOptions#filterLogicDeletedData()}设置关闭
@@ -174,39 +165,6 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @return 列表
 	 */
 	T findUniqueByExample(@Param(Constants.EXAMPLE) T example, @Param(Constants.SORT) Sort sort, @Param(Constants.PAGE) Pageable pageable, @Param(Constants.GROUP) String group);
-	
-	/**
-	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效
-	 * @param example 条件
-	 * @param sort 排序，可null
-	 * @return 列表
-	 * @deprecated 使用findByExample(T example, Sort sort)方法替代
-	 */
-	@Deprecated
-	List<T> findByExampleAndSort(@Param(Constants.EXAMPLE) T example, @Param(Constants.SORT) Sort sort);
-	
-	/**
-	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效
-	 * @param example 条件
-	 * @param sort 排序，可null，可null
-	 * @param pageable 分页参数
-	 * @return 列表
-	 * @deprecated 使用findByExampleAndSort(T example, Sort sort, Pageable pageable)方法替代
-	 */
-	@Deprecated 
-	List<T> findByExampleAndSort(@Param(Constants.EXAMPLE) T example, @Param(Constants.SORT) Sort sort, @Param(Constants.PAGE) Pageable pageable);
-	
-	/**
-	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效<br>
-	 * 结果集必须是0或1条数据，否则会报错。
-	 * @param example 条件
-	 * @param sort 排序，可null
-	 * @param pageable 分页参数，可null
-	 * @return 列表
-	 * @deprecated 使用#findUniqueByExample(T example, Sort sort, Pageable pageable)方法替代
-	 */
-	@Deprecated
-	T findUniqueByExampleAndSort(@Param(Constants.EXAMPLE) T example, @Param(Constants.SORT) Sort sort, @Param(Constants.PAGE) Pageable pageable);
 	
 	/**
 	 * 插入一条数据
@@ -712,7 +670,7 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * 1、在Mysql下，数据大于一条时，无法正确在保存的数据中获取自增主键值（即id属性），所以不要在保存的数据上直接再做更新操作。（PostgreSQL可以正常获取自增主键）<br>
 	 * 2、冲突转更新后，那些不能被更新的字段无法返回实体对象，所以不要直接使用保存后的数据做判断操作，可能会引起误判。<br>
 	 * 3、不同数据库反映的影响行数可能不一样
-	 * @param entities 需要合并的实体
+	 * @param entityList 需要合并的实体
 	 * @param conflictIndexName 可能引发冲突的（唯一/主键）索引。为空则默认为主键索引。索引由实体属性的AttributeOptions(index={})声明
 	 * @return 影响行数
 	 */

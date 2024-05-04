@@ -98,7 +98,6 @@ public class CompanyMapperTest {
 	public void testFindAll() {
 		assertEquals(companyMapper.findAll().size(), 1);
 		assertEquals(companyMapper.findAll(Sort.by("id")).size(), 1);
-		assertEquals(companyMapper.findAllAndSort(Sort.by("id")).size(), 1);
 	}
 	
 	@Test

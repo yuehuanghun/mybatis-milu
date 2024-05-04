@@ -89,17 +89,6 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	}
 
 	/**
-	 * 查询表所有数据，并指定排序方式
-	 * @param sort 排序
-	 * @return 列表
-	 * @deprecated 使用getAll(Sort sort)方法替代
-	 */
-	@Deprecated
-	default List<T> getAllAndSort(Sort sort) {
-		return getDomainMapper().findAllAndSort(sort);
-	}
-
-	/**
 	 * 使用实体类作为查询参数，非null值才会参与查询<br>
 	 * 查询关联表（引用属性）使用{@link EntityOptions}注解对实体类声明<br>
 	 * 当有实体逻辑删除属性时，将自动添加查询未删除数据的条件，可通用{@link EntityOptions#filterLogicDeletedData()}设置关闭
@@ -203,45 +192,6 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 */
 	default T getUniqueByExample(T example, Sort sort, Pageable pageable, String group) {
 		return getDomainMapper().findUniqueByExample(example, sort, pageable, group);
-	}
-
-	/**
-	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效
-	 * @param example 条件
-	 * @param sort 排序，可null
-	 * @return 列表
-	 * @deprecated 使用getByExample(T example, Sort sort)替代
-	 */
-	@Deprecated
-	default List<T> getByExampleAndSort(T example, Sort sort) {
-		return getDomainMapper().findByExampleAndSort(example, sort);
-	}
-	
-	/**
-	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效
-	 * @param example 条件
-	 * @param sort 排序，可null
-	 * @param pageable 分页参数，可null
-	 * @return 列表
-	 * @deprecated 使用getByExample(T example, Sort sort, Pageable pageable)进行替代
-	 */
-	@Deprecated
-	default List<T> getByExampleAndSort(T example, Sort sort, Pageable pageable) {
-		return getDomainMapper().findByExampleAndSort(example, sort, pageable);
-	}
-	
-	/**
-	 * 使用实体类作为查询参数，并指定排序方式，非null值才会参与查询，关联表属性无效<br>
-	 * 结果集必须是0或1条数据，否则会报错。
-	 * @param example 条件
-	 * @param sort 排序，可null
-	 * @param pageable 分页参数，可null
-	 * @return 列表
-	 * @deprecated 使用getUniqueByExample(T example, Sort sort, Pageable pageable)进行替代
-	 */
-	@Deprecated
-	default T getUniqueByExampleAndSort(T example, Sort sort, Pageable pageable) {
-		return getDomainMapper().findUniqueByExampleAndSort(example, sort, pageable);
 	}
 
 	/**
@@ -804,7 +754,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * 补丁式更新，使用动态条件
 	 * @param patch 需要被更新的属性及其值，所有指定属性都会被更新，不管值是否为null。
 	 * @param predicate 动态条件
-	 * @return
+	 * @return 影响行数
 	 */
 	default int updatePatchByCriteria(Patch patch, Predicate predicate) {
 		return getDomainMapper().updatePatchByCriteria(patch, predicate);
@@ -814,7 +764,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * 补丁式更新，使用动态条件
 	 * @param patch 需要被更新的属性及其值，所有指定属性都会被更新，不管值是否为null。
 	 * @param predicate 动态条件
-	 * @return
+	 * @return 影响行数
 	 */
 	default int updatePatchByCriteria(Patch patch, Consumer<Predicate> predicate) {
 		return getDomainMapper().updatePatchByCriteria(patch, predicate);
@@ -824,7 +774,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * 补丁式更新，使用动态条件
 	 * @param patch 需要被更新的属性及其值，所有指定属性都会被更新，不管值是否为null。
 	 * @param predicate 动态条件
-	 * @return
+	 * @return 影响行数
 	 */
 	default int updatePatchByLambdaCriteria(Patch patch, Consumer<LambdaPredicate<T>> predicate) {
 		return getDomainMapper().updatePatchByLambdaCriteria(patch, predicate);
@@ -872,7 +822,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 * 1、在Mysql下，数据大于一条时，无法正确在保存的数据中获取自增主键值（即id属性），所以不要在保存的数据上直接再做更新操作。（PostgreSQL可以正常获取自增主键）<br>
 	 * 2、冲突转更新后，那些不能被更新的字段无法返回实体对象，所以不要直接使用保存后的数据做判断操作，可能会引起误判。<br>
 	 * 3、相同的执行场景在不同数据库反映的影响行数可能不一样
-	 * @param entities 需要合并的实体
+	 * @param entityList 需要合并的实体
 	 * @param conflictIndexName 可能引发冲突的（唯一/主键）索引。为空则默认为主键索引。索引由实体属性的AttributeOptions(index={})声明
 	 * @return 影响行数
 	 */

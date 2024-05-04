@@ -91,7 +91,7 @@ public class StudentMapperTest {
 
 	@Test
 	public void testFindAllAndSort() {
-		List<Student> result = studentMapper.findAllAndSort(Sort.by(Direction.DESC, "addTime"));
+		List<Student> result = studentMapper.findAll(Sort.by(Direction.DESC, "addTime"));
 		assertTrue(result.size() > 0);
 	};
 
@@ -188,12 +188,12 @@ public class StudentMapperTest {
 		
 		Sort sort = Sort.by(Direction.DESC, "addTime");
 		
-		List<Student> result = studentMapper.findByExampleAndSort(example, sort);
+		List<Student> result = studentMapper.findByExample(example, sort);
 		assertTrue(result.size() > 0);
 		
 		sort = Sort.by(Direction.DESC, Student::getAddTime);
 		
-		result = studentMapper.findByExampleAndSort(example, sort);
+		result = studentMapper.findByExample(example, sort);
 		assertTrue(result.size() > 0);
 		
 		example = new Student();
@@ -204,12 +204,12 @@ public class StudentMapperTest {
 		params.put("addTimeEnd", endDate);
 		example.setParams(params);
 		
-		result = studentMapper.findByExampleAndSort(example, sort);
+		result = studentMapper.findByExample(example, sort);
 		assertTrue(result.size() == 3);
 		
 		params.put("addTimeBegin", "2017-06-08");
 		params.put("addTimeEnd", "");
-		result = studentMapper.findByExampleAndSort(example, sort);
+		result = studentMapper.findByExample(example, sort);
 		assertTrue(result.size() == 3);
 	};
 	
@@ -218,7 +218,7 @@ public class StudentMapperTest {
 		Student example = new Student();
 		Sort sort = Sort.by(Direction.DESC, "id");
 		
-		Student student = studentMapper.findUniqueByExampleAndSort(example, sort, new PageRequest(1));
+		Student student = studentMapper.findUniqueByExample(example, sort, new PageRequest(1));
 		
 		assertEquals(student.getId().longValue(), 4L);
 	}
@@ -791,7 +791,7 @@ public class StudentMapperTest {
 		System.out.println(JSON.toJSONString(list));
 		
 		Sort sort = Sort.asc(Student::getAge).andDesc(Student::getClassId);
-		list = studentMapper.findAllAndSort(sort);
+		list = studentMapper.findAll(sort);
 	}
 	
 	@Test

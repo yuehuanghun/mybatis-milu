@@ -49,7 +49,7 @@ public class StudentProfileMapperTest {
 	
 	@Test
 	public void findAllAndSort() {
-		List<StudentProfile> result = studentProfileMapper.findAllAndSort(Sort.by(Direction.ASC, "addTime"));
+		List<StudentProfile> result = studentProfileMapper.findAll(Sort.by(Direction.ASC, "addTime"));
 		assertTrue(result.size() > 0);
 	}
 	
@@ -65,7 +65,7 @@ public class StudentProfileMapperTest {
 	public void testFindByExampleAndSort() {
 		StudentProfile example = new StudentProfile();
 		example.setFatherName("蓝标");
-		List<StudentProfile> result = studentProfileMapper.findByExampleAndSort(example, Sort.by(Direction.DESC, "addTime"));
+		List<StudentProfile> result = studentProfileMapper.findByExample(example, Sort.by(Direction.DESC, "addTime"));
 		assertTrue(result.size() > 0);
 	}
 	

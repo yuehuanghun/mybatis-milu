@@ -50,18 +50,15 @@ import com.yuehuanghun.mybatis.milu.generic.impl.GenericDeleteByCriteriaProvider
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericDeleteByIdProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericDeleteByIdsProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericDeleteByLambdaCriteriaProviderSql;
-import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindAllAndSortProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindAllProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindByCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindByCriteriaUnionProviderSql;
-import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindByExampleAndSortProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindByExampleProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindByIdProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindByIdsProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindByLambdaCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindByLambdaCriteriaUnionProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindUniqueByCriteriaProviderSql;
-import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindUniqueByExampleAndSortProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindUniqueByExampleProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFindUniqueByLambdaCriteriaProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.impl.GenericFlushProviderSql;
@@ -162,9 +159,7 @@ public class MiluConfiguration extends Configuration {
 		this.addGenericProviderSql(new GenericCountByExampleProviderSql());
 		this.addGenericProviderSql(new GenericDeleteByIdProviderSql());
 		this.addGenericProviderSql(new GenericDeleteByIdsProviderSql());
-		this.addGenericProviderSql(new GenericFindByExampleAndSortProviderSql());
 		this.addGenericProviderSql(new GenericFindByExampleProviderSql());
-		this.addGenericProviderSql(new GenericFindAllAndSortProviderSql());
 		this.addGenericProviderSql(new GenericFindAllProviderSql());
 		this.addGenericProviderSql(new GenericFindByIdProviderSql());
 		this.addGenericProviderSql(new GenericFindByIdsProviderSql());
@@ -186,7 +181,6 @@ public class MiluConfiguration extends Configuration {
 		this.addGenericProviderSql(new GenericUpdateAttrByLambdaCriteriaProviderSql());
 		this.addGenericProviderSql(new GenericUpdateAttrByCriteriaProviderSql());
 		this.addGenericProviderSql(new GenericFindUniqueByCriteriaProviderSql());
-		this.addGenericProviderSql(new GenericFindUniqueByExampleAndSortProviderSql());
 		this.addGenericProviderSql(new GenericFindUniqueByExampleProviderSql());
 		this.addGenericProviderSql(new GenericFindUniqueByLambdaCriteriaProviderSql());
 		this.addGenericProviderSql(new GenericLogicDeleteByIdProviderSql());
