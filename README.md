@@ -28,20 +28,20 @@ jdk >= 1.8
 <dependency>
    <groupId>com.yuehuanghun</groupId>
    <artifactId>mybatismilu-spring-boot-starter</artifactId>
-   <version>1.17.1</version> <!-- 获取最新版本 -->
+   <version>1.18.0</version> <!-- 获取最新版本 -->
 </dependency>
 
 <!-- springboot3.x -->
 <dependency>
    <groupId>com.yuehuanghun</groupId>
    <artifactId>mybatismilu-spring-boot3-starter</artifactId>
-   <version>1.17.1</version> <!-- 获取最新版本 -->
+   <version>1.18.0</version> <!-- 获取最新版本 -->
 </dependency>
 ```
 
 ### 核心功能
 
-![核心功能](http://static.yuehuanghun.com/mybatis-milu/framework.png)
+![核心功能](./doc/mybatis-milu.png)
 
 ### 示范项目
 基于知名的开源项目“若依管理系统”改版的项目：[yadmin](https://gitee.com/yuehh/yadmin4j)
