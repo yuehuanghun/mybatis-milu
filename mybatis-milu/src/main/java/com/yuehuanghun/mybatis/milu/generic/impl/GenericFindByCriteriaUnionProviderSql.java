@@ -23,10 +23,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.javassist.scopedpool.SoftValueHashMap;
 import org.apache.ibatis.mapping.ResultMapping;
 
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.Page;
 import com.yuehuanghun.mybatis.milu.criteria.Join;
 import com.yuehuanghun.mybatis.milu.criteria.Limit;
 import com.yuehuanghun.mybatis.milu.criteria.LimitOffset;
@@ -64,14 +65,19 @@ public class GenericFindByCriteriaUnionProviderSql implements GenericProviderSql
 		List<QueryPredicate> predicates = new ArrayList<>();
 				
 		for(Object criteria : criteriaGroups) {
-			QueryPredicate predicate = Predicates.queryPredicate();
-			if(Consumer.class.isInstance(criteria)) {		
-				((Consumer<Predicate>)criteria).accept(predicate);
+			QueryPredicate predicate;
+			if (criteria instanceof QueryPredicate) {
+				predicate = (QueryPredicate) criteria;
 			} else {
-				predicate.and((Predicate) criteria);
-			}
-			if(selectAttrNames != null && selectAttrNames.length > 0) {
-				predicate.select(selectAttrNames);
+				predicate = Predicates.queryPredicate();
+				if (Consumer.class.isInstance(criteria)) {
+					((Consumer<Predicate>) criteria).accept(predicate);
+				} else {
+					predicate.and((Predicate) criteria);
+				}
+				if (selectAttrNames != null && selectAttrNames.length > 0) {
+					predicate.select(selectAttrNames);
+				}
 			}
 			predicate.end();
 			predicates.add(predicate);
@@ -101,11 +107,32 @@ public class GenericFindByCriteriaUnionProviderSql implements GenericProviderSql
 				}
 				
 				BuildResult subResult = new QuerySqlTemplateBuilder(context, predicate, paramStartIndex).build();
-				sqls.add(subResult.getSqlTemplate());
+				String sqlTemplate = subResult.getSqlTemplate();
+				if(paramMap.containsKey(Constants.PAGE_KEY)) {
+					Limit limit = (Limit)paramMap.remove(Constants.PAGE_KEY);
+					if(limit instanceof Pageable) {
+						Pageable page = (Pageable)limit;
+						sqlTemplate = context.getConfiguration().getPageHelperDialect().getPageSql(sqlTemplate, new Page(page.getPageNum(), page.getPageSize(), false), new CacheKey());
+					} else if(limit instanceof LimitOffset) {
+						LimitOffset limitOffset = (LimitOffset)limit;
+						Page page = new Page();
+						page.setStartRow(limitOffset.getOffset());
+						page.setEndRow(limitOffset.getOffset() + limitOffset.getSize());
+						page.setCount(false);
+						sqlTemplate = context.getConfiguration().getPageHelperDialect().getPageSql(sqlTemplate, page, new CacheKey());
+					}
+				}
+				sqls.add(sqlTemplate);
 				resultMappings = subResult.getResultMappings();
 			}
 			
-			String sqlTemplate = sqls.stream().collect(Collectors.joining(" UNION ALL "));
+			String sqlTemplate;
+			if(sqls.size() == 1) {
+				sqlTemplate = sqls.get(0);
+			} else {
+				// 有分页、排序需要括起来
+				sqlTemplate = sqls.stream().map(sql -> "(" + sql + ")").collect(Collectors.joining(" UNION ALL "));
+			}
 			
 			sqlTemplate = Segment.SCRIPT_LABEL + sqlTemplate.replace(Segment.SCRIPT_LABEL, StringUtils.EMPTY).replace(Segment.SCRIPT_LABEL_END, StringUtils.EMPTY) + Segment.SCRIPT_LABEL_END;
 			
@@ -116,17 +143,6 @@ public class GenericFindByCriteriaUnionProviderSql implements GenericProviderSql
 		
 		 // 处理主动使用PageHelper发起分页设置的，转换排序中的属性为列名
 		SqlBuildingHelper.convertLocalPageOrder(context.getEntity(), context.getConfiguration());
-		
-		if(paramMap.containsKey(Constants.PAGE_KEY)) {
-			Limit limit = (Limit)paramMap.remove(Constants.PAGE_KEY);
-			if(limit instanceof Pageable) {
-				Pageable page = (Pageable)limit;
-				PageHelper.startPage(page.getPageNum(), page.getPageSize(), page.isCount());
-			} else if(limit instanceof LimitOffset) {
-				LimitOffset limitOffset = (LimitOffset)limit;
-				PageHelper.offsetPage(limitOffset.getOffset(), limitOffset.getSize(), limitOffset.isCount());
-			}
-		}
 
 		if(!result.getResultMappings().isEmpty()) {
 			ResultMapHelper.setResultMappingList(result.getResultMappings());
