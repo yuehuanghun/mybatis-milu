@@ -22,6 +22,7 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class StringUtils {
 	private final static Pattern UNDERLINE_PATTERN = Pattern.compile("([A-Za-z\\d]+)(_)?");
@@ -79,6 +80,7 @@ public class StringUtils {
 		return true;
 	}
 	
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public static Object toCollection(final Object obj) {
 		if(obj == null || Collection.class.isInstance(obj) || obj.getClass().isArray()) {
 			return obj;
@@ -87,6 +89,9 @@ public class StringUtils {
 			if(((String)obj).contains(Segment.COMMA)) {
 				return Arrays.asList(((String)obj).split(Segment.COMMA)).stream().filter(StringUtils::isNotBlank).map(String::trim).collect(Collectors.toList());
 			}
+		}
+		if(Stream.class.isInstance(obj)) {
+			return ((Stream)obj).collect(Collectors.toList());
 		}
 		return new Object[] { obj };
 	}
