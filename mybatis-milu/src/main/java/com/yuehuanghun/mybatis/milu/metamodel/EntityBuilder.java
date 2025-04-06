@@ -109,9 +109,9 @@ public class EntityBuilder {
 		return new EntityBuilder(entityClass, configuration);
 	}
 
-	public void build(){
-		if(configuration.getMetaModel().hasEntity(entityClass)) {
-			return;
+	public Entity build(){
+		if(entityClass == Object.class || configuration.getMetaModel().hasEntity(entityClass)) {
+			return configuration.getMetaModel().getEntity(entityClass);
 		}
 		
 		Entity entity = forClass(entityClass);
@@ -130,6 +130,7 @@ public class EntityBuilder {
 		}
 		
 		setDefaultJdbcType(entity, configuration);
+		return entity;
 	}
 	
 	private Entity forClass(Class<?> entityClass) {

@@ -16,6 +16,7 @@
 package com.yuehuanghun.mybatis.milu.generic.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,14 +57,31 @@ public class GenericResumeLogicDeleteByCriteriaProviderSql implements GenericPro
 		
 		try {
 			Entity entity = context.getEntity();
-			Object entityObj = entity.getJavaType().newInstance();
-			entity.getLogicDeleteAttributes().forEach(attr -> {
-				try {
-					attr.getSetter().invoke(entityObj, new Object[] {attr.getProvider().resumeValue(new LogicDeleteProvider.Context(entity.getJavaType(), attr.getJavaType(), attr.getName()))});
-				} catch (IllegalAccessException | InvocationTargetException e) {
-					throw new SqlExpressionBuildingException(e);
+			Object entityObj;
+			if(Map.class.isAssignableFrom(entity.getJavaType())) {
+				Map map;
+				if(Modifier.isInterface(entity.getJavaType().getModifiers()) || Modifier.isAbstract(entity.getJavaType().getModifiers())) {
+					map = new HashMap<>();
+				} else {
+					map = (Map) entity.getJavaType().newInstance();
 				}
-			});
+				
+				entity.getLogicDeleteAttributes().forEach(attr -> {
+					Object val = attr.getProvider().resumeValue(new LogicDeleteProvider.Context(entity.getJavaType(), attr.getJavaType(), attr.getName()));
+					map.put(attr.getName(), val);
+				});
+				
+				entityObj = map;
+			} else {
+				entityObj = entity.getJavaType().newInstance();
+				entity.getLogicDeleteAttributes().forEach(attr -> {
+					try {
+						attr.getSetter().invoke(entityObj, new Object[] {attr.getProvider().resumeValue(new LogicDeleteProvider.Context(entity.getJavaType(), attr.getJavaType(), attr.getName()))});
+					} catch (IllegalAccessException | InvocationTargetException e) {
+						throw new SqlExpressionBuildingException(e);
+					}
+				});
+			}
 			
 			((Map)params).put(Constants.ENTITY, entityObj);
 			SqlBuildingHelper.fill(entityObj, false, context.getConfiguration());
@@ -86,5 +104,4 @@ public class GenericResumeLogicDeleteByCriteriaProviderSql implements GenericPro
 	public String getMethodName() {
 		return "resumeLogicDeletedByCriteria";
 	}
-
 }

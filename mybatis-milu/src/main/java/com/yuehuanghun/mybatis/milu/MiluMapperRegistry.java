@@ -35,7 +35,9 @@ public class MiluMapperRegistry extends MapperRegistry {
 		if(BaseMapper.class.isAssignableFrom(type)) {
 			if(config.isCreateEntityResultMap()) {
 				Class<?> entityClass = getGenericEntity(type);
-	    		EntityBuilder.instance(entityClass, config).buildEntityDefaultResultMap(type);
+	    		if(entityClass != null && entityClass != Object.class) {
+	    			EntityBuilder.instance(entityClass, config).buildEntityDefaultResultMap(type);
+	    		}
 			}
 			MapperNamingQueryBuilder parser = new MapperNamingQueryBuilder(config, type);
 			parser.parse();

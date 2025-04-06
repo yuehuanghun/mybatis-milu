@@ -115,10 +115,12 @@ public class MapperNamingQueryBuilder {
 		
 		this.assistant.setCurrentNamespace(type.getName());
 		
-		Class<?> entityClass = getGenericEntity(type);
-		EntityBuilder.instance(entityClass, configuration).build();
+		Entity entity = configuration.getMapperEntity((Class<? extends BaseMapper>) type);
+		if(entity == null) {
+			entity = EntityBuilder.instance(getGenericEntity(type), configuration).build();
+		}
 		
-		configuration.addMapperEntityMapping((Class<? extends BaseMapper>) type, configuration.getMetaModel().getEntity(entityClass));
+		configuration.addMapperEntityMapping((Class<? extends BaseMapper>) type, configuration.getMetaModel().getEntity(entity.getJavaType()));
 		
 		for (Method method : type.getDeclaredMethods()) {
 			if (!method.isAnnotationPresent(NamingQuery.class)) {
@@ -132,9 +134,9 @@ public class MapperNamingQueryBuilder {
 		}
 		
 		for (Method method : BaseMapper.class.getDeclaredMethods()) {
-			parseGenericResultMap(method, entityClass);
+			parseGenericResultMap(method, entity);
 			
-			parseGenericStatement(method, entityClass);
+			parseGenericStatement(method, entity);
 		}
 		
 	}
@@ -189,6 +191,15 @@ public class MapperNamingQueryBuilder {
 		for(Attribute attr : configuration.getMetaModel().getEntity(entityType).getAttributes()) {
 			if(attr.isSelectable()) {
 				ResultMapping resultMapping = assistant.buildResultMapping(entityType, attr.getName(), attr.getColumnName(), attr.getJavaType(), null, null, null, null, null, attr.getTypeHandler(), attr.isId() ? ID_FLAG_LIST : null);
+				resultMappings.add(resultMapping);
+			}
+		}
+	}
+	
+	private void buildEntityResultMapping(Entity entity, List<ResultMapping> resultMappings) {
+		for(Attribute attr : entity.getAttributes()) {
+			if(attr.isSelectable()) {
+				ResultMapping resultMapping = assistant.buildResultMapping(entity.getJavaType(), attr.getName(), attr.getColumnName(), attr.getJavaType(), null, null, null, null, null, attr.getTypeHandler(), attr.isId() ? ID_FLAG_LIST : null);
 				resultMappings.add(resultMapping);
 			}
 		}
@@ -568,13 +579,13 @@ public class MapperNamingQueryBuilder {
 		throw new SqlExpressionBuildingException("Mapper非BaseMapper子类");
 	}
 	
-	private String parseGenericResultMap(Method method, Class<?> entityClass) {
+	private String parseGenericResultMap(Method method, Entity entity) {
 		Class<?> returnType;
 		List<ResultMapping> resultMappings = new ArrayList<>();
 		
 		if(method.getName().startsWith("find")) {
-			returnType = entityClass;
-			buildEntityResultMapping(returnType, resultMappings);
+			returnType = entity.getJavaType();
+			buildEntityResultMapping(entity, resultMappings);
 		} else if(method.getName().startsWith("statistic")) {
 			returnType = Map.class;
 		} else {
@@ -586,7 +597,7 @@ public class MapperNamingQueryBuilder {
 		return resultMapId;
 	}
 
-	void parseGenericStatement(Method method, Class<?> entityClass) {
+	void parseGenericStatement(Method method, Entity entity) {
 		String methodName = method.getName();
 		final String mappedStatementId = type.getName() + "." + methodName;
 		if(configuration.hasStatement(mappedStatementId, false)) { //允许同名statement，Lambda模式与非Lambda模式
@@ -613,7 +624,6 @@ public class MapperNamingQueryBuilder {
 		KeyGenerator keyGenerator = NoKeyGenerator.INSTANCE;
 		String keyProperty = null;
 		String keyColumn = null;
-		Entity entity = configuration.getMetaModel().getEntity(entityClass);
 		
 		if(sqlCommandType == SqlCommandType.INSERT) {
 			IdAttribute idAttr = entity.getId();
@@ -649,7 +659,7 @@ public class MapperNamingQueryBuilder {
 							}
 						}
 					} else if(generationType == GenerationType.AUTO){
-						keyGenerator = new AssignKeyGenerator(StringUtils.defaultIfBlank(idAttr.getGenerator(), configuration.getDefaultIdGenerator()), configuration, entityClass, keyProperty);
+						keyGenerator = new AssignKeyGenerator(StringUtils.defaultIfBlank(idAttr.getGenerator(), configuration.getDefaultIdGenerator()), configuration, entity.getJavaType(), keyProperty);
 					}
 				}
 			}

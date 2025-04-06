@@ -17,6 +17,7 @@ package com.yuehuanghun.mybatis.milu.filler;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
 import org.apache.ibatis.reflection.MetaClass;
 import org.apache.ibatis.reflection.invoker.Invoker;
@@ -55,9 +56,22 @@ public class Filler {
 		this.attrName = fieldName;
 	}
 	
+	// 实体类型为Map时
+	public Filler(String attrName, Class<?> attrJavaType, AttributeValueSupplier<?> attributeValueSupplier, FillMode fillMode) {
+		this.attributeValueSupplier = attributeValueSupplier;
+		this.fieldClass = attrJavaType;
+		this.fillMode = fillMode;
+		this.attrName = attrName;
+	}
+	
+	@SuppressWarnings("rawtypes")
 	private boolean shouldFill(Object target) {
 		if(this.fillMode == FillMode.ANY) {
 			return true;
+		}
+		
+		if(target instanceof Map) {
+			return ((Map) target).get(attrName) == null;
 		}
 		
 		if(getter == null) {
@@ -69,11 +83,9 @@ public class Filler {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	public void setValue(Object target, boolean insert) {
-		if(setter == null) {
-			return;
-		}
 		if(!shouldFill(target)) {
 			return;
 		}
@@ -83,6 +95,14 @@ public class Filler {
 			value = attributeValueSupplier.getValueOnInsert(fieldClass);
 		} else {
 			value = attributeValueSupplier.getValueOnUpdate(fieldClass);
+		}
+		
+		if(target instanceof Map) {
+			((Map) target).put(attrName, value);
+		}
+		
+		if(setter == null) {
+			return;
 		}
 		
 		try {

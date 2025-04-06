@@ -15,16 +15,23 @@
  */
 package com.yuehuanghun.mybatis.milu.metamodel;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MetaModel {
 	private final Map<Class<?>, Entity> entityMap = new ConcurrentHashMap<>();
+	private final List<Entity> entities = new ArrayList<>();
 	
 	public boolean hasEntity(Class<?> entityClass) {
 		return entityMap.containsKey(entityClass);
+	}
+	
+	public boolean hasEntity(Entity entity) {
+		return entities.contains(entity);
 	}
 	
 	public Entity getEntity(Class<?> entityClass) {
@@ -32,10 +39,14 @@ public class MetaModel {
 	}
 	
 	public void addEntity(Entity entity) {
+		if(hasEntity(entity)) {
+			return;
+		}
 		entityMap.put(entity.getJavaType(), entity);
+		entities.add(entity);
 	}
 	
 	public Collection<Entity> getEntities(){
-		return Collections.unmodifiableCollection(entityMap.values());
+		return Collections.unmodifiableCollection(entities);
 	}
 }

@@ -41,4 +41,8 @@ public interface TeacherMapper extends BaseMapper<Teacher, Long> {
 	@NamingQuery
 	@StatementOptions(asExpression = "findById", lockModeType = LockModeType.PESSIMISTIC_READ)
 	public Teacher findByIdWithShareLock(Long id);
+	
+	public static void main(String[] args) {
+		System.out.println(TeacherMapper.class.getGenericInterfaces()[0].getTypeName());
+	}
 }

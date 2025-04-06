@@ -272,7 +272,7 @@ public class Entity {
 	@EqualsAndHashCode(callSuper = true)
 	public static class IdAttribute extends Attribute {
 		
-		private GenerationType generationType;
+		private GenerationType generationType = GenerationType.IDENTITY;
 		
 		private String generator;
 

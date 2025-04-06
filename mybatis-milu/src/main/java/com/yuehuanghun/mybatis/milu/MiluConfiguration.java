@@ -22,11 +22,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.javassist.ClassPool;
+import org.apache.ibatis.javassist.CtClass;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
@@ -92,6 +96,7 @@ import com.yuehuanghun.mybatis.milu.id.impl.snowflake.SnowflakeIdentifierGenerat
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.EntityBuilder;
 import com.yuehuanghun.mybatis.milu.metamodel.MetaModel;
+import com.yuehuanghun.mybatis.milu.metamodel.VEntity;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 import com.yuehuanghun.mybatis.milu.tool.converter.DefaultExampleQueryConverter;
 import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter;
@@ -109,6 +114,7 @@ public class MiluConfiguration extends Configuration {
 	@SuppressWarnings("rawtypes")
 	private final Map<Class<? extends BaseMapper>, Entity> mapperEntityMap = new HashMap<>();
 	private final Map<Object, SqlSession> mapperSqlSessionMap = new HashMap<>();
+	private final List<Class<? extends BaseMapper<?, ?>>> dynamicAddMappers = new ArrayList<>();
 
 	@Getter
 	private DbMeta dbMeta;
@@ -126,6 +132,9 @@ public class MiluConfiguration extends Configuration {
 	@Getter
 	@Setter
 	private boolean autoSetupColumnJdbcType = true; // 自动设置字段的jdbcType，自动配置参数：mybatis.autoSetupColumnJdbcType
+	@Getter
+	@Setter
+	private boolean autoUpperCaseWhileOracle = false; // 当为ORACLE数据库时，自动将表名、列名大写
 	
 	//自动化配置 mybatis.configurationProperties.idGenerator
 	@Getter
@@ -398,5 +407,83 @@ public class MiluConfiguration extends Configuration {
 	
 	public SqlSession getMapperSqlSession(Object mapper) {
 		return mapperSqlSessionMap.get(mapper);
+	}
+	
+	private static final AtomicInteger dynamicMapperCounter = new AtomicInteger();
+	
+	/**
+	 * 动态添加实体类及自动生成其对应的Mapper类
+	 * @param entity 实体类
+	 * @return BaseMapper子类实例
+	 */
+	@SuppressWarnings("unchecked")
+	public Class<? extends BaseMapper<?, ?>> dynamicAddMapperForEntity(VEntity ventity) {
+		Entity entity = ventity.toEntity();
+		try {
+			if(entity.getJavaType() == null || entity.getJavaType() == Object.class) {
+				entity.setJavaType(Map.class); // 默认使用Map接收参数
+			}
+			
+			getMetaModel().addEntity(entity);
+			
+			String name = entity.getName();
+			if(StringUtils.isBlank(name)) {
+				name = StringUtils.underline2Camel(entity.getTableName(), false);
+				entity.setName(name);
+			}
+			
+			// 避免重复
+			String mapperClassName = "com.yuehuanghun.mybatis.milu.mapper." + name + "$" + dynamicMapperCounter.getAndIncrement() + "Mapper";
+			ClassPool pool = ClassPool.getDefault();
+			CtClass baseMapperClass = pool.get(BaseMapper.class.getName());
+			CtClass mapperClass = pool.makeInterface(mapperClassName, baseMapperClass);
+			Class<? extends BaseMapper<?, ?>> clazz = (Class<? extends BaseMapper<?, ?>>) mapperClass.toClass();
+			
+			this.addMapperEntityMapping(clazz, entity); // 提前映射
+			this.addMapper(clazz);
+			dynamicAddMappers.add(clazz);
+			return clazz;
+		} catch (Exception e) {
+			throw new OrmBuildingException("动态构建Mapper异常：" + entity.getName(), e);
+		}
+	}
+	
+	/**
+	 * 卸载动态添加的Mapper类<br>
+	 * 
+	 * @param clazz mapper类
+	 */
+	@SuppressWarnings("rawtypes")
+	public void dropDynamicAddMapper(Class<? extends BaseMapper> clazz) {
+		if(!dynamicAddMappers.contains(clazz)) {
+			return;
+		}
+		
+		String prefix = clazz.getName() + ".";
+		Iterator<String> statKeyIt = mappedStatements.keySet().iterator();
+		while(statKeyIt.hasNext()) {
+			String statKey = statKeyIt.next();
+			if(statKey.startsWith(prefix)) {
+				mappedStatements.remove(statKey);
+			}
+		}
+		
+		Iterator<String> resKeyIt = resultMaps.keySet().iterator();
+		while(resKeyIt.hasNext()) {
+			String resKey = resKeyIt.next();
+			if(resKey.startsWith(prefix)) {
+				mappedStatements.remove(resKey);
+			}
+		}
+		
+		Iterator<String> kgKeyIt = keyGenerators.keySet().iterator();
+		while(kgKeyIt.hasNext()) {
+			String kgKey = kgKeyIt.next();
+			if(kgKey.startsWith(prefix)) {
+				mappedStatements.remove(kgKey);
+			}
+		}
+		
+		dynamicAddMappers.remove(clazz);
 	}
 }

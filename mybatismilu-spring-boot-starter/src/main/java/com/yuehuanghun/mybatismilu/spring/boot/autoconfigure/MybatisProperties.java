@@ -12,7 +12,6 @@ import org.apache.ibatis.mapping.ResultSetType;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.AutoMappingBehavior;
 import org.apache.ibatis.session.AutoMappingUnknownColumnBehavior;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.LocalCacheScope;
 import org.apache.ibatis.type.JdbcType;
@@ -22,6 +21,8 @@ import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+
+import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 
 @ConfigurationProperties(prefix = MybatisProperties.MYBATIS_PREFIX)
 public class MybatisProperties {
@@ -382,6 +383,11 @@ public class MybatisProperties {
 		 * 指定要切换查询使用的数据库标识。
 		 */
 		private String databaseId;
+		
+		/**
+		 * 当为ORACLE数据库时，自动将表名、列名大写
+		 */
+		private boolean autoUpperCaseWhileOracle = false;
 
 		public Boolean getSafeRowBoundsEnabled() {
 			return safeRowBoundsEnabled;
@@ -642,7 +648,15 @@ public class MybatisProperties {
 			this.databaseId = databaseId;
 		}
 
-		public void applyTo(Configuration target) {
+		public boolean isAutoUpperCaseWhileOracle() {
+			return autoUpperCaseWhileOracle;
+		}
+
+		public void setAutoUpperCaseWhileOracle(boolean autoUpperCaseWhileOracle) {
+			this.autoUpperCaseWhileOracle = autoUpperCaseWhileOracle;
+		}
+
+		public void applyTo(MiluConfiguration target) {
 			PropertyMapper mapper = PropertyMapper.get().alwaysApplyingWhenNonNull();
 			mapper.from(getSafeRowBoundsEnabled()).to(target::setSafeRowBoundsEnabled);
 			mapper.from(getSafeResultHandlerEnabled()).to(target::setSafeResultHandlerEnabled);
@@ -676,6 +690,7 @@ public class MybatisProperties {
 			mapper.from(getConfigurationFactory()).to(target::setConfigurationFactory);
 			mapper.from(getDefaultEnumTypeHandler()).to(target::setDefaultEnumTypeHandler);
 			mapper.from(getDatabaseId()).to(target::setDatabaseId);
+			mapper.from(isAutoUpperCaseWhileOracle()).to(target::setAutoUpperCaseWhileOracle);
 		}
 
 	}
