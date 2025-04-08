@@ -111,6 +111,23 @@ public class ClassMapperTest {
 		assertNotNull(classs);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testFindUniqueByCriteriaSingleCol() {
+		String name = classMapper.findUniqueByCriteria(p -> p.select("name").eq("id", 2L), String.class);
+		assertEquals(name, "二年级");
+		
+		name = classMapper.findUniqueByLambdaCriteria(p -> p.select(Classs::getName).eq(Classs::getId, 2L), String.class);
+		assertEquals(name, "二年级");
+		
+		QueryPredicate p = Predicates.queryPredicate();
+		p.select("name");
+		p.eq("id", 1L);
+		
+		name = classMapper.findUniqueByCriteria(p, String.class);
+		assertEquals(name, "一年级");
+	}
+	
 	@Test
 	public void testFindByLambdaCriteria_mix() {
 		List<Classs> result = classMapper.findByLambdaCriteria(p -> p.eq(Classs::getName, "一年级").andP(sp -> sp.eq("studentListName", "张三")));

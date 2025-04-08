@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.yuehuanghun.mybatis.milu.BaseMapper;
 import com.yuehuanghun.mybatis.milu.annotation.EntityOptions;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaPredicate;
@@ -38,6 +40,7 @@ import com.yuehuanghun.mybatis.milu.criteria.UpdatePredicate;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.SerializableFunction;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
+import com.yuehuanghun.mybatis.milu.tool.Constants;
 import com.yuehuanghun.mybatis.milu.tool.EntityUtils;
 
 /**
@@ -305,6 +308,18 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	}
 
 	/**
+	 * 动态条件查询唯一数据<br>
+	 * 结果集必须是0或1条数据，否则会报错。建议使用.limit(1)进行结果集行数限制。<br>
+	 * 查询实体单个属性时resultType可为该属性的类型
+	 * @param predicate 条件，可通过{@link Predicates#queryPredicate()}创建
+	 * @param resultType 结果类
+	 * @return 列表
+	 */
+	default <E> E getUniqueByCriteria(QueryPredicate predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType) {
+		return getDomainMapper().findUniqueByCriteria(predicate, resultType);
+	}
+
+	/**
 	 * 动态条件查询<br>
 	 * @param predicate 条件
 	 * @return 列表
@@ -375,6 +390,18 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	default T getUniqueByCriteria(Consumer<QueryPredicate> predicate) {
 		return getDomainMapper().findUniqueByCriteria(predicate);
 	}
+
+	/**
+	 * 动态条件查询唯一数据<br>
+	 * 结果集必须是0或1条数据，否则会报错。建议使用.limit(1)进行结果集行数限制。<br>
+	 * 查询实体单个属性时resultType可为该属性的类型
+	 * @param predicate 条件
+	 * @param resultType 结果类
+	 * @return 列表
+	 */
+	default <E> E getUniqueByCriteria(Consumer<QueryPredicate> predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType) {
+		return getDomainMapper().findUniqueByCriteria(predicate, resultType);
+	}
 	
 	/**
 	 * 动态条件查询<br>
@@ -423,7 +450,6 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 		return getDomainMapper().findByLambdaCriteriaUnion(selectAttrNames, predicates);
 	}
 	
-
 	/**
 	 * lambda表达式动态条件查询唯一数据<br>
 	 *  结果集必须是0或1条数据，否则会报错。建议使用.limit(1)进行结果集行数限制。
@@ -432,6 +458,18 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	 */
 	default T getUniqueByLambdaCriteria(Consumer<LambdaQueryPredicate<T>> predicate) {
 		return getDomainMapper().findUniqueByLambdaCriteria(predicate);
+	}
+
+	/**
+	 * lambda表达式动态条件查询唯一数据<br>
+	 *  结果集必须是0或1条数据，否则会报错。建议使用.limit(1)进行结果集行数限制。<br>
+	 * 查询实体单个属性时resultType可为该属性的类型
+	 * @param predicate 条件
+	 * @param resultType 结果类
+	 * @return 列表
+	 */
+	default <E> E getUniqueByLambdaCriteria(Consumer<LambdaQueryPredicate<T>> predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType) {
+		return getDomainMapper().findUniqueByLambdaCriteria(predicate, resultType);
 	}
 	
 	/**

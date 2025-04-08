@@ -249,6 +249,16 @@ public interface BaseMapper<T, ID extends Serializable> {
 	T findUniqueByCriteria(@Param(Constants.CRITERIA) QueryPredicate predicate);
 	
 	/**
+	 * 动态条件查询唯一数据<br>
+	 * 结果集必须是0或1条数据，否则会报错。建议使用.limit(1)进行结果集行数限制。<br>
+	 * 查询实体单个属性时resultType可为该属性的类型
+	 * @param predicate 条件
+	 * @param resultType 结果类
+	 * @return 列表
+	 */
+	<E> E findUniqueByCriteria(@Param(Constants.CRITERIA) QueryPredicate predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType);
+	
+	/**
 	 * 动态条件查询<br>
 	 * @param predicate 条件
 	 * @return 列表
@@ -262,6 +272,16 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @return 列表
 	 */
 	T findUniqueByCriteria(@Param(Constants.CRITERIA) Consumer<QueryPredicate> predicate);
+	
+	/**
+	 * 动态条件查询唯一数据<br>
+	 * 结果集必须是0或1条数据，否则会报错。建议使用.limit(1)进行结果集行数限制。<br>
+	 * 查询实体单个属性时resultType可为该属性的类型
+	 * @param predicate 条件
+	 * @param resultType 结果类
+	 * @return 列表
+	 */
+	<E> E findUniqueByCriteria(@Param(Constants.CRITERIA) Consumer<QueryPredicate> predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType);
 	
 	/**
 	 * 动态条件查询<br>
@@ -330,6 +350,16 @@ public interface BaseMapper<T, ID extends Serializable> {
 	 * @return 列表
 	 */
 	T findUniqueByLambdaCriteria(@Param(Constants.CRITERIA) Consumer<LambdaQueryPredicate<T>> predicate);
+	
+	/**
+	 * lambda表达式动态条件查询唯一数据<br>
+	 * 结果集必须是0或1条数据，否则会报错。建议使用.limit(1)进行结果集行数限制。<br>
+	 * 查询实体单个属性时resultType可为该属性的类型
+	 * @param predicate 条件
+	 * @param resultType 结果类
+	 * @return 列表
+	 */
+	<E> E findUniqueByLambdaCriteria(@Param(Constants.CRITERIA) Consumer<LambdaQueryPredicate<T>> predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType);
 
 	/**
 	 * 动态条件查询<br>
