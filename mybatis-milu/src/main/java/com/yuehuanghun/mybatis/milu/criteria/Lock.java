@@ -18,7 +18,7 @@ package com.yuehuanghun.mybatis.milu.criteria;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.LockModeType;
+import jakarta.persistence.LockModeType;
 
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 

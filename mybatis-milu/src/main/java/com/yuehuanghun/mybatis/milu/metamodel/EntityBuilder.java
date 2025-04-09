@@ -31,18 +31,18 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.Version;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.persistence.Version;
 
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.logging.Log;
@@ -476,7 +476,7 @@ public class EntityBuilder {
 		} else {
 			refEntityClass = attr.getJavaType();
 		}
-		if(!refEntityClass.isAnnotationPresent(javax.persistence.Entity.class)) {
+		if(!refEntityClass.isAnnotationPresent(jakarta.persistence.Entity.class)) {
 			throw new OrmBuildingException("外联对象或集合元素必须为实体类，可通过关系注解的targetEntity指定实体类");
 		}
 		
@@ -528,8 +528,8 @@ public class EntityBuilder {
 					throw new SqlExpressionBuildingException(String.format("类%s中未找到属性%s", refEntityClass.getName(), mappedBy));
 				}
 				
-				if(inverseAttr.getField().isAnnotationPresent(javax.persistence.JoinTable.class)) { //理论上有mappedBy时，对方属性应当有JoinTable注解，现允许无注解
-					javax.persistence.JoinTable joinTableAnno = inverseAttr.getField().getAnnotation(javax.persistence.JoinTable.class);
+				if(inverseAttr.getField().isAnnotationPresent(jakarta.persistence.JoinTable.class)) { //理论上有mappedBy时，对方属性应当有JoinTable注解，现允许无注解
+					jakarta.persistence.JoinTable joinTableAnno = inverseAttr.getField().getAnnotation(jakarta.persistence.JoinTable.class);
 					joinTableName = joinTableAnno.name();
 					
 					JoinColumn[] joinColumns = joinTableAnno.joinColumns();
@@ -544,8 +544,8 @@ public class EntityBuilder {
 				}
 			}
 			
-			if(field.isAnnotationPresent(javax.persistence.JoinTable.class)) {
-				javax.persistence.JoinTable joinTableAnno = field.getAnnotation(javax.persistence.JoinTable.class);
+			if(field.isAnnotationPresent(jakarta.persistence.JoinTable.class)) {
+				jakarta.persistence.JoinTable joinTableAnno = field.getAnnotation(jakarta.persistence.JoinTable.class);
 				joinTableName = joinTableAnno.name();
 				
 				JoinColumn[] joinColumns = joinTableAnno.joinColumns();

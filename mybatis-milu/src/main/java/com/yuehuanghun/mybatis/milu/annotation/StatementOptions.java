@@ -21,8 +21,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.persistence.LockModeType;
-import javax.persistence.Version;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.Version;
 
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 

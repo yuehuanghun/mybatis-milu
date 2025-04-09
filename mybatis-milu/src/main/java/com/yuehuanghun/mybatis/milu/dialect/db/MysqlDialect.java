@@ -18,7 +18,7 @@ package com.yuehuanghun.mybatis.milu.dialect.db;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.persistence.LockModeType;
+import jakarta.persistence.LockModeType;
 import javax.sql.DataSource;
 
 import com.yuehuanghun.mybatis.milu.criteria.FulltextMode;
