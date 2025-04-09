@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.LockModeType;
+import jakarta.persistence.LockModeType;
 
 import org.junit.jupiter.api.Test;
 

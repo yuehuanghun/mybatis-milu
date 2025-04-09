@@ -2,7 +2,7 @@ package com.yuehuanghun.mybatismilu.test.domain.entity;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
 import com.yuehuanghun.mybatis.milu.annotation.alias.attr.CreateTime;

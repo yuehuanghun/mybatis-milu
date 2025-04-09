@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.LockModeType;
+import jakarta.persistence.LockModeType;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.BeanUtils;
