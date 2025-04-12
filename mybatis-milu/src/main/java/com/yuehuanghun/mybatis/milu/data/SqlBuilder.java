@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import jakarta.persistence.LockModeType;
+import javax.persistence.LockModeType;
 
 import org.apache.ibatis.annotations.Param;
 

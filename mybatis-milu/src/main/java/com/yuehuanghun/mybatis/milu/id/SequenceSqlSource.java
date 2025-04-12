@@ -15,7 +15,7 @@
  */
 package com.yuehuanghun.mybatis.milu.id;
 
-import jakarta.persistence.SequenceGenerator;
+import javax.persistence.SequenceGenerator;
 
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.SqlSource;

@@ -15,7 +15,7 @@
  */
 package com.yuehuanghun.mybatis.milu.id.tablekey;
 
-import jakarta.persistence.TableGenerator;
+import javax.persistence.TableGenerator;
 
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.SqlSource;

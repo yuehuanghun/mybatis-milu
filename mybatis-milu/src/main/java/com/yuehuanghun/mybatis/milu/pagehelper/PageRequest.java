@@ -15,7 +15,7 @@
  */
 package com.yuehuanghun.mybatis.milu.pagehelper;
 
-import jakarta.persistence.Transient;
+import javax.persistence.Transient;
 
 import com.yuehuanghun.mybatis.milu.tool.Assert;
 

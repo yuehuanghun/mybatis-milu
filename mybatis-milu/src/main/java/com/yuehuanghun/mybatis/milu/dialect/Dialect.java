@@ -17,7 +17,7 @@ package com.yuehuanghun.mybatis.milu.dialect;
 
 import java.util.Map;
 
-import jakarta.persistence.LockModeType;
+import javax.persistence.LockModeType;
 import javax.sql.DataSource;
 
 import com.yuehuanghun.mybatis.milu.criteria.FulltextMode;

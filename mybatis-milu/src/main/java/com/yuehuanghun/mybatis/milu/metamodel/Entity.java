@@ -28,7 +28,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import jakarta.persistence.GenerationType;
+import javax.persistence.GenerationType;
 
 import org.apache.ibatis.reflection.invoker.Invoker;
 import org.apache.ibatis.type.JdbcType;

@@ -18,7 +18,7 @@ package com.yuehuanghun.mybatis.milu.criteria;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-import jakarta.persistence.LockModeType;
+import javax.persistence.LockModeType;
 
 import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
