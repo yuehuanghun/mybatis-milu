@@ -150,6 +150,8 @@ public class MiluConfiguration extends Configuration {
 	
 	@Getter
 	private PlaceholderResolver placeholderResolver = PlaceholderResolver.DONOTHING;
+	
+	private boolean jdkGte9 = Integer.parseInt(System.getProperty("java.version").split("\\.")[0]) >= 9;
 
 	public MiluConfiguration() {
 		super();
@@ -433,11 +435,16 @@ public class MiluConfiguration extends Configuration {
 			}
 			
 			// 避免重复
-			String mapperClassName = "com.yuehuanghun.mybatis.milu.mapper." + name + "$" + dynamicMapperCounter.getAndIncrement() + "Mapper";
+			String mapperClassName = "com.yuehuanghun.mybatis.milu." + name + "$" + dynamicMapperCounter.getAndIncrement() + "Mapper";
 			ClassPool pool = ClassPool.getDefault();
 			CtClass baseMapperClass = pool.get(BaseMapper.class.getName());
 			CtClass mapperClass = pool.makeInterface(mapperClassName, baseMapperClass);
-			Class<? extends BaseMapper<?, ?>> clazz = (Class<? extends BaseMapper<?, ?>>) mapperClass.toClass();
+			Class<? extends BaseMapper<?, ?>> clazz;
+			if(jdkGte9) {
+				clazz = (Class<? extends BaseMapper<?, ?>>) mapperClass.toClass(this.getClass());
+			} else {
+				clazz = (Class<? extends BaseMapper<?, ?>>) mapperClass.toClass();
+			}
 			
 			this.addMapperEntityMapping(clazz, entity); // 提前映射
 			this.addMapper(clazz);
