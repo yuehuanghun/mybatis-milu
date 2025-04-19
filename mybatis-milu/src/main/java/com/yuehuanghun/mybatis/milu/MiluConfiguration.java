@@ -93,6 +93,7 @@ import com.yuehuanghun.mybatis.milu.generic.impl.GenericUpdatePatchByLambdaCrite
 import com.yuehuanghun.mybatis.milu.id.IdentifierGenerator;
 import com.yuehuanghun.mybatis.milu.id.impl.UUIDIdentifierGenerator;
 import com.yuehuanghun.mybatis.milu.id.impl.snowflake.SnowflakeIdentifierGenerator;
+import com.yuehuanghun.mybatis.milu.mapper.Useless;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.EntityBuilder;
 import com.yuehuanghun.mybatis.milu.metamodel.MetaModel;
@@ -435,13 +436,13 @@ public class MiluConfiguration extends Configuration {
 			}
 			
 			// 避免重复
-			String mapperClassName = "com.yuehuanghun.mybatis.milu." + name + "$" + dynamicMapperCounter.getAndIncrement() + "Mapper";
+			String mapperClassName = "com.yuehuanghun.mybatis.milu.mapper." + name + "$" + dynamicMapperCounter.getAndIncrement() + "Mapper";
 			ClassPool pool = ClassPool.getDefault();
 			CtClass baseMapperClass = pool.get(BaseMapper.class.getName());
 			CtClass mapperClass = pool.makeInterface(mapperClassName, baseMapperClass);
 			Class<? extends BaseMapper<?, ?>> clazz;
 			if(jdkGte9) {
-				clazz = (Class<? extends BaseMapper<?, ?>>) mapperClass.toClass(this.getClass());
+				clazz = (Class<? extends BaseMapper<?, ?>>) mapperClass.toClass(Useless.class);
 			} else {
 				clazz = (Class<? extends BaseMapper<?, ?>>) mapperClass.toClass();
 			}
