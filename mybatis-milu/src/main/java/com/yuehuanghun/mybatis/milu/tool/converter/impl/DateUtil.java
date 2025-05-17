@@ -14,34 +14,34 @@ import java.time.temporal.TemporalQueries;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 
 class DateUtil {
-	static final Pattern P1_REGEX = Pattern.compile("^\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}$");
-	static final String P1 = "yyyy-MM-dd HH:mm:ss";
-	static final Pattern P2_REGEX = Pattern.compile("^\\d{4}-\\d{2}-\\d{2}$");
-	static final String P2 = "yyyy-MM-dd";
-	static final Pattern P3_REGEX = Pattern.compile("\\d{4}/\\d{2}/\\d{2}\\s\\d{2}:\\d{2}:\\d{2}$");
-	static final String P3 = "yyyy/MM/dd HH:mm:ss";
-	static final Pattern P4_REGEX = Pattern.compile("^\\d{4}-\\d{2}-\\d{2}$");
-	static final String P4 = "yyyy/MM/dd";
+	static final Pattern P1_REGEX = Pattern.compile("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{1,2}:\\d{1,2}$");
+	static final String P1 = "yyyy-M-d H:m:s";
+	static final Pattern P2_REGEX = Pattern.compile("^\\d{4}-\\d{1,2}-\\d{1,2}$");
+	static final String P2 = "yyyy-M-d";
+	static final Pattern P3_REGEX = Pattern.compile("\\d{4}/\\d{1,2}/\\d{1,2}\\s\\d{1,2}:\\d{1,2}:\\d{1,2}$");
+	static final String P3 = "yyyy/M/d H:m:s";
+	static final Pattern P4_REGEX = Pattern.compile("^\\d{4}/\\d{1,2}/\\d{1,2}$");
+	static final String P4 = "yyyy/M/d";
 	static final Pattern P5_REGEX = Pattern.compile("^\\d{8}$");
 	static final String P5 = "yyyyMMdd";
 	static final Pattern P6_REGEX = Pattern.compile("^\\d{14}$");
 	static final String P6 = "yyyyMMddHHmmss";
 	static final Pattern P7_REGEX = Pattern.compile("^\\d{17}$");
 	static final String P7 = "yyyyMMddHHmmssSSS";
-	static final Pattern P8_REGEX = Pattern.compile("^\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}\\.\\d{3}$");
-	static final String P8 = "yyyy-MM-dd HH:mm:ss.SSS";
-	static final Pattern P9_REGEX = Pattern.compile("^\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2},\\d{3}$");
-	static final String P9 = "yyyy-MM-dd HH:mm:ss,SSS";
-	static final Pattern P10_REGEX = Pattern.compile("^\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}$");
-	static final String P10 = "yyyy-MM-dd HH:mm";
+	static final Pattern P8_REGEX = Pattern.compile("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{1,2}:\\d{1,2}\\.\\d{3}$");
+	static final String P8 = "yyyy-M-d H:m:s.SSS";
+	static final Pattern P9_REGEX = Pattern.compile("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{1,2}:\\d{1,2},\\d{3}$");
+	static final String P9 = "yyyy-M-d H:m:s,SSS";
+	static final Pattern P10_REGEX = Pattern.compile("^\\d{4}-\\d{1,2}-\\d{1,2}\\s\\d{1,2}:\\d{1,2}$");
+	static final String P10 = "yyyy-M-d H:m";
 	
 	//时间
 	static final Pattern _P1_REGEX = Pattern.compile("^\\d{2}:\\d{2}:\\d{2}$");
