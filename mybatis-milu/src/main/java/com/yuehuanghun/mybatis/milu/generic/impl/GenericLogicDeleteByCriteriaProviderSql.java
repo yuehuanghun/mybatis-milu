@@ -68,7 +68,7 @@ public class GenericLogicDeleteByCriteriaProviderSql implements GenericProviderS
 				}
 				
 				entity.getLogicDeleteAttributes().forEach(attr -> {
-					Object val = attr.getProvider().resumeValue(new LogicDeleteProvider.Context(entity.getJavaType(), attr.getJavaType(), attr.getName()));
+					Object val = attr.getProvider().value(new LogicDeleteProvider.Context(entity.getJavaType(), attr.getJavaType(), attr.getName()));
 					map.put(attr.getName(), val);
 				});
 				
@@ -77,7 +77,7 @@ public class GenericLogicDeleteByCriteriaProviderSql implements GenericProviderS
 				entityObj = entity.getJavaType().newInstance();
 				entity.getLogicDeleteAttributes().forEach(attr -> {
 					try {
-						attr.getSetter().invoke(entityObj, new Object[] {attr.getProvider().resumeValue(new LogicDeleteProvider.Context(entity.getJavaType(), attr.getJavaType(), attr.getName()))});
+						attr.getSetter().invoke(entityObj, new Object[] {attr.getProvider().value(new LogicDeleteProvider.Context(entity.getJavaType(), attr.getJavaType(), attr.getName()))});
 					} catch (IllegalAccessException | InvocationTargetException e) {
 						throw new SqlExpressionBuildingException(e);
 					}
