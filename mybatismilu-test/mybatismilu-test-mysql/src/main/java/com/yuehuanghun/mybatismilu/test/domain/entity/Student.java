@@ -5,24 +5,22 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.TableGenerator;
-import jakarta.persistence.Transient;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
+import com.yuehuanghun.mybatis.milu.annotation.EntityOptions.FetchRef;
 import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery;
 import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery.MatchType;
 import com.yuehuanghun.mybatis.milu.annotation.Filler;
 import com.yuehuanghun.mybatis.milu.annotation.Filler.FillMode;
 import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
-import com.yuehuanghun.mybatis.milu.annotation.EntityOptions.FetchRef;
+import com.yuehuanghun.mybatis.milu.annotation.alias.id.SnowflakeId;
 import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
+import com.yuehuanghun.mybatismilu.test.config.JsonTypeHandler;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -33,9 +31,10 @@ import lombok.EqualsAndHashCode;
 @FetchRef(group = "class", refAttrs = "classs")
 public class Student extends PageRequest {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.TABLE, generator = "tableSequence")
-	@TableGenerator(name = "tableSequence", table = "sequence", valueColumnName = "current_seq", pkColumnName = "id", pkColumnValue = "1", allocationSize = 50)
+	@SnowflakeId
+//	@Id
+//	@GeneratedValue(strategy = GenerationType.TABLE, generator = "tableSequence")
+//	@TableGenerator(name = "tableSequence", table = "sequence", valueColumnName = "current_seq", pkColumnName = "id", pkColumnValue = "1", allocationSize = 50)
 	private Long id; //使用数据表模拟数字序列
 	
 	@AttributeOptions(filler = @Filler(fillOnInsert = true), exampleQuery = @ExampleQuery(startKeyName = "params.addTimeBegin", endKeyName = "params.addTimeEnd")) //当在插入数据时，如果该属性为null则自动填充值
@@ -50,6 +49,9 @@ public class Student extends PageRequest {
 	private Integer age;
 	
 	private Long classId;
+	
+	@AttributeOptions(typeHandler = JsonTypeHandler.class)
+	private Map<String, Object> parents;
 	
 	@AttributeOptions(logicDelete = @LogicDelete)
 	private Boolean isDeleted;

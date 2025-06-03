@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotEquals;
 import java.util.HashMap;
 import java.util.Map;
 
-import jakarta.persistence.LockModeType;
+import javax.persistence.LockModeType;
 
 import org.junit.Test;
 

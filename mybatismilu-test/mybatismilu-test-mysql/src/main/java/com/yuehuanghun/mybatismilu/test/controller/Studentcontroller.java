@@ -5,7 +5,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Student;
+import com.yuehuanghun.mybatismilu.test.domain.mapper.StudentMapper;
 import com.yuehuanghun.mybatismilu.test.service.StudentService;
 
 @RestController
@@ -22,6 +27,8 @@ import com.yuehuanghun.mybatismilu.test.service.StudentService;
 public class Studentcontroller {
 	@Autowired
 	private StudentService studentService;
+	@Autowired
+	private SqlSessionFactory sqlSessionFactory;
 
 	@GetMapping("/{id}")
 	public Student getById(@PathVariable Long id) {
@@ -53,10 +60,12 @@ public class Studentcontroller {
 	}
 	
 	@PostMapping("/batch")
-	public void batchSave() {
+	@Transactional
+	public void batchAdd() {
+		long beginTime = System.currentTimeMillis();
 		List<Student> list = new ArrayList<>(50);
 		Student student;
-		for(int i = 0; i < 50; i ++) {
+		for(int i = 0; i < 500; i ++) {
 			student = new Student();
 			student.setAge(9);
 			student.setClassId(1L);
@@ -65,6 +74,78 @@ public class Studentcontroller {
 		}
 		
 		studentService.batchAdd(list);
+		System.out.println("batchAdd耗时：" + (System.currentTimeMillis() - beginTime));
+	}
+	
+	@PostMapping("/batchSave")
+	@Transactional
+	public void batchSave() {
+		long beginTime = System.currentTimeMillis();
+		List<Student> list = new ArrayList<>(500);
+		Student student;
+		for(int i = 0; i < 500; i ++) {
+			student = new Student();
+			student.setAge(9);
+			student.setClassId(1L);
+			student.setName(randomName());
+			list.add(student);
+		}
+		
+		studentService.batchSave(list);
+		System.out.println("batchSave耗时：" + (System.currentTimeMillis() - beginTime));
+	}
+	
+	@PostMapping("/batchSave2")
+	public void batchSave2() {
+		long beginTime = System.currentTimeMillis();
+		List<Student> list = new ArrayList<>(500);
+		Student student;
+		for(int i = 0; i < 500; i ++) {
+			student = new Student();
+			student.setAge(9);
+			student.setClassId(1L);
+			student.setName(randomName());
+			list.add(student);
+		}
+		
+		studentService.batchSave(list);
+		System.out.println("batchSave2耗时：" + (System.currentTimeMillis() - beginTime));
+	}
+	
+	@PostMapping("/batchSave3")
+	@Transactional
+	public void batchSave3() {
+		long beginTime = System.currentTimeMillis();
+		SqlSession batchSqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false);
+		StudentMapper mapper = batchSqlSession.getMapper(StudentMapper.class);
+		Student student;
+		for(int i = 0; i < 500; i ++) {
+			student = new Student();
+			student.setAge(9);
+			student.setClassId(1L);
+			student.setName(randomName());
+			mapper.insert(student);
+		}
+		
+		batchSqlSession.flushStatements();
+		
+		System.out.println("batchSave3耗时：" + (System.currentTimeMillis() - beginTime));
+	}
+
+	@PostMapping("/batchForEach")
+	@Transactional
+	public void batchForEach() {
+		long beginTime = System.currentTimeMillis();
+		Student student;
+		for(int i = 0; i < 500; i ++) {
+			student = new Student();
+			student.setAge(9);
+			student.setClassId(1L);
+			student.setName(randomName());
+			studentService.add(student);
+		}
+		
+		System.out.println("batchForEach耗时：" + (System.currentTimeMillis() - beginTime));
 	}
 	
 	private static String randomName() {

@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import jakarta.persistence.LockModeType;
+import javax.persistence.LockModeType;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

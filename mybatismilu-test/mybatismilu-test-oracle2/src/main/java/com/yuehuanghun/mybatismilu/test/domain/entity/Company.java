@@ -2,10 +2,10 @@ package com.yuehuanghun.mybatismilu.test.domain.entity;
 
 import java.util.List;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import com.yuehuanghun.mybatis.milu.annotation.alias.id.SnowflakeId;
 

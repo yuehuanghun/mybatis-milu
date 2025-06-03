@@ -2,7 +2,7 @@ package com.yuehuanghun.mybatismilu.test.domain.mapper;
 
 import java.util.List;
 
-import jakarta.persistence.LockModeType;
+import javax.persistence.LockModeType;
 
 import org.apache.ibatis.annotations.Mapper;
 

@@ -42,6 +42,7 @@ import com.yuehuanghun.mybatis.milu.criteria.Predicates;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.criteria.StatisticPredicate;
+import com.yuehuanghun.mybatis.milu.criteria.ext.mysql.conds.MysqlConditions;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.ext.Pair;
@@ -1035,5 +1036,41 @@ public class StudentMapperTest {
 		
 		effect = studentService.saveOrUpdate(student, true);
 		assertEquals(effect, 1);
+	}
+
+	@Test
+	public void testJsonCompare() {
+		List<Student> students = studentMapper.findByLambdaCriteria(p -> {
+			p.and(MysqlConditions.jsonEquals("parents", "$.motherAge", 37));
+		});
+		assertEquals(1, students.size());
+		
+		students = studentMapper.findByLambdaCriteria(p -> {
+			p.and(MysqlConditions.jsonGreaterThan("parents", "$.motherAge", 37));
+		});
+		assertEquals(1, students.size());
+		
+		students = studentMapper.findByLambdaCriteria(p -> {
+			p.and(MysqlConditions.jsonLessThan("parents", "$.motherAge", 37));
+		});
+		assertEquals(1, students.size());
+	}
+	
+	@Test
+	public void testJsonLike() {
+		List<Student> students = studentMapper.findByLambdaCriteria(p -> {
+			p.and(MysqlConditions.jsonContains("parents", "$.motherName", "子"));
+		});
+		assertEquals(3, students.size());
+		
+		students = studentMapper.findByLambdaCriteria(p -> {
+			p.and(MysqlConditions.jsonStartsWith("parents", "$.fatherName", "王"));
+		});
+		assertEquals(1, students.size());
+		
+		students = studentMapper.findByLambdaCriteria(p -> {
+			p.and(MysqlConditions.jsonEndsWith("parents", "$.fatherName", "狗"));
+		});
+		assertEquals(1, students.size());
 	}
 }

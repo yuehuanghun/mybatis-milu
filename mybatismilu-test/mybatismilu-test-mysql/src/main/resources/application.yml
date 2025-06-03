@@ -25,7 +25,9 @@ spring.datasource:
     testOnBorrow: true
     
 logging:
-    level.com.yuehuanghun: debug
+    level:
+      com.yuehuanghun: debug
+      com.yuehuanghun.mybatismilu.test.domain.mapper.StudentMapper: debug
     file: ./logs/milutest.log
     
 db2: demo2

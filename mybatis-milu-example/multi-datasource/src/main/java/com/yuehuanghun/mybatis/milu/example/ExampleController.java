@@ -1,8 +1,13 @@
 package com.yuehuanghun.mybatis.milu.example;
 
+import static org.mockito.ArgumentMatchers.longThat;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +40,52 @@ public class ExampleController {
 		ExampleTwo exampleTwo = new ExampleTwo(UUID.randomUUID().toString(), randomName());
 		exampleTwoService.add(exampleTwo);
 		return exampleTwo;
+	}
+
+	@PostMapping("/batchSave")
+	public void batchSave() {
+		List<ExampleTwo> list = new ArrayList<>();
+		for(int i = 0; i < 5000; i++) {
+			list.add(new ExampleTwo(UUID.randomUUID().toString(), randomName()));
+		}
+		long beginTime = System.currentTimeMillis();
+		exampleTwoService.batchSave(list);
+		System.out.println("batchSave耗时：" + (System.currentTimeMillis() - beginTime));
+	}
+
+	@PostMapping("/batchSave2")
+	@Transactional
+	public void batchSave2() {
+		List<ExampleTwo> list = new ArrayList<>();
+		for(int i = 0; i < 5000; i++) {
+			list.add(new ExampleTwo(UUID.randomUUID().toString(), randomName()));
+		}
+		long beginTime = System.currentTimeMillis();
+		exampleTwoService.batchSave(list);
+		System.out.println("batchSave耗时：" + (System.currentTimeMillis() - beginTime));
+	}
+
+	@PostMapping("/batchSave3")
+	@Transactional(transactionManager = "example2SourceTransactionManager")
+	public void batchSave3() {
+		List<ExampleTwo> list = new ArrayList<>();
+		for(int i = 0; i < 5000; i++) {
+			list.add(new ExampleTwo(UUID.randomUUID().toString(), randomName()));
+		}
+		long beginTime = System.currentTimeMillis();
+		exampleTwoService.batchSave(list);
+		System.out.println("batchSave耗时：" + (System.currentTimeMillis() - beginTime));
+	}
+
+	@PostMapping("/batchAdd")
+	public void batchAdd() {
+		List<ExampleTwo> list = new ArrayList<>();
+		for(int i = 0; i < 5000; i++) {
+			list.add(new ExampleTwo(UUID.randomUUID().toString(), randomName()));
+		}
+		long beginTime = System.currentTimeMillis();
+		exampleTwoService.batchAdd(list);
+		System.out.println("batchAdd耗时：" + (System.currentTimeMillis() - beginTime));
 	}
 	
 	@GetMapping("/exampleOne/{id}")
