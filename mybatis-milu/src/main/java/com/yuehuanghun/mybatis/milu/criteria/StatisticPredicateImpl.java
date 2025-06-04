@@ -25,6 +25,7 @@ import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.dialect.Dialect;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
+import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
@@ -156,6 +157,12 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 	@Override
 	public StatisticPredicate limit(int pageNum, int pageSize, boolean count) {
 		this.limit = new LimitImpl(pageNum, pageSize, count);
+		return this;
+	}
+	
+	@Override
+	public StatisticPredicate limit(Pageable page) {
+		this.limit = new LimitImpl(page);
 		return this;
 	}
 	

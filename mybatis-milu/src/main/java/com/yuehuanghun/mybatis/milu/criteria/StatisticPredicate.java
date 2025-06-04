@@ -17,6 +17,7 @@ package com.yuehuanghun.mybatis.milu.criteria;
 
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
+import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 
 /**
  * 
@@ -197,6 +198,13 @@ public interface StatisticPredicate extends Predicate {
 	 * @return 当前对象
 	 */
 	StatisticPredicate limit(int pageNum, int pageSize, boolean count);
+
+	/**
+	 * 使用一个Pageable对象传递分页信息
+	 * @param page 分页，getPageNum()、getPageSize()值需大于0
+	 * @return 当前对象
+	 */
+	StatisticPredicate limit(Pageable page);
 	
 	@Override
 	StatisticPredicate conditionMode(Mode conditionMode);
