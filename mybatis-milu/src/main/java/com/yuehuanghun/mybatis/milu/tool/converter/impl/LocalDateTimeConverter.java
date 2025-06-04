@@ -15,7 +15,7 @@ public class LocalDateTimeConverter implements Converter<LocalDateTime> {
 		if(target == null) {
 			return null;
 		}
-		if(LocalDateTimeConverter.class.isInstance(target)) {
+		if(LocalDateTime.class.isInstance(target)) {
 			return (LocalDateTime) target;
 		}
 		if(CharSequence.class.isInstance(target)) {
