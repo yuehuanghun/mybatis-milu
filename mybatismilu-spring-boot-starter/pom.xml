@@ -5,7 +5,7 @@
 
     <groupId>com.yuehuanghun</groupId>
     <artifactId>mybatismilu-spring-boot-starter</artifactId>
-    <version>1.19.1</version> 
+    <version>1.19.4</version> 
     <packaging>jar</packaging>
 
     <name>mybatismilu-spring-boot-starter</name>
@@ -21,8 +21,8 @@
         <mybatis-velocity.version>2.1.0</mybatis-velocity.version>
         <mybatis-thymeleaf.version>1.0.4</mybatis-thymeleaf.version>
         <spring-boot.version>2.3.4.RELEASE</spring-boot.version>
-        <mybatis-milu.version>1.19.0</mybatis-milu.version>
-        <mybatis-milu-spring.version>1.19.0</mybatis-milu-spring.version>
+        <mybatis-milu.version>1.19.3</mybatis-milu.version>
+        <mybatis-milu-spring.version>1.19.3</mybatis-milu-spring.version>
     </properties>
 
     <dependencies>
@@ -191,8 +191,7 @@
         </snapshotRepository>
         <repository>
             <id>ossrh</id>
-            <url>
-                https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
 
