@@ -31,6 +31,7 @@ import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.javassist.ClassPool;
 import org.apache.ibatis.javassist.CtClass;
+import org.apache.ibatis.javassist.LoaderClassPath;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
@@ -438,6 +439,8 @@ public class MiluConfiguration extends Configuration {
 			// 避免重复
 			String mapperClassName = "com.yuehuanghun.mybatis.milu.mapper." + name + "$" + dynamicMapperCounter.getAndIncrement() + "Mapper";
 			ClassPool pool = ClassPool.getDefault();
+			pool.appendClassPath(new LoaderClassPath(this.getClass().getClassLoader()));
+			
 			CtClass baseMapperClass = pool.get(BaseMapper.class.getName());
 			CtClass mapperClass = pool.makeInterface(mapperClassName, baseMapperClass);
 			Class<? extends BaseMapper<?, ?>> clazz;
