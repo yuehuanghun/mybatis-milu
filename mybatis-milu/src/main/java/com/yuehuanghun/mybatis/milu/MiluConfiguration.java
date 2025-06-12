@@ -153,6 +153,8 @@ public class MiluConfiguration extends Configuration {
 	@Getter
 	private PlaceholderResolver placeholderResolver = PlaceholderResolver.DONOTHING;
 	
+	private ClassPool classPool = new ClassPool(true);
+	
 	private boolean jdkGte9 = Integer.parseInt(System.getProperty("java.version").split("\\.")[0]) >= 9;
 
 	public MiluConfiguration() {
@@ -160,6 +162,7 @@ public class MiluConfiguration extends Configuration {
 		registerGenericProviderSql();
 		registerDefaultIdentifierGenerator();
 		instances.add(this);
+		classPool.appendClassPath(new LoaderClassPath(this.getClass().getClassLoader()));
 	}
 	
 	public MiluConfiguration(Environment environment) {
@@ -438,11 +441,9 @@ public class MiluConfiguration extends Configuration {
 			
 			// 避免重复
 			String mapperClassName = "com.yuehuanghun.mybatis.milu.mapper." + name + "$" + dynamicMapperCounter.getAndIncrement() + "Mapper";
-			ClassPool pool = ClassPool.getDefault();
-			pool.appendClassPath(new LoaderClassPath(this.getClass().getClassLoader()));
-			
-			CtClass baseMapperClass = pool.get(BaseMapper.class.getName());
-			CtClass mapperClass = pool.makeInterface(mapperClassName, baseMapperClass);
+
+			CtClass baseMapperClass = classPool.get(BaseMapper.class.getName());
+			CtClass mapperClass = classPool.makeInterface(mapperClassName, baseMapperClass);
 			Class<? extends BaseMapper<?, ?>> clazz;
 			if(jdkGte9) {
 				clazz = (Class<? extends BaseMapper<?, ?>>) mapperClass.toClass(Useless.class);
