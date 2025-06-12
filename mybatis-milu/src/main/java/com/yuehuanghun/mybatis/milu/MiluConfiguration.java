@@ -153,16 +153,19 @@ public class MiluConfiguration extends Configuration {
 	@Getter
 	private PlaceholderResolver placeholderResolver = PlaceholderResolver.DONOTHING;
 	
-	private ClassPool classPool = new ClassPool(true);
+	private static final ClassPool classPool = new ClassPool(true);
 	
 	private boolean jdkGte9 = Integer.parseInt(System.getProperty("java.version").split("\\.")[0]) >= 9;
+	
+	static {
+		classPool.appendClassPath(new LoaderClassPath(MiluConfiguration.class.getClassLoader()));
+	}
 
 	public MiluConfiguration() {
 		super();
 		registerGenericProviderSql();
 		registerDefaultIdentifierGenerator();
 		instances.add(this);
-		classPool.appendClassPath(new LoaderClassPath(this.getClass().getClassLoader()));
 	}
 	
 	public MiluConfiguration(Environment environment) {
