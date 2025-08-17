@@ -16,6 +16,7 @@
 
 package com.yuehuanghun.mybatis.milu.criteria;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -453,6 +454,41 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 	@Override
 	public StatisticPredicate deleted() {
 		super.deleted();
+		return this;
+	}
+
+	@Override
+	public StatisticPredicate byExample(Object example) {
+		super.byExample(example);
+		return this;
+	}
+
+	@Override
+	public StatisticPredicate fulltext(Collection<String> attrNames, String keywordExpression) {
+		super.fulltext(attrNames, keywordExpression);
+		return this;
+	}
+
+	@Override
+	public StatisticPredicate fulltext(Collection<String> attrNames, String keywordExpression, FulltextMode fulltextMode) {
+		super.fulltext(attrNames, keywordExpression, fulltextMode);
+		return this;
+	}
+	
+	protected Predicate existsJoin(String attrName, String refAttrName) {
+		super.existsJoin(attrName, refAttrName);
+		return this;
+	}
+
+	@Override
+	public StatisticPredicate exists(Exists<?> exists) {
+		super.exists(exists);
+		return this;
+	}
+
+	@Override
+	public StatisticPredicate notExists(Exists<?> exists) {
+		super.notExists(exists);
 		return this;
 	}
 	

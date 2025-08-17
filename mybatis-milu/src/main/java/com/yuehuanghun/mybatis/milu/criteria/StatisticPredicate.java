@@ -15,6 +15,8 @@
  */
 package com.yuehuanghun.mybatis.milu.criteria;
 
+import java.util.Collection;
+
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
@@ -331,4 +333,19 @@ public interface StatisticPredicate extends Predicate {
 	
 	@Override
 	StatisticPredicate deleted();
+	
+	@Override
+	StatisticPredicate byExample(Object example);
+	
+	@Override
+	StatisticPredicate fulltext(Collection<String> attrNames, String keywordExpression);
+	
+	@Override
+	StatisticPredicate fulltext(Collection<String> attrNames, String keywordExpression, FulltextMode fulltextMode);
+
+	@Override
+	StatisticPredicate exists(Exists<?> exists);
+
+	@Override
+	StatisticPredicate notExists(Exists<?> exists);
 }
