@@ -77,10 +77,14 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate and(Condition... conditions) {
 		if(conditions.length == 1 && PredicateImpl.class.isInstance(conditions[0])) {
-			if(((PredicateImpl)conditions[0]).isEmpty()) {
+			PredicateImpl predicate = (PredicateImpl)conditions[0];
+			if(predicate.isEmpty()) {
 				return this;
 			}
-			conditionList.add(((PredicateImpl)conditions[0]).setDepth(getDepth() + 1));
+			if(predicate.hasExistsCondition()) {
+				this.hasExists = true;
+			}
+			conditionList.add(predicate.setDepth(getDepth() + 1));
 		} else if(conditions.length > 0) {
 			for(int i = 0; i < conditions.length; i++) {
 				if(conditions[i] instanceof ConditionImpl) {
@@ -97,6 +101,9 @@ public class PredicateImpl implements Predicate {
 		Predicate p = new PredicateImpl(Logic.AND).setDepth(getDepth() + 1);
 		predicate.accept(p);
 		if(!p.isEmpty()) {
+			if(p.hasExistsCondition()) {
+				this.hasExists = true;
+			}
 			conditionList.add(p);
 		}
 		return this;
@@ -105,8 +112,12 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate or(Condition... conditions) {
 		if(conditions.length == 1 && PredicateImpl.class.isInstance(conditions[0])) {
-			if(((PredicateImpl)conditions[0]).isEmpty()) {
+			PredicateImpl predicate = (PredicateImpl)conditions[0];
+			if(predicate.isEmpty()) {
 				return this;
+			}
+			if(predicate.hasExistsCondition()) {
+				this.hasExists = true;
 			}
 			conditionList.add(new PredicateImpl(Logic.OR, conditions).setDepth(getDepth() + 1));
 		} else if(conditions.length > 0) {
@@ -125,6 +136,9 @@ public class PredicateImpl implements Predicate {
 		Predicate p = new PredicateImpl(Logic.OR).setDepth(getDepth() + 1);
 		predicate.accept(p);
 		if(!p.isEmpty()) {
+			if(p.hasExistsCondition()) {
+				this.hasExists = true;
+			}
 			conditionList.add(p);
 		}
 		return this;
@@ -133,10 +147,14 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate not(Condition... conditions) {
 		if(conditions.length == 1 && PredicateImpl.class.isInstance(conditions[0])) {
-			if(((PredicateImpl)conditions[0]).isEmpty()) {
+			PredicateImpl predicate = (PredicateImpl)conditions[0];
+			if(predicate.isEmpty()) {
 				return this;
 			}
-			conditionList.add(((PredicateImpl)conditions[0]).setDepth(getDepth() + 1));
+			if(predicate.hasExistsCondition()) {
+				this.hasExists = true;
+			}
+			conditionList.add(new PredicateImpl(Logic.NOT, conditions).setDepth(getDepth() + 1));
 		} else if(conditions.length > 0) {
 			for(int i = 0; i < conditions.length; i++) {
 				if(conditions[i] instanceof ConditionImpl) {
@@ -153,6 +171,9 @@ public class PredicateImpl implements Predicate {
 		Predicate p = new PredicateImpl(Logic.NOT).setDepth(getDepth() + 1);
 		predicate.accept(p);
 		if(!p.isEmpty()) {
+			if(p.hasExistsCondition()) {
+				this.hasExists = true;
+			}
 			conditionList.add(p);
 		}
 		return this;
