@@ -78,7 +78,7 @@ public class GenericResumeLogicDeleteByIdProviderSql implements GenericProviderS
 			UpdatePredicate predicate = new UpdatePredicateImpl();
 			Attribute idAttr = entity.getId();
 			if(idAttr == null) {
-				throw new SqlExpressionBuildingException("id属性不存在");
+				throw new SqlExpressionBuildingException("实体类主键属性不存在。请确认实体类是否存在被@Id声明的属性。");
 			}
 			predicate.eq(idAttr.getName(), paramMap.get(Constants.ID));
 			

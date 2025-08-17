@@ -32,7 +32,7 @@ public class GenericUpdatePatchByIdsProviderSql extends GenericUpdatePatchByCrit
 	public String provideSql(GenericProviderContext context, Object params) {
 		Attribute idAttr = context.getEntity().getId();
 		if(idAttr == null) {
-			throw new SqlExpressionBuildingException("id属性不存在");
+			throw new SqlExpressionBuildingException("实体类主键属性不存在。请确认实体类是否存在被@Id声明的属性。");
 		}
 		
 		Map paramMap = (Map)params;

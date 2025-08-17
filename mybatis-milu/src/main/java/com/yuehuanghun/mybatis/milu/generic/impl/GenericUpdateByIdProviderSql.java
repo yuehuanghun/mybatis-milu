@@ -65,7 +65,7 @@ public class GenericUpdateByIdProviderSql extends GenericCachingProviderSql {
 		
 		Attribute idAttr = entity.getId();
 		if(idAttr == null) {
-			throw new SqlExpressionBuildingException("id属性不存在");
+			throw new SqlExpressionBuildingException("实体类主键属性不存在。请确认实体类是否存在被@Id声明的属性。");
 		}
 		sqlBuilder.append(Segment.WHERE_B).append(wrapIdentifier(idAttr.getColumnName(), context)).append(" = #{entity.").append(idAttr.getName()).append(Segment.RIGHT_BRACE);
 		

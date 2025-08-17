@@ -15,6 +15,7 @@
  */
 package com.yuehuanghun.mybatis.milu.generic.impl;
 
+import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 import com.yuehuanghun.mybatis.milu.generic.GenericCachingProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
@@ -33,7 +34,7 @@ public class GenericDeleteByIdsProviderSql extends GenericCachingProviderSql {
 		IdAttribute idAttr = entity.getId();
 		
 		if(idAttr == null) {
-			throw new RuntimeException("id属性不存在");
+			throw new SqlExpressionBuildingException("实体类主键属性不存在。请确认实体类是否存在被@Id声明的属性。");
 		}
 		
 		sqlBuilder.append(Segment.WHERE_B).append(wrapIdentifier(idAttr.getColumnName(), context)).append(" IN (<foreach collection=\"ids\" item=\"id\" separator=\",\">#{id}</foreach>)");

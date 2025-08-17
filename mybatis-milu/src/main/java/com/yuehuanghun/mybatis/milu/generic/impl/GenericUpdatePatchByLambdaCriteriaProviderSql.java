@@ -20,9 +20,7 @@ import java.util.function.Consumer;
 
 import com.yuehuanghun.mybatis.milu.criteria.LambdaPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaPredicateImpl;
-import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
-import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
 
 public class GenericUpdatePatchByLambdaCriteriaProviderSql extends GenericUpdatePatchByCriteriaProviderSql {
@@ -30,11 +28,6 @@ public class GenericUpdatePatchByLambdaCriteriaProviderSql extends GenericUpdate
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public String provideSql(GenericProviderContext context, Object params) {
-		Attribute idAttr = context.getEntity().getId();
-		if(idAttr == null) {
-			throw new SqlExpressionBuildingException("id属性不存在");
-		}
-		
 		Map paramMap = (Map)params;
 		Consumer<LambdaPredicate<?>> consumer = (Consumer<LambdaPredicate<?>>) paramMap.remove(Constants.CRITERIA);
 		LambdaPredicateImpl<?> lambdaPredicate = new LambdaPredicateImpl<>();
