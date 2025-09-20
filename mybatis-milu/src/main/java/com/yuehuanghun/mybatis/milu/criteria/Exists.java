@@ -135,11 +135,12 @@ public class Exists<Entity> implements Condition {
 
 	@Override
 	public int renderParams(GenericProviderContext context, Map<String, Object> params, int paramIndex) {
-		paramIndex = predicate.renderParams(context, params, paramIndex);
+		GenericProviderContext existQueryContext = new GenericProviderContext(context.getMapperType(), context.getMapperMethod(), context.getConfiguration(), context.getKeyGenerator(), context.getConfiguration().getMapperEntity(mapperClass));
+		paramIndex = predicate.renderParams(existQueryContext, params, paramIndex);
 		
 		for(Join join : predicate.getJoinModeMap().values()) {
 			if(join.getJoinPredicate() != null) {
-				paramIndex = join.getJoinPredicate().renderParams(context, params, paramIndex);
+				paramIndex = join.getJoinPredicate().renderParams(existQueryContext, params, paramIndex);
 			}
 		}
 		return paramIndex;

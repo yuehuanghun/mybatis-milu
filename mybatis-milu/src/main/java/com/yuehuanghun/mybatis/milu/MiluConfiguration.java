@@ -137,6 +137,9 @@ public class MiluConfiguration extends Configuration {
 	@Getter
 	@Setter
 	private boolean autoUpperCaseWhileOracle = false; // 当为ORACLE数据库时，自动将表名、列名大写
+	@Getter
+	@Setter
+	private boolean autoConvertQueryParamValue = true; // 自动转换查询值为对应实体属性的类型的值
 	
 	//自动化配置 mybatis.configurationProperties.idGenerator
 	@Getter

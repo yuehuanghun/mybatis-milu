@@ -388,6 +388,11 @@ public class MybatisProperties {
 		 * 当为ORACLE数据库时，自动将表名、列名大写
 		 */
 		private boolean autoUpperCaseWhileOracle = false;
+		
+		/**
+		 * 自动转换查询值为对应实体属性的类型的值
+		 */
+		private boolean autoConvertQueryParamValue = true;
 
 		public Boolean getSafeRowBoundsEnabled() {
 			return safeRowBoundsEnabled;
@@ -656,6 +661,14 @@ public class MybatisProperties {
 			this.autoUpperCaseWhileOracle = autoUpperCaseWhileOracle;
 		}
 
+		public boolean isAutoConvertQueryParamValue() {
+			return autoConvertQueryParamValue;
+		}
+
+		public void setAutoConvertQueryParamValue(boolean autoConvertQueryParamValue) {
+			this.autoConvertQueryParamValue = autoConvertQueryParamValue;
+		}
+
 		public void applyTo(MiluConfiguration target) {
 			PropertyMapper mapper = PropertyMapper.get().alwaysApplyingWhenNonNull();
 			mapper.from(getSafeRowBoundsEnabled()).to(target::setSafeRowBoundsEnabled);
@@ -691,6 +704,7 @@ public class MybatisProperties {
 			mapper.from(getDefaultEnumTypeHandler()).to(target::setDefaultEnumTypeHandler);
 			mapper.from(getDatabaseId()).to(target::setDatabaseId);
 			mapper.from(isAutoUpperCaseWhileOracle()).to(target::setAutoUpperCaseWhileOracle);
+			mapper.from(isAutoConvertQueryParamValue()).to(target::setAutoConvertQueryParamValue);
 		}
 
 	}
