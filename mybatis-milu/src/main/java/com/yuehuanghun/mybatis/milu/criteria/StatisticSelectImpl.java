@@ -26,7 +26,7 @@ import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
-public class SelectImpl implements Select {
+public class StatisticSelectImpl implements StatisticSelect {
 	private final Set<Function> functions = new HashSet<>();
 	private final Set<String> properties = new HashSet<>();
 
@@ -92,7 +92,7 @@ public class SelectImpl implements Select {
 			return false;
 		}
 		
-		SelectImpl that = (SelectImpl) obj;
+		StatisticSelectImpl that = (StatisticSelectImpl) obj;
 		return Objects.equals(this.functions, that.functions) && Objects.equals(this.properties, that.properties);
 	}
 }

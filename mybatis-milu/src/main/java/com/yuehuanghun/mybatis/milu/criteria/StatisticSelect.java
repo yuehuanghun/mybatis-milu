@@ -19,7 +19,7 @@ package com.yuehuanghun.mybatis.milu.criteria;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-interface Select extends Expression {
+interface StatisticSelect extends Expression {
 
 	void add(String functionName, String property, String alias);
 	

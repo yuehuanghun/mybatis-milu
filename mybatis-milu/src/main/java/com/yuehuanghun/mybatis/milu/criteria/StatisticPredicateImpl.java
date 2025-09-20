@@ -32,7 +32,7 @@ import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
 public class StatisticPredicateImpl extends PredicateImpl implements StatisticPredicate {
-	private Select select = new SelectImpl();
+	private StatisticSelect select = new StatisticSelectImpl();
 	private final Sort sort = new SortImpl();
 	private Limit limit;
 	private final Group group = new GroupImpl();
