@@ -27,7 +27,9 @@ import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.dialect.Dialect;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
+import com.yuehuanghun.mybatis.milu.tool.Assert;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
+import com.yuehuanghun.mybatis.milu.tool.DefendUtil;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
@@ -57,6 +59,7 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 
 	@Override
 	public StatisticPredicate count(String attrName, String columnAlias) {
+		Assert.isTrue(columnAlias == null || DefendUtil.testColumnAlias(columnAlias), "columnAlias值不符合规则");
 		select.add(Dialect.COUNT, attrName, columnAlias);
 		return this;
 	}
@@ -69,6 +72,7 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 
 	@Override
 	public StatisticPredicate countDistinct(String attrName, String columnAlias) {
+		Assert.isTrue(columnAlias == null || DefendUtil.testColumnAlias(columnAlias), "columnAlias值不符合规则");
 		select.add(Dialect.COUNT_DISTINCT, attrName, columnAlias);
 		return this;
 	}
@@ -81,6 +85,7 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 
 	@Override
 	public StatisticPredicate avg(String attrName, String columnAlias) {
+		Assert.isTrue(columnAlias == null || DefendUtil.testColumnAlias(columnAlias), "columnAlias值不符合规则");
 		select.add(Dialect.AVG, attrName, columnAlias);
 		return this;
 	}
@@ -93,6 +98,7 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 
 	@Override
 	public StatisticPredicate min(String attrName, String columnAlias) {
+		Assert.isTrue(columnAlias == null || DefendUtil.testColumnAlias(columnAlias), "columnAlias值不符合规则");
 		select.add(Dialect.MIN, attrName, columnAlias);
 		return this;
 	}
@@ -105,6 +111,7 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 
 	@Override
 	public StatisticPredicate max(String attrName, String columnAlias) {
+		Assert.isTrue(columnAlias == null || DefendUtil.testColumnAlias(columnAlias), "columnAlias值不符合规则");
 		select.add(Dialect.MAX, attrName, columnAlias);
 		return this;
 	}
