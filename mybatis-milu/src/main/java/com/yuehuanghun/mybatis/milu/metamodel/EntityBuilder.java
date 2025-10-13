@@ -136,6 +136,7 @@ public class EntityBuilder {
 	private Entity forClass(Class<?> entityClass) {
 		Entity entity = new Entity();
 		entity.setJavaType(entityClass);
+		entity.setName(entityClass.getSimpleName());
 		
 		if(entityClass.isAnnotationPresent(Table.class)) {
 			Table table = entityClass.getAnnotation(Table.class);
