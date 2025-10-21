@@ -64,7 +64,7 @@ public class StatisticSelectImpl implements StatisticSelect {
 		});
 		
 		properties.forEach(property -> {
-			expressionBuilder.append(columnHolder(property)).append(Segment.SPACE).append(property).append(Segment.COMMA_B);
+			expressionBuilder.append(columnHolder(property)).append(Segment.SPACE).append(SqlBuildingHelper.wrapIdentifier(property, context.getConfiguration())).append(Segment.COMMA_B);
 			columns.add(property);
 		});
 		
