@@ -52,6 +52,24 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 		getDelegate().selects(attrNameChain);
 		return this;
 	}
+	
+	@Override
+	public LambdaQueryPredicate<T> notExists(Exists<?> exists) {
+		super.notExists(exists);
+		return this;
+	}
+
+	@Override
+	public LambdaQueryPredicate<T> select(Select... selects) {
+		getDelegate().select(selects);
+		return this;
+	}
+
+	@Override
+	public LambdaQueryPredicate<T> selectAll() {
+		getDelegate().selectAll();
+		return this;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -745,12 +763,6 @@ public class LambdaQueryPredicateImpl<T> extends LambdaPredicateImpl<T> implemen
 	@Override
 	public LambdaQueryPredicate<T> exists(Exists<?> exists) {
 		super.exists(exists);
-		return this;
-	}
-	
-	@Override
-	public LambdaQueryPredicate<T> notExists(Exists<?> exists) {
-		super.notExists(exists);
 		return this;
 	}
 }

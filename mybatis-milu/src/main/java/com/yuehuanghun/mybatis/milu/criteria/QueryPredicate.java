@@ -42,6 +42,19 @@ public interface QueryPredicate extends Predicate {
 	QueryPredicate select(String... attrNames);
 	
 	/**
+	 * 指定自定义的查询表达式，如果还需要查询其它属性可以使用{@link #select(String...)} {@link #selectAll()}
+	 * @param selects 自定义的查询表达式
+	 * @return 当前对象
+	 */
+	QueryPredicate select(Select... selects);
+	
+	/**
+	 * 查询所有属性。默认情况下调用，当使用了{@link #selectAll()}，可以调用此方法查询所有属性
+	 * @return 当前对象
+	 */
+	QueryPredicate selectAll();
+	
+	/**
 	 * 指定查询的（实体类）属性，未指定时查询实体所有属性
 	 * @param attrNameChain 多个属性名用英文逗号隔开，举例：name, age, createTime
 	 * @return 当前对象

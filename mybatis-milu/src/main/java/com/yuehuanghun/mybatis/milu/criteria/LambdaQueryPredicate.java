@@ -56,6 +56,19 @@ public interface LambdaQueryPredicate<T> extends LambdaPredicate<T> {
 	LambdaQueryPredicate<T> selects(String attrNameChain);
 	
 	/**
+	 * 指定自定义的查询表达式，如果还需要查询其它属性可以使用{@link #select(String...)} {@link #selectAll()}
+	 * @param selects 自定义的查询表达式
+	 * @return 当前对象
+	 */
+	LambdaQueryPredicate<T> select(Select... selects);
+	
+	/**
+	 * 查询所有属性。默认情况下调用，当使用了{@link #selectAll()}，可以调用此方法查询所有属性
+	 * @return 当前对象
+	 */
+	LambdaQueryPredicate<T> selectAll();
+	
+	/**
 	 * 排除查询指定的（实体类）属性，select比exselect优先级更高<br>
 	 * 例如文本或二进制大字段，影响IO效率，在查询时排除掉
 	 * @param getterFns 实体类的getter函数式

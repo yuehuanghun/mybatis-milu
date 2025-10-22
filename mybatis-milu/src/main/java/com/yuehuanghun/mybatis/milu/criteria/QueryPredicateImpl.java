@@ -46,7 +46,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	private Lock lock;
 	private Boolean distinct = Boolean.FALSE;
 	@Getter
-	private final Set<String> selectAttrs = new LinkedHashSet<>();
+	private final Set<Object> selects = new LinkedHashSet<>();
 	@Getter
 	private final Set<String> exselectAttrs = new HashSet<>();
 	@Getter
@@ -55,8 +55,22 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	@Override
 	public QueryPredicate select(String... attrNames) {
 		for (String attrName : attrNames) {
-			this.selectAttrs.add(attrName);
+			this.selects.add(attrName);
 		}
+		return this;
+	}
+
+	@Override
+	public QueryPredicate select(Select... selects) {
+		for (Select select : selects) {
+			this.selects.add(select);
+		}
+		return this;
+	}
+
+	@Override
+	public QueryPredicate selectAll() {
+		this.selects.add("*");
 		return this;
 	}
 
@@ -65,7 +79,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		String[] arry = attrNameChain.split(Segment.COMMA);
 		for (String attrName : arry) {
 			if (StringUtils.isNotBlank(attrName)) {
-				selectAttrs.add(attrName.trim());
+				selects.add(attrName.trim());
 			}
 		}
 		return this;
@@ -532,7 +546,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		int result = super.hashCode();
 
 		result = 31 * result + sort.hashCode();
-		result = 31 * result + selectAttrs.hashCode();
+		result = 31 * result + selects.hashCode();
 		result = 31 * result + exselectAttrs.hashCode();
 		result = lock == null ? result : 31 * result + lock.hashCode();
 		result = 31 * result + distinct.hashCode();
@@ -552,7 +566,7 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 		QueryPredicateImpl that = (QueryPredicateImpl) obj;
 
 		return Objects.equals(this.sort, that.sort) && Objects.equals(this.exselectAttrs, that.exselectAttrs)
-				&& Objects.equals(this.selectAttrs, that.selectAttrs) && Objects.equals(this.lock, that.lock)
+				&& Objects.equals(this.selects, that.selects) && Objects.equals(this.lock, that.lock)
 				&& Objects.equals(this.distinct, that.distinct) && Objects.equals(this.joinModeMap, that.joinModeMap);
 	}
 

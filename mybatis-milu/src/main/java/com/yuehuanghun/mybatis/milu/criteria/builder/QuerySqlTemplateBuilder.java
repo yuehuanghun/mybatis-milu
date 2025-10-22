@@ -35,6 +35,7 @@ import org.apache.ibatis.mapping.ResultMapping;
 import com.yuehuanghun.mybatis.milu.criteria.Join;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
+import com.yuehuanghun.mybatis.milu.criteria.Select;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper.TableAliasDispacher;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
@@ -55,7 +56,7 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 
 	private final static Pattern ORDER_BY_PT = Pattern.compile("^\\s*ORDER BY.*$");
 	private final static List<ResultFlag> ID_FLAG_LIST = Arrays.asList(ResultFlag.ID);
-	private final static Set<String> ALL_ATTRS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("*")));
+	private final static Set<Object> ALL_ATTRS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("*")));
 
 	public QuerySqlTemplateBuilder(GenericProviderContext context, QueryPredicate queryPredicate, int paramIndex) {
 		super(context);
@@ -64,18 +65,20 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 	}
 
 	public BuildResult build() {
-		Set<String> selectAttrs = ALL_ATTRS;
+		Set<Object> selects = ALL_ATTRS;
 		Set<String> exselectAttrs = Collections.emptySet();
 		Map<String, Join> joinModeMap = Collections.emptyMap();
 		if (QueryPredicateImpl.class.isInstance(predicate)) {
-			selectAttrs = ((QueryPredicateImpl) predicate).getSelectAttrs();
-			if(selectAttrs.isEmpty()) {
-				selectAttrs = ALL_ATTRS;
+			selects = ((QueryPredicateImpl) predicate).getSelects();
+			if(selects.isEmpty()) {
+				selects = ALL_ATTRS;
 			}
 			exselectAttrs = ((QueryPredicateImpl) predicate).getExselectAttrs();
 			joinModeMap = ((QueryPredicateImpl) predicate).getJoinModeMap();
 		}
 
+		Set<String> selectAttrs = selects.stream().filter(select -> (select instanceof String)).map(select -> (String)select).collect(Collectors.toSet());
+		List<Select> selectExps = selects.stream().filter(select -> (select instanceof Select)).map(select -> (Select)select).collect(Collectors.toList());
 		Map<String, List<Attribute>> selectEntityAttrMap = analyseAttrs(selectAttrs);
 		Map<String, List<Attribute>> exselectEntityAttrMap = analyseAttrs(exselectAttrs);
 
@@ -101,6 +104,14 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 			});
 		}
 		
+		String selectExp = null;
+		Set<String> selectAliases = null;
+		if(!selectExps.isEmpty()) {
+			Set<String> tmpSelectAliases = new HashSet<>();
+			selectAliases = tmpSelectAliases;
+			selectExp = selectExps.stream().map(exp -> exp.getExpresion(context, properties, tmpSelectAliases)).collect(Collectors.joining(Segment.COMMA_B));
+		}
+		
 		TableAliasDispacher tableAliasDispacher = getTableAliasDispacher();
 
 		SqlBuildingHelper.analyseDomain(entity, properties, tableAliasDispacher, configuration, joinExpressMap,
@@ -115,15 +126,23 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 		if (QueryPredicateImpl.class.isInstance(predicate) && ((QueryPredicateImpl) predicate).isDistinct()) {
 			sqlBuilder.append(Segment.DISTINCT);
 		}
+
+		boolean firstColumn = true;
+		if (selectExp != null) {
+			sqlBuilder.append(renderConditionSql(selectExp, properties));			
+			firstColumn = false;
+		}
 		
 		Iterator<Entry<String, List<Attribute>>> it = selectEntityAttrMap.entrySet().iterator();
-		boolean firstColumn = true;
 		while(it.hasNext()) {
 			Entry<String, List<Attribute>> entityEntry = it.next();
-			String mainEntityAttrName = entityEntry.getKey();
-			List<String> exselectAttrNameList = exselectEntityAttrMap.containsKey(mainEntityAttrName) ? exselectEntityAttrMap.get(mainEntityAttrName).stream().map(Attribute::getName).collect(Collectors.toList()) : Collections.emptyList();
+			String refEntityAttrName = entityEntry.getKey();
+			List<String> exselectAttrNameList = exselectEntityAttrMap.containsKey(refEntityAttrName) ? exselectEntityAttrMap.get(refEntityAttrName).stream().map(Attribute::getName).collect(Collectors.toList()) : Collections.emptyList();
 			for(Attribute attr : entityEntry.getValue()) {
 				if (!exselectAttrNameList.isEmpty() && exselectAttrNameList.contains(attr.getName())) {
+					continue;
+				}
+				if(selectAliases != null && selectAliases.contains(attr.getName())) {
 					continue;
 				}
 				if (firstColumn) {
@@ -131,17 +150,17 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 				} else {
 					sqlBuilder.append(Segment.COMMA_B);
 				}
-				if (StringUtils.isBlank(mainEntityAttrName)) { // 没有关联查询时，不需要使用表别名
+				if (StringUtils.isBlank(refEntityAttrName)) { // 没有关联查询时，不需要使用表别名
 					if(needAlias) {
 						sqlBuilder.append(mainTableAlias).append(Segment.DOT);
 					}
 				} else {
-					sqlBuilder.append(tableAliasDispacher.dispach(Segment.ATTR_ + mainEntityAttrName)).append(Segment.DOT); //表别名
+					sqlBuilder.append(tableAliasDispacher.dispach(Segment.ATTR_ + refEntityAttrName)).append(Segment.DOT); //表别名
 				}
 				SqlBuildingHelper.appendIdentifier(sqlBuilder, attr.getColumnName(), configuration);
 				
-				if(StringUtils.isNotBlank(mainEntityAttrName)) { //处理关联表字段别名
-					String tableAlias = tableAliasDispacher.dispach(Segment.ATTR_ + mainEntityAttrName);
+				if(StringUtils.isNotBlank(refEntityAttrName)) { //处理关联表字段别名
+					String tableAlias = tableAliasDispacher.dispach(Segment.ATTR_ + refEntityAttrName);
 					sqlBuilder.append(Segment.SPACE);
 					SqlBuildingHelper.appendAlias(sqlBuilder, buildColumnAlias(tableAlias, attr.getName()), configuration);
 				}
