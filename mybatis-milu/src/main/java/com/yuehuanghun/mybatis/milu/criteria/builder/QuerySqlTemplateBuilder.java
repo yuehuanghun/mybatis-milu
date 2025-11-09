@@ -43,6 +43,8 @@ import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.mapping.MiluMapperBuilderAssistant;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
+import com.yuehuanghun.mybatis.milu.metamodel.Entity.FuncCol;
+import com.yuehuanghun.mybatis.milu.metamodel.Entity.FunctionAttribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.PluralAttribute;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
@@ -98,7 +100,23 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 			selectEntityAttrMap.forEach((attrName, attributes) -> {
 				if(StringUtils.isNotBlank(attrName)) {
 					attributes.forEach(subAttr -> {
-						properties.add(attrName + StringUtils.capitalize(subAttr.getName()));
+						if(subAttr instanceof FunctionAttribute) {
+							(((FunctionAttribute) subAttr).getFuncCol(configuration.getDbMeta().getDbEnum()).getVarAttrNames()).forEach(varAttrName -> {
+								properties.add(attrName + StringUtils.capitalize(varAttrName));
+							});
+						} else {
+							properties.add(attrName + StringUtils.capitalize(subAttr.getName()));
+						}
+					});
+				} else {
+					attributes.forEach(subAttr -> {
+						if(subAttr instanceof FunctionAttribute) {
+							(((FunctionAttribute) subAttr).getFuncCol(configuration.getDbMeta().getDbEnum()).getVarAttrNames()).forEach(varAttrName -> {
+								properties.add(varAttrName);
+							});
+						} else {
+							properties.add(subAttr.getName());
+						}
 					});
 				}
 			});
@@ -142,7 +160,7 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 				if (!exselectAttrNameList.isEmpty() && exselectAttrNameList.contains(attr.getName())) {
 					continue;
 				}
-				if(selectAliases != null && selectAliases.contains(attr.getName())) {
+				if (selectAliases != null && selectAliases.contains(attr.getName())) {
 					continue;
 				}
 				if (firstColumn) {
@@ -150,20 +168,63 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 				} else {
 					sqlBuilder.append(Segment.COMMA_B);
 				}
-				if (StringUtils.isBlank(refEntityAttrName)) { // 没有关联查询时，不需要使用表别名
-					if(needAlias) {
-						sqlBuilder.append(mainTableAlias).append(Segment.DOT);
+				
+				if (attr instanceof FunctionAttribute) {
+					FunctionAttribute funcAttr = ((FunctionAttribute) attr);
+					FuncCol funcCol = funcAttr.getFuncCol(configuration.getDbMeta().getDbEnum());
+					String funcExp = funcCol.getFuncExp();
+					
+					String tableAlias = null;
+					if (StringUtils.isBlank(refEntityAttrName)) { // 没有关联查询时，不需要使用表别名
+						if(needAlias) {
+							tableAlias = mainTableAlias;
+						}
+					} else { // 目前不会走此逻辑，只会针对主实体
+						tableAlias = tableAliasDispacher.dispach(Segment.ATTR_ + refEntityAttrName);
+					}
+					
+					for (String attrName : funcCol.getVarAttrNames()) {
+						String columnName = "";
+						if (tableAlias != null) {
+							columnName = tableAlias + Segment.DOT;
+						}
+						Attribute funcRefAttr = attr.getOwner().getAttribute(attrName); // 函数列表达式只能引用本实体的属性
+						if (funcRefAttr == null) { // 如果为null，则直接当值表列名处理
+							columnName += SqlBuildingHelper.wrapIdentifier(attrName, configuration);
+						} else if(funcRefAttr instanceof FunctionAttribute) {
+							throw new SqlExpressionBuildingException(String.format("函数属性%s表达式%s中的属性引用%s是一个函数属性，不允许函数属性", funcAttr.getName(), funcExp, attrName));
+						} else if(funcRefAttr.isReference()) {
+							throw new SqlExpressionBuildingException(String.format("函数属性%s表达式%s中的属性引用%s是一个关联属性，不允许关联属性", funcAttr.getName(), funcExp, attrName));
+						} else { // 属性映射的表字段名
+							columnName += SqlBuildingHelper.wrapIdentifier(funcRefAttr.getColumnName(), configuration);
+						}
+						
+						funcExp = funcExp.replace("${" + attrName + "}", columnName); // 替换占位
+					}
+					sqlBuilder.append(funcExp).append(Segment.SPACE);
+					
+					if (StringUtils.isBlank(refEntityAttrName)) {
+						SqlBuildingHelper.appendAlias(sqlBuilder, attr.getName(), configuration);
+					} else {
+						SqlBuildingHelper.appendAlias(sqlBuilder, buildColumnAlias(tableAlias, attr.getName()), configuration);
 					}
 				} else {
-					sqlBuilder.append(tableAliasDispacher.dispach(Segment.ATTR_ + refEntityAttrName)).append(Segment.DOT); //表别名
+					if (StringUtils.isBlank(refEntityAttrName)) { // 没有关联查询时，不需要使用表别名
+						if(needAlias) {
+							sqlBuilder.append(mainTableAlias).append(Segment.DOT);
+						}
+					} else {
+						sqlBuilder.append(tableAliasDispacher.dispach(Segment.ATTR_ + refEntityAttrName)).append(Segment.DOT); //表别名
+					}
+					SqlBuildingHelper.appendIdentifier(sqlBuilder, attr.getColumnName(), configuration);
+					
+					if(StringUtils.isNotBlank(refEntityAttrName)) { //处理关联表字段别名
+						String tableAlias = tableAliasDispacher.dispach(Segment.ATTR_ + refEntityAttrName);
+						sqlBuilder.append(Segment.SPACE);
+						SqlBuildingHelper.appendAlias(sqlBuilder, buildColumnAlias(tableAlias, attr.getName()), configuration);
+					}
 				}
-				SqlBuildingHelper.appendIdentifier(sqlBuilder, attr.getColumnName(), configuration);
 				
-				if(StringUtils.isNotBlank(refEntityAttrName)) { //处理关联表字段别名
-					String tableAlias = tableAliasDispacher.dispach(Segment.ATTR_ + refEntityAttrName);
-					sqlBuilder.append(Segment.SPACE);
-					SqlBuildingHelper.appendAlias(sqlBuilder, buildColumnAlias(tableAlias, attr.getName()), configuration);
-				}
 			}
 		}
 
@@ -185,14 +246,14 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 		if(selectEntityAttrMap.size() > 1 || (selectEntityAttrMap.size() == 1 && !selectEntityAttrMap.containsKey(StringUtils.EMPTY))) {
 			MiluMapperBuilderAssistant assistant = new MiluMapperBuilderAssistant(configuration, null); //resource ignore
 			
-			selectEntityAttrMap.forEach((mainEntityAttrName, attributes) -> {
-				if(StringUtils.isBlank(mainEntityAttrName)) {
+			selectEntityAttrMap.forEach((entityAttrName, attributes) -> {
+				if(StringUtils.isBlank(entityAttrName)) {
 					attributes.forEach(attribute -> {
 						ResultMapping resultMapping = assistant.buildResultMapping(attribute.getOwner().getJavaType(), attribute.getName(), attribute.getColumnName(), attribute.getJavaType(), attribute.getJdbcType(), null, null, null, null, attribute.getTypeHandler(), attribute.isId() ? ID_FLAG_LIST : null);
 						resultMappings.add(resultMapping);
 					});
 				} else {
-					String tableAlias = tableAliasDispacher.dispach(Segment.ATTR_ + mainEntityAttrName);
+					String tableAlias = tableAliasDispacher.dispach(Segment.ATTR_ + entityAttrName);
 					
 					List<ResultMapping> refResultMappings = new ArrayList<>();
 					attributes.forEach(attribute -> {
@@ -200,8 +261,8 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 						refResultMappings.add(resultMapping);
 					});
 					
-					String resultMapId = entity.getJavaType().getName() + "#" + mainEntityAttrName + "$" + (refResultMappings.hashCode() + 31 * predicate.hashCode());
-					Attribute attribute = entity.getAttribute(mainEntityAttrName);
+					String resultMapId = entity.getJavaType().getName() + "#" + entityAttrName + "$" + (refResultMappings.hashCode() + 31 * predicate.hashCode());
+					Attribute attribute = entity.getAttribute(entityAttrName);
 					
 					if(!configuration.hasResultMap(resultMapId)) {
 						Class<?> javaType = attribute.getJavaType();

@@ -38,6 +38,7 @@ import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery.MatchType;
 import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Part;
+import com.yuehuanghun.mybatis.milu.db.DbEnum;
 import com.yuehuanghun.mybatis.milu.filler.Filler;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.Reference;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
@@ -48,7 +49,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
@@ -297,7 +300,7 @@ public class Entity {
 	@Data
 	@EqualsAndHashCode(callSuper = true)
 	public static class PluralAttribute extends Attribute {
-		private Class<?> elementClass;
+		protected Class<?> elementClass;
 
 		@Override
 		public boolean isCollection() {
@@ -329,6 +332,40 @@ public class Entity {
 		private boolean main;
 	}
 	
+	@ToString
+	public static class FunctionAttribute extends PluralAttribute {
+		@Setter
+		private boolean collection;
+		
+		private Map<DbEnum, FuncCol> funcColMap = new HashMap<>();
+		
+		public FuncCol getFuncCol(DbEnum forDb) {
+			FuncCol funcCol = funcColMap.get(forDb);
+			if(funcCol != null) {
+				return funcCol;
+			}
+			
+			return funcColMap.get(DbEnum.ANY);
+		}
+		
+		public void putFuncCol(DbEnum forDb, FuncCol funcCol) {
+			funcColMap.put(forDb, funcCol);
+		}
+		
+		@Override
+		public boolean isCollection() {
+			return collection;
+		}
+
+		@Override
+		public Class<?> getElementClass() {
+			if(elementClass == null) {
+				return getJavaType();
+			}
+			return elementClass;
+		}
+	}
+	
 	@Data
 	@AllArgsConstructor
 	public static class RangeCondition {
@@ -350,7 +387,44 @@ public class Entity {
 		// 索引名
 		private String name;
 		// 属性
-		private List<Attribute> attrs;
+		private List<Attribute> attrs;	
+	}
+	
+	@NoArgsConstructor
+	public static class FuncCol {
+		@Getter
+		@Setter
+		private String funcExp;
 		
+		// 表达式变量
+		private Set<String> varAttrNames;
+
+		public FuncCol(String funcExp) {
+			this.funcExp = funcExp;
+		}
+
+		public Set<String> getVarAttrNames() {
+			if(varAttrNames != null) {
+				return varAttrNames;
+			}
+			
+			synchronized (this) {
+				if(varAttrNames != null) {
+					return varAttrNames;
+				}
+				varAttrNames = new HashSet<>();
+				if(StringUtils.isBlank(funcExp)) {
+					return varAttrNames;
+				}
+				Pattern pattern = Pattern.compile("\\$\\{.+?}");
+				Matcher matcher = pattern.matcher(funcExp);
+				while(matcher.find()) { // 提取${xxx}的属性引用参数
+					String group = matcher.group();
+					varAttrNames.add(group.substring(2, group.length() - 1));
+				}
+				
+				return varAttrNames;
+			}
+		}
 	}
 }

@@ -17,11 +17,15 @@ package com.yuehuanghun.mybatis.milu.generic.impl;
 
 import java.util.Collection;
 
+import com.yuehuanghun.mybatis.milu.MiluConfiguration;
+import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 import com.yuehuanghun.mybatis.milu.generic.GenericCachingProviderSql;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
+import com.yuehuanghun.mybatis.milu.metamodel.Entity.FuncCol;
+import com.yuehuanghun.mybatis.milu.metamodel.Entity.FunctionAttribute;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
 public class GenericFindByIdProviderSql extends GenericCachingProviderSql {
@@ -40,6 +44,8 @@ public class GenericFindByIdProviderSql extends GenericCachingProviderSql {
 		}
 		boolean first = true;
 		
+		MiluConfiguration configuration = context.getConfiguration();
+		
 		for(Attribute attr : attributes) {
 			if(!attr.isSelectable()) {
 				continue;
@@ -49,6 +55,32 @@ public class GenericFindByIdProviderSql extends GenericCachingProviderSql {
 				sqlBuilder.append(Segment.COMMA_B);
 			} else {
 				first = false;
+			}
+			
+			if (attr instanceof FunctionAttribute) {
+				FunctionAttribute funcAttr = ((FunctionAttribute) attr);
+				FuncCol funcCol = funcAttr.getFuncCol(configuration.getDbMeta().getDbEnum());
+				String funcExp = funcCol.getFuncExp();
+				
+				for(String attrName : funcCol.getVarAttrNames()) {
+					String columnName = "";
+					Attribute funcRefAttr = attr.getOwner().getAttribute(attrName); // 函数列表达式只能引用本实体的属性
+					if(funcRefAttr == null) { // 如果为null，则直接当值表列名处理
+						columnName += SqlBuildingHelper.wrapIdentifier(attrName, configuration);
+					} else if(funcRefAttr instanceof FunctionAttribute) {
+						throw new SqlExpressionBuildingException(String.format("函数属性%s表达式%s中的属性引用%s是一个函数属性，不允许函数属性", funcAttr.getName(), funcExp, attrName));
+					} else if(funcRefAttr.isReference()) {
+						throw new SqlExpressionBuildingException(String.format("函数属性%s表达式%s中的属性引用%s是一个关联属性，不允许关联属性", funcAttr.getName(), funcExp, attrName));
+					} else { // 属性映射的表字段名
+						columnName += SqlBuildingHelper.wrapIdentifier(funcRefAttr.getColumnName(), configuration);
+					}
+					
+					funcExp = funcExp.replace("${" + attrName + "}", columnName); // 替换占位
+				}
+				sqlBuilder.append(funcExp).append(Segment.SPACE);
+				SqlBuildingHelper.appendAlias(sqlBuilder, attr.getName(), configuration);
+				
+				continue;
 			}
 			
 			sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context));

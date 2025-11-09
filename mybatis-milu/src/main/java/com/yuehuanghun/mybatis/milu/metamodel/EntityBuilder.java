@@ -58,6 +58,8 @@ import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
 import com.yuehuanghun.mybatis.milu.annotation.EntityOptions;
 import com.yuehuanghun.mybatis.milu.annotation.EntityOptions.FetchRef;
 import com.yuehuanghun.mybatis.milu.annotation.Filler.FillMode;
+import com.yuehuanghun.mybatis.milu.annotation.FuncColumn;
+import com.yuehuanghun.mybatis.milu.annotation.FuncColumns;
 import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery;
 import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
@@ -69,6 +71,8 @@ import com.yuehuanghun.mybatis.milu.filler.Filler;
 import com.yuehuanghun.mybatis.milu.filler.SupplierHelper;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.AssociationAttribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
+import com.yuehuanghun.mybatis.milu.metamodel.Entity.FuncCol;
+import com.yuehuanghun.mybatis.milu.metamodel.Entity.FunctionAttribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.IdAttribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.LogicDeleteAttribute;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.PluralAttribute;
@@ -78,6 +82,7 @@ import com.yuehuanghun.mybatis.milu.metamodel.ref.ManyToManyReference;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.MappedReference;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.Reference;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.Reference.JoinCondition;
+import com.yuehuanghun.mybatis.milu.tool.DefendUtil;
 import com.yuehuanghun.mybatis.milu.tool.InstanceUtils;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 import com.yuehuanghun.mybatis.milu.tool.converter.Converter;
@@ -377,10 +382,35 @@ public class EntityBuilder {
 			} else {
 				attribute.setEntityClass(targetEntity);
 			}
+		} else if(field.isAnnotationPresent(FuncColumn.class) || field.isAnnotationPresent(FuncColumns.class)) {
+			FuncColumn[] funcColumns = getFuncColumns(field);
+			
+			FunctionAttribute attr = new FunctionAttribute();
+			attribute = attr;
+			for(FuncColumn funcColumn : funcColumns) {
+				if(!DefendUtil.testFuncColumnExp(funcColumn.expression())) {
+					throw new OrmBuildingException(String.format("实体%s的函数属性%s中的函数表达式包含不安全信息，表达式：%s", field.getDeclaringClass().getSimpleName(), field.getName(), funcColumn.expression()));
+				}
+				attr.putFuncCol(funcColumn.forDb(), new FuncCol(funcColumn.expression()));
+			}
+			
+			if(Collection.class.isAssignableFrom(field.getType())) {
+				ParameterizedType genericType = (ParameterizedType) field.getGenericType();
+				attr.setElementClass((Class<?>) genericType.getActualTypeArguments()[0]);
+				attr.setCollection(true);
+			} else if(field.getType().isArray()) {
+				attr.setElementClass(field.getType().getComponentType());
+				attr.setCollection(true);
+			} else {
+				attr.setElementClass(field.getType());
+			}
+			attr.setUpdateable(false);
+			attr.setInsertable(false);
+			attr.setColumnName(field.getName());
 		} else if(Collection.class.isAssignableFrom(field.getType())) {
 			attribute = new PluralAttribute();
 			ParameterizedType genericType = (ParameterizedType) field.getGenericType();
-			Class<?> elementClass = (Class<?>) genericType.getActualTypeArguments()[0];
+			Class<?> elementClass = (Class<?>) genericType.getActualTypeArguments()[0]; // TODO 支持Type ?
 			((PluralAttribute)attribute).setElementClass(elementClass);
 			if(field.isAnnotationPresent(OneToOne.class) || field.isAnnotationPresent(ManyToOne.class)) {
 				throw new OrmBuildingException(String.format("集合属性上不允许使用@OneToOne或@ManyToOne注解：实体%s，属性%s", field.getDeclaringClass().getSimpleName(), field.getName()));
@@ -459,6 +489,14 @@ public class EntityBuilder {
 			return null;
 		}
 		return options.logicDelete()[0];
+	}
+	
+	private FuncColumn[] getFuncColumns(Field field){
+		if(field.isAnnotationPresent(FuncColumns.class)) {
+			return field.getAnnotation(FuncColumns.class).funcColumns();
+		}
+		
+		return new FuncColumn[] {field.getAnnotation(FuncColumn.class)};
 	}
 	
 	private Reference buildReference(Attribute attr, Entity ownerEntity) {
