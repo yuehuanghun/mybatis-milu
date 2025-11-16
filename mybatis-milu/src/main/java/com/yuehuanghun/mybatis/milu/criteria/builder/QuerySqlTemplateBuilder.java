@@ -147,6 +147,7 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 
 		boolean firstColumn = true;
 		if (selectExp != null) {
+			selectExp = SqlBuildingHelper.scriptContentEscape.apply(selectExp);
 			sqlBuilder.append(renderConditionSql(selectExp, properties));			
 			firstColumn = false;
 		}

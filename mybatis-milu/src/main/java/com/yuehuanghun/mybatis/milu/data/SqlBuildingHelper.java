@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.ibatis.scripting.xmltags.OgnlCache;
@@ -55,6 +56,13 @@ import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 import com.yuehuanghun.mybatis.milu.tool.converter.ExampleQueryConverter;
 
 public class SqlBuildingHelper {
+	// 目前针对XML脚本内容进行转义
+	public static Function<String, String> scriptContentEscape = (content) -> {
+		if(content == null) {
+			return null;
+		}
+		return content.replace("<", "&lt;").replace(">", "&gt;");
+	};
 	public static void analyseDomain(Entity entity, Collection<String> properties, TableAliasDispacher tableAliasDispacher, MiluConfiguration configuration, Map<String, String> joinExpressMap, Map<String, String> joinQueryColumnNap) {
 		analyseDomain(entity, properties, tableAliasDispacher, configuration, joinExpressMap, joinQueryColumnNap, Collections.emptyMap());
 	}

@@ -63,6 +63,7 @@ import com.yuehuanghun.mybatis.milu.annotation.FuncColumns;
 import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery;
 import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
+import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.data.Part.Type;
 import com.yuehuanghun.mybatis.milu.exception.OrmBuildingException;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
@@ -391,7 +392,7 @@ public class EntityBuilder {
 				if(!DefendUtil.testFuncColumnExp(funcColumn.expression())) {
 					throw new OrmBuildingException(String.format("实体%s的函数属性%s中的函数表达式包含不安全信息，表达式：%s", field.getDeclaringClass().getSimpleName(), field.getName(), funcColumn.expression()));
 				}
-				attr.putFuncCol(funcColumn.forDb(), new FuncCol(funcColumn.expression()));
+				attr.putFuncCol(funcColumn.forDb(), new FuncCol(SqlBuildingHelper.scriptContentEscape.apply(funcColumn.expression())));
 			}
 			
 			if(Collection.class.isAssignableFrom(field.getType())) {

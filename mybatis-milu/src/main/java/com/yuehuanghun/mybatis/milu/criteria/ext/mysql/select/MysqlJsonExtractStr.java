@@ -44,7 +44,7 @@ public class MysqlJsonExtractStr implements Select {
 	public String getExpresion(GenericProviderContext context, Set<String> attrNames, Set<String> aliases) {
 		attrNames.add(attrName);
 		aliases.add(alias);
-		return wrapAttrName(attrName) + " -&gt;&gt; '" + jsonKey + "' " + SqlBuildingHelper.wrapIdentifier(alias, context.getConfiguration());
+		return wrapAttrName(attrName) + " ->> '" + jsonKey + "' " + SqlBuildingHelper.wrapIdentifier(alias, context.getConfiguration());
 	}
 
 
