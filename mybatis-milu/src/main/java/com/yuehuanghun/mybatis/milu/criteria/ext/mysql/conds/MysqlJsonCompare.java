@@ -5,12 +5,11 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.yuehuanghun.mybatis.milu.criteria.Condition;
+import com.yuehuanghun.mybatis.milu.criteria.ext.CompareMode;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.tool.Assert;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
-
-import lombok.Getter;
 
 public class MysqlJsonCompare implements Condition {
 
@@ -80,17 +79,5 @@ public class MysqlJsonCompare implements Condition {
 		return Objects.equals(this.attrName, ((MysqlJsonCompare)that).attrName)
 				&& Objects.equals(this.jsonKey, ((MysqlJsonCompare)that).jsonKey)
 				&& Objects.equals(this.compareMode, ((MysqlJsonCompare)that).compareMode);
-	}
-
-	
-	public static enum CompareMode {
-		EQUALS("="), NOT_EQUALS("!="), GREATER_THAN("&gt;"), LESS_THAN("&lt;");
-		
-		@Getter
-		private String exp;
-		
-		CompareMode(String exp){
-			this.exp = exp;
-		}
 	}
 }
