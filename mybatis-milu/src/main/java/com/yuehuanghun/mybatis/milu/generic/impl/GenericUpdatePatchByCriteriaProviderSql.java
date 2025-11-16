@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.CacheKey;
-import org.apache.ibatis.javassist.scopedpool.SoftValueHashMap;
 
 import com.yuehuanghun.mybatis.milu.annotation.Filler.FillMode;
 import com.yuehuanghun.mybatis.milu.criteria.Patch;
@@ -32,9 +32,10 @@ import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderSql;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
+import com.yuehuanghun.mybatis.milu.tool.cache.SynchronizedLruCache;
 
 public class GenericUpdatePatchByCriteriaProviderSql implements GenericProviderSql {
-	private final Map<Class<?>, Map<Object, String>> cache = new ConcurrentHashMap<>();
+	private final Map<Class<?>, Cache> cache = new ConcurrentHashMap<>();
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
@@ -77,12 +78,21 @@ public class GenericUpdatePatchByCriteriaProviderSql implements GenericProviderS
 				}
 			}
 		});
-		
-		return cache.computeIfAbsent(context.getMapperType(), mapperType -> {
-			return new SoftValueHashMap<>();
-		}).computeIfAbsent(new CacheKey(new Object[] { predicate, patch.getAttrNames() }), key -> {			
-			return new UpdatePatchSqlTemplateBuilder(context, patch, predicate).build();
+
+		Cache buildTemplateCache = cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
+			return new SynchronizedLruCache(getMethodName()); // 使用LRU缓存，最多存储1024个缓存数据
 		});
+		
+		CacheKey cacheKey = new CacheKey(new Object[] { predicate, patch.getAttrNames()});
+		
+		String sqlTemplate = (String)buildTemplateCache.getObject(cacheKey);
+		
+		if(sqlTemplate == null) {
+			sqlTemplate = new UpdatePatchSqlTemplateBuilder(context, patch, predicate).build();
+			buildTemplateCache.putObject(cacheKey, sqlTemplate);
+		}
+		
+		return sqlTemplate;
 	}
 
 	@Override

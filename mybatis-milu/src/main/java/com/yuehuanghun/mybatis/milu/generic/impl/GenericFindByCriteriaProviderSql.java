@@ -20,10 +20,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-import org.apache.ibatis.javassist.scopedpool.SoftValueHashMap;
+import org.apache.ibatis.cache.Cache;
 
 import com.github.pagehelper.PageHelper;
-import com.yuehuanghun.mybatis.milu.criteria.Expression;
 import com.yuehuanghun.mybatis.milu.criteria.Join;
 import com.yuehuanghun.mybatis.milu.criteria.Limit;
 import com.yuehuanghun.mybatis.milu.criteria.LimitOffset;
@@ -38,10 +37,11 @@ import com.yuehuanghun.mybatis.milu.generic.GenericProviderSql;
 import com.yuehuanghun.mybatis.milu.mapping.ResultMapHelper;
 import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
+import com.yuehuanghun.mybatis.milu.tool.cache.SynchronizedLruCache;
 
 public class GenericFindByCriteriaProviderSql implements GenericProviderSql {
 
-	private final Map<Class<?>, Map<Expression, BuildResult>> cache = new ConcurrentHashMap<>();
+	private final Map<Class<?>, Cache> cache = new ConcurrentHashMap<>();
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
@@ -86,11 +86,17 @@ public class GenericFindByCriteriaProviderSql implements GenericProviderSql {
 		}
 		
 		paramMap.putAll(queryParams);
-		BuildResult result = cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
-			return new SoftValueHashMap<>();
-		}).computeIfAbsent(predicate, (key) -> {
-			return new QuerySqlTemplateBuilder(context, predicate, 0).build();
+		
+		Cache buildResultCache = cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
+			return new SynchronizedLruCache(getMethodName()); // 使用LRU缓存，最多存储1024个缓存数据
 		});
+		
+		BuildResult result = (BuildResult)buildResultCache.getObject(predicate);
+
+		if(result == null) {
+			result = new QuerySqlTemplateBuilder(context, predicate, 0).build();
+			buildResultCache.putObject(predicate, result);
+		}
 		
 		if(!result.getResultMappings().isEmpty()) {
 			ResultMapHelper.setResultMappingList(result.getResultMappings());

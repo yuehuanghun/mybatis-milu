@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-import org.apache.ibatis.javassist.scopedpool.SoftValueHashMap;
+import org.apache.ibatis.cache.Cache;
 
 import com.yuehuanghun.mybatis.milu.criteria.LambdaPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaPredicateImpl;
@@ -33,9 +33,10 @@ import com.yuehuanghun.mybatis.milu.generic.GenericProviderSql;
 import com.yuehuanghun.mybatis.milu.mapping.ResultMapHelper;
 import com.yuehuanghun.mybatis.milu.tool.Assert;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
+import com.yuehuanghun.mybatis.milu.tool.cache.SynchronizedLruCache;
 
 public abstract class GenericSingleStatisticByLambdaCriteriaProviderSql implements GenericProviderSql {
-	private final Map<Class<?>, Map<Object, String>> cache = new ConcurrentHashMap<>();
+	private final Map<Class<?>, Cache> cache = new ConcurrentHashMap<>();
 	
 	private final String functionName;
 	
@@ -66,13 +67,20 @@ public abstract class GenericSingleStatisticByLambdaCriteriaProviderSql implemen
 		
 		Map<String, Object> valueKey = new HashMap<>();
 		valueKey.put(Constants.CRITERIA, predicate);
-		valueKey.put(Constants.ATTR_NAME, attrName);
-		
-		return cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
-			return new SoftValueHashMap<>();
-		}).computeIfAbsent(valueKey, (key) -> {
-			return new SingleStatisticSqlTemplateBuilder(context, functionName, attrName, predicate.getDelegate()).build();
+		valueKey.put(Constants.ATTR_NAME, attrName);		
+
+		Cache buildTemplateCache = cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
+			return new SynchronizedLruCache(getMethodName()); // 使用LRU缓存，最多存储1024个缓存数据
 		});
+		
+		String sqlTemplate = (String)buildTemplateCache.getObject(valueKey);
+		
+		if(sqlTemplate == null) {
+			sqlTemplate = new SingleStatisticSqlTemplateBuilder(context, functionName, attrName, predicate.getDelegate()).build();
+			buildTemplateCache.putObject(valueKey, sqlTemplate);
+		}
+		
+		return sqlTemplate;
 	}
 
 }

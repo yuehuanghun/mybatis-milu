@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.CacheKey;
-import org.apache.ibatis.javassist.scopedpool.SoftValueHashMap;
 import org.apache.ibatis.reflection.MetaClass;
 
 import com.yuehuanghun.mybatis.milu.criteria.UpdatePredicate;
@@ -36,10 +36,11 @@ import com.yuehuanghun.mybatis.milu.generic.GenericProviderSql;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
+import com.yuehuanghun.mybatis.milu.tool.cache.SynchronizedLruCache;
 
 public class GenericUpdateAttrByCriteriaProviderSql implements GenericProviderSql {
 
-	private final Map<Class<?>, Map<Object, String>> cache = new ConcurrentHashMap<>();
+	private final Map<Class<?>, Cache> cache = new ConcurrentHashMap<>();
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
@@ -85,13 +86,20 @@ public class GenericUpdateAttrByCriteriaProviderSql implements GenericProviderSq
 		predicate.renderParams(context, queryParams, 0);
 		((Map)params).putAll(queryParams);
 
-		String sqlExpression = cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
-			return new SoftValueHashMap<>();
-		}).computeIfAbsent(new CacheKey(new Object[] { predicate, attrName }), (key) -> {
-			return new UpdateSqlTemplateBuilder(context, predicate).setNullableUpdateAttrNames(Arrays.asList(attrName)).build();
+		Cache buildTemplateCache = cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
+			return new SynchronizedLruCache(getMethodName()); // 使用LRU缓存，最多存储1024个缓存数据
 		});
 		
-		return sqlExpression;
+		CacheKey cacheKey = new CacheKey(new Object[] { predicate, attrName });
+		
+		String sqlTemplate = (String)buildTemplateCache.getObject(cacheKey);
+		
+		if(sqlTemplate == null) {
+			sqlTemplate = new UpdateSqlTemplateBuilder(context, predicate).setNullableUpdateAttrNames(Arrays.asList(attrName)).build();
+			buildTemplateCache.putObject(cacheKey, sqlTemplate);
+		}
+		
+		return sqlTemplate;
 	}
 
 	@Override

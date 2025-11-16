@@ -22,9 +22,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-import org.apache.ibatis.javassist.scopedpool.SoftValueHashMap;
+import org.apache.ibatis.cache.Cache;
 
-import com.yuehuanghun.mybatis.milu.criteria.Expression;
 import com.yuehuanghun.mybatis.milu.criteria.UpdatePredicate;
 import com.yuehuanghun.mybatis.milu.criteria.UpdatePredicateImpl;
 import com.yuehuanghun.mybatis.milu.criteria.builder.LogicDeleteSqlTemplateBuilder;
@@ -34,11 +33,12 @@ import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderSql;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
+import com.yuehuanghun.mybatis.milu.tool.cache.SynchronizedLruCache;
 import com.yuehuanghun.mybatis.milu.tool.logicdel.LogicDeleteProvider;
 
 public class GenericResumeLogicDeleteByCriteriaProviderSql implements GenericProviderSql {
 
-	private final Map<Class<?>, Map<Expression, String>> cache = new ConcurrentHashMap<>();
+	private final Map<Class<?>, Cache> cache = new ConcurrentHashMap<>();
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
@@ -93,11 +93,18 @@ public class GenericResumeLogicDeleteByCriteriaProviderSql implements GenericPro
 		predicate.renderParams(context, queryParams, 0);
 		((Map)params).putAll(queryParams);
 
-		return cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
-			return new SoftValueHashMap<>();
-		}).computeIfAbsent(predicate, (key) -> {
-			return new LogicDeleteSqlTemplateBuilder(context, predicate).build();
+		Cache buildTemplateCache = cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
+			return new SynchronizedLruCache(getMethodName()); // 使用LRU缓存，最多存储1024个缓存数据
 		});
+		
+		String sqlTemplate = (String)buildTemplateCache.getObject(predicate);
+		
+		if(sqlTemplate == null) {
+			sqlTemplate = new LogicDeleteSqlTemplateBuilder(context, predicate).build();
+			buildTemplateCache.putObject(predicate, sqlTemplate);
+		}
+		
+		return sqlTemplate;
 	}
 
 	@Override

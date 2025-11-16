@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import org.apache.ibatis.javassist.scopedpool.SoftValueHashMap;
+import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.mapping.ResultMapping;
 
 import com.github.pagehelper.PageHelper;
@@ -45,10 +45,11 @@ import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
+import com.yuehuanghun.mybatis.milu.tool.cache.SynchronizedLruCache;
 
 public class GenericFindByCriteriaUnionProviderSql implements GenericProviderSql {
 
-	private final Map<Class<?>, Map<Object, BuildResult>> cache = new ConcurrentHashMap<>();
+	private final Map<Class<?>, Cache> cache = new ConcurrentHashMap<>();
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
@@ -82,10 +83,14 @@ public class GenericFindByCriteriaUnionProviderSql implements GenericProviderSql
 		}
 		
 		Map<String, Object> queryParams = new HashMap<>();
+
+		Cache buildTemplateCache = cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
+			return new SynchronizedLruCache(getMethodName()); // 使用LRU缓存，最多存储1024个缓存数据
+		});
 		
-		BuildResult result = cache.computeIfAbsent(context.getMapperType(), (clazz) -> {
-			return new SoftValueHashMap<>();
-		}).computeIfAbsent(predicates, (key) -> {
+		BuildResult result = (BuildResult)buildTemplateCache.getObject(predicates);
+		
+		if(result == null) {
 			List<String> sqls = new ArrayList<>();
 			List<ResultMapping> resultMappings = null;
 			int paramIndex = 0;
@@ -109,8 +114,21 @@ public class GenericFindByCriteriaUnionProviderSql implements GenericProviderSql
 			
 			sqlTemplate = Segment.SCRIPT_LABEL + sqlTemplate.replace(Segment.SCRIPT_LABEL, StringUtils.EMPTY).replace(Segment.SCRIPT_LABEL_END, StringUtils.EMPTY) + Segment.SCRIPT_LABEL_END;
 			
-			return new BuildResult(sqlTemplate, resultMappings, paramIndex);
-		});
+			result = new BuildResult(sqlTemplate, resultMappings, paramIndex);
+			buildTemplateCache.putObject(predicates, result);
+		} else {
+			int paramIndex = 0;
+			
+			for(QueryPredicate predicate : predicates) {
+				paramIndex = predicate.renderParams(context, queryParams, paramIndex);
+				
+				for(Join join : ((QueryPredicateImpl)predicate).getJoinModeMap().values()) {
+					if(join.getJoinPredicate() != null) {
+						paramIndex = join.getJoinPredicate().renderParams(context, queryParams, paramIndex);
+					}
+				}
+			}
+		}
 		
 		paramMap.putAll(queryParams);
 		

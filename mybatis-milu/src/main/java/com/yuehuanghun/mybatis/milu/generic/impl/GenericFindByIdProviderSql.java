@@ -34,7 +34,7 @@ public class GenericFindByIdProviderSql extends GenericCachingProviderSql {
 	public String provideCachingSql(GenericProviderContext context, Object params) {
 		Entity entity = context.getEntity();
 		Collection<Attribute> attributes = entity.getAttributes();
-		StringBuilder sqlBuilder = new StringBuilder(512);
+		StringBuilder sqlBuilder = new StringBuilder(512).append(Segment.SCRIPT_LABEL);
 		
 		sqlBuilder.append(Segment.SELECT);
 		
@@ -89,6 +89,7 @@ public class GenericFindByIdProviderSql extends GenericCachingProviderSql {
 		
 		sqlBuilder.append(Segment.FROM_B).append(wrapTableName(entity, context));
 		sqlBuilder.append(Segment.WHERE_B).append(wrapIdentifier(idAttr.getColumnName(), context)).append(" = #{id}");
+		sqlBuilder.append(Segment.SCRIPT_LABEL_END);
 		
 		return sqlBuilder.toString();
 	}
