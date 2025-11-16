@@ -39,6 +39,9 @@ import com.yuehuanghun.mybatis.milu.criteria.Predicate;
 import com.yuehuanghun.mybatis.milu.criteria.PredicateImpl;
 import com.yuehuanghun.mybatis.milu.criteria.Predicates;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
+import com.yuehuanghun.mybatis.milu.criteria.ext.postgre.conds.PostgreConditions;
+import com.yuehuanghun.mybatis.milu.criteria.ext.postgre.select.PostgreJsonExtract;
+import com.yuehuanghun.mybatis.milu.criteria.ext.postgre.select.PostgreJsonExtractPath;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.ext.Pair;
@@ -964,5 +967,68 @@ public class StudentMapperTest {
 		assertNull(list.get(0).getAge());
 		list = studentMapper.findByLambdaCriteriaUnion(p -> p.between(Student::getAddTime, LocalDateTime.parse("2016-01-01T00:00:00"), LocalDateTime.parse("2018-01-01T00:00:00")).undeleted(), p -> p.between(Student::getAddTime, LocalDateTime.parse("2018-01-01T00:00:00"), LocalDateTime.parse("2022-01-01T00:00:00")).undeleted());
 		assertEquals(list.size(), 4);
+	}
+	
+	@Test
+	public void testJsonExtract() {
+		String fatherName = studentMapper.findUniqueByCriteria(p -> {
+			p.select(PostgreJsonExtract.of("parents", "fatherName", null));
+			p.eq("id", 1);
+		}, String.class);
+		
+		assertEquals(fatherName, "蓝山");
+		
+		Integer motherAge = studentMapper.findUniqueByCriteria(p -> {
+			p.select(PostgreJsonExtractPath.of("parents", "{motherAge}", null));
+			p.eq("id", 1);
+		}, Integer.class);
+		
+		assertEquals(motherAge.intValue(), 33);
+	}
+	
+	@Test
+	public void testJsonCompare() {
+		List<Student> students = studentMapper.findByLambdaCriteria(p -> {
+			p.and(PostgreConditions.jsonEquals("parents", "motherAge", 37));
+		});
+		assertEquals(1, students.size());
+		
+		students = studentMapper.findByLambdaCriteria(p -> {
+			p.and(PostgreConditions.jsonGreaterThan("parents", "motherAge", 37));
+		});
+		assertEquals(1, students.size());
+		
+		students = studentMapper.findByLambdaCriteria(p -> {
+			p.and(PostgreConditions.jsonLessThan("parents", "motherAge", 37));
+		});
+		assertEquals(1, students.size());
+		
+		students = studentMapper.findByLambdaCriteria(p -> {
+			p.and(PostgreConditions.jsonEquals("parents", "fatherName", "蓝山"));
+		});
+		assertEquals(1, students.size());
+	}
+	
+	@Test
+	public void testJsonPathCompare() {
+		List<Student> students = studentMapper.findByLambdaCriteria(p -> {
+			p.and(PostgreConditions.jsonPathEquals("parents", "{motherAge}", 37));
+		});
+		assertEquals(1, students.size());
+		
+		students = studentMapper.findByLambdaCriteria(p -> {
+			p.and(PostgreConditions.jsonPathGreaterThan("parents", "{motherAge}", 37));
+		});
+		assertEquals(1, students.size());
+		
+		students = studentMapper.findByLambdaCriteria(p -> {
+			p.and(PostgreConditions.jsonPathLessThan("parents", "{motherAge}", 37));
+		});
+		assertEquals(1, students.size());
+		
+		students = studentMapper.findByLambdaCriteria(p -> {
+			p.and(PostgreConditions.jsonPathEquals("parents", "{fatherName}", "蓝山"));
+		});
+		assertEquals(1, students.size());
 	}
 }

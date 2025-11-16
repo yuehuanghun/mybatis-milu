@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -14,7 +13,6 @@ import java.util.Optional;
 
 import javax.persistence.LockModeType;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeanUtils;
@@ -27,7 +25,7 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.AppTest;
 import com.yuehuanghun.mybatis.milu.criteria.Exists;
-import com.yuehuanghun.mybatismilu.test.domain.entity.Student;
+import com.yuehuanghun.mybatis.milu.criteria.ext.mysql.select.MysqlIfNull;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Teacher;
 import com.yuehuanghun.mybatismilu.test.dto.TeacherDTO;
 
@@ -291,5 +289,16 @@ public class TeacherMapperTest {
 		});
 		
 		assertNull(teacherMapper.findById(1L).get().getName());
+	}
+	
+	@Test
+	public void testSelect() {
+		List<Teacher> teachers = teacherMapper.findByCriteria(p -> {
+			p.select(MysqlIfNull.ofValue("cv", "没有介绍", null));
+			p.selectAll();
+//			p.select("id").select("name");
+		});
+		assertEquals(teachers.size(), 3);
+		assertEquals("没有介绍", teachers.get(2).getCv());
 	}
 }

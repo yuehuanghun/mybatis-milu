@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.pagehelper.PageHelper;
+import com.yuehuanghun.mybatis.milu.criteria.Predicate;
+import com.yuehuanghun.mybatis.milu.criteria.Predicates;
+import com.yuehuanghun.mybatis.milu.tool.Assert;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Student;
 import com.yuehuanghun.mybatismilu.test.domain.mapper.StudentMapper;
 import com.yuehuanghun.mybatismilu.test.service.StudentService;
@@ -155,4 +158,29 @@ public class Studentcontroller {
 	private static char getRandomChar() {
         return (char) (0x4e00 + (int) (Math.random() * (0x9fa5 - 0x4e00 + 1)));
     }
+	
+	@GetMapping("findByCriteria")
+	public void findByCriteria() {
+		List<Student> list = studentService.getByCriteria(p -> p.eq("id", 1L));
+		List<Student> list2 = studentService.getByCriteria(p -> p.eq("id", 1L));
+		Assert.isTrue(list.equals(list2), "不一致");
+	}
+
+	@GetMapping("findByCriteriaUnion")
+	public void findByCriteriaUnion() {
+		Predicate predicate1 = Predicates.predicate();
+		predicate1.eq("id", 1);
+		Predicate predicate2 = Predicates.predicate();
+		predicate2.eq("id", 2);
+		
+		List<Student> list = studentService.getByCriteriaUnion(predicate1, predicate2);
+		
+		Predicate predicate3 = Predicates.predicate();
+		predicate3.eq("id", 1);
+		Predicate predicate4 = Predicates.predicate();
+		predicate4.eq("id", 2);
+		
+		List<Student> list2 = studentService.getByCriteriaUnion(predicate3, predicate4);
+		Assert.isTrue(list.equals(list2), "不一致");
+	}
 }

@@ -17,6 +17,7 @@ import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery;
 import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery.MatchType;
 import com.yuehuanghun.mybatis.milu.annotation.Filler;
 import com.yuehuanghun.mybatis.milu.annotation.Filler.FillMode;
+import com.yuehuanghun.mybatis.milu.annotation.FuncColumn;
 import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
 import com.yuehuanghun.mybatis.milu.annotation.alias.id.SnowflakeId;
 import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
@@ -62,6 +63,9 @@ public class Student extends PageRequest {
 	
 	@OneToOne(mappedBy = "student")
 	private StudentProfile studentProfile; //一对一引用
+	
+	@FuncColumn(expression = "${parents} ->> '$.fatherName'")
+	private String fatherName;
 	
 	@Transient
 	private Map<String, Object> params;

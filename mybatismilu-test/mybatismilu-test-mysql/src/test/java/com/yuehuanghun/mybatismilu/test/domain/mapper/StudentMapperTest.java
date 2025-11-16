@@ -39,15 +39,15 @@ import com.yuehuanghun.mybatis.milu.criteria.LambdaUpdatePredicate;
 import com.yuehuanghun.mybatis.milu.criteria.Predicate;
 import com.yuehuanghun.mybatis.milu.criteria.PredicateImpl;
 import com.yuehuanghun.mybatis.milu.criteria.Predicates;
-import com.yuehuanghun.mybatis.milu.criteria.QueryPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
 import com.yuehuanghun.mybatis.milu.criteria.StatisticPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.ext.mysql.conds.MysqlConditions;
+import com.yuehuanghun.mybatis.milu.criteria.ext.mysql.select.MysqlJsonExtract;
+import com.yuehuanghun.mybatis.milu.criteria.ext.mysql.select.MysqlJsonExtractStr;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
 import com.yuehuanghun.mybatis.milu.ext.Pair;
 import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
-import com.yuehuanghun.mybatismilu.test.domain.entity.Classs;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Student;
 import com.yuehuanghun.mybatismilu.test.domain.entity.StudentProfile;
 import com.yuehuanghun.mybatismilu.test.dto.StudentDTO;
@@ -66,12 +66,14 @@ public class StudentMapperTest {
 	public void testFindById() {
 		Optional<Student> result = studentMapper.findById(2L);
 		assertTrue(result.isPresent());
+		assertEquals("王大大", result.get().getFatherName());
 	};
 
 	@Test
 	public void testFindByIds() {
 		List<Student> result = studentMapper.findByIds(Arrays.asList(2L, 3L));
 		assertTrue(result.size() == 2);
+		assertEquals("王大大", result.get(0).getFatherName());
 	};
 
 	@Test
@@ -83,6 +85,7 @@ public class StudentMapperTest {
 		
 		result = studentMapper.findAll();
 		assertTrue(result.size() > 0);
+		assertEquals("蓝山", result.get(0).getFatherName());
 		
         PageHelper.startPage(1, 10, "updateTime DESC, age");
 		
@@ -540,6 +543,7 @@ public class StudentMapperTest {
 		System.out.println(JSON.toJSONString(list));
 		assertEquals(1, list.size());
 		assertNotNull(list.get(0).getClasss());
+		assertEquals(list.get(0).getFatherName(), "蓝山");
 		
 		list = studentMapper.findByCriteria(p -> p.select("*", "classs*").eq("id", 1L).limit(1));
 		System.out.println(JSON.toJSONString(list));
@@ -1072,5 +1076,22 @@ public class StudentMapperTest {
 			p.and(MysqlConditions.jsonEndsWith("parents", "$.fatherName", "狗"));
 		});
 		assertEquals(1, students.size());
+	}
+	
+	@Test
+	public void testJsonExtract() {
+		String fatherName = studentMapper.findUniqueByCriteria(p -> {
+			p.select(MysqlJsonExtractStr.of("parents", "$.fatherName", null));
+			p.eq("id", 1);
+		}, String.class);
+		
+		assertEquals(fatherName, "蓝山");
+		
+		Integer motherAge = studentMapper.findUniqueByCriteria(p -> {
+			p.select(MysqlJsonExtract.of("parents", "$.motherAge", null));
+			p.eq("id", 1);
+		}, Integer.class);
+		
+		assertEquals(motherAge.intValue(), 33);
 	}
 }

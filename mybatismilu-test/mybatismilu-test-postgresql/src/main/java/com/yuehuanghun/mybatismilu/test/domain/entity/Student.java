@@ -26,6 +26,7 @@ import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
 import com.yuehuanghun.mybatis.milu.annotation.EntityOptions.FetchRef;
 import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
 import com.yuehuanghun.mybatismilu.test.config.Boolean2SmallIntTypeHandler;
+import com.yuehuanghun.mybatismilu.test.config.JsonTypeHandler;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -53,6 +54,9 @@ public class Student extends PageRequest {
 	private Integer age;
 	
 	private Long classId;
+
+	@AttributeOptions(typeHandler = JsonTypeHandler.class)
+	private Map<String, Object> parents;
 	
 	@AttributeOptions(logicDelete = @LogicDelete, jdbcType = JdbcType.SMALLINT, typeHandler = Boolean2SmallIntTypeHandler.class)
 	private Boolean isDeleted;
