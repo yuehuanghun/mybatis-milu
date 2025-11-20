@@ -29,7 +29,8 @@ import com.yuehuanghun.mybatis.milu.tool.converter.impl.StringConverter;
  *
  */
 public class ConverterUtils {
-	static final Map<Class<?>, Converter<?>> CONVERTER_MAP = new HashMap<>();
+	@SuppressWarnings("rawtypes")
+	static final Map<Class<?>, Converter> CONVERTER_MAP = new HashMap<>();
 	static {
 		register(java.util.Date.class, new DateConverter());
 		register(java.sql.Date.class, new SqlDateConverter());
@@ -51,7 +52,12 @@ public class ConverterUtils {
 		CONVERTER_MAP.put(clazz, converter);
 	}
 	
-	public static Optional<Converter<?>> getConverter(Class<?> clazz){
+	@SuppressWarnings("unchecked")
+	public static <T> Optional<Converter<T>> getConverter(Class<T> clazz){
+		return Optional.ofNullable(CONVERTER_MAP.get(clazz));
+	}
+	
+	public static Optional<Converter<?>> ofConverter(Class<?> clazz){
 		return Optional.ofNullable(CONVERTER_MAP.get(clazz));
 	}
 }

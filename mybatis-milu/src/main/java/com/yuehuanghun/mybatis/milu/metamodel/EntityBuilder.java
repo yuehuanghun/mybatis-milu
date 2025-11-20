@@ -298,7 +298,7 @@ public class EntityBuilder {
 				
 				// 自动填充正常值
 				if(!hashFiller && logicDelete.autoFill()) {
-					Optional<Converter<?>> converterOpt = ConverterUtils.getConverter(field.getType());
+					Optional<Converter<?>> converterOpt = ConverterUtils.ofConverter(field.getType());
 					Object value;
 					if(converterOpt.isPresent()) {
 						value = converterOpt.get().convert(logicDelete.resumeValue());

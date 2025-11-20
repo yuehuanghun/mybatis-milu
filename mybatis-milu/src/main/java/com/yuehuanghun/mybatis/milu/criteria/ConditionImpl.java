@@ -116,7 +116,7 @@ public class ConditionImpl implements Condition {
 				String key = attributeName + "_" + paramIndex;
 				Object param = getParams()[i];
 				if (convert && param != null && attribute.getJavaType() != param.getClass()) {
-					Optional<Converter<?>> converterOpt = ConverterUtils.getConverter(attribute.getJavaType());
+					Optional<Converter<?>> converterOpt = ConverterUtils.ofConverter(attribute.getJavaType());
 					if (converterOpt.isPresent()) {
 						Converter<?> converter = converterOpt.get();
 						try {
