@@ -156,6 +156,11 @@ public class MiluConfiguration extends Configuration {
 	@Getter
 	private PlaceholderResolver placeholderResolver = PlaceholderResolver.DONOTHING;
 	
+	/** 默认的SqlSession。主动设置或第一次调用{@link #getMapper(Class, SqlSession)}时设置（不存在时） */
+	@Getter
+	@Setter
+	private SqlSession defaultSqlSession;
+	
 	private static final ClassPool classPool = new ClassPool(true);
 	
 	private boolean jdkGte9 = Integer.parseInt(System.getProperty("java.version").split("\\.")[0]) >= 9;
@@ -261,7 +266,23 @@ public class MiluConfiguration extends Configuration {
 	public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
 		T mapper = miluMapperRegistry.getMapper(type, sqlSession);
 		mapperSqlSessionMap.put(mapper, sqlSession);
+		if(defaultSqlSession == null) {
+			defaultSqlSession = sqlSession;
+		}
 		return mapper;
+	}
+	
+	/**
+	 * 获取Mapper实例，必须设置defaultSqlSession
+	 * @param <T> Mapper类
+	 * @param type Mapper类
+	 * @return type对应的Mapper实例
+	 */
+	public <T> T getMapper(Class<T> type) {
+		if(defaultSqlSession == null) {
+			throw new OrmRuntimeException("未设置defaultSqlSession");
+		}
+		return getMapper(type, defaultSqlSession);
 	}
 
 	@Override

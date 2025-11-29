@@ -1,6 +1,7 @@
 package com.yuehuanghun.mybatismilu.spring.boot.autoconfigure;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -18,6 +19,7 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
 import org.apache.ibatis.type.TypeHandler;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -53,6 +55,7 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.yuehuanghun.mybatis.milu.BaseMapper;
@@ -269,11 +272,25 @@ public class MybatisMiluAutoConfiguration implements InitializingBean, Applicati
 	@ConditionalOnMissingBean
 	public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
 		ExecutorType executorType = this.properties.getExecutorType();
+		SqlSessionTemplate sqlSession;
 		if (executorType != null) {
-			return new SqlSessionTemplate(sqlSessionFactory, executorType);
+			sqlSession = new SqlSessionTemplate(sqlSessionFactory, executorType);
 		} else {
-			return new SqlSessionTemplate(sqlSessionFactory);
+			sqlSession = new SqlSessionTemplate(sqlSessionFactory);
 		}
+		
+		if(sqlSessionFactory instanceof DefaultSqlSessionFactory) {
+			Field field = ReflectionUtils.findField(DefaultSqlSessionFactory.class, "configuration");
+			if(field != null) {
+				ReflectionUtils.makeAccessible(field);
+				Object fieldVal = ReflectionUtils.getField(field, sqlSessionFactory);
+				if(fieldVal instanceof MiluConfiguration) {
+					((MiluConfiguration) fieldVal).setDefaultSqlSession(sqlSession);
+				}
+			}
+		}
+		
+		return sqlSession;
 	}
 
 	@Override
