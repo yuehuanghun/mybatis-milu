@@ -20,6 +20,7 @@ import java.util.function.Consumer;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.SerializableFunction;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
+import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 
 public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	
@@ -236,6 +237,13 @@ public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	 * @return 当前对象
 	 */
 	LambdaStatisticPredicate<T> limit(int pageNum, int pageSize, boolean count);
+	
+	/**
+	 * 使用一个Pageable对象传递分页信息
+	 * @param page 分页，getPageNum()、getPageSize()值需大于0
+	 * @return 当前对象
+	 */
+	LambdaStatisticPredicate<T> limit(Pageable page);
 
 	@Override
 	LambdaStatisticPredicate<T> apply(T entity);

@@ -16,11 +16,15 @@
 
 package com.yuehuanghun.mybatis.milu.criteria;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
+
+import lombok.Setter;
 
 /**
  * 分组表达式实现
@@ -29,6 +33,9 @@ import com.yuehuanghun.mybatis.milu.tool.Segment;
  */
 public class GroupImpl extends LinkedHashSet<String> implements Group {
 	private static final long serialVersionUID = 1L;
+	
+	@Setter
+	private Collection<String> aliases;
 
 	@Override
 	public int renderSqlTemplate(GenericProviderContext context, StringBuilder expressionBuilder, Set<String> columns,
@@ -40,7 +47,14 @@ public class GroupImpl extends LinkedHashSet<String> implements Group {
 		columns.addAll(this);
 		
 		expressionBuilder.append(Segment.GROUP_BY_B);
-		this.forEach(attrName -> expressionBuilder.append(columnHolder(attrName)).append(Segment.COMMA_B));
+		this.forEach(attrName -> {
+			if(aliases != null && aliases.contains(attrName)) {
+				expressionBuilder.append(SqlBuildingHelper.wrapIdentifier(attrName, context.getConfiguration()));
+			} else {
+				expressionBuilder.append(columnHolder(attrName));
+			}
+			expressionBuilder.append(Segment.COMMA_B);
+		});
 		
 		expressionBuilder.setLength(expressionBuilder.length() - Segment.COMMA_B.length()); //去掉最后逗号
 		

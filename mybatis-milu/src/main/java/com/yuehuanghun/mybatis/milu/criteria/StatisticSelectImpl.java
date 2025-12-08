@@ -26,8 +26,12 @@ import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
+import lombok.Getter;
+
 public class StatisticSelectImpl implements StatisticSelect {
+	@Getter
 	private final Set<Function> functions = new HashSet<>();
+	@Getter
 	private final Set<String> properties = new HashSet<>();
 
 	@Override
@@ -47,7 +51,6 @@ public class StatisticSelectImpl implements StatisticSelect {
 			throw new SqlExpressionBuildingException("未设置统计字段属性");
 		}
 		
-		expressionBuilder.append(Segment.SELECT);
 		functions.forEach(function -> {
 			if(StringUtils.isBlank(function.getFunctionName())) {
 				expressionBuilder.append(columnHolder(function.getPropertyName()));

@@ -125,6 +125,13 @@ public interface StatisticPredicate extends Predicate {
 	StatisticPredicate max(String attrName, String columnAlias);
 	
 	/**
+	 * 指定查询
+	 * @param select 查询表达式
+	 * @return 当前对象
+	 */
+	StatisticPredicate select(Select select);
+	
+	/**
 	 * 添加排序，不指定排序方向，以数据库默认排序为准
 	 * @param attrNames 属性名
 	 * @return 当前对象

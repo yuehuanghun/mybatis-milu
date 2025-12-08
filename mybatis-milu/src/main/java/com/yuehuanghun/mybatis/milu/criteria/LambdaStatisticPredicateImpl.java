@@ -21,6 +21,7 @@ import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.LambdaReflections;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.SerializableFunction;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
+import com.yuehuanghun.mybatis.milu.pagehelper.Pageable;
 
 import lombok.Getter;
 
@@ -202,6 +203,12 @@ public class LambdaStatisticPredicateImpl<T> extends LambdaPredicateImpl<T> impl
 	@Override
 	public LambdaStatisticPredicate<T> limit(int pageNum, int pageSize, boolean count) {
 		getDelegate().limit(pageNum, pageSize, count);
+		return this;
+	}
+
+	@Override
+	public LambdaStatisticPredicate<T> limit(Pageable page) {
+		getDelegate().limit(page);
 		return this;
 	}
 

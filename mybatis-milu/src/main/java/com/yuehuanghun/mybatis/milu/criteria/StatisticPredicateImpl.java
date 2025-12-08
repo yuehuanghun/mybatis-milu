@@ -17,10 +17,12 @@
 package com.yuehuanghun.mybatis.milu.criteria;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
@@ -33,11 +35,15 @@ import com.yuehuanghun.mybatis.milu.tool.DefendUtil;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
+import lombok.Getter;
+
 public class StatisticPredicateImpl extends PredicateImpl implements StatisticPredicate {
 	private StatisticSelect select = new StatisticSelectImpl();
 	private final Sort sort = new SortImpl();
 	private Limit limit;
 	private final Group group = new GroupImpl();
+	@Getter
+	private Set<Select> selects;
 
 	@Override
 	public StatisticPredicate sum(String attrName) {
@@ -117,8 +123,17 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 	}
 
 	@Override
+	public StatisticPredicate select(Select select) {
+		if (selects == null) { // 很少用不初始化
+			selects = new HashSet<>();
+		}
+		selects.add(select);
+		return this;
+	}
+
+	@Override
 	public StatisticPredicate order(String... attrNames) {
-		for(String attrName : attrNames) {
+		for (String attrName : attrNames) {
 			sort.add(attrName);
 		}
 		return this;
@@ -126,7 +141,7 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 
 	@Override
 	public StatisticPredicate order(Direction direction, String... attrNames) {
-		for(String attrName : attrNames) {
+		for (String attrName : attrNames) {
 			sort.add(attrName, direction);
 		}
 		return this;
@@ -149,7 +164,7 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 		this.limit = new LimitImpl(pageSize);
 		return this;
 	}
-	
+
 	@Override
 	public StatisticPredicate limit(int pageSize, boolean count) {
 		this.limit = new LimitImpl(pageSize, count);
@@ -161,19 +176,19 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 		this.limit = new LimitImpl(pageNum, pageSize, true);
 		return this;
 	}
-	
+
 	@Override
 	public StatisticPredicate limit(int pageNum, int pageSize, boolean count) {
 		this.limit = new LimitImpl(pageNum, pageSize, count);
 		return this;
 	}
-	
+
 	@Override
 	public StatisticPredicate limit(Pageable page) {
 		this.limit = new LimitImpl(page);
 		return this;
 	}
-	
+
 	@Override
 	public StatisticPredicate conditionMode(Mode conditionMode) {
 		super.conditionMode(conditionMode);
@@ -185,7 +200,7 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 		super.and(conditions);
 		return this;
 	}
-	
+
 	@Override
 	public StatisticPredicate and(Consumer<Predicate> predicate) {
 		super.and(predicate);
@@ -197,19 +212,19 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 		super.or(conditions);
 		return this;
 	}
-	
+
 	@Override
 	public StatisticPredicate or(Consumer<Predicate> predicate) {
 		super.or(predicate);
 		return this;
 	}
-	
+
 	@Override
 	public StatisticPredicate not(Condition... conditions) {
 		super.or(conditions);
 		return this;
 	}
-	
+
 	@Override
 	public StatisticPredicate not(Consumer<Predicate> predicate) {
 		super.not(predicate);
@@ -293,7 +308,7 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 		super.between(attrName, startValue, endValue);
 		return this;
 	}
-	
+
 	@Override
 	public StatisticPredicate between(boolean accept, String attrName, Object startValue, Object endValue) {
 		super.between(accept, attrName, startValue, endValue);
@@ -323,7 +338,7 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 		super.notNull(accept, attrName);
 		return this;
 	}
-	
+
 	@Override
 	public StatisticPredicate in(String attrName, Object value) {
 		super.in(attrName, value);
@@ -335,7 +350,7 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 		super.notIn(attrName, value);
 		return this;
 	}
-	
+
 	@Override
 	public StatisticPredicate eq(boolean accept, String attrName, Object value) {
 		super.eq(accept, attrName, value);
@@ -419,7 +434,7 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 		super.notIn(accept, attrName, value);
 		return this;
 	}
-	
+
 	@Override
 	public StatisticPredicate regex(String attrName, Object value) {
 		super.regex(attrName, value);
@@ -428,16 +443,16 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 
 	@Override
 	public StatisticPredicate groupBy(String... attrNames) {
-		for(String attrName : attrNames){
+		for (String attrName : attrNames) {
 			group.add(attrName);
 			select.add(attrName);
 		}
 		return this;
 	}
-	
+
 	@Override
 	public StatisticPredicate groupByAs(String attrName, String alias) {
-		if(StringUtils.isBlank(alias)) {
+		if (StringUtils.isBlank(alias)) {
 			select.add(attrName);
 		} else {
 			select.add(StringUtils.EMPTY, attrName, alias);
@@ -477,11 +492,12 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 	}
 
 	@Override
-	public StatisticPredicate fulltext(Collection<String> attrNames, String keywordExpression, FulltextMode fulltextMode) {
+	public StatisticPredicate fulltext(Collection<String> attrNames, String keywordExpression,
+			FulltextMode fulltextMode) {
 		super.fulltext(attrNames, keywordExpression, fulltextMode);
 		return this;
 	}
-	
+
 	protected Predicate existsJoin(String attrName, String refAttrName) {
 		super.existsJoin(attrName, refAttrName);
 		return this;
@@ -498,46 +514,61 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 		super.notExists(exists);
 		return this;
 	}
-	
+
 	@Override
 	public int renderSqlTemplate(GenericProviderContext context, StringBuilder expressionBuilder, Set<String> columns,
 			int paramIndex) {
+		expressionBuilder.append(Segment.SELECT);
+		Set<String> aliases;
+		if (selects != null) {
+			aliases = new HashSet<>();
+			String selectExp = selects.stream().map(exp -> exp.getExpresion(context, columns, aliases)).collect(Collectors.joining(Segment.COMMA_B));
+			expressionBuilder.append(selectExp);
+			expressionBuilder.append(Segment.COMMA_B);
+			((StatisticSelectImpl)select).getProperties().removeAll(aliases);
+		} else {
+			aliases = null;
+		}
 		paramIndex = select.renderSqlTemplate(context, expressionBuilder, columns, paramIndex);
-		
 		expressionBuilder.append(Segment.FROM_B).append(Constants.TABLE_HOLDER).append(Segment.WHERE_LABEL);
-		
+
 		StringBuilder conditionBuilder = new StringBuilder();
 		paramIndex = super.renderSqlTemplate(context, expressionBuilder, columns, paramIndex);
-		
+
 		expressionBuilder.append(conditionBuilder).append(Segment.WHERE_LABEL_END);
-		
+
+		((GroupImpl)group).setAliases(aliases);
 		paramIndex = group.renderSqlTemplate(context, expressionBuilder, columns, paramIndex);
-		
+
 		sort.renderSqlTemplate(context, expressionBuilder, columns, paramIndex);
-	
-		if(limit != null) {
+
+		if (limit != null) {
 			limit.renderSqlTemplate(context, expressionBuilder, columns, paramIndex);
 		}
-		
+		if(aliases != null) {
+			columns.removeAll(aliases); // 别名不需要做属性解析
+		}
+
 		return paramIndex;
 	}
 
 	@Override
 	public int renderParams(GenericProviderContext context, Map<String, Object> params, int paramIndex) {
 		paramIndex = select.renderParams(context, params, paramIndex);
-		
+
 		paramIndex = super.renderParams(context, params, paramIndex);
-		
-		paramIndex = group.renderParams(context, params, paramIndex);;
-		
+
+		paramIndex = group.renderParams(context, params, paramIndex);
+		;
+
 		paramIndex = sort.renderParams(context, params, paramIndex);
-	
-		if(limit != null) {
+
+		if (limit != null) {
 			paramIndex = limit.renderParams(context, params, paramIndex);
 		}
-		
+
 		return paramIndex;
-	}	
+	}
 
 	@Override
 	public int hashCode() {
@@ -547,6 +578,9 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 		result = 31 * result + select.hashCode();
 		result = 31 * result + group.hashCode();
 		result = 31 * result + (limit == null ? 0 : limit.hashCode());
+		if (selects != null) {
+			result = 31 * result + selects.hashCode();
+		}
 		return result;
 	}
 
@@ -558,11 +592,12 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 		if (!super.equals(obj)) {
 			return false;
 		}
-		
+
 		StatisticPredicateImpl that = (StatisticPredicateImpl) obj;
 
 		return Objects.equals(this.sort, that.sort) && Objects.equals(this.select, that.select)
-				&& Objects.equals(this.group, that.group) && Objects.equals(this.limit, that.limit);
+				&& Objects.equals(this.group, that.group) && Objects.equals(this.limit, that.limit)
+				&& Objects.equals(this.selects, that.selects);
 	}
 
 }
