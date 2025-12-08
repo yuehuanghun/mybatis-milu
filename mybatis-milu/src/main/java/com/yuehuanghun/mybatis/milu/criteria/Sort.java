@@ -29,7 +29,7 @@ import lombok.Getter;
  * @author yuehuanghun
  *
  */
-interface Sort extends Expression, Set<com.yuehuanghun.mybatis.milu.criteria.Sort.Order> {
+public interface Sort extends Expression, Set<com.yuehuanghun.mybatis.milu.criteria.Sort.Order> {
 	default boolean add(String attrName, Direction direction, NullHandling nullHandling) {
 		return add(Order.order(attrName, direction, nullHandling));
 	}
