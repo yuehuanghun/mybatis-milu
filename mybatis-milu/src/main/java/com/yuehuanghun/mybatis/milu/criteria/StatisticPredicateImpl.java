@@ -35,14 +35,11 @@ import com.yuehuanghun.mybatis.milu.tool.DefendUtil;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
-import lombok.Getter;
-
 public class StatisticPredicateImpl extends PredicateImpl implements StatisticPredicate {
 	private StatisticSelect select = new StatisticSelectImpl();
 	private final Sort sort = new SortImpl();
 	private Limit limit;
 	private final Group group = new GroupImpl();
-	@Getter
 	private Set<Select> selects;
 
 	@Override
@@ -578,7 +575,10 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 		result = 31 * result + sort.hashCode();
 		result = 31 * result + select.hashCode();
 		result = 31 * result + group.hashCode();
-		result = 31 * result + (limit == null ? 0 : limit.hashCode());
+		
+		if(limit != null) {
+			result = 31 * result + limit.hashCode();
+		}
 		if (selects != null) {
 			result = 31 * result + selects.hashCode();
 		}
