@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -40,13 +41,16 @@ import com.yuehuanghun.mybatis.milu.criteria.Predicate;
 import com.yuehuanghun.mybatis.milu.criteria.PredicateImpl;
 import com.yuehuanghun.mybatis.milu.criteria.Predicates;
 import com.yuehuanghun.mybatis.milu.criteria.QueryPredicateImpl;
+import com.yuehuanghun.mybatis.milu.criteria.Select;
 import com.yuehuanghun.mybatis.milu.criteria.StatisticPredicate;
 import com.yuehuanghun.mybatis.milu.criteria.ext.mysql.conds.MysqlConditions;
 import com.yuehuanghun.mybatis.milu.criteria.ext.mysql.select.MysqlJsonExtract;
 import com.yuehuanghun.mybatis.milu.criteria.ext.mysql.select.MysqlJsonExtractStr;
 import com.yuehuanghun.mybatis.milu.data.Sort;
 import com.yuehuanghun.mybatis.milu.data.Sort.Direction;
+import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.ext.Pair;
+import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
 import com.yuehuanghun.mybatismilu.test.domain.entity.Student;
 import com.yuehuanghun.mybatismilu.test.domain.entity.StudentProfile;
@@ -1093,5 +1097,26 @@ public class StudentMapperTest {
 		}, Integer.class);
 		
 		assertEquals(motherAge.intValue(), 33);
+	}
+	
+	@Test
+	public void testStatisticByCriteriaWithSelect() {
+		StatisticPredicate predicate = Predicates.statisticPredicate();
+		predicate.select(IfGroup.instance).count("id").groupBy("comp");
+		List<Map<String, Object>> result = studentMapper.statisticByCriteria(predicate);
+		assertTrue(result.size() == 2);
+		System.out.println(JSON.toJSONString(result));
+	}
+	
+	public static class IfGroup implements Select {
+		static IfGroup instance = new IfGroup();
+
+		@Override
+		public String getExpresion(GenericProviderContext context, Set<String> attrNames, Set<String> aliases) {
+			aliases.add("comp");
+			attrNames.add("age");
+			return String.format("IF(%s > 8, 'elder', 'younger') comp", SqlBuildingHelper.columnHolder("age"));
+		}
+		
 	}
 }
