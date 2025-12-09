@@ -544,7 +544,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	
 	/**
 	 * 动态统计数据<br>
-	 * 被统计属性的默认字段名为属性名+统计函数名，例如: count("id") -> idCount
+	 * 被统计属性的默认字段名为属性名+统计函数名，例如: count("id") -&gt; idCount
 	 * @param predicate 条件
 	 * @return 统计数据列表
 	 */
@@ -554,7 +554,7 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	
 	/**
 	 * 动态统计数据<br>
-	 * 被统计属性的默认字段名为属性名+统计函数名，例如: count("id") -> idCount
+	 * 被统计属性的默认字段名为属性名+统计函数名，例如: count("id") -&gt; idCount
 	 * @param <E> 每行数据的接收类
 	 * @param predicate 条件
 	 * @param resultType 结果类
