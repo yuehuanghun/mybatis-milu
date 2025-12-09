@@ -540,6 +540,7 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 		((GroupImpl)group).setAliases(aliases);
 		paramIndex = group.renderSqlTemplate(context, expressionBuilder, columns, paramIndex);
 
+		((SortImpl)sort).setAliases(aliases);
 		sort.renderSqlTemplate(context, expressionBuilder, columns, paramIndex);
 
 		if (limit != null) {

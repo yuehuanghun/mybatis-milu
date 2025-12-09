@@ -16,16 +16,23 @@
 
 package com.yuehuanghun.mybatis.milu.criteria;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.data.Sort.NullHandling;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
+import lombok.Setter;
+
 public class SortImpl extends LinkedHashSet<com.yuehuanghun.mybatis.milu.criteria.Sort.Order> implements Sort {
 
 	private static final long serialVersionUID = 1L;
+	
+	@Setter
+	private Collection<String> aliases;
 
 	@Override
 	public int renderSqlTemplate(GenericProviderContext context, StringBuilder expressionBuilder, Set<String> columns,
@@ -40,12 +47,21 @@ public class SortImpl extends LinkedHashSet<com.yuehuanghun.mybatis.milu.criteri
 			columns.add(order.getAttributeName());
 			
 			if(order.getNullHandling() == NullHandling.NATIVE) {
-				expressionBuilder.append(columnHolder(order.getAttributeName()));
+				if(aliases != null && aliases.contains(order.getAttributeName())) {
+					expressionBuilder.append(SqlBuildingHelper.wrapIdentifier(order.getAttributeName(), context.getConfiguration()));
+				} else {
+					expressionBuilder.append(columnHolder(order.getAttributeName()));
+				}
 				if(order.getDirection() != null) {
 					expressionBuilder.append(Segment.SPACE).append(order.getDirection().name());
 				}
 			} else {
-				String column = columnHolder(order.getAttributeName());
+				String column;
+				if(aliases != null && aliases.contains(order.getAttributeName())) {
+					column = SqlBuildingHelper.wrapIdentifier(order.getAttributeName(), context.getConfiguration());
+				} else {
+					column = columnHolder(order.getAttributeName());
+				}
 				String orderExpression = column;
 				if(order.getDirection() != null) {
 					orderExpression += Segment.SPACE + order.getDirection().name();
