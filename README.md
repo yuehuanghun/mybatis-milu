@@ -1,5 +1,5 @@
 # mybatis-milu
-[详细文档](http://mybatis-milu.yuehuanghun.com/)  
+[详细文档](https://mybatis-milu.yuehuanghun.com/)  
 [示范项目yadmin](https://gitee.com/yuehh/yadmin4j)
 ### 介绍
 mybatis-milu是基于mybatis的功能增强框架，遵循JPA规范的超轻量ORM拓展，提供通用Mapper接口，提供类似Spring Data JPA的查询创建器，通过方法名解析查询语句，极大提高开发效率。
@@ -28,14 +28,14 @@ jdk >= 1.8
 <dependency>
    <groupId>com.yuehuanghun</groupId>
    <artifactId>mybatismilu-spring-boot-starter</artifactId>
-   <version>1.18.0</version> <!-- 获取最新版本 -->
+   <version>1.21.0</version> <!-- 获取最新版本 -->
 </dependency>
 
 <!-- springboot3.x -->
 <dependency>
    <groupId>com.yuehuanghun</groupId>
    <artifactId>mybatismilu-spring-boot3-starter</artifactId>
-   <version>1.18.0</version> <!-- 获取最新版本 -->
+   <version>1.20.0</version> <!-- 获取最新版本 -->
 </dependency>
 ```
 
@@ -204,6 +204,9 @@ JPA提供注解未能完全满足需要，因此也有一些此框架中自定�
 
 3. StatementOptions  
 Mapper查询方法的选项
+
+4. FuncColumns & FuncColumn
+实体属性映射函数列的声明
 
 #### 二、通用Mapper
 
