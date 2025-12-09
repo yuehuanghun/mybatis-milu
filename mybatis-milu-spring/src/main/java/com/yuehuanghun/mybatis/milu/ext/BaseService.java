@@ -543,6 +543,28 @@ public interface BaseService<T, ID extends Serializable,  M extends BaseMapper<T
 	}
 	
 	/**
+	 * 动态统计数据<br>
+	 * 被统计属性的默认字段名为属性名+统计函数名，例如: count("id") -> idCount
+	 * @param predicate 条件
+	 * @return 统计数据列表
+	 */
+	default List<Map<String, Object>> statisticByCriteria(@Param(Constants.CRITERIA) StatisticPredicate predicate) {
+		return getDomainMapper().statisticByCriteria(predicate);
+	}
+	
+	/**
+	 * 动态统计数据<br>
+	 * 被统计属性的默认字段名为属性名+统计函数名，例如: count("id") -> idCount
+	 * @param <E> 每行数据的接收类
+	 * @param predicate 条件
+	 * @param resultType 结果类
+	 * @return 统计数据列表
+	 */
+	default <E> List<E> statisticByCriteria(@Param(Constants.CRITERIA) StatisticPredicate predicate, @Param(Constants.RESULT_TYPE) Class<E> resultType) {
+		return getDomainMapper().statisticByCriteria(predicate, resultType);
+	}
+	
+	/**
 	 * 动态统计数据
 	 * @param predicate 条件
 	 * @return 统计数据列表
