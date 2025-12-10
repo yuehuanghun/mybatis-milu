@@ -543,9 +543,6 @@ public class StatisticPredicateImpl extends PredicateImpl implements StatisticPr
 		if (limit != null) {
 			limit.renderSqlTemplate(context, expressionBuilder, columns, paramIndex);
 		}
-		if(aliases != null) {
-			columns.removeAll(aliases); // 别名不需要做属性解析
-		}
 
 		return paramIndex;
 	}

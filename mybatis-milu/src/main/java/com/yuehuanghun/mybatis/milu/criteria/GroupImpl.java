@@ -41,20 +41,25 @@ public class GroupImpl extends LinkedHashSet<String> implements Group {
 	public int renderSqlTemplate(GenericProviderContext context, StringBuilder expressionBuilder, Set<String> columns,
 			int paramIndex) {
 		if(this.isEmpty()) {
-			return paramIndex;
+			if(aliases == null) {
+				return paramIndex;
+			}
+		} else {
+			columns.addAll(this);
 		}
-		
-		columns.addAll(this);
 		
 		expressionBuilder.append(Segment.GROUP_BY_B);
 		this.forEach(attrName -> {
-			if(aliases != null && aliases.contains(attrName)) {
-				expressionBuilder.append(SqlBuildingHelper.wrapIdentifier(attrName, context.getConfiguration()));
-			} else {
-				expressionBuilder.append(columnHolder(attrName));
-			}
+			expressionBuilder.append(columnHolder(attrName));
 			expressionBuilder.append(Segment.COMMA_B);
 		});
+		
+		if(aliases != null) {
+			aliases.forEach(alias -> {
+				expressionBuilder.append(SqlBuildingHelper.wrapIdentifier(alias, context.getConfiguration()));
+				expressionBuilder.append(Segment.COMMA_B);
+			});
+		}
 		
 		expressionBuilder.setLength(expressionBuilder.length() - Segment.COMMA_B.length()); //去掉最后逗号
 		
