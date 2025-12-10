@@ -1102,9 +1102,16 @@ public class StudentMapperTest {
 	@Test
 	public void testStatisticByCriteriaWithSelect() {
 		StatisticPredicate predicate = Predicates.statisticPredicate();
-		predicate.select(IfGroup.instance).count("id").groupBy("comp");
+		predicate.select(IfGroup.instance).count("id");
 		List<Map<String, Object>> result = studentMapper.statisticByCriteria(predicate);
 		assertTrue(result.size() == 2);
+		System.out.println(JSON.toJSONString(result));
+		
+		result = studentMapper.statisticByCriteria(p -> {
+			p.select(IfGroup.instance).count("id");
+			p.gt("age", 8);
+		});
+		assertTrue(result.size() == 1);
 		System.out.println(JSON.toJSONString(result));
 	}
 	
