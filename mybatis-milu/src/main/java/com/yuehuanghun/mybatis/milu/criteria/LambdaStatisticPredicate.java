@@ -119,6 +119,13 @@ public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	 * @return 当前对象
 	 */
 	LambdaStatisticPredicate<T> max(SerializableFunction<T, ?> getterFn, String columnAlias);
+	
+	/**
+	 * 指定查询
+	 * @param select 查询表达式
+	 * @return 当前对象
+	 */
+	LambdaStatisticPredicate<T> select(Select select);
 
 	/**
 	 * 分组
@@ -134,6 +141,13 @@ public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	LambdaStatisticPredicate<T> groupBy(SerializableFunction<T, ?>... getterFns);
+
+	/**
+	 * 分组
+	 * @param attrNames 分组的实体类的属性名
+	 * @return 当前对象
+	 */
+	LambdaStatisticPredicate<T> groupBy(String... attrNames);
 
 	/**
 	 * 分组

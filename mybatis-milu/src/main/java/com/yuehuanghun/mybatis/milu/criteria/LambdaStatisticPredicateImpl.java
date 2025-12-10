@@ -101,6 +101,12 @@ public class LambdaStatisticPredicateImpl<T> extends LambdaPredicateImpl<T> impl
 		getDelegate().max(LambdaReflections.fnToFieldName(getterFn), columnAlias);
 		return this;
 	}
+
+	@Override
+	public LambdaStatisticPredicate<T> select(Select select) {
+		getDelegate().select(select);
+		return this;
+	}
 	
 	@Override
 	public LambdaStatisticPredicate<T> groupBy(SerializableFunction<T, ?> getterFn) {
@@ -122,6 +128,12 @@ public class LambdaStatisticPredicateImpl<T> extends LambdaPredicateImpl<T> impl
 	
 	public LambdaStatisticPredicate<T> groupByAs(SerializableFunction<T, ?> getterFn, String alias) {
 		getDelegate().groupByAs(LambdaReflections.fnToFieldName(getterFn), alias);
+		return this;
+	}
+
+	@Override
+	public LambdaStatisticPredicate<T> groupBy(String... attrNames) {
+		getDelegate().groupBy(attrNames);
 		return this;
 	}
 
