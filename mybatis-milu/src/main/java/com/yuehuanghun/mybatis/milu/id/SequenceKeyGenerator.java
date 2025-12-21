@@ -29,9 +29,11 @@ import org.apache.ibatis.session.RowBounds;
 
 public class SequenceKeyGenerator implements KeyGenerator {
 	private final MappedStatement keyStatement;
+	private final boolean ignoreGenIdIfPresent;
 
-	public SequenceKeyGenerator(MappedStatement keyStatement) {
+	public SequenceKeyGenerator(MappedStatement keyStatement, boolean ignoreGenIdIfPresent) {
 		this.keyStatement = keyStatement;
+		this.ignoreGenIdIfPresent = ignoreGenIdIfPresent;
 	}
 
 	@Override
@@ -52,6 +54,9 @@ public class SequenceKeyGenerator implements KeyGenerator {
 					if (keyProperties.length != 1) {
 						throw new ExecutorException("keyProperties not only one value.");
 					} else {
+						if(ignoreGenIdIfPresent && metaParam.getValue(keyProperties[0]) != null) { // 有值则忽略
+							return;
+						}
 						setValue(metaParam, keyProperties[0], values.get(0));
 					}
 				}

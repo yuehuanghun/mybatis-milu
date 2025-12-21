@@ -57,14 +57,15 @@ import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
 import com.yuehuanghun.mybatis.milu.annotation.EntityOptions;
 import com.yuehuanghun.mybatis.milu.annotation.EntityOptions.FetchRef;
+import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery;
 import com.yuehuanghun.mybatis.milu.annotation.Filler.FillMode;
 import com.yuehuanghun.mybatis.milu.annotation.FuncColumn;
 import com.yuehuanghun.mybatis.milu.annotation.FuncColumns;
-import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery;
+import com.yuehuanghun.mybatis.milu.annotation.IgnoreGenIdIfPresend;
 import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
-import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.data.Part.Type;
+import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.exception.OrmBuildingException;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 import com.yuehuanghun.mybatis.milu.filler.AttributeValueSupplier;
@@ -365,6 +366,11 @@ public class EntityBuilder {
 			if(generatedValue != null) {
 				((IdAttribute)attribute).setGenerationType(generatedValue.strategy());
 				((IdAttribute)attribute).setGenerator(generatedValue.generator());
+				
+				IgnoreGenIdIfPresend ignoreGenIdIfPresend = getAnnotation(field, IgnoreGenIdIfPresend.class);
+				if(ignoreGenIdIfPresend != null) {
+					((IdAttribute)attribute).setIgnoreGenIdIfPresent(ignoreGenIdIfPresend.value());
+				}
 			}
 		} else if(field.isAnnotationPresent(Version.class)) {
 			attribute = new VersionAttribute();
@@ -456,6 +462,7 @@ public class EntityBuilder {
 		return attribute;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private <T extends Annotation> T getAnnotation(Field field, Class<T> annoClass) {
 		T anno = field.getAnnotation(annoClass);
 		if(anno != null) {
@@ -469,6 +476,14 @@ public class EntityBuilder {
 				anno = method.getAnnotation(annoClass);
 				if(anno != null) {
 					return anno;
+				}
+				try {
+					Object value = method.invoke(an);
+					if(annoClass.isInstance(value)) {
+						return (T) value;
+					}
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					// ignore
 				}
 			}
 			anno = an.annotationType().getAnnotation(annoClass);

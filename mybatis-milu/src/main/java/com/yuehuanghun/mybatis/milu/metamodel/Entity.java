@@ -276,8 +276,10 @@ public class Entity {
 	public static class IdAttribute extends Attribute {
 		
 		private GenerationType generationType = GenerationType.IDENTITY;
-		
+		// ID构造器名
 		private String generator;
+		// 新增时，ID值如果已存在则不再生成ID
+		private boolean ignoreGenIdIfPresent = true;
 
 		@Override
 		public boolean isId() {

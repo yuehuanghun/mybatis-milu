@@ -38,18 +38,17 @@ import org.apache.ibatis.transaction.Transaction;
 public class TableKeyGenerator implements KeyGenerator {
 	
 	private MappedStatement selectStatement;
-	
 	private MappedStatement updateStatement;
-	
 	private int capacity;
-	
 	private KeyManager keyManager = new KeyManager();
+	private final boolean ignoreGenIdIfPresent;
 
 	private final ReentrantLock rLock = new ReentrantLock();
 	
-	public TableKeyGenerator(MappedStatement selectStatement, MappedStatement updateStatement, int capacity) {
+	public TableKeyGenerator(MappedStatement selectStatement, MappedStatement updateStatement, int capacity, boolean ignoreGenIdIfPresent) {
 		this.selectStatement = selectStatement;
 		this.updateStatement = updateStatement;
+		this.ignoreGenIdIfPresent = ignoreGenIdIfPresent;
 		this.capacity = capacity <= 0 ? 1 : capacity;
 	}
 
@@ -58,6 +57,9 @@ public class TableKeyGenerator implements KeyGenerator {
 		final Configuration configuration = ms.getConfiguration();
 		final MetaObject metaParam = configuration.newMetaObject(parameter);
 
+		if(ignoreGenIdIfPresent && metaParam.getValue(selectStatement.getKeyProperties()[0]) != null) { // 有值则忽略
+			return;
+		}
 		setValue(metaParam, selectStatement.getKeyProperties()[0], keyManager.getNextKey());
 	}
 

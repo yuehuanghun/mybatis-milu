@@ -275,7 +275,7 @@ public class MapperNamingQueryBuilder {
 							if(configuration.hasKeyGenerator(sequenceGenerator.name())){
 								keyGenerator = configuration.getKeyGenerator(sequenceGenerator.name());
 							} else {
-								keyGenerator = handleSequenceGeneratorAnnotation(sequenceGenerator, mappedStatementId, keyProperty, keyColumn, idAttr.getJavaType(), languageDriver);							
+								keyGenerator = handleSequenceGeneratorAnnotation(sequenceGenerator, mappedStatementId, keyProperty, keyColumn, idAttr.getJavaType(), languageDriver, idAttr);							
 								configuration.addKeyGenerator(sequenceGenerator.name(), keyGenerator);
 							}
 						}
@@ -285,12 +285,12 @@ public class MapperNamingQueryBuilder {
 							if(configuration.hasKeyGenerator(tableGenerator.name())){
 								keyGenerator = configuration.getKeyGenerator(tableGenerator.name());
 							} else {
-								keyGenerator = handleTableGeneratorAnnotation(tableGenerator, mappedStatementId, keyProperty, keyColumn, languageDriver);
+								keyGenerator = handleTableGeneratorAnnotation(tableGenerator, mappedStatementId, keyProperty, keyColumn, languageDriver, idAttr);
 								configuration.addKeyGenerator(tableGenerator.name(), keyGenerator);
 							}
 						}
 					} else if(generatorType == GenerationType.AUTO){
-						keyGenerator = new AssignKeyGenerator(idAttr.getGenerator(), configuration, entityClass, keyProperty);
+						keyGenerator = new AssignKeyGenerator(idAttr.getGenerator(), configuration, entityClass, keyProperty, idAttr.isIgnoreGenIdIfPresent());
 					}
 				}
 			}
@@ -644,7 +644,7 @@ public class MapperNamingQueryBuilder {
 							if(configuration.hasKeyGenerator(sequenceGenerator.name())){
 								keyGenerator = configuration.getKeyGenerator(sequenceGenerator.name());
 							} else {
-								keyGenerator = handleSequenceGeneratorAnnotation(sequenceGenerator, mappedStatementId, keyProperty, keyColumn, idAttr.getJavaType(), languageDriver);							
+								keyGenerator = handleSequenceGeneratorAnnotation(sequenceGenerator, mappedStatementId, keyProperty, keyColumn, idAttr.getJavaType(), languageDriver, idAttr);							
 								configuration.addKeyGenerator(sequenceGenerator.name(), keyGenerator);
 							}
 						}
@@ -654,12 +654,12 @@ public class MapperNamingQueryBuilder {
 							if(configuration.hasKeyGenerator(tableGenerator.name())){
 								keyGenerator = configuration.getKeyGenerator(tableGenerator.name());
 							} else {
-								keyGenerator = handleTableGeneratorAnnotation(tableGenerator, mappedStatementId, keyProperty, keyColumn, languageDriver);
+								keyGenerator = handleTableGeneratorAnnotation(tableGenerator, mappedStatementId, keyProperty, keyColumn, languageDriver, idAttr);
 								configuration.addKeyGenerator(tableGenerator.name(), keyGenerator);
 							}
 						}
 					} else if(generationType == GenerationType.AUTO){
-						keyGenerator = new AssignKeyGenerator(StringUtils.defaultIfBlank(idAttr.getGenerator(), configuration.getDefaultIdGenerator()), configuration, entity.getJavaType(), keyProperty);
+						keyGenerator = new AssignKeyGenerator(StringUtils.defaultIfBlank(idAttr.getGenerator(), configuration.getDefaultIdGenerator()), configuration, entity.getJavaType(), keyProperty, idAttr.isIgnoreGenIdIfPresent());
 					}
 				}
 			}
@@ -692,7 +692,7 @@ public class MapperNamingQueryBuilder {
 				false, keyGenerator, keyProperty, keyColumn, configuration.getDatabaseId(), languageDriver,null, true);
 	}
 	
-	private KeyGenerator handleSequenceGeneratorAnnotation(SequenceGenerator sequenceGenerator, String baseStatementId, String keyProperty, String keyColumn, Class<?> keyJavaType, LanguageDriver languageDriver) {
+	private KeyGenerator handleSequenceGeneratorAnnotation(SequenceGenerator sequenceGenerator, String baseStatementId, String keyProperty, String keyColumn, Class<?> keyJavaType, LanguageDriver languageDriver, IdAttribute idAttr) {
 	    String id = baseStatementId + "!" + sequenceGenerator.name();
 	    // defaults
 	    Class<?> resultTypeClass = keyJavaType;
@@ -718,12 +718,12 @@ public class MapperNamingQueryBuilder {
 	    id = assistant.applyCurrentNamespace(id, false);
 
 	    MappedStatement keyStatement = configuration.getMappedStatement(id, false);
-	    SequenceKeyGenerator answer = new SequenceKeyGenerator(keyStatement);
+	    SequenceKeyGenerator answer = new SequenceKeyGenerator(keyStatement, idAttr.isIgnoreGenIdIfPresent());
 	    configuration.addKeyGenerator(id, answer);
 	    return answer;
 	}
 	
-	private KeyGenerator handleTableGeneratorAnnotation(TableGenerator tableGenerator, String baseStatementId, String keyProperty, String keyColumn, LanguageDriver languageDriver) {
+	private KeyGenerator handleTableGeneratorAnnotation(TableGenerator tableGenerator, String baseStatementId, String keyProperty, String keyColumn, LanguageDriver languageDriver, IdAttribute idAttr) {
 	    String baseId = baseStatementId + "!" + tableGenerator.name();
 
 	    // defaults
@@ -762,7 +762,7 @@ public class MapperNamingQueryBuilder {
 
 		MappedStatement updateKeyStatement = configuration.getMappedStatement(updateId, false);
 	    
-	    TableKeyGenerator answer = new TableKeyGenerator(selectKeyStatement, updateKeyStatement, tableGenerator.allocationSize());
+	    TableKeyGenerator answer = new TableKeyGenerator(selectKeyStatement, updateKeyStatement, tableGenerator.allocationSize(), idAttr.isIgnoreGenIdIfPresent());
 	    configuration.addKeyGenerator(baseId, answer);
 	    return answer;
 	}

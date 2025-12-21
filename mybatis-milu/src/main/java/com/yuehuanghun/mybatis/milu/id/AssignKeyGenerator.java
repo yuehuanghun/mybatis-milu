@@ -26,14 +26,16 @@ import org.apache.ibatis.reflection.MetaObject;
 
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 
-public class AssignKeyGenerator implements KeyGenerator{
+public class AssignKeyGenerator implements KeyGenerator {
 	private final String identifierGeneratorName;
 	private final String keyProperty;
 	private final IdGenerateContext idGenerateContext;
+	private final boolean ignoreGenIdIfPresent;
 	
-	public AssignKeyGenerator(String identifierGeneratorName,MiluConfiguration configuration, Class<?> entityClass, String keyProperty) {
+	public AssignKeyGenerator(String identifierGeneratorName, MiluConfiguration configuration, Class<?> entityClass, String keyProperty, boolean ignoreGenIdIfPresent) {
 		this.identifierGeneratorName = identifierGeneratorName;
 		this.keyProperty = keyProperty;
+		this.ignoreGenIdIfPresent = ignoreGenIdIfPresent;
 		idGenerateContext  = new IdGenerateContext(configuration, entityClass);
 	}
 
@@ -41,6 +43,10 @@ public class AssignKeyGenerator implements KeyGenerator{
 	public void processBefore(Executor executor, MappedStatement ms, Statement stmt, Object parameter) {
 		final MiluConfiguration configuration = (MiluConfiguration) ms.getConfiguration();
 		final MetaObject metaParam = ms.getConfiguration().newMetaObject(parameter);
+		
+		if(ignoreGenIdIfPresent && metaParam.getValue(keyProperty) != null) { // 有值则忽略
+			return;
+		}
 		
 		if(!configuration.hasIdentifierGenerator(identifierGeneratorName)) {
 			throw new ExecutorException(String.format("不存在名为%s的ID构造器", identifierGeneratorName));
@@ -58,10 +64,11 @@ public class AssignKeyGenerator implements KeyGenerator{
 
 	
 	private void setValue(MetaObject metaParam, String property, Object value) {
-	    if (metaParam.hasSetter(property)) {
-	      metaParam.setValue(property, value);
-	    } else {
-	      throw new ExecutorException("No setter found for the keyProperty '" + property + "' in " + metaParam.getOriginalObject().getClass().getName() + ".");
-	    }
-	  }
+		if (metaParam.hasSetter(property)) {
+			metaParam.setValue(property, value);
+		} else {
+			throw new ExecutorException("No setter found for the keyProperty '" + property + "' in "
+					+ metaParam.getOriginalObject().getClass().getName() + ".");
+		}
+	}
 }
