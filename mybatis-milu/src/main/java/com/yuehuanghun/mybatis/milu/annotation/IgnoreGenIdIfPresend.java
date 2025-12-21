@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  * 可以直接在实体类的ID属性上，或ID属性的其它注解的类注解上，或ID属性上的注释的属性值，或ID属性上的注释。
  */
 @Retention(RUNTIME)
-@Target({ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 public @interface IgnoreGenIdIfPresend {
 
 	/**
