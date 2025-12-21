@@ -99,6 +99,23 @@ public class StudentProfileMapperTest {
 	
 	@Test
 	@Transactional
+	public void testInsertSpecifyId() {
+		StudentProfile profile = new StudentProfile();
+		profile.setFatherName("张爱民");
+		profile.setFatherAge(43);
+		profile.setMotherName("何兰芳");
+		profile.setMotherAge(33);
+		profile.setStudentId(1L);
+		profile.setId(100L);
+		
+		int result = studentProfileMapper.insert(profile);
+		
+		assertTrue(result == 1);
+		assertTrue(profile.getId() != 100);
+	}
+	
+	@Test
+	@Transactional
 	public void testBatchInsert() {
 		Student student = new Student();
 		student.setAddTime(LocalDateTime.now());

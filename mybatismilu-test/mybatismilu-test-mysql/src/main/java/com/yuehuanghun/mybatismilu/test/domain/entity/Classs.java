@@ -11,6 +11,7 @@ import javax.persistence.Table;
 import org.apache.ibatis.type.JdbcType;
 
 import com.yuehuanghun.mybatis.milu.annotation.AttributeOptions;
+import com.yuehuanghun.mybatis.milu.annotation.IgnoreGenIdIfPresend;
 import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
 import com.yuehuanghun.mybatis.milu.annotation.alias.attr.CreateTime;
 import com.yuehuanghun.mybatis.milu.annotation.alias.id.SnowflakeId;
@@ -23,7 +24,7 @@ import lombok.Data;
 @Data
 public class Classs {
 
-	@SnowflakeId
+	@SnowflakeId(@IgnoreGenIdIfPresend(false))
 	private Long id; //使用分布式ID，内置的snowflakeId
 
 	@CreateTime

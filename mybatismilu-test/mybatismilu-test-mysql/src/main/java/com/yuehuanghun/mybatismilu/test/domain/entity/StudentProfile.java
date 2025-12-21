@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
+import com.yuehuanghun.mybatis.milu.annotation.IgnoreGenIdIfPresend;
+
 import lombok.Data;
 
 @Entity
@@ -18,6 +20,7 @@ import lombok.Data;
 public class StudentProfile {
 	
 	@Id
+	@IgnoreGenIdIfPresend(false)
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "timestamp") //自定义ID生成器com.yuehuanghun.mybatismilu.test.generator.TimestampIdGenerator
 	private Long id;
 

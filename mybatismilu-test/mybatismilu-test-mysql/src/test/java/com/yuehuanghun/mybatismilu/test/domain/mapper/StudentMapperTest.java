@@ -247,6 +247,23 @@ public class StudentMapperTest {
 
 	@Test
 	@Transactional
+	public void testInsertSpecifyId() {
+		Student student = new Student();
+		student.setAge(9);
+		student.setClassId(1L);
+		student.setName(randomName());
+		student.setId(100L);
+		
+		int result = studentMapper.insert(student);
+		assertTrue(result == 1);
+		assertTrue(student.getId() == 100);
+		
+		Optional<Student> studentOpt = studentMapper.findById(100L);
+		assertTrue(studentOpt.isPresent());
+	};
+
+	@Test
+	@Transactional
 	public void testBatchInsert() {
 		List<Student> list = new ArrayList<>();
 		Student student = new Student();

@@ -295,6 +295,26 @@ public class ClassMapperTest {
 	
 	@Test
 	@Transactional
+	public void testInsertSpecifyId() {
+		Classs clazz = new Classs();
+		clazz.setName("六年级");
+		clazz.setData(Arrays.asList(3L, 4L, 5L, 6L));
+		clazz.setId(100L);
+		
+		int result = classMapper.insert(clazz);
+		
+		assertTrue(result == 1);
+		assertTrue(clazz.getId() != 100);
+		
+		Optional<Classs> classOpt = classMapper.findById(100L);
+		assertTrue(!classOpt.isPresent());
+		
+		classOpt = classMapper.findById(clazz.getId());
+		assertTrue(classOpt.isPresent());
+	}
+	
+	@Test
+	@Transactional
 	public void testBatchInsert() {
 		Classs clazz = new Classs();
 		clazz.setName("六年级");
