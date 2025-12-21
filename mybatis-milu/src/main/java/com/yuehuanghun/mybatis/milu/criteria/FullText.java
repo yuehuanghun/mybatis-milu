@@ -2,11 +2,12 @@ package com.yuehuanghun.mybatis.milu.criteria;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
+import com.yuehuanghun.mybatis.milu.tool.Assert;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
 public class FullText implements Condition {
@@ -18,25 +19,22 @@ public class FullText implements Condition {
 	private FulltextMode fulltextMode = FulltextMode.NATIVE;
 	
 	public FullText(Collection<String> attrNames, String keywordExpression) {
-		super();
-		this.attrNames = attrNames;
-		this.keywordExpression = keywordExpression;
+		this(attrNames, keywordExpression, null);
 	}
 
 	public FullText(Collection<String> attrNames, String keywordExpression, FulltextMode fulltextMode) {
-		super();
+		Assert.notEmpty(attrNames, "attrNames不能为空");
+		Assert.notBlank(keywordExpression, "keywordExpression不能为空");
 		this.attrNames = attrNames;
 		this.keywordExpression = keywordExpression;
-		this.fulltextMode = fulltextMode;
+		if(fulltextMode != null) {
+			this.fulltextMode = fulltextMode;
+		}
 	}
 
 	@Override
 	public int renderSqlTemplate(GenericProviderContext context, StringBuilder expressionBuilder, Set<String> columns,
-			int paramIndex) {
-		if(attrNames == null || attrNames.isEmpty()) {
-			throw new SqlExpressionBuildingException("全文搜索列不能为空");
-		}
-		
+			int paramIndex) {		
 		attrNames.forEach(attrName -> columns.add(attrName));
 		
 		String key = attrNames.iterator().next() + "_" + paramIndex;
@@ -68,6 +66,26 @@ public class FullText implements Condition {
 		params.put(key, keywordExpression);
 		paramIndex++;
 		return paramIndex;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = 17;
+
+		result = 31 * result + attrNames.hashCode();
+		result = 31 * result + keywordExpression.hashCode();
+		result = 31 * result + fulltextMode.hashCode();
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object that) {
+		if (!this.getClass().isInstance(that)) {
+			return false;
+		}
+		return Objects.equals(this.attrNames, ((FullText) that).attrNames)
+				&& Objects.equals(this.keywordExpression, ((FullText) that).keywordExpression)
+				&& Objects.equals(this.fulltextMode, ((FullText) that).fulltextMode);
 	}
 
 }
