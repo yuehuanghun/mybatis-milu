@@ -31,7 +31,6 @@ import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.metamodel.Entity.Attribute;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
-import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.converter.Converter;
 import com.yuehuanghun.mybatis.milu.tool.converter.ConverterUtils;
 
@@ -85,10 +84,9 @@ public class ConditionImpl implements Condition {
 		String partTypeExpression = String.format(expression, keys);
 		if (partTypeExpression.contains(Constants.COLUMN_HOLDER)) {
 			expressionBuilder.append(partTypeExpression.replace(Constants.COLUMN_HOLDER,
-					Segment.DOLLAR + attributeName + Segment.DOLLAR));
+					columnHolder(attributeName)));
 		} else {
-			expressionBuilder.append(Segment.DOLLAR).append(attributeName).append(Segment.DOLLAR)
-					.append(partTypeExpression);
+			expressionBuilder.append(columnHolder(attributeName)).append(partTypeExpression);
 		}
 
 		columns.add(attributeName);

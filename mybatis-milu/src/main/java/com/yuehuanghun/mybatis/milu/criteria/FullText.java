@@ -38,9 +38,9 @@ public class FullText implements Condition {
 		attrNames.forEach(attrName -> columns.add(attrName));
 		
 		String key = attrNames.iterator().next() + "_" + paramIndex;
-		String param = Segment.HASH_LEFT_BRACE + key + Segment.RIGHT_BRACE;
+		String param = context.tool.columnScriptParam(key);
 		
-		String searchColumns = attrNames.stream().map(attrName -> Segment.DOLLAR + attrName + Segment.DOLLAR).collect(Collectors.joining(","));
+		String searchColumns = attrNames.stream().map(attrName -> columnHolder(attrName)).collect(Collectors.joining(","));
 		
 		String mode = context.getConfiguration().getDialect().getFullTextModeExpression(fulltextMode);
 		

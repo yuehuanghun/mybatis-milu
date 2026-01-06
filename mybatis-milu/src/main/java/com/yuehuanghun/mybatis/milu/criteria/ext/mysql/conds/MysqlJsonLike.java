@@ -61,12 +61,12 @@ public class MysqlJsonLike implements Condition {
 		columns.add(attrName);
 		String key = attrName + "_" + paramIndex;
 		paramIndex ++;
-		expressionBuilder.append(Segment.SPACE).append(Segment.DOLLAR).append(attrName).append(Segment.DOLLAR).append(" -&gt;&gt; ")
+		expressionBuilder.append(Segment.SPACE).append(columnHolder(attrName)).append(" -&gt;&gt; ")
 		  .append(Segment.SIGLE_QUOT).append(jsonKey).append(Segment.SIGLE_QUOT).append(" LIKE CONCAT(");
 		if(likeMode == LikeMode.CONTAINS || likeMode == LikeMode.ENDS_WITH) {
 			expressionBuilder.append("'%', ");
 		}
-		expressionBuilder.append(Segment.HASH_LEFT_BRACE).append(key).append(Segment.RIGHT_BRACE);
+		expressionBuilder.append(context.tool.columnScriptParam(key));
 		if(likeMode == LikeMode.CONTAINS || likeMode == LikeMode.STARTS_WITH) {
 			expressionBuilder.append(", '%'");
 		}

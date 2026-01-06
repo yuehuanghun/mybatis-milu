@@ -77,13 +77,13 @@ public class PostgreJsonPathCompare implements Condition {
 		if(this.jdbcType != PostgreJdbcType.TEXT) {
 			expressionBuilder.append("CAST (");
 		}
-		expressionBuilder.append(Segment.DOLLAR).append(attrName).append(Segment.DOLLAR).append(" #&gt;&gt; ")
+		expressionBuilder.append(columnHolder(attrName)).append(" #&gt;&gt; ")
 		  .append(Segment.SIGLE_QUOT).append(jsonKey).append(Segment.SIGLE_QUOT);
 		if(this.jdbcType != PostgreJdbcType.TEXT) {
 			expressionBuilder.append(" AS ").append(this.jdbcType).append(")");
 		}
 		expressionBuilder.append(Segment.SPACE).append(compareMode.getExp()).append(Segment.SPACE)
-		  .append(Segment.HASH_LEFT_BRACE).append(key).append(Segment.RIGHT_BRACE);
+		  .append(context.tool.columnScriptParam(key));
 		return paramIndex;
 	}
 

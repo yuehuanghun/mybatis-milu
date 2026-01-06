@@ -35,7 +35,7 @@ public class ExistsJoin implements Condition {
 	@Override
 	public int renderSqlTemplate(GenericProviderContext context, StringBuilder expressionBuilder, Set<String> columns,
 			int paramIndex) {
-		expressionBuilder.append(Segment.DOLLAR).append(attrName).append(Segment.DOLLAR);
+		expressionBuilder.append(columnHolder(attrName));
 		expressionBuilder.append(Segment.EQUALS_B);
 		expressionBuilder.append(Segment.AT).append(refAttrName).append(Segment.AT);
 		columns.add(attrName);

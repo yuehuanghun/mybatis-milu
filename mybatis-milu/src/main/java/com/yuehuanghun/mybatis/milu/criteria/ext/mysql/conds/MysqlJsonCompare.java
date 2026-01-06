@@ -46,10 +46,10 @@ public class MysqlJsonCompare implements Condition {
 		columns.add(attrName);
 		String key = attrName + "_" + paramIndex;
 		paramIndex ++;
-		expressionBuilder.append(Segment.SPACE).append(Segment.DOLLAR).append(attrName).append(Segment.DOLLAR).append(" -&gt;&gt; ")
+		expressionBuilder.append(Segment.SPACE).append(columnHolder(attrName)).append(" -&gt;&gt; ")
 		  .append(Segment.SIGLE_QUOT).append(jsonKey).append(Segment.SIGLE_QUOT)
 		  .append(Segment.SPACE).append(compareMode.getExp()).append(Segment.SPACE)
-		  .append(Segment.HASH_LEFT_BRACE).append(key).append(Segment.RIGHT_BRACE);
+		  .append(context.tool.columnScriptParam(key));
 		return paramIndex;
 	}
 
