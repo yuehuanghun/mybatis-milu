@@ -1132,6 +1132,77 @@ public class StudentMapperTest {
 		System.out.println(JSON.toJSONString(result));
 	}
 	
+	@Test
+	@Transactional
+	public void testUpsertFunc() {
+		Student student = new Student();
+		student.setAge(9);
+		student.setClassId(1L);
+		student.setName(randomName());
+		student.setIdNo("222222200202182202");
+		
+		int result = studentMapper.insert(student);
+		assertEquals(result, 1);
+		
+		Optional<Student> studentOpt = studentMapper.findById(student.getId());
+		assertTrue(studentOpt.isPresent());
+		assertEquals(studentOpt.get().getIdNo(), "222222200202182202");
+		
+		Long id = student.getId();
+		student = studentMapper.findUniqueByLambdaCriteria(p -> p.eq(Student::getId, id));
+		assertNotNull(student);
+		
+		studentMapper.updateAttrById(Student::getIdNo, "222222200202182212", id);
+		
+		studentOpt = studentMapper.findById(student.getId());
+		assertEquals(studentOpt.get().getIdNo(), "222222200202182212");
+	}
+	
+	@Test
+	@Transactional
+	public void testBatchUpsertFunc() {
+		Student student = new Student();
+		student.setAge(9);
+		student.setClassId(1L);
+		student.setName(randomName());
+		student.setIdNo("222222200202182202");
+		
+		Student student2 = new Student();
+		student2.setAge(9);
+		student2.setClassId(1L);
+		student2.setName(randomName());
+		student2.setIdNo("222222200202182203");
+		
+		int result = studentMapper.batchInsert(Arrays.asList(student, student2));
+		assertEquals(result, 2);
+		
+		Optional<Student> studentOpt = studentMapper.findById(student.getId());
+		assertTrue(studentOpt.isPresent());
+		assertEquals(studentOpt.get().getIdNo(), "222222200202182202");
+		
+		Long id = student.getId();
+		student = studentMapper.findUniqueByLambdaCriteria(p -> p.eq(Student::getId, id));
+		assertNotNull(student);
+		
+		studentMapper.updateAttrById(Student::getIdNo, "222222200202182212", id);
+		
+		studentOpt = studentMapper.findById(student.getId());
+		assertEquals(studentOpt.get().getIdNo(), "222222200202182212");
+		
+		Optional<Student> student2Opt = studentMapper.findById(student2.getId());
+		assertTrue(student2Opt.isPresent());
+		assertEquals(student2Opt.get().getIdNo(), "222222200202182203");
+	}
+	
+	@Test
+	public void testSelectFunc() {
+		List<Student> students = studentMapper.findByLambdaCriteria(p -> {
+			p.eq(Student::getIdNo, "222222200202182202");
+		});
+		assertEquals(students.size(), 1);
+		assertEquals(students.get(0).getIdNo(), "222222200202182202");
+	}
+	
 	public static class IfGroup implements Select {
 		static IfGroup instance = new IfGroup();
 

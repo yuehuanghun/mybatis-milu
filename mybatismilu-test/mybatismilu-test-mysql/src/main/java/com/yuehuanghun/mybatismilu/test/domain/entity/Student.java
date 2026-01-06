@@ -18,6 +18,7 @@ import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery.MatchType;
 import com.yuehuanghun.mybatis.milu.annotation.Filler;
 import com.yuehuanghun.mybatis.milu.annotation.Filler.FillMode;
 import com.yuehuanghun.mybatis.milu.annotation.FuncColumn;
+import com.yuehuanghun.mybatis.milu.annotation.FuncUpsert;
 import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
 import com.yuehuanghun.mybatis.milu.annotation.alias.id.SnowflakeId;
 import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
@@ -48,6 +49,9 @@ public class Student extends PageRequest {
 	private String name;
 	
 	private Integer age;
+	
+	@FuncColumn(expression = "AES_DECRYPT(FROM_BASE64(${idNo}),'123456')", upsertExp = "TO_BASE64(AES_ENCRYPT(${value},'123456'))")
+	private String idNo;
 	
 	private Long classId;
 	
