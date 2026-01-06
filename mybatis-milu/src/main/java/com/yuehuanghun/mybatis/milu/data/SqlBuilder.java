@@ -165,8 +165,8 @@ public class SqlBuilder {
 						Attribute funcRefAttr = attr.getOwner().getAttribute(attrName); // 函数列表达式只能引用本实体的属性
 						if(funcRefAttr == null) { // 如果为null，则直接当值表列名处理
 							columnName += SqlBuildingHelper.wrapIdentifier(attrName, configuration);
-						} else if(funcRefAttr instanceof FunctionAttribute) {
-							throw new SqlExpressionBuildingException(String.format("函数属性%s表达式%s中的属性引用%s是一个函数属性，不允许函数属性", funcAttr.getName(), funcExp, attrName));
+//						} else if(funcRefAttr instanceof FunctionAttribute) {
+//							throw new SqlExpressionBuildingException(String.format("函数属性%s表达式%s中的属性引用%s是一个函数属性，不允许函数属性", funcAttr.getName(), funcExp, attrName));
 						} else if(funcRefAttr.isReference()) {
 							throw new SqlExpressionBuildingException(String.format("函数属性%s表达式%s中的属性引用%s是一个关联属性，不允许关联属性", funcAttr.getName(), funcExp, attrName));
 						} else { // 属性映射的表字段名
@@ -176,7 +176,7 @@ public class SqlBuilder {
 						funcExp = funcExp.replace("${" + attrName + "}", columnName); // 替换占位
 					}
 					sb.append(funcExp).append(Segment.SPACE);
-					SqlBuildingHelper.appendAlias(sb, attr.getName(), configuration);
+					SqlBuildingHelper.appendAlias(sb, attr.getColumnName(), configuration);
 					
 					continue;
 				}

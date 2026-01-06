@@ -81,7 +81,7 @@ public class UpdatePatchSqlTemplateBuilder extends SqlTemplateBuilder {
 				continue;
 			}
 			
-			sqlBuilder.append(SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration)).append(" = #{entity.").append(attr.toParameter()).append("}, ");
+			sqlBuilder.append(SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration)).append(" = ").append(attr.toParaWithPrefix("entity.", context.getConfiguration())).append(", ");
 			
 		}
 		sqlBuilder.append(Segment.SET_LABEL_END);

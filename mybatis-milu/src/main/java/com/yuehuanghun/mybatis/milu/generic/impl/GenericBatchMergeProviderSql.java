@@ -108,11 +108,11 @@ public class GenericBatchMergeProviderSql extends GenericCachingProviderSql {
 	 
 			if(attr.isId() && (context.getKeyGenerator() == NoKeyGenerator.INSTANCE || Jdbc3KeyGenerator.class.isInstance(context.getKeyGenerator()))) {
 				sqlBuilder.append(" <if test=\"entityList[0].").append(attr.getName()).append(" != null\">").append(wrapIdentifier(attr.getColumnName(), context)).append(",</if> ");
-				values.append(" <if test=\"entityList[0].").append(attr.getName()).append(" != null\">").append("#{item.").append(attr.toParameter()).append("},</if> ");
+				values.append(" <if test=\"entityList[0].").append(attr.getName()).append(" != null\">").append(attr.toParaWithPrefix("item.", context.getConfiguration())).append(",</if> ");
 				continue;
 			}
 			sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context)).append(", ");
-			values.append("#{item.").append(attr.toParameter()).append("}, ");
+			values.append(attr.toParaWithPrefix("item.", context.getConfiguration())).append(", ");
 		}
 		sqlBuilder.append(" </trim>) ");
 		values.append("</trim>)</foreach> ");
@@ -146,11 +146,11 @@ public class GenericBatchMergeProviderSql extends GenericCachingProviderSql {
 	 
 			if(attr.isId() && (context.getKeyGenerator() == NoKeyGenerator.INSTANCE || Jdbc3KeyGenerator.class.isInstance(context.getKeyGenerator()))) {
 				sqlBuilder.append(" <if test=\"entityList[0].").append(attr.getName()).append(" != null\">").append(wrapIdentifier(attr.getColumnName(), context)).append(",</if> ");
-				values.append(" <if test=\"entityList[0].").append(attr.getName()).append(" != null\">").append("#{item.").append(attr.toParameter()).append("},</if> ");
+				values.append(" <if test=\"entityList[0].").append(attr.getName()).append(" != null\">").append(attr.toParaWithPrefix("item.", context.getConfiguration())).append(",</if> ");
 				continue;
 			}
 			sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context)).append(", ");
-			values.append("#{item.").append(attr.toParameter()).append("}, ");
+			values.append(attr.toParaWithPrefix("item.", context.getConfiguration())).append(", ");
 		}
 		sqlBuilder.append("</trim>) ");
 		values.append("</trim>)</foreach> ");
@@ -196,7 +196,7 @@ public class GenericBatchMergeProviderSql extends GenericCachingProviderSql {
 		for(Attribute attr : attributes) {
 //			sqlBuilder.append(wrapIdentifier(attr.getColumnName(), context)).append(", ");
 			String wrapedColumnName = wrapIdentifier(attr.getColumnName(), context);
-			sqlBuilder.append("#{item.").append(attr.toParameter()).append("} ").append(wrapedColumnName).append(Segment.COMMA_B);
+			sqlBuilder.append(attr.toParaWithPrefix("item.", context.getConfiguration())).append(" ").append(wrapedColumnName).append(Segment.COMMA_B);
 			
 			// 构建tb.columnName = tmp.columnName,
 			if(!conflictIndexAttrs.contains(attr) && attr.isUpdateable()) {

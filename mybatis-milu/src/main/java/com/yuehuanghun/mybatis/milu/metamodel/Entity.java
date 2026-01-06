@@ -34,11 +34,13 @@ import org.apache.ibatis.reflection.invoker.Invoker;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
+import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery.MatchType;
 import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.data.Part;
 import com.yuehuanghun.mybatis.milu.db.DbEnum;
+import com.yuehuanghun.mybatis.milu.exception.OrmBuildingException;
 import com.yuehuanghun.mybatis.milu.filler.Filler;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.Reference;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
@@ -227,11 +229,11 @@ public class Entity {
 			return updateable;
 		}
 		
-		public String toParameter() {
-			return toParameter(getName());
+		public String toParameter(MiluConfiguration configuration) {
+			return toParameter(getName(), configuration);
 		}
 		
-		public String toParameter(String name) {
+		public String toParameter(String name, MiluConfiguration configuration) {
 			String param = name;
 			if(getJdbcType() != null) {
 				param += ",jdbcType=" + getJdbcType().name();
@@ -239,7 +241,11 @@ public class Entity {
 			if(getTypeHandler() != null) {
 				param += ",typeHandler=" + getTypeHandler().getName();
 			}
-			return param;
+			return "#{" + param + "}";
+		}
+		
+		public String toParaWithPrefix(String prefix, MiluConfiguration configuration) {
+			return toParameter(prefix + getName(), configuration);
 		}
 		
 		public String formatParameterExpression(String expression) {
@@ -339,7 +345,9 @@ public class Entity {
 		@Setter
 		private boolean collection;
 		
-		private Map<DbEnum, FuncCol> funcColMap = new HashMap<>();
+		private Map<DbEnum, FuncCol> funcColMap;
+		
+		private Map<DbEnum, String> funcUpsertMap;
 		
 		public FuncCol getFuncCol(DbEnum forDb) {
 			FuncCol funcCol = funcColMap.get(forDb);
@@ -351,7 +359,26 @@ public class Entity {
 		}
 		
 		public void putFuncCol(DbEnum forDb, FuncCol funcCol) {
+			if(funcColMap == null) {
+				funcColMap = new HashMap<>();
+			}
 			funcColMap.put(forDb, funcCol);
+		}
+		
+		public String getFuncUpsert(DbEnum forDb) {
+			String exp = funcUpsertMap.get(forDb);
+			if(exp != null) {
+				return exp;
+			}
+			
+			return funcUpsertMap.get(DbEnum.ANY);
+		}
+		
+		public void putFuncUpsert(DbEnum forDb, String exp) {
+			if(funcUpsertMap == null) {
+				funcUpsertMap = new HashMap<>();
+			}
+			funcUpsertMap.put(forDb, exp);
 		}
 		
 		@Override
@@ -365,6 +392,30 @@ public class Entity {
 				return getJavaType();
 			}
 			return elementClass;
+		}
+
+		@Override
+		public boolean isSelectable() {
+			return funcColMap != null && super.isSelectable();
+		}
+
+		@Override
+		public boolean isInsertable() {
+			return funcUpsertMap != null && super.isInsertable();
+		}
+
+		@Override
+		public boolean isUpdateable() {
+			return funcUpsertMap != null && super.isUpdateable();
+		}
+
+		@Override
+		public String toParameter(String name, MiluConfiguration configuration) {
+			String upsertExp = getFuncUpsert(configuration.getDbMeta().getDbEnum());
+			if(StringUtils.isBlank(upsertExp)) {
+				throw new OrmBuildingException(String.format("实体“%s”插入/更新函数字段“%s”未支持数据库：%s", this.getOwner().getName(), this.getName(), configuration.getDbMeta().getDbEnum().getDbName()));
+			}
+			return upsertExp.replace("${value}", "#{" + name + "}");
 		}
 	}
 	
@@ -427,6 +478,19 @@ public class Entity {
 				
 				return varAttrNames;
 			}
+		}
+	}
+	
+	@NoArgsConstructor
+	public static class FuncUps {
+		@Getter
+		private String columnName;
+		@Getter
+		private String funcExp;
+
+		public FuncUps(String columnName, String funcExp) {
+			this.columnName = columnName;
+			this.funcExp = funcExp;
 		}
 	}
 }

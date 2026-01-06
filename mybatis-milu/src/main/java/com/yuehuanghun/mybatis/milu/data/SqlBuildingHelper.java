@@ -481,7 +481,7 @@ public class SqlBuildingHelper {
 	    		type = Part.Type.SIMPLE_PROPERTY;
 	    		break;
 	    }
-	    return String.format(configuration.getDialect().getPartTypeExpression(type), Segment.HASH_EXAMPLE  + attr.toParameter() + Segment.RIGHT_BRACE);
+	    return String.format(configuration.getDialect().getPartTypeExpression(type), attr.toParaWithPrefix("example.", configuration));
 	}
 	
 	public static String matchExpression(Part.Type type, String keyName, Attribute forAttr, MiluConfiguration configuration) {
@@ -490,7 +490,7 @@ public class SqlBuildingHelper {
 			expression = forAttr.formatParameterExpression(expression);
 			return expression;
 		}
-		return String.format(configuration.getDialect().getPartTypeExpression(type), Segment.HASH_EXAMPLE + forAttr.toParameter(keyName) + Segment.RIGHT_BRACE);
+		return String.format(configuration.getDialect().getPartTypeExpression(type), forAttr.toParameter("example." + keyName, configuration));
 	}
 	
 	//转换PageHelper中的排序中的属性为column

@@ -394,11 +394,24 @@ public class EntityBuilder {
 			
 			FunctionAttribute attr = new FunctionAttribute();
 			attribute = attr;
+			attr.setUpdateable(false);
+			attr.setInsertable(false);
 			for(FuncColumn funcColumn : funcColumns) {
 				if(!DefendUtil.testFuncColumnExp(funcColumn.expression())) {
 					throw new OrmBuildingException(String.format("实体%s的函数属性%s中的函数表达式包含不安全信息，表达式：%s", field.getDeclaringClass().getSimpleName(), field.getName(), funcColumn.expression()));
 				}
 				attr.putFuncCol(funcColumn.forDb(), new FuncCol(SqlBuildingHelper.scriptContentEscape.apply(funcColumn.expression())));
+				
+				String upsertExp = funcColumn.upsertExp();
+				if(StringUtils.isNotBlank(upsertExp)) {
+					if(!DefendUtil.testFuncColumnExp(upsertExp)) {
+						throw new OrmBuildingException(String.format("实体%s的函数属性%s中的函数表达式包含不安全信息，表达式：%s", field.getDeclaringClass().getSimpleName(), field.getName(), upsertExp));
+					}
+					upsertExp = SqlBuildingHelper.scriptContentEscape.apply(upsertExp);
+					attr.putFuncUpsert(funcColumn.forDb(), upsertExp);
+					attr.setUpdateable(true);
+					attr.setInsertable(true);
+				}
 			}
 			
 			if(Collection.class.isAssignableFrom(field.getType())) {
@@ -411,9 +424,6 @@ public class EntityBuilder {
 			} else {
 				attr.setElementClass(field.getType());
 			}
-			attr.setUpdateable(false);
-			attr.setInsertable(false);
-			attr.setColumnName(field.getName());
 		} else if(Collection.class.isAssignableFrom(field.getType())) {
 			attribute = new PluralAttribute();
 			ParameterizedType genericType = (ParameterizedType) field.getGenericType();

@@ -192,8 +192,8 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 						Attribute funcRefAttr = attr.getOwner().getAttribute(attrName); // 函数列表达式只能引用本实体的属性
 						if (funcRefAttr == null) { // 如果为null，则直接当值表列名处理
 							columnName += SqlBuildingHelper.wrapIdentifier(attrName, configuration);
-						} else if(funcRefAttr instanceof FunctionAttribute) {
-							throw new SqlExpressionBuildingException(String.format("函数属性%s表达式%s中的属性引用%s是一个函数属性，不允许函数属性", funcAttr.getName(), funcExp, attrName));
+//						} else if(funcRefAttr instanceof FunctionAttribute) {
+//							throw new SqlExpressionBuildingException(String.format("函数属性%s表达式%s中的属性引用%s是一个函数属性，不允许函数属性", funcAttr.getName(), funcExp, attrName));
 						} else if(funcRefAttr.isReference()) {
 							throw new SqlExpressionBuildingException(String.format("函数属性%s表达式%s中的属性引用%s是一个关联属性，不允许关联属性", funcAttr.getName(), funcExp, attrName));
 						} else { // 属性映射的表字段名
@@ -205,9 +205,9 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 					sqlBuilder.append(funcExp).append(Segment.SPACE);
 					
 					if (StringUtils.isBlank(refEntityAttrName)) {
-						SqlBuildingHelper.appendAlias(sqlBuilder, attr.getName(), configuration);
+						SqlBuildingHelper.appendAlias(sqlBuilder, attr.getColumnName(), configuration);
 					} else {
-						SqlBuildingHelper.appendAlias(sqlBuilder, buildColumnAlias(tableAlias, attr.getName()), configuration);
+						SqlBuildingHelper.appendAlias(sqlBuilder, buildColumnAlias(tableAlias, attr.getColumnName()), configuration);
 					}
 				} else {
 					if (StringUtils.isBlank(refEntityAttrName)) { // 没有关联查询时，不需要使用表别名

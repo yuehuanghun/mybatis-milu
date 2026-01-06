@@ -35,13 +35,19 @@ import com.yuehuanghun.mybatis.milu.db.DbEnum;
 public @interface FuncColumn {
 
 	/**
-	 * 表达式<br>
+	 * 查询表达式<br>
 	 * 可以使用${属性/列名}指定实体内的属性或列名，例如IFNULL(${number}, 0)，在表关联查询时，会自动添加表别名<br>
      * 如果不使用${属性/列名}指定，则要注意是否可能出现表间重复列的问题<br>
      * 注：框架只对表达式做有限的安全性检测，开发者应当保证表达式内容的安全性，避免不安全操作。
 	 * @return 函数列表达式
 	 */
 	String expression();
+	
+	/**
+	 * 插入/更新表达式。如果不设置则无此字段插入/更新功能。
+	 * @return
+	 */
+	String upsertExp() default "";
 	
 	/**
 	 * 用于哪种数据库

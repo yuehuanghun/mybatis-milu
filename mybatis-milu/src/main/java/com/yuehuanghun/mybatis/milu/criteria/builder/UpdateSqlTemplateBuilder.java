@@ -61,11 +61,11 @@ public class UpdateSqlTemplateBuilder extends SqlTemplateBuilder {
 				sqlBuilder.append(colName).append(" = ").append(colName).append(" + 1, ");
 			} else {
 				if(predicate.getUpdateMode() == Mode.ALL || nullableUpdateAttrNames.contains(attr.getName())) {
-					sqlBuilder.append(SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration)).append(" = #{entity.").append(attr.toParameter()).append("}, ");
+					sqlBuilder.append(SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration)).append(" = ").append(attr.toParaWithPrefix("entity.", context.getConfiguration())).append(", ");
 				} else if(predicate.getUpdateMode() == Mode.NOT_EMPTY && CharSequence.class.isAssignableFrom(attr.getJavaType())) {
 					sqlBuilder.append(" <if test=\"entity.").append(attr.getName()).append(" != null and entity.").append(attr.getName()).append("!=''\">").append(SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration)).append(" = #{entity.").append(attr.getName()).append("}, </if> ");
 				} else {
-					sqlBuilder.append(" <if test=\"entity.").append(attr.getName()).append(" != null\">").append(SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration)).append(" = #{entity.").append(attr.toParameter()).append("}, </if> ");
+					sqlBuilder.append(" <if test=\"entity.").append(attr.getName()).append(" != null\">").append(SqlBuildingHelper.wrapIdentifier(attr.getColumnName(), configuration)).append(" = ").append(attr.toParaWithPrefix("entity.", context.getConfiguration())).append(", </if> ");
 				}
 			}	
 		}

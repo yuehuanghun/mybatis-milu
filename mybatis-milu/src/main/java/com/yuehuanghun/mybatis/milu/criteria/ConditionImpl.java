@@ -75,7 +75,7 @@ public class ConditionImpl implements Condition {
 					keys[i] = key;
 					expression = attribute.formatParameterExpression(expression);
 				} else {
-					keys[i] = Segment.HASH_LEFT_BRACE + attribute.toParameter(key) + Segment.RIGHT_BRACE;
+					keys[i] = attribute.toParameter(key, context.getConfiguration());
 				}
 
 				paramIndex++;
