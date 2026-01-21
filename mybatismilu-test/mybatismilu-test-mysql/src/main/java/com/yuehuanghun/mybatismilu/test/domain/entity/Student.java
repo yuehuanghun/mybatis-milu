@@ -18,7 +18,6 @@ import com.yuehuanghun.mybatis.milu.annotation.ExampleQuery.MatchType;
 import com.yuehuanghun.mybatis.milu.annotation.Filler;
 import com.yuehuanghun.mybatis.milu.annotation.Filler.FillMode;
 import com.yuehuanghun.mybatis.milu.annotation.FuncColumn;
-import com.yuehuanghun.mybatis.milu.annotation.FuncUpsert;
 import com.yuehuanghun.mybatis.milu.annotation.LogicDelete;
 import com.yuehuanghun.mybatis.milu.annotation.alias.id.SnowflakeId;
 import com.yuehuanghun.mybatis.milu.pagehelper.PageRequest;
