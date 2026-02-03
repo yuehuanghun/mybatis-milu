@@ -37,7 +37,7 @@ public class Teacher {
 	private Integer revision;
 	
 	@ManyToMany
-	@JoinTable(name = "class_teacher_rel", joinColumns = @JoinColumn(name = "teacher_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "class_id", referencedColumnName = "id"))
+	@JoinTable(schema = "demo",name = "class_teacher_rel", joinColumns = @JoinColumn(name = "teacher_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "class_id", referencedColumnName = "id"))
 	private List<Classs> classList; //多对多引用演示
 	
 	@LogicDelete(provider = MyLogicDeleteProvider.class)

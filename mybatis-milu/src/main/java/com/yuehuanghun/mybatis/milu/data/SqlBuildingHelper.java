@@ -129,6 +129,7 @@ public class SqlBuildingHelper {
 								String joinTableAlias = tableAliasDispacher.dispach(Segment.TABLE_ + m2mRef.getJoinTableName());
 								
 								joinExpressBuilder.append(joinExpression);
+								appendSchema(joinExpressBuilder, m2mRef.getCatalog(), m2mRef.getSchema(), configuration);
 								appendIdentifier(joinExpressBuilder, m2mRef.getJoinTableName(), configuration);
 								joinExpressBuilder.append(Segment.SPACE).append(joinTableAlias)
 								    .append(Segment.ON_BRACKET);
