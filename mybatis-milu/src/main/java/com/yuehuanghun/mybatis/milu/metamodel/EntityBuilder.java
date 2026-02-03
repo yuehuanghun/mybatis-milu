@@ -585,7 +585,6 @@ public class EntityBuilder {
 		} else if(field.isAnnotationPresent(ManyToMany.class)) {
 			ManyToMany refAnnon = field.getAnnotation(ManyToMany.class);
 			String mappedBy = refAnnon.mappedBy();
-			String joinTableName = null;
 			
 			if(StringUtils.isNotBlank(mappedBy)) {
 				Attribute inverseAttr = inverseEntity.getAttribute(mappedBy);
@@ -595,34 +594,28 @@ public class EntityBuilder {
 				
 				if(inverseAttr.getField().isAnnotationPresent(javax.persistence.JoinTable.class)) { //理论上有mappedBy时，对方属性应当有JoinTable注解，现允许无注解
 					javax.persistence.JoinTable joinTableAnno = inverseAttr.getField().getAnnotation(javax.persistence.JoinTable.class);
-					joinTableName = joinTableAnno.name();
 					
-					JoinColumn[] joinColumns = joinTableAnno.joinColumns();
-					if(joinColumns.length == 0) {
+					if(joinTableAnno.joinColumns().length == 0) {
 						throw new SqlExpressionBuildingException(String.format("@JoinTable中joinColumns期望至少一个@JoinColumn值。类%s的属性%s。", refEntityClass.getName(), inverseAttr.getName()));
 					}
-					JoinColumn[] inverseJoinColumns = joinTableAnno.inverseJoinColumns();
-					if(inverseJoinColumns.length == 0) {
+					if(joinTableAnno.inverseJoinColumns().length == 0) {
 						throw new SqlExpressionBuildingException(String.format("@JoinTable中inverseJoinColumns期望至少一个@JoinColumn值。类%s的属性%s。", refEntityClass.getName(), inverseAttr.getName()));
 					}
-					return buildManyToManyReference(attr, joinTableName, inverseEntity, joinColumns, inverseJoinColumns, inverseAttr);
+					return buildManyToManyReference(attr, joinTableAnno, inverseEntity, inverseAttr);
 				}
 			}
 			
 			if(field.isAnnotationPresent(javax.persistence.JoinTable.class)) {
 				javax.persistence.JoinTable joinTableAnno = field.getAnnotation(javax.persistence.JoinTable.class);
-				joinTableName = joinTableAnno.name();
 				
-				JoinColumn[] joinColumns = joinTableAnno.joinColumns();
-				if(joinColumns.length == 0) {
+				if(joinTableAnno.joinColumns().length == 0) {
 					throw new SqlExpressionBuildingException(String.format("@JoinTable中joinColumns期望至少一个@JoinColumn值。类%s的属性%s。", refEntityClass.getName(), field.getName()));
 				}
-				JoinColumn[] inverseJoinColumns = joinTableAnno.inverseJoinColumns();
-				if(inverseJoinColumns.length == 0) {
+				if(joinTableAnno.inverseJoinColumns().length == 0) {
 					throw new SqlExpressionBuildingException(String.format("@JoinTable中inverseJoinColumns期望至少一个@JoinColumn值。类%s的属性%s。", refEntityClass.getName(), field.getName()));
 				}
 				
-				return buildManyToManyReference(attr, joinTableName, inverseEntity, joinColumns, inverseJoinColumns, null);
+				return buildManyToManyReference(attr, joinTableAnno, inverseEntity, null);
 			}
 			
 			log.warn(String.format("类%s的属性%s中未找到JoinTable声明", ownerEntity.getName(), attr.getName()));
@@ -647,9 +640,11 @@ public class EntityBuilder {
 		return ref;
 	}
 	
-	private ManyToManyReference buildManyToManyReference(Attribute attr, String joinTableName, Entity inverseEntity, JoinColumn[] joinColumns, JoinColumn[] inverseJoinColumns, Attribute inverseMappedByAttr) {
-		ManyToManyReference ref = new ManyToManyReference(attr.getName(), joinTableName, inverseEntity.getTableName(), inverseEntity.getCatalog(), inverseEntity.getSchema());
-		for(JoinColumn joinColumn : joinColumns) {
+	private ManyToManyReference buildManyToManyReference(Attribute attr, javax.persistence.JoinTable joinTableAnno, Entity inverseEntity, Attribute inverseMappedByAttr) {
+		ManyToManyReference ref = new ManyToManyReference(attr.getName(), joinTableAnno.name(), inverseEntity.getTableName(), inverseEntity.getCatalog(), inverseEntity.getSchema());
+		ref.setCatalog(joinTableAnno.catalog());
+		ref.setSchema(joinTableAnno.schema());
+		for(JoinColumn joinColumn : joinTableAnno.joinColumns()) {
 			if(inverseMappedByAttr != null) {
 				String name = StringUtils.defaultIfBlank(joinColumn.name(), inverseMappedByAttr.getColumnName());
 				String inverseName = StringUtils.defaultIfBlank(joinColumn.referencedColumnName(), name);
@@ -661,7 +656,7 @@ public class EntityBuilder {
 			}
 		}
 		
-		for(JoinColumn joinColumn : inverseJoinColumns) {
+		for(JoinColumn joinColumn : joinTableAnno.inverseJoinColumns()) {
 			if(inverseMappedByAttr != null) {
 				String name = StringUtils.defaultIfBlank(joinColumn.name(), inverseMappedByAttr.getColumnName());
 				String inverseName = StringUtils.defaultIfBlank(joinColumn.referencedColumnName(), name);

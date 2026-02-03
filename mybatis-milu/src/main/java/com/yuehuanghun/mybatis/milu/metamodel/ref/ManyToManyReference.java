@@ -33,6 +33,10 @@ public class ManyToManyReference implements Reference {
 	
 	private String inverseSchema;
 	
+	private String catalog;
+	
+	private String schema;
+	
 	private List<JoinCondition> joinConditionList = new ArrayList<>(3);
 	
 	private List<JoinCondition> inverseJoinConditionList = new ArrayList<>(3);
