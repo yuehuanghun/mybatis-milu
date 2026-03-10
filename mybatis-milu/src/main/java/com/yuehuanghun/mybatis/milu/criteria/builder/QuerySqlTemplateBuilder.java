@@ -249,17 +249,21 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 			
 			selectEntityAttrMap.forEach((entityAttrName, attributes) -> {
 				if(StringUtils.isBlank(entityAttrName)) {
-					attributes.forEach(attribute -> {
-						ResultMapping resultMapping = assistant.buildResultMapping(attribute.getOwner().getJavaType(), attribute.getName(), attribute.getColumnName(), attribute.getJavaType(), attribute.getJdbcType(), null, null, null, null, attribute.getTypeHandler(), attribute.isId() ? ID_FLAG_LIST : null);
-						resultMappings.add(resultMapping);
+					entity.getAttributes().forEach(attribute -> {
+						if(attribute.isSelectable()) {
+							ResultMapping resultMapping = assistant.buildResultMapping(attribute.getOwner().getJavaType(), attribute.getName(), attribute.getColumnName(), attribute.getJavaType(), attribute.getJdbcType(), null, null, null, null, attribute.getTypeHandler(), attribute.isId() ? ID_FLAG_LIST : null);
+							resultMappings.add(resultMapping);
+						}
 					});
 				} else {
 					String tableAlias = tableAliasDispacher.dispach(Segment.ATTR_ + entityAttrName);
 					
 					List<ResultMapping> refResultMappings = new ArrayList<>();
-					attributes.forEach(attribute -> {
-						ResultMapping resultMapping = assistant.buildResultMapping(attribute.getOwner().getJavaType(), attribute.getName(), buildColumnAlias(tableAlias, attribute.getName()), attribute.getJavaType(), attribute.getJdbcType(), null, null, null, null, attribute.getTypeHandler(), attribute.isId() ? ID_FLAG_LIST : null);
-						refResultMappings.add(resultMapping);
+					attributes.get(0).getOwner().getAttributes().forEach(attribute -> {
+						if(attribute.isSelectable()) {
+							ResultMapping resultMapping = assistant.buildResultMapping(attribute.getOwner().getJavaType(), attribute.getName(), buildColumnAlias(tableAlias, attribute.getName()), attribute.getJavaType(), attribute.getJdbcType(), null, null, null, null, attribute.getTypeHandler(), attribute.isId() ? ID_FLAG_LIST : null);
+							refResultMappings.add(resultMapping);
+						}
 					});
 					
 					String resultMapId = entity.getJavaType().getName() + "#" + entityAttrName + "$" + (refResultMappings.hashCode() + 31 * predicate.hashCode());
