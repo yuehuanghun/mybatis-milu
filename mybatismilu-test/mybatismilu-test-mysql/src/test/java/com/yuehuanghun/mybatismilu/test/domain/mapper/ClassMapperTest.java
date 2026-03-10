@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.yuehuanghun.AppTest;
+import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
 import com.yuehuanghun.mybatis.milu.annotation.Mode;
 import com.yuehuanghun.mybatis.milu.criteria.Conditions;
 import com.yuehuanghun.mybatis.milu.criteria.Exists;
@@ -204,7 +204,7 @@ public class ClassMapperTest {
 		
 		result = classMapper.findByLambdaCriteria(predicate -> predicate.eq(Classs::getName, "").order(Direction.ASC, Classs::getAddTime, Classs::getName));
 		
-		assertTrue(result.size() == 2);
+		assertTrue(result.size() == 3);
 		
 		result = classMapper.findByLambdaCriteria(predicate -> predicate.conditionMode(Mode.NOT_NULL).eq(Classs::getName, "").order(Direction.ASC, Classs::getAddTime, Classs::getName));
 		
@@ -257,7 +257,7 @@ public class ClassMapperTest {
 		assertTrue(result2.get(0) == 1);
 		
 		result2 = classMapper.findByLambdaCriteria(p -> p.select(Classs::getId), Long.class);
-		assertEquals(result2.size(), 2);
+		assertEquals(result2.size(), 3);
 		assertNotNull(result2.get(0));
 		assertNotNull(result2.get(1));
 	}
@@ -436,7 +436,7 @@ public class ClassMapperTest {
 		assertEquals(classList.size(), 2);
 		
 		classList = classMapper.findByCriteria(p -> p.undeleted());
-		assertEquals(classList.size(), 0);
+		assertEquals(classList.size(), 1);
 		
 		classList = classMapper.findByCriteria(p -> p.eq("name", "一年级").deleted());
 		assertEquals(classList.size(), 1);
@@ -534,7 +534,7 @@ public class ClassMapperTest {
 				ep.eq("name", "张三");
 			}));
 		});
-		assertEquals(list.size(), 1);
+		assertEquals(list.size(), 2);
 	}
 	
 	@Test
@@ -554,5 +554,15 @@ public class ClassMapperTest {
 		hashCode2 = predicate2.hashCode();
 		
 		assertEquals(predicate1, predicate2);
+	}
+	
+	@Test
+	public void testClassLeftJoin() {
+		List<Classs> list = classMapper.findByLambdaCriteria(p -> {
+			p.selects("*,studentListId,studentListId,studentListAge").joinMode(JoinMode.LEFT_JOIN).eq(Classs::getId, 10L);
+		});
+		
+		assertEquals(list.size(), 1);
+		assertEquals(list.get(0).getStudentList().size(), 0);
 	}
 }
