@@ -56,7 +56,7 @@ public class GenericUpdatePatchByCriteriaProviderSql implements GenericProviderS
 			predicate = Predicates.predicate();
 			((Consumer<Predicate>)predicateObj).accept(predicate);
 		}
-		predicate.end();
+		predicate.end(context);
 		
 		Map<String, Object> queryParams = new HashMap<>();
 		predicate.renderParams(context, queryParams, 0);

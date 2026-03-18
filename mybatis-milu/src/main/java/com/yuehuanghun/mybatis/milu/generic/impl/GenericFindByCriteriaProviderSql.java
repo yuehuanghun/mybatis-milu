@@ -56,7 +56,7 @@ public class GenericFindByCriteriaProviderSql implements GenericProviderSql {
 		} else {
 			predicate = (QueryPredicate) criteria;
 		}
-		predicate.end();
+		predicate.end(context);
 
 		if(paramMap.containsKey(Constants.RESULT_TYPE)) { //动态resultType
 			ResultMapHelper.setResultType((Class<?>) paramMap.remove(Constants.RESULT_TYPE));

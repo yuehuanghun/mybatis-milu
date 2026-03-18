@@ -74,7 +74,7 @@ public class GenericFindByCriteriaUnionProviderSql implements GenericProviderSql
 			if(selectAttrNames != null && selectAttrNames.length > 0) {
 				predicate.select(selectAttrNames);
 			}
-			predicate.end();
+			predicate.end(context);
 			predicates.add(predicate);
 		}
 		
