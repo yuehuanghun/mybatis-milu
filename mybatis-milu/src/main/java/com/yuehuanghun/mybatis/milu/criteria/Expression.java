@@ -35,7 +35,7 @@ public interface Expression {
 		return SqlBuildingHelper.columnHolder(attrName);
 	}
 	
-	default void end() {
+	default void end(GenericProviderContext context) {
 		
 	}
 }

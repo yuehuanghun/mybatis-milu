@@ -67,6 +67,10 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 	}
 
 	public BuildResult build() {
+		StringBuilder expressionBuilder = new StringBuilder(256);
+		Set<String> properties = new HashSet<>();
+		int paramIndex = predicate.renderSqlTemplate(context, expressionBuilder, properties, this.paramStartIndex);
+
 		Set<Object> selects = ALL_ATTRS;
 		Set<String> exselectAttrs = Collections.emptySet();
 		Map<String, Join> joinModeMap = Collections.emptyMap();
@@ -79,15 +83,6 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 			joinModeMap = ((QueryPredicateImpl) predicate).getJoinModeMap();
 		}
 
-		Set<String> selectAttrs = selects.stream().filter(select -> (select instanceof String)).map(select -> (String)select).collect(Collectors.toSet());
-		List<Select> selectExps = selects.stream().filter(select -> (select instanceof Select)).map(select -> (Select)select).collect(Collectors.toList());
-		Map<String, List<Attribute>> selectEntityAttrMap = analyseAttrs(selectAttrs);
-		Map<String, List<Attribute>> exselectEntityAttrMap = analyseAttrs(exselectAttrs);
-
-		StringBuilder expressionBuilder = new StringBuilder(256);
-		Set<String> properties = new HashSet<>();
-		int paramIndex = predicate.renderSqlTemplate(context, expressionBuilder, properties, this.paramStartIndex);
-		
 		for(Join join : joinModeMap.values()) {
 			if(join.getJoinPredicate() != null) {
 				StringBuilder joinCondition = new StringBuilder();
@@ -95,6 +90,11 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 				join.setPredicateExpression(joinCondition.toString());
 			}
 		}
+
+		Set<String> selectAttrs = selects.stream().filter(select -> (select instanceof String)).map(select -> (String)select).collect(Collectors.toSet());
+		List<Select> selectExps = selects.stream().filter(select -> (select instanceof Select)).map(select -> (Select)select).collect(Collectors.toList());
+		Map<String, List<Attribute>> selectEntityAttrMap = analyseAttrs(selectAttrs);
+		Map<String, List<Attribute>> exselectEntityAttrMap = analyseAttrs(exselectAttrs);
 		
 		if(!selectEntityAttrMap.isEmpty()) {
 			selectEntityAttrMap.forEach((attrName, attributes) -> {

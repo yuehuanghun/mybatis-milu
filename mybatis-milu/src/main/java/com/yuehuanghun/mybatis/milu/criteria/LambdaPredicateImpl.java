@@ -631,7 +631,7 @@ public class LambdaPredicateImpl<T> implements LambdaPredicate<T> {
 	}
 
 	@Override
-	public void end() {
-		getDelegate().end();
+	public void end(GenericProviderContext context) {
+		getDelegate().end(context);
 	}
 }

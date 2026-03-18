@@ -234,7 +234,25 @@ public class TeacherMapperTest {
 	
 	@Test
 	public void testMaxByLambdaCriteriaExists() {
-		Integer maxAge = teacherMapper.maxByLambdaCriteria(Teacher::getAge, p -> p.exists(Exists.of(ClassTeacherRelMaper.class).join("teacherId", "id").criteria(ep -> ep.eq("classesName", "一年级"))));
+//		Integer maxAge = teacherMapper.maxByLambdaCriteria(Teacher::getAge, p -> p.exists(Exists.of(ClassTeacherRelMaper.class).join("teacherId", "id").criteria(ep -> ep.eq("classesName", "一年级"))));
+//		assertEquals(maxAge.intValue(), 31);
+		
+		Integer maxAge = teacherMapper.maxByLambdaCriteria(Teacher::getAge, p -> {
+			p.and(ap -> {
+				ap.exists(Exists.of(ClassTeacherRelMaper.class).join("teacherId", "id").criteria(ep -> ep.eq("classesName", "一年级")));
+				ap.exists(Exists.of(ClassTeacherRelMaper.class).join("teacherId", "id").criteria(ep -> ep.eq("classesName", "二年级")));
+			});
+			
+		});
+		assertEquals(maxAge.intValue(), 31);
+		
+		maxAge = teacherMapper.maxByLambdaCriteria(Teacher::getAge, p -> {
+			p.and(ap -> {
+				ap.exists(Exists.of(ClassTeacherRelMaper.class).join("teacherId", "id").criteria(ep -> ep.eq("classesName", "一年级")));
+				ap.exists(Exists.of(ClassTeacherRelMaper.class).join("teacherId", "id").criteria(ep -> ep.eq("classesName", "二年级")));
+			});
+			
+		});
 		assertEquals(maxAge.intValue(), 31);
 	}
 	

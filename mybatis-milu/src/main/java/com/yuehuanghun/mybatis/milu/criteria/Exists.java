@@ -29,6 +29,7 @@ import com.yuehuanghun.mybatis.milu.criteria.builder.QuerySqlTemplateBuilder.Bui
 import com.yuehuanghun.mybatis.milu.criteria.lambda.LambdaReflections;
 import com.yuehuanghun.mybatis.milu.criteria.lambda.SerializableFunction;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
+import com.yuehuanghun.mybatis.milu.metamodel.Entity.IdAttribute;
 import com.yuehuanghun.mybatis.milu.tool.Assert;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
@@ -147,13 +148,21 @@ public class Exists<Entity> implements Condition {
 	}
 
 	@Override
-	public void end() {
+	public void end(GenericProviderContext context) {
 		if(this.predicate == null) {
 			this.predicate = new QueryPredicateImpl();
 		}
 		joins.forEach((key, value) -> {
 			predicate.existsJoin(key, value);
 		});
+
+		
+		if(predicate.getSelects().isEmpty() && predicate.getExselectAttrs().isEmpty()) {
+			IdAttribute id = context.getEntity().getId();
+			if(id != null) { // exists子查询默认只查主键
+				predicate.select(id.getName());
+			}
+		}
 	}
 	
 	@Override

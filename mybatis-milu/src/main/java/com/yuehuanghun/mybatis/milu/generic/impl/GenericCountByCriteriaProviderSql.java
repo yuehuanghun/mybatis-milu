@@ -31,7 +31,7 @@ public class GenericCountByCriteriaProviderSql implements GenericProviderSql {
 		} else {
 			predicate = (Predicate) criteria;
 		}
-		predicate.end();
+		predicate.end(context);
 
 		Map<String, Object> queryParams = new HashMap<>();
 		predicate.renderParams(context, queryParams, 0);
