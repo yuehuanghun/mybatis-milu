@@ -52,7 +52,7 @@ public class PredicateImpl implements Predicate {
 	@Accessors(chain = true)
 	private int depth;
 	
-	private boolean hasExists;
+	private boolean end;
 	
 	public PredicateImpl() {
 		logic = Logic.AND;
@@ -81,9 +81,6 @@ public class PredicateImpl implements Predicate {
 			if(predicate.isEmpty()) {
 				return this;
 			}
-			if(predicate.hasExistsCondition()) {
-				this.hasExists = true;
-			}
 			conditionList.add(predicate.setDepth(getDepth() + 1));
 		} else if(conditions.length > 0) {
 			for(int i = 0; i < conditions.length; i++) {
@@ -101,9 +98,6 @@ public class PredicateImpl implements Predicate {
 		Predicate p = new PredicateImpl(Logic.AND).setDepth(getDepth() + 1);
 		predicate.accept(p);
 		if(!p.isEmpty()) {
-			if(p.hasExistsCondition()) {
-				this.hasExists = true;
-			}
 			conditionList.add(p);
 		}
 		return this;
@@ -115,9 +109,6 @@ public class PredicateImpl implements Predicate {
 			PredicateImpl predicate = (PredicateImpl)conditions[0];
 			if(predicate.isEmpty()) {
 				return this;
-			}
-			if(predicate.hasExistsCondition()) {
-				this.hasExists = true;
 			}
 			conditionList.add(new PredicateImpl(Logic.OR, conditions).setDepth(getDepth() + 1));
 		} else if(conditions.length > 0) {
@@ -136,9 +127,6 @@ public class PredicateImpl implements Predicate {
 		Predicate p = new PredicateImpl(Logic.OR).setDepth(getDepth() + 1);
 		predicate.accept(p);
 		if(!p.isEmpty()) {
-			if(p.hasExistsCondition()) {
-				this.hasExists = true;
-			}
 			conditionList.add(p);
 		}
 		return this;
@@ -150,9 +138,6 @@ public class PredicateImpl implements Predicate {
 			PredicateImpl predicate = (PredicateImpl)conditions[0];
 			if(predicate.isEmpty()) {
 				return this;
-			}
-			if(predicate.hasExistsCondition()) {
-				this.hasExists = true;
 			}
 			conditionList.add(new PredicateImpl(Logic.NOT, conditions).setDepth(getDepth() + 1));
 		} else if(conditions.length > 0) {
@@ -171,9 +156,6 @@ public class PredicateImpl implements Predicate {
 		Predicate p = new PredicateImpl(Logic.NOT).setDepth(getDepth() + 1);
 		predicate.accept(p);
 		if(!p.isEmpty()) {
-			if(p.hasExistsCondition()) {
-				this.hasExists = true;
-			}
 			conditionList.add(p);
 		}
 		return this;
@@ -530,10 +512,14 @@ public class PredicateImpl implements Predicate {
 	}
 
 	@Override
-	public void end() {
-		for(Condition condition : conditionList) {
-			condition.end();
+	public void end(GenericProviderContext context) {
+		if(end) {
+			return;
 		}
+		for(Condition condition : conditionList) {
+			condition.end(context);
+		}
+		end = true;
 	}
 
 	@Override
@@ -598,7 +584,6 @@ public class PredicateImpl implements Predicate {
 	@Override
 	public Predicate exists(Exists<?> exists) {
 		this.and(exists);
-		this.hasExists = true;
 		return this;
 	}
 
@@ -606,12 +591,33 @@ public class PredicateImpl implements Predicate {
 	public Predicate notExists(Exists<?> exists) {
 		exists.setNot(Boolean.TRUE);
 		this.and(exists);
-		this.hasExists = true;
 		return this;
 	}
 
 	@Override
 	public boolean hasExistsCondition() {
-		return this.hasExists;
+		return this.hashExist(this.conditionList);
+	}
+	
+	private boolean hashExist(List<Condition> conditions) {
+		for(Condition cond : conditions) {
+			if(cond instanceof Exists) {
+				return true;
+			}
+		}
+		
+		for(Condition cond : conditions) {
+			if((cond instanceof PredicateImpl)) {
+				if(hashExist(((PredicateImpl) cond).conditionList)) {
+					return true;
+				}
+			} else if((cond instanceof LambdaPredicateImpl)) {
+				if(hashExist(((LambdaPredicateImpl<?>) cond).getDelegate().conditionList)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 }
