@@ -44,11 +44,7 @@ public class GenericStatisticByCriteriaProviderSql implements GenericProviderSql
 	@Override
 	public String provideSql(GenericProviderContext context, Object params) {
 		Map paramMap = ((Map)params);
-		Object criteria = paramMap.get(Constants.CRITERIA);		
-		
-		if(paramMap.containsKey(Constants.RESULT_TYPE)) { //动态resultType
-			ResultMapHelper.setResultType((Class<?>) paramMap.remove(Constants.RESULT_TYPE));
-		}
+		Object criteria = paramMap.get(Constants.CRITERIA);	
 		
 		StatisticPredicate predicate;
 		
@@ -58,7 +54,11 @@ public class GenericStatisticByCriteriaProviderSql implements GenericProviderSql
 		} else {
 			predicate = (StatisticPredicate)criteria;
 		}
-		predicate.end(context);
+		predicate.end(context);	
+		
+		if(paramMap.containsKey(Constants.RESULT_TYPE)) { //动态resultType
+			ResultMapHelper.setResultType((Class<?>) paramMap.remove(Constants.RESULT_TYPE));
+		}
 		
 		Map<String, Object> queryParams = new HashMap<>();
 		predicate.renderParams(context, queryParams, 0);		
