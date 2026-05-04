@@ -24,9 +24,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.Entity;
 
+import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.session.Configuration;
+
+import com.yuehuanghun.mybatis.milu.tool.cache.SynchronizedLruCache;
 
 /**
  * 目前针对通用的统计mapper方法中动态返回类型的处理<br>
@@ -36,16 +39,23 @@ import org.apache.ibatis.session.Configuration;
  */
 public class ResultMapHelper {
 
-	private final static Map<String, Map<Class<?>, ResultMap>> DYNAMIC_RESULT_MAP = new ConcurrentHashMap<>();
+	private final static SynchronizedLruCache DYNAMIC_RESULT_MAP_CACHE = new SynchronizedLruCache();
+	private final static Map<String, Map<Class<?>, ResultMap>> CLASS_RESULT_MAP = new ConcurrentHashMap<>();
 	
 	private final static ThreadLocal<Class<?>> DYNAMIC_RETURN_TYPE = new ThreadLocal<>(); 
 	
 	private final static ThreadLocal<List<ResultMapping>> DYNAMIC_RESULT_MAPPINGS = new ThreadLocal<>(); 
 	
 	public static ResultMap replaceResultMap(ResultMap resultMap) {
-		if(DYNAMIC_RESULT_MAPPINGS.get() != null) { //主表与关系表同时查询时的处理
-			Configuration configuration = getConfiguration(resultMap);
-			return new ResultMap.Builder(configuration, resultMap.getId(), resultMap.getType(), DYNAMIC_RESULT_MAPPINGS.get(), true).build();
+		List<ResultMapping> dynResultMappings = DYNAMIC_RESULT_MAPPINGS.get();
+		if(dynResultMappings != null) { //主表与关系表同时查询时的处理
+			CacheKey cacheKey = new CacheKey();
+			cacheKey.update(resultMap.getId());
+			cacheKey.update(dynResultMappings);
+			return DYNAMIC_RESULT_MAP_CACHE.computeIfAbsent(cacheKey, key -> {
+				Configuration configuration = getConfiguration(resultMap);
+				return new ResultMap.Builder(configuration, resultMap.getId(), resultMap.getType(), dynResultMappings, false).build();
+			});
 		}
 		
 		Class<?> returnType = DYNAMIC_RETURN_TYPE.get();
@@ -55,13 +65,13 @@ public class ResultMapHelper {
 		
 		String resultMapId = resultMap.getId();
 		
-		Map<Class<?>, ResultMap> map = DYNAMIC_RESULT_MAP.get(resultMapId);
+		Map<Class<?>, ResultMap> map = CLASS_RESULT_MAP.get(resultMapId);
 		if(map == null) {
 			synchronized (resultMapId) {
-				map = DYNAMIC_RESULT_MAP.get(resultMapId);
+				map = CLASS_RESULT_MAP.get(resultMapId);
 				if(map == null) {
 					map = new ConcurrentHashMap<>();
-					DYNAMIC_RESULT_MAP.put(resultMapId, map);
+					CLASS_RESULT_MAP.put(resultMapId, map);
 				}
 			}
 		}

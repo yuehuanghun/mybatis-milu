@@ -16,7 +16,9 @@
 
 package com.yuehuanghun.mybatis.milu.tool.cache;
 
+import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Function;
 
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.decorators.LruCache;
@@ -28,6 +30,11 @@ public class SynchronizedLruCache implements Cache {
 	
 	public SynchronizedLruCache() {
 		delegate = new LruCache(new PerpetualCache(UUID.randomUUID().toString()));
+	}
+	
+	public SynchronizedLruCache(int size) {
+		this();
+		delegate.setSize(size);
 	}
 	
 	public SynchronizedLruCache(String id) {
@@ -54,6 +61,21 @@ public class SynchronizedLruCache implements Cache {
 	public Object removeObject(Object key) {
 		return delegate.removeObject(key);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T computeIfAbsent(Object key,
+            Function<Object, T> mappingFunction) {
+        Objects.requireNonNull(mappingFunction);
+        Object oldValue;
+        if ((oldValue = getObject(key)) == null) {
+            Object newValue = mappingFunction.apply(key);
+            if (newValue != null) {
+            	putObject(key, newValue);
+            }
+            return (T)newValue;
+        }
+        return (T)oldValue;
+    }
 
 	@Override
 	public void clear() {
