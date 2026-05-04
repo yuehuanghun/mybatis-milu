@@ -59,6 +59,9 @@ import lombok.ToString;
 @Setter
 public class Entity {
 	
+	/** 实体唯一标识 */
+	private String entityId;
+	
 	private String name;
 	
 	private String tableName;
@@ -182,11 +185,13 @@ public class Entity {
 		private boolean insertable = true;
 		
 		private boolean selectable = true;
-		//目前没有什么用
+		// 目前没有什么用
 		private boolean optional;
-		//关联属性，外键属性
+		// 是否关联属性，外键属性
 		private boolean reference;
-		//实体类，仅reference为true有值，表示外键的实体类
+		// 外键实体标识，仅reference为true有值
+		private String entityId;
+		// 实体类，仅reference为true有值，表示外键的实体类
 		private Class<?> entityClass;
 		
 		private MatchType exampleMatchType = MatchType.EQUAL;

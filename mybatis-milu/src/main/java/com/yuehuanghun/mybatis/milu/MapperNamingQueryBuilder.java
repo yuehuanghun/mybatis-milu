@@ -118,9 +118,8 @@ public class MapperNamingQueryBuilder {
 		Entity entity = configuration.getMapperEntity((Class<? extends BaseMapper>) type);
 		if(entity == null) {
 			entity = EntityBuilder.instance(getGenericEntity(type), configuration).build();
+			configuration.addMapperEntityMapping((Class<? extends BaseMapper>) type, entity);
 		}
-		
-		configuration.addMapperEntityMapping((Class<? extends BaseMapper>) type, configuration.getMetaModel().getEntity(entity.getJavaType()));
 		
 		for (Method method : type.getDeclaredMethods()) {
 			if (!method.isAnnotationPresent(NamingQuery.class)) {

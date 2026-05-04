@@ -275,7 +275,7 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 							javaType = ((PluralAttribute) attribute).getElementClass();
 						}
 						try {
-							configuration.addResultMap(new ResultMap.Builder(configuration, resultMapId, javaType, refResultMappings, true).build());
+							configuration.addResultMap(new ResultMap.Builder(configuration, resultMapId, javaType, refResultMappings, false).build());
 						} catch (IllegalArgumentException e) {
 							// 并发下的重复添加引起的异常，忽略
 						}
@@ -326,7 +326,7 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 				if(!attribute.isReference()) {
 					throw new SqlExpressionBuildingException(String.format("表达式%s中%s不是关联（外键）属性", attr, refAttr));
 				}
-				Entity refEntity = configuration.getMetaModel().getEntity(attribute.getEntityClass());
+				Entity refEntity = configuration.getMetaModel().getEntity(attribute.getEntityId());
 				if(refEntity == null) {
 					throw new SqlExpressionBuildingException(String.format("关联（外键）属性%s无对应实体类信息", attribute.getEntityClass().getName()));
 				}
@@ -363,7 +363,7 @@ public class QuerySqlTemplateBuilder extends SqlTemplateBuilder {
 				}
 				
 				Attribute refAttribute = entity.getAttribute(possibleProperty.getKey());
-				Entity refAttrEntity = configuration.getMetaModel().getEntity(refAttribute.getEntityClass());
+				Entity refAttrEntity = configuration.getMetaModel().getEntity(refAttribute.getEntityId());
 				if(!refAttrEntity.hasAttribute(possibleProperty.getValue())) {
 					continue;
 				}

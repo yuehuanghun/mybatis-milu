@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MetaModel {
 	private final Map<Class<?>, Entity> entityMap = new ConcurrentHashMap<>();
+	private final Map<String, Entity> idEntityMap = new ConcurrentHashMap<>();
 	private final List<Entity> entities = new ArrayList<>();
 	
 	public boolean hasEntity(Class<?> entityClass) {
@@ -38,15 +39,29 @@ public class MetaModel {
 		return entityMap.get(entityClass);
 	}
 	
+	public Entity getEntity(String entityId) {
+		return idEntityMap.get(entityId);
+	}
+	
 	public void addEntity(Entity entity) {
 		if(hasEntity(entity)) {
 			return;
 		}
-		entityMap.put(entity.getJavaType(), entity);
+		if(!Map.class.isAssignableFrom(entity.getJavaType())) {
+			entityMap.put(entity.getJavaType(), entity);
+		}
+		idEntityMap.put(entity.getEntityId(), entity);
 		entities.add(entity);
 	}
 	
 	public Collection<Entity> getEntities(){
 		return Collections.unmodifiableCollection(entities);
+	}
+	
+	public void removeEntity(String entityId) {
+		Entity removed = idEntityMap.remove(entityId);
+		if(removed != null && !Map.class.isAssignableFrom(removed.getJavaType())) {
+			entityMap.remove(removed.getJavaType());
+		}
 	}
 }

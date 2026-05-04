@@ -83,146 +83,134 @@ public class SqlBuildingHelper {
 			Iterator<String> propIt = possiblePropertyMap.keySet().iterator();
 			while(propIt.hasNext()) {
 				String prop = propIt.next();
-				if(entity.hasAttribute(prop)){
-					Attribute attribute = entity.getAttribute(prop);
-					
-					if(attribute.isAssociation() || attribute.isCollection()) {
-						Class<?> refClass;
-						if(attribute.isReference()) {
-							refClass = attribute.getEntityClass();
-						} else {
-							if(PluralAttribute.class.isInstance(attribute)) {
-								refClass = ((PluralAttribute) attribute).getElementClass();
-							} else {
-								refClass = attribute.getJavaType();
+				Attribute attribute = entity.getAttribute(prop);
+				if(attribute == null || !attribute.isReference()) {
+					continue;
+				}
+				
+				Entity refEntity = configuration.getMetaModel().getEntity(attribute.getEntityId());
+				
+				if(!refEntity.hasAttribute(possiblePropertyMap.get(prop))) {
+					continue;
+				}
+				
+				Reference reference = entity.getReference(prop);
+
+				String inverseTableAlias = tableAliasDispacher.dispach(Segment.ATTR_ + reference.getAttributeName());
+				
+				String joinExpression;
+				String joinPredicateExpression;
+				if(joinMap.containsKey(prop)) {
+					joinExpression = joinMap.get(prop).getJoinMode().getExpression();
+					joinPredicateExpression = joinMap.get(prop).getPredicateExpression();
+				} else if(joinMap.containsKey(Constants.ANY_REF_PROPERTY)) {
+					joinExpression = joinMap.get(Constants.ANY_REF_PROPERTY).getJoinMode().getExpression();
+					joinPredicateExpression = null;
+				} else {
+					joinExpression = Segment.INNER_JOIN_B;
+					joinPredicateExpression = null;
+				}
+				
+				if(reference instanceof ManyToManyReference) {
+					joinExpressMap.computeIfAbsent(prop, key -> {
+						ManyToManyReference m2mRef = (ManyToManyReference) reference;
+						
+						StringBuilder joinExpressBuilder = new StringBuilder();
+						String joinTableAlias = tableAliasDispacher.dispach(Segment.TABLE_ + m2mRef.getJoinTableName());
+						
+						joinExpressBuilder.append(joinExpression);
+						appendSchema(joinExpressBuilder, m2mRef.getCatalog(), m2mRef.getSchema(), configuration);
+						appendIdentifier(joinExpressBuilder, m2mRef.getJoinTableName(), configuration);
+						joinExpressBuilder.append(Segment.SPACE).append(joinTableAlias)
+						    .append(Segment.ON_BRACKET);
+
+						//多个join条件
+						String joinCond = m2mRef.getJoinConditionList().stream().map(cond -> {									
+							StringBuilder temp =  new StringBuilder(joinTableAlias).append(Segment.DOT);
+							appendIdentifier(temp, cond.getColumnName(), configuration);
+							temp.append(Segment.EQUALS_B).append(mainTableAlias).append(Segment.DOT);
+							appendIdentifier(temp, cond.getInverseColumnName(), configuration);
+							return temp.toString();
+						}).collect(Collectors.joining(Segment.AND_B));
+						
+						joinExpressBuilder.append(joinCond);
+						joinExpressBuilder.append(Segment.RIGHT_BRACKET);
+						
+						joinExpressBuilder.append(joinExpression);
+						appendSchema(joinExpressBuilder, reference.getInverseCatalog(), reference.getInverseSchema(), configuration);
+						appendIdentifier(joinExpressBuilder, reference.getInverseTableName(), configuration);
+						joinExpressBuilder.append(Segment.SPACE).append(inverseTableAlias)
+					        .append(Segment.ON_BRACKET);
+										
+						//多个join条件
+						joinCond = m2mRef.getInverseJoinConditionList().stream().map(cond -> {									
+							StringBuilder temp =  new StringBuilder(joinTableAlias).append(Segment.DOT);
+							appendIdentifier(temp, cond.getColumnName(), configuration);
+							temp.append(Segment.EQUALS_B).append(inverseTableAlias).append(Segment.DOT);
+							appendIdentifier(temp, cond.getInverseColumnName(), configuration);
+							return temp.toString();
+						}).collect(Collectors.joining(Segment.AND_B));
+						
+						joinExpressBuilder.append(joinCond);
+						
+						if(StringUtils.isNotBlank(joinPredicateExpression)) { // 其它指定联结条件
+							joinExpressBuilder.append(Segment.AND_B);
+							boolean hasOr = joinPredicateExpression.contains(Segment.OR_B); // 根据是否有OR条件决定是否需要括起"其它指定联结条件"
+							if(hasOr) {
+								joinExpressBuilder.append(Segment.LEFT_BRACKET);
+							}
+							joinExpressBuilder.append(joinPredicateExpression);
+							if(hasOr) {
+								joinExpressBuilder.append(Segment.RIGHT_BRACKET);
 							}
 						}
 						
-						Entity refEntity = configuration.getMetaModel().getEntity(refClass);
+						joinExpressBuilder.append(Segment.RIGHT_BRACKET);
+						return joinExpressBuilder.toString();
+					});
+				} else {
+					joinExpressMap.computeIfAbsent(prop, key -> {
+						MappedReference ref = (MappedReference) reference;
+						StringBuilder joinExpressBuilder = new StringBuilder();
+						joinExpressBuilder.append(joinExpression);
+						appendSchema(joinExpressBuilder, reference.getInverseCatalog(), reference.getInverseSchema(), configuration);
+						appendIdentifier(joinExpressBuilder, reference.getInverseTableName(), configuration);
+						joinExpressBuilder.append(Segment.SPACE).append(inverseTableAlias)
+						    .append(Segment.ON_BRACKET);
+					
+						//多个join条件
+						String joinCond = ref.getJoinConditionList().stream().map(cond -> {									
+							StringBuilder temp =  new StringBuilder(mainTableAlias).append(Segment.DOT);
+							appendIdentifier(temp, cond.getColumnName(), configuration);
+							temp.append(Segment.EQUALS_B).append(inverseTableAlias).append(Segment.DOT);
+							appendIdentifier(temp, cond.getInverseColumnName(), configuration);
+							return temp.toString();
+						}).collect(Collectors.joining(Segment.AND_B));
 						
-						if(!refEntity.hasAttribute(possiblePropertyMap.get(prop))) {
-							continue;
+						joinExpressBuilder.append(joinCond);
+						
+						if(StringUtils.isNotBlank(joinPredicateExpression)) { // 其它指定联结条件
+							joinExpressBuilder.append(Segment.AND_B);
+							boolean hasOr = joinPredicateExpression.contains(Segment.OR_B); // 根据是否有OR条件决定是否需要括起"其它指定联结条件"
+							if(hasOr) {
+								joinExpressBuilder.append(Segment.LEFT_BRACKET);
+							}
+							joinExpressBuilder.append(joinPredicateExpression);
+							if(hasOr) {
+								joinExpressBuilder.append(Segment.RIGHT_BRACKET);
+							}
 						}
 						
-						Reference reference = entity.getReference(prop);
-
-						String inverseTableAlias = tableAliasDispacher.dispach(Segment.ATTR_ + reference.getAttributeName());
-						
-						String joinExpression;
-						String joinPredicateExpression;
-						if(joinMap.containsKey(prop)) {
-							joinExpression = joinMap.get(prop).getJoinMode().getExpression();
-							joinPredicateExpression = joinMap.get(prop).getPredicateExpression();
-						} else if(joinMap.containsKey(Constants.ANY_REF_PROPERTY)) {
-							joinExpression = joinMap.get(Constants.ANY_REF_PROPERTY).getJoinMode().getExpression();
-							joinPredicateExpression = null;
-						} else {
-							joinExpression = Segment.INNER_JOIN_B;
-							joinPredicateExpression = null;
-						}
-						
-						if(reference instanceof ManyToManyReference) {
-							joinExpressMap.computeIfAbsent(prop, key -> {
-								ManyToManyReference m2mRef = (ManyToManyReference) reference;
-								
-								StringBuilder joinExpressBuilder = new StringBuilder();
-								String joinTableAlias = tableAliasDispacher.dispach(Segment.TABLE_ + m2mRef.getJoinTableName());
-								
-								joinExpressBuilder.append(joinExpression);
-								appendSchema(joinExpressBuilder, m2mRef.getCatalog(), m2mRef.getSchema(), configuration);
-								appendIdentifier(joinExpressBuilder, m2mRef.getJoinTableName(), configuration);
-								joinExpressBuilder.append(Segment.SPACE).append(joinTableAlias)
-								    .append(Segment.ON_BRACKET);
-
-								//多个join条件
-								String joinCond = m2mRef.getJoinConditionList().stream().map(cond -> {									
-									StringBuilder temp =  new StringBuilder(joinTableAlias).append(Segment.DOT);
-									appendIdentifier(temp, cond.getColumnName(), configuration);
-									temp.append(Segment.EQUALS_B).append(mainTableAlias).append(Segment.DOT);
-									appendIdentifier(temp, cond.getInverseColumnName(), configuration);
-									return temp.toString();
-								}).collect(Collectors.joining(Segment.AND_B));
-								
-								joinExpressBuilder.append(joinCond);
-								joinExpressBuilder.append(Segment.RIGHT_BRACKET);
-								
-								joinExpressBuilder.append(joinExpression);
-								appendSchema(joinExpressBuilder, reference.getInverseCatalog(), reference.getInverseSchema(), configuration);
-								appendIdentifier(joinExpressBuilder, reference.getInverseTableName(), configuration);
-								joinExpressBuilder.append(Segment.SPACE).append(inverseTableAlias)
-							        .append(Segment.ON_BRACKET);
-												
-								//多个join条件
-								joinCond = m2mRef.getInverseJoinConditionList().stream().map(cond -> {									
-									StringBuilder temp =  new StringBuilder(joinTableAlias).append(Segment.DOT);
-									appendIdentifier(temp, cond.getColumnName(), configuration);
-									temp.append(Segment.EQUALS_B).append(inverseTableAlias).append(Segment.DOT);
-									appendIdentifier(temp, cond.getInverseColumnName(), configuration);
-									return temp.toString();
-								}).collect(Collectors.joining(Segment.AND_B));
-								
-								joinExpressBuilder.append(joinCond);
-								
-								if(StringUtils.isNotBlank(joinPredicateExpression)) { // 其它指定联结条件
-									joinExpressBuilder.append(Segment.AND_B);
-									boolean hasOr = joinPredicateExpression.contains(Segment.OR_B); // 根据是否有OR条件决定是否需要括起"其它指定联结条件"
-									if(hasOr) {
-										joinExpressBuilder.append(Segment.LEFT_BRACKET);
-									}
-									joinExpressBuilder.append(joinPredicateExpression);
-									if(hasOr) {
-										joinExpressBuilder.append(Segment.RIGHT_BRACKET);
-									}
-								}
-								
-								joinExpressBuilder.append(Segment.RIGHT_BRACKET);
-								return joinExpressBuilder.toString();
-							});
-						} else {
-							joinExpressMap.computeIfAbsent(prop, key -> {
-								MappedReference ref = (MappedReference) reference;
-								StringBuilder joinExpressBuilder = new StringBuilder();
-								joinExpressBuilder.append(joinExpression);
-								appendSchema(joinExpressBuilder, reference.getInverseCatalog(), reference.getInverseSchema(), configuration);
-								appendIdentifier(joinExpressBuilder, reference.getInverseTableName(), configuration);
-								joinExpressBuilder.append(Segment.SPACE).append(inverseTableAlias)
-								    .append(Segment.ON_BRACKET);
-							
-								//多个join条件
-								String joinCond = ref.getJoinConditionList().stream().map(cond -> {									
-									StringBuilder temp =  new StringBuilder(mainTableAlias).append(Segment.DOT);
-									appendIdentifier(temp, cond.getColumnName(), configuration);
-									temp.append(Segment.EQUALS_B).append(inverseTableAlias).append(Segment.DOT);
-									appendIdentifier(temp, cond.getInverseColumnName(), configuration);
-									return temp.toString();
-								}).collect(Collectors.joining(Segment.AND_B));
-								
-								joinExpressBuilder.append(joinCond);
-								
-								if(StringUtils.isNotBlank(joinPredicateExpression)) { // 其它指定联结条件
-									joinExpressBuilder.append(Segment.AND_B);
-									boolean hasOr = joinPredicateExpression.contains(Segment.OR_B); // 根据是否有OR条件决定是否需要括起"其它指定联结条件"
-									if(hasOr) {
-										joinExpressBuilder.append(Segment.LEFT_BRACKET);
-									}
-									joinExpressBuilder.append(joinPredicateExpression);
-									if(hasOr) {
-										joinExpressBuilder.append(Segment.RIGHT_BRACKET);
-									}
-								}
-								
-								joinExpressBuilder.append(Segment.RIGHT_BRACKET);
-								return joinExpressBuilder.toString();
-							});
-						}
-						
-						Attribute refAttr = refEntity.getAttribute(possiblePropertyMap.get(prop));
-						joinQueryColumnNap.put(property, inverseTableAlias + Segment.DOT + wrapIdentifier(refAttr.getColumnName(), configuration));
-
-						hasAttr = true;
-						break;
-					}
+						joinExpressBuilder.append(Segment.RIGHT_BRACKET);
+						return joinExpressBuilder.toString();
+					});
 				}
+				
+				Attribute refAttr = refEntity.getAttribute(possiblePropertyMap.get(prop));
+				joinQueryColumnNap.put(property, inverseTableAlias + Segment.DOT + wrapIdentifier(refAttr.getColumnName(), configuration));
+
+				hasAttr = true;
+				break;
 			}
 			if(!hasAttr) {
 				throw new SqlExpressionBuildingException(String.format("未知的查询属性：%s", property));

@@ -136,6 +136,16 @@ public class EntityBuilder {
 			EntityBuilder.instance(referenceEntityClass, configuration).build();
 		}
 		
+		for(Attribute attr : entity.getAttributes()) {
+			if(!attr.isReference()) {
+				continue;
+			}
+			Entity refEntity = configuration.getMetaModel().getEntity(attr.getEntityClass());
+			if(refEntity != null) {
+				attr.setEntityId(refEntity.getEntityId());
+			}
+		}
+		
 		setDefaultJdbcType(entity, configuration);
 		return entity;
 	}
@@ -144,6 +154,7 @@ public class EntityBuilder {
 		Entity entity = new Entity();
 		entity.setJavaType(entityClass);
 		entity.setName(entityClass.getSimpleName());
+		entity.setEntityId(entityClass.getName());
 		
 		if(entityClass.isAnnotationPresent(Table.class)) {
 			Table table = entityClass.getAnnotation(Table.class);

@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.ibatis.binding.MapperRegistry;
@@ -447,7 +448,7 @@ public class MiluConfiguration extends Configuration {
 	
 	/**
 	 * 动态添加实体类及自动生成其对应的Mapper类
-	 * @param entity 实体类
+	 * @param entity 实体类。请使用者确保实体类内数据的安全性
 	 * @return BaseMapper子类实例
 	 */
 	@SuppressWarnings("unchecked")
@@ -458,7 +459,11 @@ public class MiluConfiguration extends Configuration {
 				entity.setJavaType(Map.class); // 默认使用Map接收参数
 			}
 			
-			getMetaModel().addEntity(entity);
+			// 先卸载Mapper及实体
+			mapperEntityMap.entrySet().stream().filter(entry -> entry.getValue().getEntityId().equals(entity.getEntityId())).map(entry -> entry.getKey()).forEach(mapperClass -> {
+				dropDynamicAddMapper(mapperClass);
+			});
+			metaModel.addEntity(entity);
 			
 			String name = entity.getName();
 			if(StringUtils.isBlank(name)) {
@@ -481,6 +486,17 @@ public class MiluConfiguration extends Configuration {
 			this.addMapperEntityMapping(clazz, entity); // 提前映射
 			this.addMapper(clazz);
 			dynamicAddMappers.add(clazz);
+			
+			getMetaModel().getEntities().forEach(item -> {
+				item.getAttributes().forEach(attr -> {
+					if(attr.getOwner() == null && StringUtils.isNotBlank(attr.getEntityId())) {
+						attr.setOwner(getMetaModel().getEntity(attr.getEntityId()));
+					} else if(Objects.equals(attr.getEntityId(), entity.getEntityId())) { // 重载实体的情况
+						attr.setOwner(entity);
+					}
+				});
+			});
+			
 			return clazz;
 		} catch (Exception e) {
 			throw new OrmBuildingException("动态构建Mapper异常：" + entity.getName(), e);
@@ -524,5 +540,7 @@ public class MiluConfiguration extends Configuration {
 		}
 		
 		dynamicAddMappers.remove(clazz);
+		Entity removedEntity = mapperEntityMap.remove(clazz);
+		metaModel.removeEntity(removedEntity.getEntityId());
 	}
 }

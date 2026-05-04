@@ -17,6 +17,7 @@ package com.yuehuanghun.mybatis.milu.metamodel.ref;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public interface Reference {
 
@@ -34,6 +35,7 @@ public interface Reference {
 	
 	@Data
 	@AllArgsConstructor
+	@NoArgsConstructor
 	public class JoinCondition {
 		/**
 		 * 本实体列名

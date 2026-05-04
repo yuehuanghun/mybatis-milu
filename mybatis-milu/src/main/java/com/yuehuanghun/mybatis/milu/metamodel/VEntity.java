@@ -34,6 +34,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class VEntity {
+	/** 实体唯一标识，不可空。实体已存在时，将会自动卸载旧的实体及其Mapper */
+	private String entityId;
 	/** 实体名。作标识使用 */
 	private String name;
 	/** 对应的数据库表名 */
@@ -80,10 +82,12 @@ public class VEntity {
 	}
 	
 	public Entity toEntity() {
+		Assert.notBlank(entityId, "实体标识不能为空");
 		Assert.notBlank(tableName, "实体表名不能为空");
 		Assert.notEmpty(attributes, "实体属性不能为空");
 		Entity entity = new Entity();
 		
+		entity.setEntityId(entityId);
 		entity.setName(name);
 		entity.setTableName(tableName);
 		entity.setCatalog(catalog);
@@ -96,7 +100,7 @@ public class VEntity {
 				if(StringUtils.isBlank(attr.getColumnName())) {
 					attr.setColumnName(attr.getName());
 				}
-			} else {
+			} else if(!attr.isReference()) {
 				Assert.notBlank(attr.getColumnName(), "属性映射数据表字段名columnName值不能为空");
 			}
 			entity.addAttribute(attr);

@@ -102,8 +102,7 @@ public class GenericFindByExampleProviderSql extends GenericFindByCriteriaProvid
 	}
 	
 	private Entry<String, Object> getRefLogicDeleteValue(GenericProviderContext context, String refAttr) {
-		Class<?> refEntityClass = context.getEntity().getAttribute(refAttr).getEntityClass();
-		Entity refEntity = context.getConfiguration().getMetaModel().getEntity(refEntityClass);
+		Entity refEntity = context.getConfiguration().getMetaModel().getEntity(context.getEntity().getAttribute(refAttr).getEntityId());
 		
 		if(!refEntity.isFilterLogicDeletedData()) {
 			return null;
@@ -120,7 +119,7 @@ public class GenericFindByExampleProviderSql extends GenericFindByCriteriaProvid
 		
 		if(logicDeleteAttribute != null) {
 			String attr = refAttr + StringUtils.capitalize(logicDeleteAttribute.getName());
-			Object val = logicDeleteAttribute.getProvider().resumeValue(new Context(refEntityClass, refEntity.getJavaType(), refEntity.getName()));
+			Object val = logicDeleteAttribute.getProvider().resumeValue(new Context(refEntity.getJavaType(), refEntity.getJavaType(), refEntity.getName()));
 			return new Entry<String, Object>() {				
 				@Override
 				public String setValue(Object value) {
