@@ -208,12 +208,21 @@ public interface QueryPredicate extends Predicate {
 
 	@Override
 	QueryPredicate and(Condition... conditions);
+	
+	@Override
+	QueryPredicate and(Consumer<Predicate> predicate);
 
 	@Override
 	QueryPredicate or(Condition... conditions);
+	
+	@Override
+	QueryPredicate or(Consumer<Predicate> predicate);
 
 	@Override
 	QueryPredicate not(Condition... conditions);
+	
+	@Override
+	QueryPredicate not(Consumer<Predicate> predicate);
 
 	@Override
 	QueryPredicate eq(String attrName, Object value);
