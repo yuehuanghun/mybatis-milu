@@ -1,6 +1,7 @@
 package com.yuehuanghun.mybatis.milu.tool.converter.impl;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Date;
@@ -17,6 +18,9 @@ public class LocalDateConverter implements Converter<LocalDate> {
 		}
 		if(LocalDate.class.isInstance(target)) {
 			return (LocalDate) target;
+		}
+		if(LocalDateTime.class.isInstance(target)) {
+			return ((LocalDateTime) target).toLocalDate();
 		}
 		if(CharSequence.class.isInstance(target)) {
 			if(StringUtils.isBlank((CharSequence) target)) {
