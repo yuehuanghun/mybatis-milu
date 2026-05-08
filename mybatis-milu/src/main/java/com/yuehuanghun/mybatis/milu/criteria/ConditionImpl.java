@@ -51,11 +51,22 @@ public class ConditionImpl implements Condition {
 
 	@Getter
 	private String attributeName;
+	
+	// 查询时，忽略typeHandler对传入参数的处理，即按查询原值送给数据库
+	@Getter
+	private Boolean ignoreTypeHandler = Boolean.FALSE;
 
 	protected ConditionImpl(Type type, String attributeName, Object... params) {
 		this.type = type;
 		this.attributeName = attributeName;
 		this.params = params;
+	}
+	
+	public ConditionImpl(Type type, String attributeName, boolean ignoreTypeHandler, Object... params) {
+		this.type = type;
+		this.attributeName = attributeName;
+		this.params = params;
+		this.ignoreTypeHandler = ignoreTypeHandler;
 	}
 
 	@Override
@@ -72,9 +83,9 @@ public class ConditionImpl implements Condition {
 				String key = attributeName + "_" + paramIndex;
 				if (getType() == Type.IN || getType() == Type.NOT_IN) { // collection
 					keys[i] = key;
-					expression = attribute.formatParameterExpression(expression);
+					expression = attribute.formatParameterExpression(expression, ignoreTypeHandler);
 				} else {
-					keys[i] = attribute.toParameter(key, context.getConfiguration());
+					keys[i] = attribute.toParameter(key, context.getConfiguration(), ignoreTypeHandler);
 				}
 
 				paramIndex++;
@@ -152,7 +163,8 @@ public class ConditionImpl implements Condition {
 			return false;
 		}
 		return Objects.equals(this.getType(), ((ConditionImpl) that).getType())
-				&& Objects.equals(this.getAttributeName(), ((ConditionImpl) that).getAttributeName());
+				&& Objects.equals(this.getAttributeName(), ((ConditionImpl) that).getAttributeName())
+				&& Objects.equals(this.getIgnoreTypeHandler(), ((ConditionImpl) that).getIgnoreTypeHandler());
 	}
 
 	@Override
@@ -161,6 +173,7 @@ public class ConditionImpl implements Condition {
 
 		result = 31 * result + type.hashCode();
 		result = 31 * result + attributeName.hashCode();
+		result = 31 * result + ignoreTypeHandler.hashCode();
 		return result;
 	}
 }

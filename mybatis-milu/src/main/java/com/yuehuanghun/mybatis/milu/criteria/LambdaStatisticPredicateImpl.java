@@ -574,6 +574,12 @@ public class LambdaStatisticPredicateImpl<T> extends LambdaPredicateImpl<T> impl
 	}
 
 	@Override
+	public LambdaStatisticPredicate<T> like(SerializableFunction<T, ?> getterFn, Object value, boolean ignoreTypeHandler) {
+		super.like(getterFn, value, ignoreTypeHandler);
+		return this;
+	}
+
+	@Override
 	public LambdaStatisticPredicate<T> like(boolean accept, SerializableFunction<T, ?> getterFn, Object value) {
 		super.like(accept, getterFn, value);
 		return this;
@@ -598,6 +604,12 @@ public class LambdaStatisticPredicateImpl<T> extends LambdaPredicateImpl<T> impl
 	}
 
 	@Override
+	public LambdaStatisticPredicate<T> contain(SerializableFunction<T, ?> getterFn, Object value, boolean ignoreTypeHandler) {
+		super.contain(getterFn, value, ignoreTypeHandler);
+		return this;
+	}
+
+	@Override
 	public LambdaStatisticPredicate<T> contain(boolean accept, SerializableFunction<T, ?> getterFn, Object value) {
 		super.contain(accept, getterFn, value);
 		return this;
@@ -606,6 +618,12 @@ public class LambdaStatisticPredicateImpl<T> extends LambdaPredicateImpl<T> impl
 	@Override
 	public LambdaStatisticPredicate<T> notContain(SerializableFunction<T, ?> getterFn, Object value) {
 		super.notContain(getterFn, value);
+		return this;
+	}
+
+	@Override
+	public LambdaStatisticPredicate<T> notContain(SerializableFunction<T, ?> getterFn, Object value, boolean ignoreTypeHandler) {
+		super.notContain(getterFn, value, ignoreTypeHandler);
 		return this;
 	}
 

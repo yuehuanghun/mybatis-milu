@@ -235,6 +235,9 @@ public interface QueryPredicate extends Predicate {
 
 	@Override
 	QueryPredicate like(String attrName, Object value);
+	
+	@Override
+	QueryPredicate like(String attrName, Object value, boolean ignoreTypeHandler);
 
 	@Override
 	QueryPredicate notLike(String attrName, Object value);
@@ -243,7 +246,13 @@ public interface QueryPredicate extends Predicate {
 	QueryPredicate contain(String attrName, Object value);
 
 	@Override
+	QueryPredicate contain(String attrName, Object value, boolean ignoreTypeHandler);
+
+	@Override
 	QueryPredicate notContain(String attrName, Object value);
+
+	@Override
+	QueryPredicate notContain(String attrName, Object value, boolean ignoreTypeHandler);
 
 	@Override
 	QueryPredicate startWith(String attrName, Object value);

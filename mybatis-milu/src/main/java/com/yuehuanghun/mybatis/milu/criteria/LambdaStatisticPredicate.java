@@ -435,6 +435,9 @@ public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	LambdaStatisticPredicate<T> like(SerializableFunction<T, ?> getterFn, Object value);
 
 	@Override
+	LambdaStatisticPredicate<T> like(SerializableFunction<T, ?> getterFn, Object value, boolean ignoreTypeHandler);
+
+	@Override
 	LambdaStatisticPredicate<T> like(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
 
 	@Override
@@ -447,10 +450,16 @@ public interface LambdaStatisticPredicate<T> extends LambdaPredicate<T> {
 	LambdaStatisticPredicate<T> contain(SerializableFunction<T, ?> getterFn, Object value);
 
 	@Override
+	LambdaStatisticPredicate<T> contain(SerializableFunction<T, ?> getterFn, Object value, boolean ignoreTypeHandler);
+
+	@Override
 	LambdaStatisticPredicate<T> contain(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
 
 	@Override
 	LambdaStatisticPredicate<T> notContain(SerializableFunction<T, ?> getterFn, Object value);
+
+	@Override
+	LambdaStatisticPredicate<T> notContain(SerializableFunction<T, ?> getterFn, Object value, boolean ignoreTypeHandler);
 
 	@Override
 	LambdaStatisticPredicate<T> notContain(boolean accept, SerializableFunction<T, ?> getterFn, Object value);

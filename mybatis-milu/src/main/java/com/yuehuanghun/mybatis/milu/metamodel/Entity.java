@@ -239,31 +239,40 @@ public class Entity {
 		}
 		
 		public String toParameter(String name, MiluConfiguration configuration) {
+			return toParameter(name, configuration, false);
+		}
+		
+		public String toParameter(String name, MiluConfiguration configuration, boolean ignoreTypeHandler) {
 			String param = name;
-			if(getJdbcType() != null) {
-				param += ",jdbcType=" + getJdbcType().name();
+			if(!ignoreTypeHandler) {
+				if(getJdbcType() != null) {
+					param += ",jdbcType=" + getJdbcType().name();
+				}
+				if(getTypeHandler() != null) {
+					param += ",typeHandler=" + getTypeHandler().getName();
+				}
 			}
-			if(getTypeHandler() != null) {
-				param += ",typeHandler=" + getTypeHandler().getName();
-			}
+			
 			return "#{" + param + "}";
 		}
 		
 		public String toParaWithPrefix(String prefix, MiluConfiguration configuration) {
-			return toParameter(prefix + getName(), configuration);
+			return toParameter(prefix + getName(), configuration, false);
 		}
 		
-		public String formatParameterExpression(String expression) {
+		public String formatParameterExpression(String expression, boolean ignoreTypeHandler) {
 			if(getJdbcType() == null && getTypeHandler() == null) {
 				return expression;
 			}
 			
 			String tail = "";
-			if(getJdbcType() != null) {
-				tail += ",jdbcType=" + getJdbcType().name();
-			}
-			if(getTypeHandler() != null) {
-				tail += ",typeHandler=" + getTypeHandler().getName();
+			if(!ignoreTypeHandler) {
+				if(getJdbcType() != null) {
+					tail += ",jdbcType=" + getJdbcType().name();
+				}
+				if(getTypeHandler() != null) {
+					tail += ",typeHandler=" + getTypeHandler().getName();
+				}
 			}
 			
 			Pattern pattern = Pattern.compile("#\\{.+?}");
@@ -421,6 +430,11 @@ public class Entity {
 				throw new OrmBuildingException(String.format("实体“%s”插入/更新函数字段“%s”未支持数据库：%s", this.getOwner().getName(), this.getName(), configuration.getDbMeta().getDbEnum().getDbName()));
 			}
 			return upsertExp.replace("${value}", "#{" + name + "}");
+		}
+		
+		@Override
+		public String toParameter(String name, MiluConfiguration configuration, boolean ignoreTypeHandler) {
+			return toParameter(name, configuration);
 		}
 	}
 	

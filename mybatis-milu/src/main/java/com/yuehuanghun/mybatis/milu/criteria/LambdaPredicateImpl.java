@@ -471,6 +471,12 @@ public class LambdaPredicateImpl<T> implements LambdaPredicate<T> {
 	}
 
 	@Override
+	public LambdaPredicate<T> like(SerializableFunction<T, ?> getterFn, Object value, boolean ignoreTypeHandler) {
+		getDelegate().like(LambdaReflections.fnToFieldName(getterFn), value, ignoreTypeHandler);
+		return this;
+	}
+
+	@Override
 	public LambdaPredicate<T> like(boolean accept, SerializableFunction<T, ?> getterFn, Object value) {
 		getDelegate().like(accept, LambdaReflections.fnToFieldName(getterFn), value);
 		return this;
@@ -495,6 +501,12 @@ public class LambdaPredicateImpl<T> implements LambdaPredicate<T> {
 	}
 
 	@Override
+	public LambdaPredicate<T> contain(SerializableFunction<T, ?> getterFn, Object value, boolean ignoreTypeHandler) {
+		getDelegate().contain(LambdaReflections.fnToFieldName(getterFn), value, ignoreTypeHandler);
+		return this;
+	}
+
+	@Override
 	public LambdaPredicate<T> contain(boolean accept, SerializableFunction<T, ?> getterFn, Object value) {
 		getDelegate().contain(accept, LambdaReflections.fnToFieldName(getterFn), value);
 		return this;
@@ -503,6 +515,12 @@ public class LambdaPredicateImpl<T> implements LambdaPredicate<T> {
 	@Override
 	public LambdaPredicate<T> notContain(SerializableFunction<T, ?> getterFn, Object value) {
 		getDelegate().notContain(LambdaReflections.fnToFieldName(getterFn), value);
+		return this;
+	}
+
+	@Override
+	public LambdaPredicate<T> notContain(SerializableFunction<T, ?> getterFn, Object value, boolean ignoreTypeHandler) {
+		getDelegate().notContain(LambdaReflections.fnToFieldName(getterFn), value, ignoreTypeHandler);
 		return this;
 	}
 

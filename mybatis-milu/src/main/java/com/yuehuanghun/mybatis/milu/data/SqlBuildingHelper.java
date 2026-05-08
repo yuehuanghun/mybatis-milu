@@ -451,36 +451,36 @@ public class SqlBuildingHelper {
 		return true;
 	}
 	
-	public static String matchExpression(Attribute attr, MiluConfiguration configuration) {
-		Part.Type type;
-	    switch (attr.getExampleMatchType()) {
-	    	case EQUAL:
-	    		type = Part.Type.SIMPLE_PROPERTY;
-	    		break;
-	    	case CONTAIN:
-	    		type = Part.Type.CONTAINING;
-	    		break;
-	    	case END_WITH:
-	    		type = Part.Type.ENDING_WITH;
-	    		break;
-	    	case START_WITH:
-	    		type = Part.Type.STARTING_WITH;
-	    		break;
-	    	default:
-	    		type = Part.Type.SIMPLE_PROPERTY;
-	    		break;
-	    }
-	    return String.format(configuration.getDialect().getPartTypeExpression(type), attr.toParaWithPrefix("example.", configuration));
-	}
+//	public static String matchExpression(Attribute attr, MiluConfiguration configuration) {
+//		Part.Type type;
+//	    switch (attr.getExampleMatchType()) {
+//	    	case EQUAL:
+//	    		type = Part.Type.SIMPLE_PROPERTY;
+//	    		break;
+//	    	case CONTAIN:
+//	    		type = Part.Type.CONTAINING;
+//	    		break;
+//	    	case END_WITH:
+//	    		type = Part.Type.ENDING_WITH;
+//	    		break;
+//	    	case START_WITH:
+//	    		type = Part.Type.STARTING_WITH;
+//	    		break;
+//	    	default:
+//	    		type = Part.Type.SIMPLE_PROPERTY;
+//	    		break;
+//	    }
+//	    return String.format(configuration.getDialect().getPartTypeExpression(type), attr.toParaWithPrefix("example.", configuration));
+//	}
 	
-	public static String matchExpression(Part.Type type, String keyName, Attribute forAttr, MiluConfiguration configuration) {
-		if(type == Part.Type.IN || type == Part.Type.NOT_IN) {
-			String expression = String.format(configuration.getDialect().getPartTypeExpression(type), Segment.EXAMPLE_TO_COLLECTION + keyName + Segment.RIGHT_BRACKET);
-			expression = forAttr.formatParameterExpression(expression);
-			return expression;
-		}
-		return String.format(configuration.getDialect().getPartTypeExpression(type), forAttr.toParameter("example." + keyName, configuration));
-	}
+//	public static String matchExpression(Part.Type type, String keyName, Attribute forAttr, MiluConfiguration configuration) {
+//		if(type == Part.Type.IN || type == Part.Type.NOT_IN) {
+//			String expression = String.format(configuration.getDialect().getPartTypeExpression(type), Segment.EXAMPLE_TO_COLLECTION + keyName + Segment.RIGHT_BRACKET);
+//			expression = forAttr.formatParameterExpression(expression);
+//			return expression;
+//		}
+//		return String.format(configuration.getDialect().getPartTypeExpression(type), forAttr.toParameter("example." + keyName, configuration));
+//	}
 	
 	//转换PageHelper中的排序中的属性为column
 	public static void convertLocalPageOrder(Entity entity, MiluConfiguration configuration) {

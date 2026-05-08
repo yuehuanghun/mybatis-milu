@@ -204,6 +204,14 @@ public class PredicateImpl implements Predicate {
 	}
 
 	@Override
+	public Predicate like(String attrName, Object value, boolean ignoreTypeHandler) {
+		if(acceptCondition(value)) {
+			and(Conditions.like(attrName, value, ignoreTypeHandler));
+		}
+		return this;
+	}
+
+	@Override
 	public Predicate notLike(String attrName, Object value) {
 		this.notLike(acceptCondition(value), attrName, value);
 		return this;
@@ -216,8 +224,24 @@ public class PredicateImpl implements Predicate {
 	}
 
 	@Override
+	public Predicate contain(String attrName, Object value, boolean ignoreTypeHandler) {
+		if(acceptCondition(value)) {
+			and(Conditions.containing(attrName, value, ignoreTypeHandler));
+		}
+		return this;
+	}
+
+	@Override
 	public Predicate notContain(String attrName, Object value) {
 		this.notContain(acceptCondition(value), attrName, value);
+		return this;
+	}
+
+	@Override
+	public Predicate notContain(String attrName, Object value, boolean ignoreTypeHandler) {
+		if(acceptCondition(value)) {
+			and(Conditions.notContaining(attrName, value, ignoreTypeHandler));
+		}
 		return this;
 	}
 

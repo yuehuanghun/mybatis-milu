@@ -373,6 +373,12 @@ public class LambdaUpdatePredicateImpl<T> extends LambdaPredicateImpl<T> impleme
 	}
 
 	@Override
+	public LambdaUpdatePredicate<T> like(SerializableFunction<T, ?> getterFn, Object value, boolean ignoreTypeHandler) {
+		super.like(getterFn, value, ignoreTypeHandler);
+		return this;
+	}
+
+	@Override
 	public LambdaUpdatePredicate<T> like(boolean accept, SerializableFunction<T, ?> getterFn, Object value) {
 		super.like(accept, getterFn, value);
 		return this;
@@ -397,6 +403,12 @@ public class LambdaUpdatePredicateImpl<T> extends LambdaPredicateImpl<T> impleme
 	}
 
 	@Override
+	public LambdaUpdatePredicate<T> contain(SerializableFunction<T, ?> getterFn, Object value, boolean ignoreTypeHandler) {
+		super.contain(getterFn, value, ignoreTypeHandler);
+		return this;
+	}
+
+	@Override
 	public LambdaUpdatePredicate<T> contain(boolean accept, SerializableFunction<T, ?> getterFn, Object value) {
 		super.contain(accept, getterFn, value);
 		return this;
@@ -405,6 +417,12 @@ public class LambdaUpdatePredicateImpl<T> extends LambdaPredicateImpl<T> impleme
 	@Override
 	public LambdaUpdatePredicate<T> notContain(SerializableFunction<T, ?> getterFn, Object value) {
 		super.notContain(getterFn, value);
+		return this;
+	}
+
+	@Override
+	public LambdaUpdatePredicate<T> notContain(SerializableFunction<T, ?> getterFn, Object value, boolean ignoreTypeHandler) {
+		super.notContain(getterFn, value, ignoreTypeHandler);
 		return this;
 	}
 

@@ -295,6 +295,12 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	}
 
 	@Override
+	public QueryPredicate like(String attrName, Object value, boolean ignoreTypeHandler) {
+		super.like(attrName, value, ignoreTypeHandler);
+		return this;
+	}
+
+	@Override
 	public QueryPredicate notLike(String attrName, Object value) {
 		super.notLike(attrName, value);
 		return this;
@@ -307,8 +313,20 @@ public class QueryPredicateImpl extends PredicateImpl implements QueryPredicate 
 	}
 
 	@Override
+	public QueryPredicate contain(String attrName, Object value, boolean ignoreTypeHandler) {
+		super.contain(attrName, value, ignoreTypeHandler);
+		return this;
+	}
+
+	@Override
 	public QueryPredicate notContain(String attrName, Object value) {
 		super.notContain(attrName, value);
+		return this;
+	}
+
+	@Override
+	public QueryPredicate notContain(String attrName, Object value, boolean ignoreTypeHandler) {
+		super.notContain(attrName, value, ignoreTypeHandler);
 		return this;
 	}
 

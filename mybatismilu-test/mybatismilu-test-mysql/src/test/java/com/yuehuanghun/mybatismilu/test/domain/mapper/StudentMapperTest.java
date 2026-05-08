@@ -35,6 +35,8 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.AppTest;
 import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
+import com.yuehuanghun.mybatis.milu.criteria.ConditionImpl;
+import com.yuehuanghun.mybatis.milu.criteria.Conditions;
 import com.yuehuanghun.mybatis.milu.criteria.Exists;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaUpdatePredicate;
 import com.yuehuanghun.mybatis.milu.criteria.Predicate;
@@ -485,11 +487,18 @@ public class StudentMapperTest {
 		result = studentMapper.statisticByLambdaCriteria(p -> p.sum(Student::getAge).avg(Student::getAge).count(Student::getId).groupBy(Student::getClassId).orderAsc(Student::getClassId), StudentStatistic.class);
 		assertTrue(result.size() > 0);
 		assertEquals(result.get(0).getClass(), StudentStatistic.class);
+		
+		result = studentMapper.statisticByCriteria(p -> {
+			p.sum("age").avg("age").count("id").groupBy("classId").orderAsc("classId");
+			studentMapper.findAll();
+		}, StudentStatistic.class);
+		assertTrue(result.size() > 0);
+		assertEquals(result.get(0).getClass(), StudentStatistic.class);
 	}
 	
 	@Test
 	public void testStatisticByCriteriaExists() {
-		List<StudentStatistic> result = studentMapper.statisticByCriteria(p -> p.sum("age").avg("age").count("id").exists(Exists.of(ClassMapper.class).join("id", "classId").criteria(ep -> ep.eq("name", "一年级"))), StudentStatistic.class);
+		List<StudentStatistic> result = studentService.statisticByCriteria(p -> p.sum("age").avg("age").count("id").exists(Exists.of(ClassMapper.class).join("id", "classId").criteria(ep -> ep.eq("name", "一年级"))), StudentStatistic.class);
 		assertTrue(result.size() == 1);
 		assertEquals(result.get(0).getIdCount().intValue(), 3);
 	}
@@ -1213,5 +1222,20 @@ public class StudentMapperTest {
 			return String.format("IF(%s > 8, 'elder', 'younger') comp", SqlBuildingHelper.columnHolder("age"));
 		}
 		
+	}
+
+	@Test
+	public void testFindByCriteriaIgnoreTypeHandler() {
+		List<Student> list = studentMapper.findByCriteria(p -> {
+			p.and(Conditions.containing("parents", "蓝山", true));
+		});
+		assertEquals(list.size(), 1);
+		assertEquals(list.get(0).getId(), (Long)1L);
+		
+		list = studentMapper.findByCriteria(p -> {
+			p.contain("parents", "蓝山", true);
+		});
+		assertEquals(list.size(), 1);
+		assertEquals(list.get(0).getId(), (Long)1L);
 	}
 }

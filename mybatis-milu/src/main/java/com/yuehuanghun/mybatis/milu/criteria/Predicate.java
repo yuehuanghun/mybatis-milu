@@ -191,6 +191,15 @@ public interface Predicate extends Condition {
 	 * @return 当前对象
 	 */
 	Predicate like(String attrName, Object value);
+
+	/**
+	 * 增加一个匹配查询条件，注：该查询值不会自动加匹配符，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
+	 * @param attrName 查询属性名
+	 * @param value 值应包括匹配符
+	 * @param ignoreTypeHandler 是否忽略typeHandler
+	 * @return 当前对象
+	 */
+	Predicate like(String attrName, Object value, boolean ignoreTypeHandler);
 	
 	/**
 	 * 增加一个匹配查询条件，注：该查询值不会自动加匹配符
@@ -227,6 +236,15 @@ public interface Predicate extends Condition {
 	Predicate contain(String attrName, Object value);
 	
 	/**
+	 * 增加一个包含值查询条件，在值前后增加%，column LIKE CONCAT('%', value, '%')，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
+	 * @param attrName 查询属性名
+	 * @param value 值
+	 * @param ignoreTypeHandler是否忽略typeHandler
+	 * @return 当前对象
+	 */
+	Predicate contain(String attrName, Object value, boolean ignoreTypeHandler);
+	
+	/**
 	 * 增加一个包含值查询条件，在值前后增加%，column LIKE CONCAT('%', value, '%')
 	 * @param accept 当值为true时，条件生效
 	 * @param attrName 查询属性名
@@ -242,6 +260,15 @@ public interface Predicate extends Condition {
 	 * @return 当前对象
 	 */
 	Predicate notContain(String attrName, Object value);
+
+	/**
+	 * 增加一个非包含值查询条件，在值前后增加%，column NOT LIKE CONCAT('%', value, '%')，默认当value不为空时条件生效，通过设置conditionMode变更生效方式。（为空指值为null，字符串时空串，集合/数组时为0个元素）
+	 * @param attrName 查询属性名
+	 * @param value 值
+	 * @param ignoreTypeHandler是否忽略typeHandler
+	 * @return 当前对象
+	 */
+	Predicate notContain(String attrName, Object value, boolean ignoreTypeHandler);
 	
 	/**
 	 * 增加一个非包含值查询条件，在值前后增加%，column NOT LIKE CONCAT('%', value, '%')

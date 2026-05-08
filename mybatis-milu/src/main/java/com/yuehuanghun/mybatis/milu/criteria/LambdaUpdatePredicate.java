@@ -195,6 +195,9 @@ public interface LambdaUpdatePredicate<T> extends LambdaPredicate<T> {
 	LambdaUpdatePredicate<T> like(SerializableFunction<T, ?> getterFn, Object value);
 
 	@Override
+	LambdaUpdatePredicate<T> like(SerializableFunction<T, ?> getterFn, Object value, boolean ignoreTypeHandler);
+
+	@Override
 	LambdaUpdatePredicate<T> like(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
 
 	@Override
@@ -207,10 +210,16 @@ public interface LambdaUpdatePredicate<T> extends LambdaPredicate<T> {
 	LambdaUpdatePredicate<T> contain(SerializableFunction<T, ?> getterFn, Object value);
 
 	@Override
+	LambdaUpdatePredicate<T> contain(SerializableFunction<T, ?> getterFn, Object value, boolean ignoreTypeHandler);
+
+	@Override
 	LambdaUpdatePredicate<T> contain(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
 
 	@Override
 	LambdaUpdatePredicate<T> notContain(SerializableFunction<T, ?> getterFn, Object value);
+
+	@Override
+	LambdaUpdatePredicate<T> notContain(SerializableFunction<T, ?> getterFn, Object value, boolean ignoreTypeHandler);
 
 	@Override
 	LambdaUpdatePredicate<T> notContain(boolean accept, SerializableFunction<T, ?> getterFn, Object value);
