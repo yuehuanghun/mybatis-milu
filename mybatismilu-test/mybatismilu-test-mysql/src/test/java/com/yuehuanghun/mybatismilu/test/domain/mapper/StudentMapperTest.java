@@ -940,6 +940,9 @@ public class StudentMapperTest {
 
 		maxAge = studentMapper.maxByLambdaCriteria(Student::getAge, p -> p.gt(Student::getId, 100));
 		assertNull(maxAge);
+		
+		maxAge = studentMapper.maxByLambdaCriteria(Student::getAge, p -> p.and(Conditions.equal("classsName", "一年级")));
+		assertNotNull(maxAge);
 	}
 	
 	@Test

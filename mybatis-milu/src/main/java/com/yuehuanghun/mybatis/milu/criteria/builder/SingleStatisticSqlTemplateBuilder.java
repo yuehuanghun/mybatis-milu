@@ -28,21 +28,21 @@ import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
 public class SingleStatisticSqlTemplateBuilder extends SqlTemplateBuilder {
 	private final Predicate predicate;
-	private final String maxAttr;
+	private final String attrName;
 	private final String functionName;
 
-	public SingleStatisticSqlTemplateBuilder(GenericProviderContext context, String functionName, String maxAttr, Predicate predicate) {
+	public SingleStatisticSqlTemplateBuilder(GenericProviderContext context, String functionName, String attrName, Predicate predicate) {
 		super(context);
 		this.functionName = functionName;
-		this.maxAttr = maxAttr;
+		this.attrName = attrName;
 		this.predicate = predicate;
 	}
 
 	@Override
 	public String build() {
-		Attribute attribute = context.getEntity().getAttribute(maxAttr);
+		Attribute attribute = context.getEntity().getAttribute(attrName);
 		if(attribute == null) {
-			throw new SqlExpressionBuildingException(String.format("实体类：%s中找不到属性：%s", context.getEntity().getJavaType().getName(), maxAttr));
+			throw new SqlExpressionBuildingException(String.format("实体类：%s中找不到属性：%s", context.getEntity().getJavaType().getName(), attrName));
 		}
 		
 		String functionExpressionTemplate = context.getConfiguration().getDialect().getFunctionExpression(functionName);
@@ -55,7 +55,11 @@ public class SingleStatisticSqlTemplateBuilder extends SqlTemplateBuilder {
 		
 		super.needAlias = predicate.hasExistsCondition() || !joinExpressMap.isEmpty();
 		StringBuilder sqlBuilder = new StringBuilder(1024).append(Segment.SCRIPT_LABEL);
-		sqlBuilder.append(Segment.SELECT).append(String.format(functionExpressionTemplate, SqlBuildingHelper.wrapIdentifier(attribute.getColumnName(), configuration))).append(Segment.SPACE).append(SqlBuildingHelper.wrapIdentifier("result", configuration)).append(Segment.FROM_B);
+		String columnName = SqlBuildingHelper.wrapIdentifier(attribute.getColumnName(), configuration);
+		if(super.needAlias) {
+			columnName = super.mainTableAlias + Segment.DOT + columnName;
+		}
+		sqlBuilder.append(Segment.SELECT).append(String.format(functionExpressionTemplate, columnName)).append(Segment.SPACE).append(SqlBuildingHelper.wrapIdentifier("result", configuration)).append(Segment.FROM_B);
 		buildTableSegment(sqlBuilder);
 		
 		String sqlTemplateTmp = expressionBuilder.toString();
