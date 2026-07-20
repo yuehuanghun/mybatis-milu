@@ -51,7 +51,12 @@ public class ResultMapHelper {
 		if(dynResultMappings != null) { //主表与关系表同时查询时的处理
 			CacheKey cacheKey = new CacheKey();
 			cacheKey.update(resultMap.getId());
-			cacheKey.update(dynResultMappings);
+			dynResultMappings.forEach(mapping -> {
+				cacheKey.update(mapping.getProperty());
+				if(mapping.getNestedResultMapId() != null) {
+					cacheKey.update(mapping.getNestedResultMapId());
+				}
+			});
 			return DYNAMIC_RESULT_MAP_CACHE.computeIfAbsent(cacheKey, key -> {
 				Configuration configuration = getConfiguration(resultMap);
 				return new ResultMap.Builder(configuration, resultMap.getId(), resultMap.getType(), dynResultMappings, false).build();
