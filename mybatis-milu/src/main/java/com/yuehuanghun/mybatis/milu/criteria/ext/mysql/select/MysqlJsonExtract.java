@@ -33,6 +33,7 @@ public class MysqlJsonExtract implements Select {
 		Assert.notBlank(attrName, "attrName不能为空");
 		Assert.notBlank(jsonKey, "jsonKey不能为空");
 		Assert.isTrue(alias == null || DefendUtil.testColumnAlias(alias), "alias值不符合规则");
+		Assert.isTrue(DefendUtil.testMysqlJsonPath(jsonKey), "jsonKey值不符合规则");
 		MysqlJsonExtract select = new MysqlJsonExtract();
 		select.attrName = attrName;
 		select.jsonKey = jsonKey;

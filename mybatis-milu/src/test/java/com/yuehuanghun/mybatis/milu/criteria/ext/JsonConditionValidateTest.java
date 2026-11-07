@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import com.yuehuanghun.mybatis.milu.criteria.ext.mysql.conds.MysqlJsonCompare;
 import com.yuehuanghun.mybatis.milu.criteria.ext.mysql.conds.MysqlJsonLike;
 import com.yuehuanghun.mybatis.milu.criteria.ext.mysql.conds.MysqlJsonLike.LikeMode;
+import com.yuehuanghun.mybatis.milu.criteria.ext.mysql.select.MysqlJsonExtract;
+import com.yuehuanghun.mybatis.milu.criteria.ext.mysql.select.MysqlJsonExtractStr;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 
 public class JsonConditionValidateTest {
@@ -31,5 +33,25 @@ public class JsonConditionValidateTest {
 	@Test
 	public void mysqlJsonLike_acceptsValidPath() {
 		new MysqlJsonLike("extAttr", "$.name", "v", LikeMode.CONTAINS);
+	}
+
+	@Test
+	public void mysqlJsonExtract_rejectsInjection() {
+		assertThrows(SqlExpressionBuildingException.class, () -> MysqlJsonExtract.of("extAttr", INJECTION, null));
+	}
+
+	@Test
+	public void mysqlJsonExtract_acceptsValidPath() {
+		MysqlJsonExtract.of("extAttr", "$.name", null);
+	}
+
+	@Test
+	public void mysqlJsonExtractStr_rejectsInjection() {
+		assertThrows(SqlExpressionBuildingException.class, () -> MysqlJsonExtractStr.of("extAttr", INJECTION, null));
+	}
+
+	@Test
+	public void mysqlJsonExtractStr_acceptsValidPath() {
+		MysqlJsonExtractStr.of("extAttr", "$.name", null);
 	}
 }
