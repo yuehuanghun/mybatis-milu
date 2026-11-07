@@ -23,6 +23,7 @@ import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 
 import com.yuehuanghun.mybatis.milu.MiluConfiguration;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
+import com.yuehuanghun.mybatis.milu.tool.DefendUtil;
 
 public class SequenceSqlSource implements SqlSource {
 	private final SequenceGenerator sequenceGenerator;
@@ -31,6 +32,7 @@ public class SequenceSqlSource implements SqlSource {
 	public SequenceSqlSource(MiluConfiguration configuration, SequenceGenerator sequenceGenerator) {
 		this.configuration = configuration;
 		this.sequenceGenerator = sequenceGenerator;
+		DefendUtil.checkIdentifier(sequenceGenerator.sequenceName(), "sequenceName");
 	}
 
 	@Override

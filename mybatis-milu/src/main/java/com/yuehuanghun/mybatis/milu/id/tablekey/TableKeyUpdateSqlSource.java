@@ -22,6 +22,7 @@ import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
+import com.yuehuanghun.mybatis.milu.tool.DefendUtil;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
 public class TableKeyUpdateSqlSource implements SqlSource{
@@ -37,6 +38,10 @@ public class TableKeyUpdateSqlSource implements SqlSource{
 	}
 	
 	private BoundSql initBoundSql() {
+		DefendUtil.checkIdentifier(tableGenerator.table(), "table");
+		DefendUtil.checkIdentifier(tableGenerator.schema(), "schema");
+		DefendUtil.checkIdentifier(tableGenerator.valueColumnName(), "valueColumnName");
+		DefendUtil.checkIdentifier(tableGenerator.pkColumnName(), "pkColumnName");
 		StringBuilder sqlBuilder = new StringBuilder();
 		sqlBuilder.append("UPDATE ");
 		if(StringUtils.isNotBlank(tableGenerator.schema())) {
@@ -46,7 +51,7 @@ public class TableKeyUpdateSqlSource implements SqlSource{
 		   .append(" SET ").append(tableGenerator.valueColumnName()).append(" = #{newValue} ");
 		sqlBuilder.append(" WHERE ");
 		if(StringUtils.isNotBlank(tableGenerator.pkColumnName()) && StringUtils.isNotBlank(tableGenerator.pkColumnValue())) {
-			sqlBuilder.append(tableGenerator.pkColumnName()).append(" = '").append(tableGenerator.pkColumnValue()).append("' AND ");
+			sqlBuilder.append(tableGenerator.pkColumnName()).append(" = '").append(DefendUtil.escapeSingleQuote(tableGenerator.pkColumnValue())).append("' AND ");
 		}
 		sqlBuilder.append(tableGenerator.valueColumnName()).append(" = #{oldValue}");
 		return configuration.getLanguageDriver(XMLLanguageDriver.class).createSqlSource(configuration, sqlBuilder.toString(), Object.class).getBoundSql(null);

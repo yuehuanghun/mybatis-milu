@@ -22,6 +22,7 @@ import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
+import com.yuehuanghun.mybatis.milu.tool.DefendUtil;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
 
 public class TableKeySelectSqlSource implements SqlSource{
@@ -37,6 +38,10 @@ public class TableKeySelectSqlSource implements SqlSource{
 	}
 	
 	private BoundSql initBoundSql() {
+		DefendUtil.checkIdentifier(tableGenerator.valueColumnName(), "valueColumnName");
+		DefendUtil.checkIdentifier(tableGenerator.table(), "table");
+		DefendUtil.checkIdentifier(tableGenerator.schema(), "schema");
+		DefendUtil.checkIdentifier(tableGenerator.pkColumnName(), "pkColumnName");
 		StringBuilder sqlBuilder = new StringBuilder();
 		sqlBuilder.append("SELECT ").append(tableGenerator.valueColumnName()).append(" FROM ");
 		if(StringUtils.isNotBlank(tableGenerator.schema())) {
@@ -44,7 +49,7 @@ public class TableKeySelectSqlSource implements SqlSource{
 		}
 		sqlBuilder.append(tableGenerator.table());
 		if(StringUtils.isNotBlank(tableGenerator.pkColumnName()) && StringUtils.isNotBlank(tableGenerator.pkColumnValue())) {
-			sqlBuilder.append(" WHERE ").append(tableGenerator.pkColumnName()).append(" = '").append(tableGenerator.pkColumnValue()).append("'");
+			sqlBuilder.append(" WHERE ").append(tableGenerator.pkColumnName()).append(" = '").append(DefendUtil.escapeSingleQuote(tableGenerator.pkColumnValue())).append("'");
 		}
 		return configuration.getLanguageDriver(XMLLanguageDriver.class).createSqlSource(configuration, sqlBuilder.toString(), Object.class).getBoundSql(null);
 	}
