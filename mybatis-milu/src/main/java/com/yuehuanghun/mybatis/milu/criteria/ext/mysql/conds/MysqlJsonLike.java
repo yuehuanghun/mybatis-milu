@@ -24,6 +24,7 @@ import com.yuehuanghun.mybatis.milu.criteria.Condition;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.tool.Assert;
+import com.yuehuanghun.mybatis.milu.tool.DefendUtil;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
 public class MysqlJsonLike implements Condition {
@@ -47,6 +48,7 @@ public class MysqlJsonLike implements Condition {
 		Assert.notBlank(jsonKey, "jsonKey不能为空");
 		Assert.notBlank(jsonVal, "jsonVal不能为空");
 		Assert.notNull(likeMode, "likeMode不能为空");
+		Assert.isTrue(DefendUtil.testMysqlJsonPath(jsonKey), "jsonKey值不符合规则");
 		
 		this.attrName = attrName;
 		this.jsonKey = jsonKey;

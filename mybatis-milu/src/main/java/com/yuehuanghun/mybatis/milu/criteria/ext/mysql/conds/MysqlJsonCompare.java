@@ -9,6 +9,7 @@ import com.yuehuanghun.mybatis.milu.criteria.ext.CompareMode;
 import com.yuehuanghun.mybatis.milu.data.SqlBuildingHelper;
 import com.yuehuanghun.mybatis.milu.generic.GenericProviderContext;
 import com.yuehuanghun.mybatis.milu.tool.Assert;
+import com.yuehuanghun.mybatis.milu.tool.DefendUtil;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 
 public class MysqlJsonCompare implements Condition {
@@ -32,6 +33,7 @@ public class MysqlJsonCompare implements Condition {
 		Assert.notBlank(jsonKey, "jsonKey不能为空");
 		Assert.notNull(jsonVal, "jsonVal不能为空");
 		Assert.notNull(compareMode, "compareMode不能为空");
+		Assert.isTrue(DefendUtil.testMysqlJsonPath(jsonKey), "jsonKey值不符合规则");
 		
 		this.attrName = attrName;
 		this.jsonKey = jsonKey;
