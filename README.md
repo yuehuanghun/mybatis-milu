@@ -754,3 +754,30 @@ public class SomeEntitySericeImpl extends BaseServiceImpl<SomeEntity, Long, Some
 1.  Hibernate
 2.  Spring Data JPA
 3.  Mybatis-Plus
+
+### 安全默认值与放宽开关（DefendUtil）
+
+框架对进入SQL结构的字符串做了默认白名单校验，规则集中在 `com.yuehuanghun.mybatis.milu.tool.DefendUtil`，非法值在构造期抛出 `SqlExpressionBuildingException`：
+
+| 校验项 | 默认规则 | 应用位置 |
+|---|---|---|
+| 列别名 / 标识符 | `^[a-zA-Z0-9_]+$` | JSON查询列别名、@TableGenerator/@SequenceGenerator 注解值 |
+| MySQL JSON路径 | `^\$(\*\*|\.\*|\.[\w\-]+|\[\*\]|\[\d+\])*$` | MysqlJsonCompare / MysqlJsonLike / MysqlJsonExtract / MysqlJsonExtractStr |
+| PostgreSQL JSON键（`->>`） | `^\w[\w\-]*$` | PostgreJsonCompare / PostgreJsonExtract |
+| PostgreSQL JSON路径（`#>>`） | `^\{[\w\-]+(,[\w\-]+)*\}$` | PostgreJsonPathCompare / PostgreJsonExtractPath |
+| PageHelper 排序属性 | `^[a-zA-Z0-9_.]+$`，方向仅 ASC/DESC | PageHelper.orderBy |
+| 函数列表达式 | 黑名单：truncate / delete from / drop table / `;` / `--` / `union select` | @FuncColumn |
+
+其他默认防护：
+- 条件值一律通过 `#{}` 参数绑定，不拼接。
+- 标识符被引号包裹时，内嵌引号字符自动双写转义。
+- `@TableGenerator` 的 `pkColumnValue` 拼接前自动单引号双写转义。
+
+如默认规则不满足业务需要（如包含引号的JSON键名、函数式排序表达式），可通过对应 setter 放宽；传入 `null` 恢复默认规则：
+
+```java
+// 例：允许任意MySQL JSON路径（自行确保来源可信）
+DefendUtil.setMysqlJsonPathDefendPredicate(path -> true);
+```
+
+注意：放宽开关影响全局，请仅校验过来源可信时使用；面向用户的输入永远不要直接作为JSON路径或排序属性。
