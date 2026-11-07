@@ -50,6 +50,7 @@ import com.yuehuanghun.mybatis.milu.metamodel.ref.ManyToManyReference;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.MappedReference;
 import com.yuehuanghun.mybatis.milu.metamodel.ref.Reference;
 import com.yuehuanghun.mybatis.milu.tool.Constants;
+import com.yuehuanghun.mybatis.milu.tool.DefendUtil;
 import com.yuehuanghun.mybatis.milu.tool.InstanceUtils;
 import com.yuehuanghun.mybatis.milu.tool.Segment;
 import com.yuehuanghun.mybatis.milu.tool.StringUtils;
@@ -494,26 +495,37 @@ public class SqlBuildingHelper {
 		}
 		
 		String[] orderArray = orders.split(",");
-		if(orderArray.length == 1) {
-			String[] orderEl = orderArray[0].trim().split("\\s+");
+		Map<String, String> orderMap = new LinkedHashMap<>();
+		for(String order : orderArray) {
+			String[] orderEl = validateOrderSegment(order);
 			Attribute attr = entity.getAttribute(orderEl[0]);
 			if(attr != null) {
-				page.setOrderBy(wrapIdentifier(attr.getColumnName(), configuration) + (orderEl.length == 1 ? StringUtils.EMPTY : Segment.SPACE + orderEl[1]));
+				orderMap.put(wrapIdentifier(attr.getColumnName(), configuration), orderEl[1]);
+			} else if(DefendUtil.testOrderColumn(orderEl[0])) {
+				orderMap.put(wrapIdentifier(orderEl[0], configuration), orderEl[1]);
+			} else {
+				throw new SqlExpressionBuildingException(String.format("非法的排序属性：%s", orderEl[0]));
 			}
-		} else {
-			Map<String, String> orderMap = new LinkedHashMap<>();
-			for(String order : orderArray) {
-				String[] orderEl = order.trim().split("\\s+");
-				Attribute attr = entity.getAttribute(orderEl[0]);
-				if(attr != null) {
-					orderMap.put(wrapIdentifier(attr.getColumnName(), configuration), orderEl.length == 1 ? StringUtils.EMPTY : orderEl[1]);
-				} else {
-					orderMap.put(orderEl[0], orderEl.length == 1 ? StringUtils.EMPTY : orderEl[1]);
-				}
-			}
-			String orderEl = orderMap.entrySet().stream().map(item -> item.getKey() + Segment.SPACE + item.getValue()).collect(Collectors.joining(", "));
-			page.setOrderBy(orderEl);
 		}
+		String orderEl = orderMap.entrySet().stream().map(item -> item.getKey() + (StringUtils.isBlank(item.getValue()) ? StringUtils.EMPTY : Segment.SPACE + item.getValue())).collect(Collectors.joining(", "));
+		page.setOrderBy(orderEl);
+	}
+	
+	//校验并规范化单个排序片段，返回长度为2的数组：[列名或属性名, 方向(可能为空字符串)]
+	static String[] validateOrderSegment(String orderSegment) {
+		String[] orderEl = orderSegment.trim().split("\\s+");
+		if(orderEl.length > 2) {
+			throw new SqlExpressionBuildingException(String.format("非法的排序片段：%s", orderSegment));
+		}
+		String direction = StringUtils.EMPTY;
+		if(orderEl.length == 2) {
+			String dir = orderEl[1].toUpperCase();
+			if(!"ASC".equals(dir) && !"DESC".equals(dir)) {
+				throw new SqlExpressionBuildingException(String.format("非法的排序方向：%s", orderEl[1]));
+			}
+			direction = dir;
+		}
+		return new String[] { orderEl[0], direction };
 	}
 	
 	/**
