@@ -21,8 +21,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.RandomUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +33,6 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.yuehuanghun.AppTest;
 import com.yuehuanghun.mybatis.milu.annotation.JoinMode;
-import com.yuehuanghun.mybatis.milu.criteria.ConditionImpl;
 import com.yuehuanghun.mybatis.milu.criteria.Conditions;
 import com.yuehuanghun.mybatis.milu.criteria.Exists;
 import com.yuehuanghun.mybatis.milu.criteria.LambdaUpdatePredicate;
@@ -59,6 +56,9 @@ import com.yuehuanghun.mybatismilu.test.domain.entity.StudentProfile;
 import com.yuehuanghun.mybatismilu.test.dto.StudentDTO;
 import com.yuehuanghun.mybatismilu.test.dto.StudentStatistic;
 import com.yuehuanghun.mybatismilu.test.service.StudentService;
+
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.RandomUtil;
 
 @SpringBootTest(classes = AppTest.class)
 @RunWith(SpringRunner.class)
@@ -120,7 +120,7 @@ public class StudentMapperTest {
 		assertTrue(result.size() == 1);
 		
 		example = new Student();
-		Date startDate = DateUtils.parseDate("2017-06-08", "yyyy-MM-dd");
+		Date startDate = DateUtil.parse("2017-06-08", "yyyy-MM-dd");
 		Date endDate = new Date();
 		Map<String, Object> params = new HashMap<>();
 		params.put("addTimeBegin", startDate);
@@ -162,7 +162,7 @@ public class StudentMapperTest {
 		assertTrue(result.size() > 0);
 		
 		example = new Student();
-		Date startDate = DateUtils.parseDate("2017-06-08", "yyyy-MM-dd");
+		Date startDate = DateUtil.parse("2017-06-08", "yyyy-MM-dd");
 		Date endDate = new Date();
 		Map<String, Object> params = new HashMap<>();
 		params.put("addTimeBegin", startDate);
@@ -207,7 +207,7 @@ public class StudentMapperTest {
 		assertTrue(result.size() > 0);
 		
 		example = new Student();
-		Date startDate = DateUtils.parseDate("2017-06-08", "yyyy-MM-dd");
+		Date startDate = DateUtil.parse("2017-06-08", "yyyy-MM-dd");
 		Date endDate = new Date();
 		Map<String, Object> params = new HashMap<>();
 		params.put("addTimeBegin", startDate);
@@ -326,7 +326,7 @@ public class StudentMapperTest {
 		assertTrue(result == 1);
 		
 		example = new Student();
-		Date startDate = DateUtils.parseDate("2017-06-08", "yyyy-MM-dd");
+		Date startDate = DateUtil.parse("2017-06-08", "yyyy-MM-dd");
 		Date endDate = new Date();
 		Map<String, Object> params = new HashMap<>();
 		params.put("addTimeBegin", startDate);
@@ -855,7 +855,7 @@ public class StudentMapperTest {
 		
 		for(int i = 0; i < 10; i++) {
 			Student student = new Student();
-			student.setAge(RandomUtils.nextInt(9, 11));
+			student.setAge(RandomUtil.randomInt(9, 11));
 			student.setClassId(1L);
 			student.setName(randomName());
 			
