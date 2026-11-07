@@ -295,7 +295,7 @@ public class SqlBuildingHelper {
 		if(StringUtils.isBlank(identifierQuoteString)) {
 			stringBuilder.append(identifier);
 		} else {
-			stringBuilder.append(identifierQuoteString).append(identifier).append(identifierQuoteString);
+			stringBuilder.append(identifierQuoteString).append(escapeIdentifier(identifier, identifierQuoteString)).append(identifierQuoteString);
 		}
 	}
 	
@@ -304,7 +304,7 @@ public class SqlBuildingHelper {
 		if(StringUtils.isBlank(identifierQuoteString)) {
 			stringBuilder.append(alias);
 		} else {
-			stringBuilder.append(identifierQuoteString).append(alias).append(identifierQuoteString);
+			stringBuilder.append(identifierQuoteString).append(escapeIdentifier(alias, identifierQuoteString)).append(identifierQuoteString);
 		}
 	}
 	
@@ -335,8 +335,13 @@ public class SqlBuildingHelper {
 		if(StringUtils.isBlank(identifierQuoteString)) {
 			return identifier;
 		} else {
-			return identifierQuoteString + identifier + identifierQuoteString;
+			return identifierQuoteString + escapeIdentifier(identifier, identifierQuoteString) + identifierQuoteString;
 		}
+	}
+
+	//标识符内嵌引号字符双写转义，如 `a``b`、"a""b"
+	static String escapeIdentifier(String identifier, String quoteString) {
+		return identifier.replace(quoteString, quoteString + quoteString);
 	}
 	
 	public static String wrapTableName(Entity entity, MiluConfiguration configuration) {
