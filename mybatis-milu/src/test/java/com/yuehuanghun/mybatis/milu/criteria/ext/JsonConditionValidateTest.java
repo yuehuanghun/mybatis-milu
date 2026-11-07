@@ -9,6 +9,10 @@ import com.yuehuanghun.mybatis.milu.criteria.ext.mysql.conds.MysqlJsonLike;
 import com.yuehuanghun.mybatis.milu.criteria.ext.mysql.conds.MysqlJsonLike.LikeMode;
 import com.yuehuanghun.mybatis.milu.criteria.ext.mysql.select.MysqlJsonExtract;
 import com.yuehuanghun.mybatis.milu.criteria.ext.mysql.select.MysqlJsonExtractStr;
+import com.yuehuanghun.mybatis.milu.criteria.ext.postgre.conds.PostgreJsonCompare;
+import com.yuehuanghun.mybatis.milu.criteria.ext.postgre.conds.PostgreJsonPathCompare;
+import com.yuehuanghun.mybatis.milu.criteria.ext.postgre.select.PostgreJsonExtract;
+import com.yuehuanghun.mybatis.milu.criteria.ext.postgre.select.PostgreJsonExtractPath;
 import com.yuehuanghun.mybatis.milu.exception.SqlExpressionBuildingException;
 
 public class JsonConditionValidateTest {
@@ -53,5 +57,45 @@ public class JsonConditionValidateTest {
 	@Test
 	public void mysqlJsonExtractStr_acceptsValidPath() {
 		MysqlJsonExtractStr.of("extAttr", "$.name", null);
+	}
+
+	@Test
+	public void postgreJsonCompare_rejectsInjection() {
+		assertThrows(SqlExpressionBuildingException.class, () -> new PostgreJsonCompare("extAttr", "name' OR '1'='1", "v", CompareMode.EQUALS));
+	}
+
+	@Test
+	public void postgreJsonCompare_acceptsValidKey() {
+		new PostgreJsonCompare("extAttr", "name", "v", CompareMode.EQUALS);
+	}
+
+	@Test
+	public void postgreJsonPathCompare_rejectsInjection() {
+		assertThrows(SqlExpressionBuildingException.class, () -> new PostgreJsonPathCompare("extAttr", "{a,b}'; DROP TABLE x--", "v", CompareMode.EQUALS));
+	}
+
+	@Test
+	public void postgreJsonPathCompare_acceptsValidPath() {
+		new PostgreJsonPathCompare("extAttr", "{a,b}", "v", CompareMode.EQUALS);
+	}
+
+	@Test
+	public void postgreJsonExtract_rejectsInjection() {
+		assertThrows(SqlExpressionBuildingException.class, () -> PostgreJsonExtract.of("extAttr", "name' OR '1'='1", null));
+	}
+
+	@Test
+	public void postgreJsonExtract_acceptsValidKey() {
+		PostgreJsonExtract.of("extAttr", "name", null);
+	}
+
+	@Test
+	public void postgreJsonExtractPath_rejectsInjection() {
+		assertThrows(SqlExpressionBuildingException.class, () -> PostgreJsonExtractPath.of("extAttr", "{a,b}'; DROP TABLE x--", null));
+	}
+
+	@Test
+	public void postgreJsonExtractPath_acceptsValidPath() {
+		PostgreJsonExtractPath.of("extAttr", "{a,b}", null);
 	}
 }
