@@ -31,6 +31,7 @@
 		<module>mybatismilu-test-sqlserver</module>
 		<module>mybatismilu-test-dm</module>
 		<module>mybatismilu-test-mysql-boot3</module>
+        <module>mybatismilu-test-mysql-boot4</module>
 	</modules>
 
 	<dependencyManagement>
